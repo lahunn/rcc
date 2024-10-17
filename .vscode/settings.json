@@ -1,0 +1,7 @@
+{
+    "digital-ide.function.lsp.linter.vlog.diagnostor": "default",
+    "verilog.linting.linter": "xvlog",
+    "files.watcherExclude": {
+        "**/target": true
+    }
+}
