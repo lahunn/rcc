@@ -52,6 +52,7 @@ module RCC #(
   output [5:0]    rtcpre              ,
   output          stopkerwuck         ,
   output          stopwuck            ,
+  input  [2:0]    cur_rcc_cfgr_sw     ,
   output [2:0]    sw                  ,
   output [3:0]    d1cpre              ,
   output [2:0]    d1ppre              ,
@@ -136,8 +137,6 @@ module RCC #(
   output          lsirdyie            ,
   input           rcc_hsecss_fail_it  ,
   input           rcc_lsecss_fail_it  ,
-  input           rcc_sys_stop        ,
-  input           rcc_hsecss_fail     ,
   output          bdrst               ,
   output          rtcen               ,
   output [1:0]    rtcsel              ,
@@ -670,7 +669,9 @@ module RCC #(
   output          rcc_c2_i2c4lp_en    ,
   output          rcc_c2_spi6lp_en    ,
   output          rcc_c2_lpuart1lp_en ,
-  output          rcc_c2_syscfglp_en  
+  output          rcc_c2_syscfglp_en  ,
+  input           rcc_sys_stop        ,
+  input           rcc_hsecss_fail     
 );
 // ================================================================================
 // LOCAL PARAMETERS
@@ -801,6 +802,10 @@ wire        cur_rcc_cr_csion   ;
 wire        nxt_rcc_cr_csion   ;
 wire        rcc_cr_csion_en    ;
 wire        cur_rcc_cr_hsidivf ;
+wire        nxt_rcc_cr_hsidivf ;
+wire        rcc_cr_hsidivf_en  ;
+wire        rcc_cr_hsidivf_clr ;
+wire        rcc_cr_hsidivf_set ;
 wire [1:0]  cur_rcc_cr_hsidiv  ;
 wire [1:0]  nxt_rcc_cr_hsidiv  ;
 wire        rcc_cr_hsidiv_en   ;
@@ -1155,16 +1160,60 @@ wire        rcc_cier_lsirdyie_en   ;
 wire [31:0] rcc_cifr_read         ;
 wire        rcc_cifr_sel          ;
 wire        cur_rcc_cifr_hsecssf  ;
+wire        nxt_rcc_cifr_hsecssf  ;
+wire        rcc_cifr_hsecssf_en   ;
+wire        rcc_cifr_hsecssf_clr  ;
+wire        rcc_cifr_hsecssf_set  ;
 wire        cur_rcc_cifr_lsecssf  ;
+wire        nxt_rcc_cifr_lsecssf  ;
+wire        rcc_cifr_lsecssf_en   ;
+wire        rcc_cifr_lsecssf_clr  ;
+wire        rcc_cifr_lsecssf_set  ;
 wire        cur_rcc_cifr_pll3rdyf ;
+wire        nxt_rcc_cifr_pll3rdyf ;
+wire        rcc_cifr_pll3rdyf_en  ;
+wire        rcc_cifr_pll3rdyf_clr ;
+wire        rcc_cifr_pll3rdyf_set ;
 wire        cur_rcc_cifr_pll2rdyf ;
+wire        nxt_rcc_cifr_pll2rdyf ;
+wire        rcc_cifr_pll2rdyf_en  ;
+wire        rcc_cifr_pll2rdyf_clr ;
+wire        rcc_cifr_pll2rdyf_set ;
 wire        cur_rcc_cifr_pll1rdyf ;
+wire        nxt_rcc_cifr_pll1rdyf ;
+wire        rcc_cifr_pll1rdyf_en  ;
+wire        rcc_cifr_pll1rdyf_clr ;
+wire        rcc_cifr_pll1rdyf_set ;
 wire        cur_rcc_cifr_hsi48rdyf;
+wire        nxt_rcc_cifr_hsi48rdyf;
+wire        rcc_cifr_hsi48rdyf_en ;
+wire        rcc_cifr_hsi48rdyf_clr;
+wire        rcc_cifr_hsi48rdyf_set;
 wire        cur_rcc_cifr_csirdyf  ;
+wire        nxt_rcc_cifr_csirdyf  ;
+wire        rcc_cifr_csirdyf_en   ;
+wire        rcc_cifr_csirdyf_clr  ;
+wire        rcc_cifr_csirdyf_set  ;
 wire        cur_rcc_cifr_hserdyf  ;
+wire        nxt_rcc_cifr_hserdyf  ;
+wire        rcc_cifr_hserdyf_en   ;
+wire        rcc_cifr_hserdyf_clr  ;
+wire        rcc_cifr_hserdyf_set  ;
 wire        cur_rcc_cifr_hsirdyf  ;
+wire        nxt_rcc_cifr_hsirdyf  ;
+wire        rcc_cifr_hsirdyf_en   ;
+wire        rcc_cifr_hsirdyf_clr  ;
+wire        rcc_cifr_hsirdyf_set  ;
 wire        cur_rcc_cifr_lserdyf  ;
+wire        nxt_rcc_cifr_lserdyf  ;
+wire        rcc_cifr_lserdyf_en   ;
+wire        rcc_cifr_lserdyf_clr  ;
+wire        rcc_cifr_lserdyf_set  ;
 wire        cur_rcc_cifr_lsirdyf  ;
+wire        nxt_rcc_cifr_lsirdyf  ;
+wire        rcc_cifr_lsirdyf_en   ;
+wire        rcc_cifr_lsirdyf_clr  ;
+wire        rcc_cifr_lsirdyf_set  ;
 // rcc_cicr
 wire [31:0] rcc_cicr_read         ;
 wire        rcc_cicr_sel          ;
@@ -1214,6 +1263,10 @@ wire [1:0]  cur_rcc_bdcr_rtcsel  ;
 wire [1:0]  nxt_rcc_bdcr_rtcsel  ;
 wire        rcc_bdcr_rtcsel_en   ;
 wire        cur_rcc_bdcr_lsecssd ;
+wire        nxt_rcc_bdcr_lsecssd ;
+wire        rcc_bdcr_lsecssd_en  ;
+wire        rcc_bdcr_lsecssd_clr ;
+wire        rcc_bdcr_lsecssd_set ;
 wire        cur_rcc_bdcr_lsecsson;
 wire        nxt_rcc_bdcr_lsecsson;
 wire        rcc_bdcr_lsecsson_en ;
@@ -1589,19 +1642,75 @@ wire        rcc_d3amr_bdmaamen_en    ;
 wire [31:0] rcc_c1_rsr_read         ;
 wire        rcc_c1_rsr_sel          ;
 wire        cur_rcc_c1_rsr_lpwr2rstf;
+wire        nxt_rcc_c1_rsr_lpwr2rstf;
+wire        rcc_c1_rsr_lpwr2rstf_en ;
+wire        rcc_c1_rsr_lpwr2rstf_clr;
+wire        rcc_c1_rsr_lpwr2rstf_set;
 wire        cur_rcc_c1_rsr_lpwr1rstf;
+wire        nxt_rcc_c1_rsr_lpwr1rstf;
+wire        rcc_c1_rsr_lpwr1rstf_en ;
+wire        rcc_c1_rsr_lpwr1rstf_clr;
+wire        rcc_c1_rsr_lpwr1rstf_set;
 wire        cur_rcc_c1_rsr_wwdg2rstf;
+wire        nxt_rcc_c1_rsr_wwdg2rstf;
+wire        rcc_c1_rsr_wwdg2rstf_en ;
+wire        rcc_c1_rsr_wwdg2rstf_clr;
+wire        rcc_c1_rsr_wwdg2rstf_set;
 wire        cur_rcc_c1_rsr_wwdg1rstf;
+wire        nxt_rcc_c1_rsr_wwdg1rstf;
+wire        rcc_c1_rsr_wwdg1rstf_en ;
+wire        rcc_c1_rsr_wwdg1rstf_clr;
+wire        rcc_c1_rsr_wwdg1rstf_set;
 wire        cur_rcc_c1_rsr_iwdg2rstf;
+wire        nxt_rcc_c1_rsr_iwdg2rstf;
+wire        rcc_c1_rsr_iwdg2rstf_en ;
+wire        rcc_c1_rsr_iwdg2rstf_clr;
+wire        rcc_c1_rsr_iwdg2rstf_set;
 wire        cur_rcc_c1_rsr_iwdg1rstf;
+wire        nxt_rcc_c1_rsr_iwdg1rstf;
+wire        rcc_c1_rsr_iwdg1rstf_en ;
+wire        rcc_c1_rsr_iwdg1rstf_clr;
+wire        rcc_c1_rsr_iwdg1rstf_set;
 wire        cur_rcc_c1_rsr_sft2rstf ;
+wire        nxt_rcc_c1_rsr_sft2rstf ;
+wire        rcc_c1_rsr_sft2rstf_en  ;
+wire        rcc_c1_rsr_sft2rstf_clr ;
+wire        rcc_c1_rsr_sft2rstf_set ;
 wire        cur_rcc_c1_rsr_sft1rstf ;
+wire        nxt_rcc_c1_rsr_sft1rstf ;
+wire        rcc_c1_rsr_sft1rstf_en  ;
+wire        rcc_c1_rsr_sft1rstf_clr ;
+wire        rcc_c1_rsr_sft1rstf_set ;
 wire        cur_rcc_c1_rsr_porrstf  ;
+wire        nxt_rcc_c1_rsr_porrstf  ;
+wire        rcc_c1_rsr_porrstf_en   ;
+wire        rcc_c1_rsr_porrstf_clr  ;
+wire        rcc_c1_rsr_porrstf_set  ;
 wire        cur_rcc_c1_rsr_pinrstf  ;
+wire        nxt_rcc_c1_rsr_pinrstf  ;
+wire        rcc_c1_rsr_pinrstf_en   ;
+wire        rcc_c1_rsr_pinrstf_clr  ;
+wire        rcc_c1_rsr_pinrstf_set  ;
 wire        cur_rcc_c1_rsr_borrstf  ;
+wire        nxt_rcc_c1_rsr_borrstf  ;
+wire        rcc_c1_rsr_borrstf_en   ;
+wire        rcc_c1_rsr_borrstf_clr  ;
+wire        rcc_c1_rsr_borrstf_set  ;
 wire        cur_rcc_c1_rsr_d2rstf   ;
+wire        nxt_rcc_c1_rsr_d2rstf   ;
+wire        rcc_c1_rsr_d2rstf_en    ;
+wire        rcc_c1_rsr_d2rstf_clr   ;
+wire        rcc_c1_rsr_d2rstf_set   ;
 wire        cur_rcc_c1_rsr_d1rstf   ;
+wire        nxt_rcc_c1_rsr_d1rstf   ;
+wire        rcc_c1_rsr_d1rstf_en    ;
+wire        rcc_c1_rsr_d1rstf_clr   ;
+wire        rcc_c1_rsr_d1rstf_set   ;
 wire        cur_rcc_c1_rsr_oblrstf  ;
+wire        nxt_rcc_c1_rsr_oblrstf  ;
+wire        rcc_c1_rsr_oblrstf_en   ;
+wire        rcc_c1_rsr_oblrstf_clr  ;
+wire        rcc_c1_rsr_oblrstf_set  ;
 wire        cur_rcc_c1_rsr_rmvf     ;
 wire        nxt_rcc_c1_rsr_rmvf     ;
 wire        rcc_c1_rsr_rmvf_en      ;
@@ -2287,19 +2396,75 @@ wire        rcc_c1_apb4lpenr_syscfglpen_en  ;
 wire [31:0] rcc_c2_rsr_read         ;
 wire        rcc_c2_rsr_sel          ;
 wire        cur_rcc_c2_rsr_lpwr2rstf;
+wire        nxt_rcc_c2_rsr_lpwr2rstf;
+wire        rcc_c2_rsr_lpwr2rstf_en ;
+wire        rcc_c2_rsr_lpwr2rstf_clr;
+wire        rcc_c2_rsr_lpwr2rstf_set;
 wire        cur_rcc_c2_rsr_lpwr1rstf;
+wire        nxt_rcc_c2_rsr_lpwr1rstf;
+wire        rcc_c2_rsr_lpwr1rstf_en ;
+wire        rcc_c2_rsr_lpwr1rstf_clr;
+wire        rcc_c2_rsr_lpwr1rstf_set;
 wire        cur_rcc_c2_rsr_wwdg2rstf;
+wire        nxt_rcc_c2_rsr_wwdg2rstf;
+wire        rcc_c2_rsr_wwdg2rstf_en ;
+wire        rcc_c2_rsr_wwdg2rstf_clr;
+wire        rcc_c2_rsr_wwdg2rstf_set;
 wire        cur_rcc_c2_rsr_wwdg1rstf;
+wire        nxt_rcc_c2_rsr_wwdg1rstf;
+wire        rcc_c2_rsr_wwdg1rstf_en ;
+wire        rcc_c2_rsr_wwdg1rstf_clr;
+wire        rcc_c2_rsr_wwdg1rstf_set;
 wire        cur_rcc_c2_rsr_iwdg2rstf;
+wire        nxt_rcc_c2_rsr_iwdg2rstf;
+wire        rcc_c2_rsr_iwdg2rstf_en ;
+wire        rcc_c2_rsr_iwdg2rstf_clr;
+wire        rcc_c2_rsr_iwdg2rstf_set;
 wire        cur_rcc_c2_rsr_iwdg1rstf;
+wire        nxt_rcc_c2_rsr_iwdg1rstf;
+wire        rcc_c2_rsr_iwdg1rstf_en ;
+wire        rcc_c2_rsr_iwdg1rstf_clr;
+wire        rcc_c2_rsr_iwdg1rstf_set;
 wire        cur_rcc_c2_rsr_sft2rstf ;
+wire        nxt_rcc_c2_rsr_sft2rstf ;
+wire        rcc_c2_rsr_sft2rstf_en  ;
+wire        rcc_c2_rsr_sft2rstf_clr ;
+wire        rcc_c2_rsr_sft2rstf_set ;
 wire        cur_rcc_c2_rsr_sft1rstf ;
+wire        nxt_rcc_c2_rsr_sft1rstf ;
+wire        rcc_c2_rsr_sft1rstf_en  ;
+wire        rcc_c2_rsr_sft1rstf_clr ;
+wire        rcc_c2_rsr_sft1rstf_set ;
 wire        cur_rcc_c2_rsr_porrstf  ;
+wire        nxt_rcc_c2_rsr_porrstf  ;
+wire        rcc_c2_rsr_porrstf_en   ;
+wire        rcc_c2_rsr_porrstf_clr  ;
+wire        rcc_c2_rsr_porrstf_set  ;
 wire        cur_rcc_c2_rsr_pinrstf  ;
+wire        nxt_rcc_c2_rsr_pinrstf  ;
+wire        rcc_c2_rsr_pinrstf_en   ;
+wire        rcc_c2_rsr_pinrstf_clr  ;
+wire        rcc_c2_rsr_pinrstf_set  ;
 wire        cur_rcc_c2_rsr_borrstf  ;
+wire        nxt_rcc_c2_rsr_borrstf  ;
+wire        rcc_c2_rsr_borrstf_en   ;
+wire        rcc_c2_rsr_borrstf_clr  ;
+wire        rcc_c2_rsr_borrstf_set  ;
 wire        cur_rcc_c2_rsr_d2rstf   ;
+wire        nxt_rcc_c2_rsr_d2rstf   ;
+wire        rcc_c2_rsr_d2rstf_en    ;
+wire        rcc_c2_rsr_d2rstf_clr   ;
+wire        rcc_c2_rsr_d2rstf_set   ;
 wire        cur_rcc_c2_rsr_d1rstf   ;
+wire        nxt_rcc_c2_rsr_d1rstf   ;
+wire        rcc_c2_rsr_d1rstf_en    ;
+wire        rcc_c2_rsr_d1rstf_clr   ;
+wire        rcc_c2_rsr_d1rstf_set   ;
 wire        cur_rcc_c2_rsr_oblrstf  ;
+wire        nxt_rcc_c2_rsr_oblrstf  ;
+wire        rcc_c2_rsr_oblrstf_en   ;
+wire        rcc_c2_rsr_oblrstf_clr  ;
+wire        rcc_c2_rsr_oblrstf_set  ;
 wire        cur_rcc_c2_rsr_rmvf     ;
 wire        nxt_rcc_c2_rsr_rmvf     ;
 wire        rcc_c2_rsr_rmvf_en      ;
@@ -3467,7 +3632,20 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 5:5                 hsidivf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cr_hsidivf = 'b0;
+assign rcc_cr_hsidivf_set = cur_rcc_cr_hsidiv == eff_hsidiv        ;
+assign rcc_cr_hsidivf_clr = cur_rcc_cr_hsidiv != eff_hsidiv        ;
+assign rcc_cr_hsidivf_en  = rcc_cr_hsidivf_set | rcc_cr_hsidivf_clr;
+assign nxt_rcc_cr_hsidivf = rcc_cr_hsidivf_set                     ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cr_hsidivf (
+  .clk  (clk               ),
+  .rst_n(rst_n             ),
+  .en   (rcc_cr_hsidivf_en ),
+  .din  (nxt_rcc_cr_hsidivf),
+  .dout (cur_rcc_cr_hsidivf)
+);
 
 // --------------------------------------------------------------------------------
 // 4:3                 hsidiv              RW                  0b0                 
@@ -5684,57 +5862,200 @@ assign rcc_cifr_read = {{21{1'b0}}
 // --------------------------------------------------------------------------------
 // 10:10               hsecssf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_hsecssf = rcc_hsecss_fail_it;
+assign rcc_cifr_hsecssf_set = rcc_hsecss_fail                            ;
+assign rcc_cifr_hsecssf_clr = cur_rcc_cicr_hsecssc                       ;
+assign rcc_cifr_hsecssf_en  = rcc_cifr_hsecssf_set | rcc_cifr_hsecssf_clr;
+assign nxt_rcc_cifr_hsecssf = rcc_cifr_hsecssf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_hsecssf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_hsecssf_en ),
+  .din  (nxt_rcc_cifr_hsecssf),
+  .dout (cur_rcc_cifr_hsecssf)
+);
 
 // --------------------------------------------------------------------------------
 // 9:9                 lsecssf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_lsecssf = rcc_lsecss_fail_it;
+assign rcc_cifr_lsecssf_set = rcc_lsecss_fail                            ;
+assign rcc_cifr_lsecssf_clr = cur_rcc_cicr_lsecssc                       ;
+assign rcc_cifr_lsecssf_en  = rcc_cifr_lsecssf_set | rcc_cifr_lsecssf_clr;
+assign nxt_rcc_cifr_lsecssf = rcc_cifr_lsecssf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_lsecssf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_lsecssf_en ),
+  .din  (nxt_rcc_cifr_lsecssf),
+  .dout (cur_rcc_cifr_lsecssf)
+);
 
 // --------------------------------------------------------------------------------
 // 8:8                 pll3rdyf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_pll3rdyf = 'b0;
+assign rcc_cifr_pll3rdyf_set = pll3_rdy                                     ;
+assign rcc_cifr_pll3rdyf_clr = cur_rcc_cicr_pll3rdyc                        ;
+assign rcc_cifr_pll3rdyf_en  = rcc_cifr_pll3rdyf_set | rcc_cifr_pll3rdyf_clr;
+assign nxt_rcc_cifr_pll3rdyf = rcc_cifr_pll3rdyf_set                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_pll3rdyf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_cifr_pll3rdyf_en ),
+  .din  (nxt_rcc_cifr_pll3rdyf),
+  .dout (cur_rcc_cifr_pll3rdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 7:7                 pll2rdyf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_pll2rdyf = 'b0;
+assign rcc_cifr_pll2rdyf_set = pll2_rdy                                     ;
+assign rcc_cifr_pll2rdyf_clr = cur_rcc_cicr_pll3rdyc                        ;
+assign rcc_cifr_pll2rdyf_en  = rcc_cifr_pll2rdyf_set | rcc_cifr_pll2rdyf_clr;
+assign nxt_rcc_cifr_pll2rdyf = rcc_cifr_pll2rdyf_set                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_pll2rdyf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_cifr_pll2rdyf_en ),
+  .din  (nxt_rcc_cifr_pll2rdyf),
+  .dout (cur_rcc_cifr_pll2rdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 6:6                 pll1rdyf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_pll1rdyf = 'b0;
+assign rcc_cifr_pll1rdyf_set = pll1_rdy                                     ;
+assign rcc_cifr_pll1rdyf_clr = cur_rcc_cicr_pll2rdyc                        ;
+assign rcc_cifr_pll1rdyf_en  = rcc_cifr_pll1rdyf_set | rcc_cifr_pll1rdyf_clr;
+assign nxt_rcc_cifr_pll1rdyf = rcc_cifr_pll1rdyf_set                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_pll1rdyf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_cifr_pll1rdyf_en ),
+  .din  (nxt_rcc_cifr_pll1rdyf),
+  .dout (cur_rcc_cifr_pll1rdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 5:5                 hsi48rdyf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_hsi48rdyf = 'b0;
+assign rcc_cifr_hsi48rdyf_set = hsi48_rdy                                      ;
+assign rcc_cifr_hsi48rdyf_clr = cur_rcc_cicr_pll1rdyc                          ;
+assign rcc_cifr_hsi48rdyf_en  = rcc_cifr_hsi48rdyf_set | rcc_cifr_hsi48rdyf_clr;
+assign nxt_rcc_cifr_hsi48rdyf = rcc_cifr_hsi48rdyf_set                         ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_hsi48rdyf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_cifr_hsi48rdyf_en ),
+  .din  (nxt_rcc_cifr_hsi48rdyf),
+  .dout (cur_rcc_cifr_hsi48rdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 4:4                 csirdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_csirdyf = 'b0;
+assign rcc_cifr_csirdyf_set = csi_rdy                                    ;
+assign rcc_cifr_csirdyf_clr = cur_rcc_cicr_hsi48rdyc                     ;
+assign rcc_cifr_csirdyf_en  = rcc_cifr_csirdyf_set | rcc_cifr_csirdyf_clr;
+assign nxt_rcc_cifr_csirdyf = rcc_cifr_csirdyf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_csirdyf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_csirdyf_en ),
+  .din  (nxt_rcc_cifr_csirdyf),
+  .dout (cur_rcc_cifr_csirdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 3:3                 hserdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_hserdyf = 'b0;
+assign rcc_cifr_hserdyf_set = hse_rdy                                    ;
+assign rcc_cifr_hserdyf_clr = cur_rcc_cicr_csirdyc                       ;
+assign rcc_cifr_hserdyf_en  = rcc_cifr_hserdyf_set | rcc_cifr_hserdyf_clr;
+assign nxt_rcc_cifr_hserdyf = rcc_cifr_hserdyf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_hserdyf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_hserdyf_en ),
+  .din  (nxt_rcc_cifr_hserdyf),
+  .dout (cur_rcc_cifr_hserdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 2:2                 hsirdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_hsirdyf = 'b0;
+assign rcc_cifr_hsirdyf_set = hsi_rdy                                    ;
+assign rcc_cifr_hsirdyf_clr = cur_rcc_cicr_hserdyc                       ;
+assign rcc_cifr_hsirdyf_en  = rcc_cifr_hsirdyf_set | rcc_cifr_hsirdyf_clr;
+assign nxt_rcc_cifr_hsirdyf = rcc_cifr_hsirdyf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_hsirdyf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_hsirdyf_en ),
+  .din  (nxt_rcc_cifr_hsirdyf),
+  .dout (cur_rcc_cifr_hsirdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 1:1                 lserdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_lserdyf = 'b0;
+assign rcc_cifr_lserdyf_set = lse_rdy                                    ;
+assign rcc_cifr_lserdyf_clr = cur_rcc_cicr_hsirdyc                       ;
+assign rcc_cifr_lserdyf_en  = rcc_cifr_lserdyf_set | rcc_cifr_lserdyf_clr;
+assign nxt_rcc_cifr_lserdyf = rcc_cifr_lserdyf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_lserdyf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_lserdyf_en ),
+  .din  (nxt_rcc_cifr_lserdyf),
+  .dout (cur_rcc_cifr_lserdyf)
+);
 
 // --------------------------------------------------------------------------------
 // 0:0                 lsirdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cifr_lsirdyf = 'b0;
+assign rcc_cifr_lsirdyf_set = lsi_rdy                                    ;
+assign rcc_cifr_lsirdyf_clr = cur_rcc_cicr_lserdyc                       ;
+assign rcc_cifr_lsirdyf_en  = rcc_cifr_lsirdyf_set | rcc_cifr_lsirdyf_clr;
+assign nxt_rcc_cifr_lsirdyf = rcc_cifr_lsirdyf_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_cifr_lsirdyf (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_cifr_lsirdyf_en ),
+  .din  (nxt_rcc_cifr_lsirdyf),
+  .dout (cur_rcc_cifr_lsirdyf)
+);
 
 
 // --------------------------------------------------------------------------------
@@ -6048,7 +6369,20 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 6:6                 lsecssd             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_bdcr_lsecssd = 'b0;
+assign rcc_bdcr_lsecssd_set = rcc_lsecss_fail                            ;
+assign rcc_bdcr_lsecssd_clr = 1'b0                                       ;
+assign rcc_bdcr_lsecssd_en  = rcc_bdcr_lsecssd_set | rcc_bdcr_lsecssd_clr;
+assign nxt_rcc_bdcr_lsecssd = rcc_bdcr_lsecssd_set                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_bdcr_lsecssd (
+  .clk  (clk                 ),
+  .rst_n(rst_n               ),
+  .en   (rcc_bdcr_lsecssd_en ),
+  .din  (nxt_rcc_bdcr_lsecssd),
+  .dout (cur_rcc_bdcr_lsecssd)
+);
 
 // --------------------------------------------------------------------------------
 // 5:5                 lsecsson            W1S                 0b0                 
@@ -8491,72 +8825,254 @@ assign rcc_c1_rsr_read = {cur_rcc_c1_rsr_lpwr2rstf
 // --------------------------------------------------------------------------------
 // 31:31               lpwr2rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_lpwr2rstf = 'b0;
+assign rcc_c1_rsr_lpwr2rstf_set = lpwr2_rst                                          ;
+assign rcc_c1_rsr_lpwr2rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c1_rsr_lpwr2rstf_en  = rcc_c1_rsr_lpwr2rstf_set | rcc_c1_rsr_lpwr2rstf_clr;
+assign nxt_rcc_c1_rsr_lpwr2rstf = ~rcc_c1_rsr_lpwr2rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_lpwr2rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c1_rsr_lpwr2rstf_en ),
+  .din  (nxt_rcc_c1_rsr_lpwr2rstf),
+  .dout (cur_rcc_c1_rsr_lpwr2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 30:30               lpwr1rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_lpwr1rstf = 'b0;
+assign rcc_c1_rsr_lpwr1rstf_set = lpwr1_rst                                          ;
+assign rcc_c1_rsr_lpwr1rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c1_rsr_lpwr1rstf_en  = rcc_c1_rsr_lpwr1rstf_set | rcc_c1_rsr_lpwr1rstf_clr;
+assign nxt_rcc_c1_rsr_lpwr1rstf = ~rcc_c1_rsr_lpwr1rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_lpwr1rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c1_rsr_lpwr1rstf_en ),
+  .din  (nxt_rcc_c1_rsr_lpwr1rstf),
+  .dout (cur_rcc_c1_rsr_lpwr1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 29:29               wwdg2rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_wwdg2rstf = 'b0;
+assign rcc_c1_rsr_wwdg2rstf_set = wwdg2_out_rst                                      ;
+assign rcc_c1_rsr_wwdg2rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c1_rsr_wwdg2rstf_en  = rcc_c1_rsr_wwdg2rstf_set | rcc_c1_rsr_wwdg2rstf_clr;
+assign nxt_rcc_c1_rsr_wwdg2rstf = ~rcc_c1_rsr_wwdg2rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_wwdg2rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c1_rsr_wwdg2rstf_en ),
+  .din  (nxt_rcc_c1_rsr_wwdg2rstf),
+  .dout (cur_rcc_c1_rsr_wwdg2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 28:28               wwdg1rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_wwdg1rstf = 'b0;
+assign rcc_c1_rsr_wwdg1rstf_set = wwdg1_out_rst                                      ;
+assign rcc_c1_rsr_wwdg1rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c1_rsr_wwdg1rstf_en  = rcc_c1_rsr_wwdg1rstf_set | rcc_c1_rsr_wwdg1rstf_clr;
+assign nxt_rcc_c1_rsr_wwdg1rstf = ~rcc_c1_rsr_wwdg1rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_wwdg1rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c1_rsr_wwdg1rstf_en ),
+  .din  (nxt_rcc_c1_rsr_wwdg1rstf),
+  .dout (cur_rcc_c1_rsr_wwdg1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 27:27               iwdg2rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_iwdg2rstf = 'b0;
+assign rcc_c1_rsr_iwdg2rstf_set = iwdg1_out_rst                                      ;
+assign rcc_c1_rsr_iwdg2rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c1_rsr_iwdg2rstf_en  = rcc_c1_rsr_iwdg2rstf_set | rcc_c1_rsr_iwdg2rstf_clr;
+assign nxt_rcc_c1_rsr_iwdg2rstf = ~rcc_c1_rsr_iwdg2rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_iwdg2rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c1_rsr_iwdg2rstf_en ),
+  .din  (nxt_rcc_c1_rsr_iwdg2rstf),
+  .dout (cur_rcc_c1_rsr_iwdg2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 26:26               iwdg1rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_iwdg1rstf = 'b0;
+assign rcc_c1_rsr_iwdg1rstf_set = iwdg1_out_rst                                      ;
+assign rcc_c1_rsr_iwdg1rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c1_rsr_iwdg1rstf_en  = rcc_c1_rsr_iwdg1rstf_set | rcc_c1_rsr_iwdg1rstf_clr;
+assign nxt_rcc_c1_rsr_iwdg1rstf = ~rcc_c1_rsr_iwdg1rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_iwdg1rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c1_rsr_iwdg1rstf_en ),
+  .din  (nxt_rcc_c1_rsr_iwdg1rstf),
+  .dout (cur_rcc_c1_rsr_iwdg1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 25:25               sft2rstf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_sft2rstf = 'b0;
+assign rcc_c1_rsr_sft2rstf_set = cpu2_sftrst                                      ;
+assign rcc_c1_rsr_sft2rstf_clr = cur_rcc_rsr_rmvf                                 ;
+assign rcc_c1_rsr_sft2rstf_en  = rcc_c1_rsr_sft2rstf_set | rcc_c1_rsr_sft2rstf_clr;
+assign nxt_rcc_c1_rsr_sft2rstf = ~rcc_c1_rsr_sft2rstf_clr                         ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_sft2rstf (
+  .clk  (clk                    ),
+  .rst_n(rst_n                  ),
+  .en   (rcc_c1_rsr_sft2rstf_en ),
+  .din  (nxt_rcc_c1_rsr_sft2rstf),
+  .dout (cur_rcc_c1_rsr_sft2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 24:24               sft1rstf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_sft1rstf = 'b0;
+assign rcc_c1_rsr_sft1rstf_set = cpu1_sftrst                                      ;
+assign rcc_c1_rsr_sft1rstf_clr = cur_rcc_rsr_rmvf                                 ;
+assign rcc_c1_rsr_sft1rstf_en  = rcc_c1_rsr_sft1rstf_set | rcc_c1_rsr_sft1rstf_clr;
+assign nxt_rcc_c1_rsr_sft1rstf = ~rcc_c1_rsr_sft1rstf_clr                         ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_sft1rstf (
+  .clk  (clk                    ),
+  .rst_n(rst_n                  ),
+  .en   (rcc_c1_rsr_sft1rstf_en ),
+  .din  (nxt_rcc_c1_rsr_sft1rstf),
+  .dout (cur_rcc_c1_rsr_sft1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 23:23               porrstf             RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_porrstf = 'b0;
+assign rcc_c1_rsr_porrstf_set = pwr_por_rst                                    ;
+assign rcc_c1_rsr_porrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c1_rsr_porrstf_en  = rcc_c1_rsr_porrstf_set | rcc_c1_rsr_porrstf_clr;
+assign nxt_rcc_c1_rsr_porrstf = ~rcc_c1_rsr_porrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c1_rsr_porrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c1_rsr_porrstf_en ),
+  .din  (nxt_rcc_c1_rsr_porrstf),
+  .dout (cur_rcc_c1_rsr_porrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 22:22               pinrstf             RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_pinrstf = 'b0;
+assign rcc_c1_rsr_pinrstf_set = nrst_in                                        ;
+assign rcc_c1_rsr_pinrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c1_rsr_pinrstf_en  = rcc_c1_rsr_pinrstf_set | rcc_c1_rsr_pinrstf_clr;
+assign nxt_rcc_c1_rsr_pinrstf = ~rcc_c1_rsr_pinrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c1_rsr_pinrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c1_rsr_pinrstf_en ),
+  .din  (nxt_rcc_c1_rsr_pinrstf),
+  .dout (cur_rcc_c1_rsr_pinrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 21:21               borrstf             RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_borrstf = 'b0;
+assign rcc_c1_rsr_borrstf_set = pwr_bor_rst                                    ;
+assign rcc_c1_rsr_borrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c1_rsr_borrstf_en  = rcc_c1_rsr_borrstf_set | rcc_c1_rsr_borrstf_clr;
+assign nxt_rcc_c1_rsr_borrstf = ~rcc_c1_rsr_borrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c1_rsr_borrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c1_rsr_borrstf_en ),
+  .din  (nxt_rcc_c1_rsr_borrstf),
+  .dout (cur_rcc_c1_rsr_borrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 20:20               d2rstf              RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_d2rstf = 'b0;
+assign rcc_c1_rsr_d2rstf_set = d2_rst                                       ;
+assign rcc_c1_rsr_d2rstf_clr = cur_rcc_rsr_rmvf                             ;
+assign rcc_c1_rsr_d2rstf_en  = rcc_c1_rsr_d2rstf_set | rcc_c1_rsr_d2rstf_clr;
+assign nxt_rcc_c1_rsr_d2rstf = ~rcc_c1_rsr_d2rstf_clr                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c1_rsr_d2rstf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_c1_rsr_d2rstf_en ),
+  .din  (nxt_rcc_c1_rsr_d2rstf),
+  .dout (cur_rcc_c1_rsr_d2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 19:19               d1rstf              RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_d1rstf = 'b0;
+assign rcc_c1_rsr_d1rstf_set = d1_rst                                       ;
+assign rcc_c1_rsr_d1rstf_clr = cur_rcc_rsr_rmvf                             ;
+assign rcc_c1_rsr_d1rstf_en  = rcc_c1_rsr_d1rstf_set | rcc_c1_rsr_d1rstf_clr;
+assign nxt_rcc_c1_rsr_d1rstf = ~rcc_c1_rsr_d1rstf_clr                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c1_rsr_d1rstf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_c1_rsr_d1rstf_en ),
+  .din  (nxt_rcc_c1_rsr_d1rstf),
+  .dout (cur_rcc_c1_rsr_d1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 17:17               oblrstf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c1_rsr_oblrstf = 'b0;
+assign rcc_c1_rsr_oblrstf_set = obl_rst                                        ;
+assign rcc_c1_rsr_oblrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c1_rsr_oblrstf_en  = rcc_c1_rsr_oblrstf_set | rcc_c1_rsr_oblrstf_clr;
+assign nxt_rcc_c1_rsr_oblrstf = ~rcc_c1_rsr_oblrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c1_rsr_oblrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c1_rsr_oblrstf_en ),
+  .din  (nxt_rcc_c1_rsr_oblrstf),
+  .dout (cur_rcc_c1_rsr_oblrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 16:16               rmvf                RW                  0b0                 
@@ -13044,72 +13560,254 @@ assign rcc_c2_rsr_read = {cur_rcc_c2_rsr_lpwr2rstf
 // --------------------------------------------------------------------------------
 // 31:31               lpwr2rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_lpwr2rstf = 'b0;
+assign rcc_c2_rsr_lpwr2rstf_set = lpwr2_rst                                          ;
+assign rcc_c2_rsr_lpwr2rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c2_rsr_lpwr2rstf_en  = rcc_c2_rsr_lpwr2rstf_set | rcc_c2_rsr_lpwr2rstf_clr;
+assign nxt_rcc_c2_rsr_lpwr2rstf = ~rcc_c2_rsr_lpwr2rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_lpwr2rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c2_rsr_lpwr2rstf_en ),
+  .din  (nxt_rcc_c2_rsr_lpwr2rstf),
+  .dout (cur_rcc_c2_rsr_lpwr2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 30:30               lpwr1rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_lpwr1rstf = 'b0;
+assign rcc_c2_rsr_lpwr1rstf_set = lpwr1_rst                                          ;
+assign rcc_c2_rsr_lpwr1rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c2_rsr_lpwr1rstf_en  = rcc_c2_rsr_lpwr1rstf_set | rcc_c2_rsr_lpwr1rstf_clr;
+assign nxt_rcc_c2_rsr_lpwr1rstf = ~rcc_c2_rsr_lpwr1rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_lpwr1rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c2_rsr_lpwr1rstf_en ),
+  .din  (nxt_rcc_c2_rsr_lpwr1rstf),
+  .dout (cur_rcc_c2_rsr_lpwr1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 29:29               wwdg2rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_wwdg2rstf = 'b0;
+assign rcc_c2_rsr_wwdg2rstf_set = wwdg2_out_rst                                      ;
+assign rcc_c2_rsr_wwdg2rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c2_rsr_wwdg2rstf_en  = rcc_c2_rsr_wwdg2rstf_set | rcc_c2_rsr_wwdg2rstf_clr;
+assign nxt_rcc_c2_rsr_wwdg2rstf = ~rcc_c2_rsr_wwdg2rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_wwdg2rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c2_rsr_wwdg2rstf_en ),
+  .din  (nxt_rcc_c2_rsr_wwdg2rstf),
+  .dout (cur_rcc_c2_rsr_wwdg2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 28:28               wwdg1rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_wwdg1rstf = 'b0;
+assign rcc_c2_rsr_wwdg1rstf_set = wwdg1_out_rst                                      ;
+assign rcc_c2_rsr_wwdg1rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c2_rsr_wwdg1rstf_en  = rcc_c2_rsr_wwdg1rstf_set | rcc_c2_rsr_wwdg1rstf_clr;
+assign nxt_rcc_c2_rsr_wwdg1rstf = ~rcc_c2_rsr_wwdg1rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_wwdg1rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c2_rsr_wwdg1rstf_en ),
+  .din  (nxt_rcc_c2_rsr_wwdg1rstf),
+  .dout (cur_rcc_c2_rsr_wwdg1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 27:27               iwdg2rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_iwdg2rstf = 'b0;
+assign rcc_c2_rsr_iwdg2rstf_set = iwdg1_out_rst                                      ;
+assign rcc_c2_rsr_iwdg2rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c2_rsr_iwdg2rstf_en  = rcc_c2_rsr_iwdg2rstf_set | rcc_c2_rsr_iwdg2rstf_clr;
+assign nxt_rcc_c2_rsr_iwdg2rstf = ~rcc_c2_rsr_iwdg2rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_iwdg2rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c2_rsr_iwdg2rstf_en ),
+  .din  (nxt_rcc_c2_rsr_iwdg2rstf),
+  .dout (cur_rcc_c2_rsr_iwdg2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 26:26               iwdg1rstf           RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_iwdg1rstf = 'b0;
+assign rcc_c2_rsr_iwdg1rstf_set = iwdg1_out_rst                                      ;
+assign rcc_c2_rsr_iwdg1rstf_clr = cur_rcc_rsr_rmvf                                   ;
+assign rcc_c2_rsr_iwdg1rstf_en  = rcc_c2_rsr_iwdg1rstf_set | rcc_c2_rsr_iwdg1rstf_clr;
+assign nxt_rcc_c2_rsr_iwdg1rstf = ~rcc_c2_rsr_iwdg1rstf_clr                          ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_iwdg1rstf (
+  .clk  (clk                     ),
+  .rst_n(rst_n                   ),
+  .en   (rcc_c2_rsr_iwdg1rstf_en ),
+  .din  (nxt_rcc_c2_rsr_iwdg1rstf),
+  .dout (cur_rcc_c2_rsr_iwdg1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 25:25               sft2rstf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_sft2rstf = 'b0;
+assign rcc_c2_rsr_sft2rstf_set = cpu2_sftrst                                      ;
+assign rcc_c2_rsr_sft2rstf_clr = cur_rcc_rsr_rmvf                                 ;
+assign rcc_c2_rsr_sft2rstf_en  = rcc_c2_rsr_sft2rstf_set | rcc_c2_rsr_sft2rstf_clr;
+assign nxt_rcc_c2_rsr_sft2rstf = ~rcc_c2_rsr_sft2rstf_clr                         ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_sft2rstf (
+  .clk  (clk                    ),
+  .rst_n(rst_n                  ),
+  .en   (rcc_c2_rsr_sft2rstf_en ),
+  .din  (nxt_rcc_c2_rsr_sft2rstf),
+  .dout (cur_rcc_c2_rsr_sft2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 24:24               sft1rstf            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_sft1rstf = 'b0;
+assign rcc_c2_rsr_sft1rstf_set = cpu1_sftrst                                      ;
+assign rcc_c2_rsr_sft1rstf_clr = cur_rcc_rsr_rmvf                                 ;
+assign rcc_c2_rsr_sft1rstf_en  = rcc_c2_rsr_sft1rstf_set | rcc_c2_rsr_sft1rstf_clr;
+assign nxt_rcc_c2_rsr_sft1rstf = ~rcc_c2_rsr_sft1rstf_clr                         ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_sft1rstf (
+  .clk  (clk                    ),
+  .rst_n(rst_n                  ),
+  .en   (rcc_c2_rsr_sft1rstf_en ),
+  .din  (nxt_rcc_c2_rsr_sft1rstf),
+  .dout (cur_rcc_c2_rsr_sft1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 23:23               porrstf             RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_porrstf = 'b0;
+assign rcc_c2_rsr_porrstf_set = pwr_por_rst                                    ;
+assign rcc_c2_rsr_porrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c2_rsr_porrstf_en  = rcc_c2_rsr_porrstf_set | rcc_c2_rsr_porrstf_clr;
+assign nxt_rcc_c2_rsr_porrstf = ~rcc_c2_rsr_porrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c2_rsr_porrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c2_rsr_porrstf_en ),
+  .din  (nxt_rcc_c2_rsr_porrstf),
+  .dout (cur_rcc_c2_rsr_porrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 22:22               pinrstf             RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_pinrstf = 'b0;
+assign rcc_c2_rsr_pinrstf_set = nrst_in                                        ;
+assign rcc_c2_rsr_pinrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c2_rsr_pinrstf_en  = rcc_c2_rsr_pinrstf_set | rcc_c2_rsr_pinrstf_clr;
+assign nxt_rcc_c2_rsr_pinrstf = ~rcc_c2_rsr_pinrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c2_rsr_pinrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c2_rsr_pinrstf_en ),
+  .din  (nxt_rcc_c2_rsr_pinrstf),
+  .dout (cur_rcc_c2_rsr_pinrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 21:21               borrstf             RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_borrstf = 'b0;
+assign rcc_c2_rsr_borrstf_set = pwr_bor_rst                                    ;
+assign rcc_c2_rsr_borrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c2_rsr_borrstf_en  = rcc_c2_rsr_borrstf_set | rcc_c2_rsr_borrstf_clr;
+assign nxt_rcc_c2_rsr_borrstf = ~rcc_c2_rsr_borrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c2_rsr_borrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c2_rsr_borrstf_en ),
+  .din  (nxt_rcc_c2_rsr_borrstf),
+  .dout (cur_rcc_c2_rsr_borrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 20:20               d2rstf              RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_d2rstf = 'b0;
+assign rcc_c2_rsr_d2rstf_set = d2_rst                                       ;
+assign rcc_c2_rsr_d2rstf_clr = cur_rcc_rsr_rmvf                             ;
+assign rcc_c2_rsr_d2rstf_en  = rcc_c2_rsr_d2rstf_set | rcc_c2_rsr_d2rstf_clr;
+assign nxt_rcc_c2_rsr_d2rstf = ~rcc_c2_rsr_d2rstf_clr                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c2_rsr_d2rstf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_c2_rsr_d2rstf_en ),
+  .din  (nxt_rcc_c2_rsr_d2rstf),
+  .dout (cur_rcc_c2_rsr_d2rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 19:19               d1rstf              RO                  0b1                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_d1rstf = 'b0;
+assign rcc_c2_rsr_d1rstf_set = d1_rst                                       ;
+assign rcc_c2_rsr_d1rstf_clr = cur_rcc_rsr_rmvf                             ;
+assign rcc_c2_rsr_d1rstf_en  = rcc_c2_rsr_d1rstf_set | rcc_c2_rsr_d1rstf_clr;
+assign nxt_rcc_c2_rsr_d1rstf = ~rcc_c2_rsr_d1rstf_clr                       ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h1)
+) U_rcc_c2_rsr_d1rstf (
+  .clk  (clk                  ),
+  .rst_n(rst_n                ),
+  .en   (rcc_c2_rsr_d1rstf_en ),
+  .din  (nxt_rcc_c2_rsr_d1rstf),
+  .dout (cur_rcc_c2_rsr_d1rstf)
+);
 
 // --------------------------------------------------------------------------------
 // 17:17               oblrstf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_c2_rsr_oblrstf = 'b0;
+assign rcc_c2_rsr_oblrstf_set = obl_rst                                        ;
+assign rcc_c2_rsr_oblrstf_clr = cur_rcc_rsr_rmvf                               ;
+assign rcc_c2_rsr_oblrstf_en  = rcc_c2_rsr_oblrstf_set | rcc_c2_rsr_oblrstf_clr;
+assign nxt_rcc_c2_rsr_oblrstf = ~rcc_c2_rsr_oblrstf_clr                        ;
+BB_dfflr #(
+  .DW     (1  ),
+  .RST_VAL('h0)
+) U_rcc_c2_rsr_oblrstf (
+  .clk  (clk                   ),
+  .rst_n(rst_n                 ),
+  .en   (rcc_c2_rsr_oblrstf_en ),
+  .din  (nxt_rcc_c2_rsr_oblrstf),
+  .dout (cur_rcc_c2_rsr_oblrstf)
+);
 
 // --------------------------------------------------------------------------------
 // 16:16               rmvf                RW                  0b0                 
