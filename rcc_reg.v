@@ -29,7 +29,7 @@ module RCC #(
   output          hseon               ,
   input           d2_clk_rdy          ,
   input           d1_clk_rdy          ,
-  input           hsi48_dry           ,
+  input           hsi48_rdy           ,
   output          hsi48on             ,
   output          csikeron            ,
   input           csi_rdy             ,
@@ -672,7 +672,48 @@ module RCC #(
   input           rcc_sys_stop        ,
   input           rcc_hsecss_fail     ,
   input           rcc_exit_sys_stop   ,
-  input           rcc_lsecss_fail     
+  input           rcc_lsecss_fail     ,
+
+
+  // rcc_c1_rsr 
+  input cur_rcc_c1_rsr_lpwr2rstf,
+  input cur_rcc_c1_rsr_lpwr1rstf,
+  input cur_rcc_c1_rsr_wwdg2rstf,
+  input cur_rcc_c1_rsr_wwdg1rstf,
+  input cur_rcc_c1_rsr_iwdg2rstf,
+  input cur_rcc_c1_rsr_iwdg1rstf,
+  input cur_rcc_c1_rsr_sft2rstf,
+  input cur_rcc_c1_rsr_sft1rstf,
+  input cur_rcc_c1_rsr_porrstf,
+  input cur_rcc_c1_rsr_pinrstf,
+  input cur_rcc_c1_rsr_borrstf,
+  input cur_rcc_c1_rsr_d2rstf,
+  input cur_rcc_c1_rsr_d1rstf,
+  input cur_rcc_c1_rsr_oblrstf,
+  input cur_rcc_c1_rsr_rmvf,
+    // rcc_c2_rsr 
+  input cur_rcc_c2_rsr_lpwr2rstf,
+  input cur_rcc_c2_rsr_lpwr1rstf,
+  input cur_rcc_c2_rsr_wwdg2rstf,
+  input cur_rcc_c2_rsr_wwdg1rstf,
+  input cur_rcc_c2_rsr_iwdg2rstf,
+  input cur_rcc_c2_rsr_iwdg1rstf,
+  input cur_rcc_c2_rsr_sft2rstf,
+  input cur_rcc_c2_rsr_sft1rstf,
+  input cur_rcc_c2_rsr_porrstf,
+  input cur_rcc_c2_rsr_pinrstf,
+  input cur_rcc_c2_rsr_borrstf,
+  input cur_rcc_c2_rsr_d2rstf,
+  input cur_rcc_c2_rsr_d1rstf,
+  input cur_rcc_c2_rsr_oblrstf,
+  input cur_rcc_c2_rsr_rmvf,
+    // rcc_csr
+  input cur_rcc_csr_lsirdy,
+  input cur_rcc_csr_lsion,
+  
+  output rcc_c1_rsr_rmvf_wren,
+  output rcc_c2_rsr_rmvf_wren,
+  output rcc_csr_lsion_wren
 );
 // ================================================================================
 // LOCAL PARAMETERS
@@ -733,6 +774,7 @@ localparam RCC_C1_APB1LLPENR = (RCC + 'h170) >> 2;
 localparam RCC_C1_APB1HLPENR = (RCC + 'h174) >> 2;
 localparam RCC_C1_APB2LPENR  = (RCC + 'h178) >> 2;
 localparam RCC_C1_APB4LPENR  = (RCC + 'h17C) >> 2;
+localparam RCC_C2_RSR        = (RCC + 'h190) >> 2;
 localparam RCC_C2_AHB3ENR    = (RCC + 'h194) >> 2;
 localparam RCC_C2_AHB1ENR    = (RCC + 'h198) >> 2;
 localparam RCC_C2_AHB2ENR    = (RCC + 'h19C) >> 2;
@@ -2994,6 +3036,16 @@ wire hsi48on_clr_n;
 wire [1:0]  eff_hsidiv;
 wire rcc_eff_hsidiv_en;
 
+// rcc_csr
+wire [31:0] rcc_csr_read      ;
+// rcc_c1_rsr
+wire [31:0] rcc_c1_rsr_read         ;
+wire        rcc_c1_rsr_sel          ;
+// rcc_c2_rsr
+wire [31:0] rcc_c2_rsr_read         ;
+wire        rcc_c2_rsr_sel          ;
+
+
 // ================================================================================
 // R/W INDICATOR
 // ================================================================================
@@ -3058,6 +3110,7 @@ assign rcc_c1_apb1llpenr_sel = (addr == RCC_C1_APB1LLPENR);
 assign rcc_c1_apb1hlpenr_sel = (addr == RCC_C1_APB1HLPENR);
 assign rcc_c1_apb2lpenr_sel  = (addr == RCC_C1_APB2LPENR) ;
 assign rcc_c1_apb4lpenr_sel  = (addr == RCC_C1_APB4LPENR) ;
+assign rcc_c2_rsr_sel        = (addr == RCC_C2_RSR)       ;
 assign rcc_c2_ahb3enr_sel    = (addr == RCC_C2_AHB3ENR)   ;
 assign rcc_c2_ahb1enr_sel    = (addr == RCC_C2_AHB1ENR)   ;
 assign rcc_c2_ahb2enr_sel    = (addr == RCC_C2_AHB2ENR)   ;
@@ -3863,8 +3916,8 @@ assign cur_rcc_cfgr_sws = cur_rcc_cfgr_sw;
 wire sw_clr_n[2:0];
 wire sw_set_n[2:0];
 
-assign sw_clr_n = (~{2{ rcc_hse_fail|rcc_exit_sys_stop },rcc_hse_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==0)}) & {3{rst_n}};
-assign sw_set_n = ~{2'b0,(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1)};
+assign sw_clr_n = ({2{~(rcc_hse_fail|rcc_exit_sys_stop)},~(rcc_hse_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==0))}) & {3{rst_n}};
+assign sw_set_n = {2'b1,~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1)};
 
 assign rcc_cfgr_sw_en  = (|wr_req & rcc_cfgr_sel);
 assign nxt_rcc_cfgr_sw = wdata[2:0]              ;
@@ -17433,6 +17486,57 @@ BB_dfflr #(
   .din  (nxt_rcc_c2_apb4lpenr_syscfglpen),
   .dout (cur_rcc_c2_apb4lpenr_syscfglpen)
 );
+
+// --------------------------------------------------------------------------------
+// rcc_c1_rsr read data
+// --------------------------------------------------------------------------------
+assign rcc_c1_rsr_read = {cur_rcc_c1_rsr_lpwr2rstf
+                       , cur_rcc_c1_rsr_lpwr1rstf
+                       , cur_rcc_c1_rsr_wwdg2rstf
+                       , cur_rcc_c1_rsr_wwdg1rstf
+                       , cur_rcc_c1_rsr_iwdg2rstf
+                       , cur_rcc_c1_rsr_iwdg1rstf
+                       , cur_rcc_c1_rsr_sft2rstf
+                       , cur_rcc_c1_rsr_sft1rstf
+                       , cur_rcc_c1_rsr_porrstf
+                       , cur_rcc_c1_rsr_pinrstf
+                       , cur_rcc_c1_rsr_borrstf
+                       , cur_rcc_c1_rsr_d2rstf
+                       , cur_rcc_c1_rsr_d1rstf
+                       , {1{1'b0}}
+                       , cur_rcc_c1_rsr_oblrstf
+                       , cur_rcc_c1_rsr_rmvf
+                       , {16{1'b0}}};
+assign rcc_c1_rsr_rmvf_wren  = (wr_req[2] & rcc_c1_rsr_sel);
+// --------------------------------------------------------------------------------
+// rcc_c2_rsr read data
+// --------------------------------------------------------------------------------
+assign rcc_c2_rsr_read = {cur_rcc_c2_rsr_lpwr2rstf
+                       , cur_rcc_c2_rsr_lpwr1rstf
+                       , cur_rcc_c2_rsr_wwdg2rstf
+                       , cur_rcc_c2_rsr_wwdg1rstf
+                       , cur_rcc_c2_rsr_iwdg2rstf
+                       , cur_rcc_c2_rsr_iwdg1rstf
+                       , cur_rcc_c2_rsr_sft2rstf
+                       , cur_rcc_c2_rsr_sft1rstf
+                       , cur_rcc_c2_rsr_porrstf
+                       , cur_rcc_c2_rsr_pinrstf
+                       , cur_rcc_c2_rsr_borrstf
+                       , cur_rcc_c2_rsr_d2rstf
+                       , cur_rcc_c2_rsr_d1rstf
+                       , {1{1'b0}}
+                       , cur_rcc_c2_rsr_oblrstf
+                       , cur_rcc_c2_rsr_rmvf
+                       , {16{1'b0}}};
+assign rcc_c2_rsr_rmvf_wren  = (wr_req[2] & rcc_c2_rsr_sel);
+// --------------------------------------------------------------------------------
+// rcc_csr read data
+// --------------------------------------------------------------------------------
+assign rcc_csr_read = {{30{1'b0}}
+                    , cur_rcc_csr_lsirdy
+                    , cur_rcc_csr_lsion};
+
+
 
 
 endmodule

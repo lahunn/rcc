@@ -39,6 +39,7 @@ module rcc_vdd_reg(
     output reg cur_rcc_c1_rsr_d2rstf,
     output reg cur_rcc_c1_rsr_d1rstf,
     output reg cur_rcc_c1_rsr_oblrstf,
+    output wire cur_rcc_c1_rsr_rmvf,
     // rcc_c2_rsr 
     output reg cur_rcc_c2_rsr_lpwr2rstf,
     output reg cur_rcc_c2_rsr_lpwr1rstf,
@@ -54,6 +55,7 @@ module rcc_vdd_reg(
     output reg cur_rcc_c2_rsr_d2rstf,
     output reg cur_rcc_c2_rsr_d1rstf,
     output reg cur_rcc_c2_rsr_oblrstf,
+    output wire cur_rcc_c2_rsr_rmvf,
     // rcc_csr
     output wire cur_rcc_csr_lsirdy,
     output reg cur_rcc_csr_lsion
