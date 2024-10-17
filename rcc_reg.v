@@ -136,6 +136,8 @@ module RCC #(
   output          lsirdyie            ,
   input           rcc_hsecss_fail_it  ,
   input           rcc_lsecss_fail_it  ,
+  input           rcc_sys_stop        ,
+  input           rcc_hsecss_fail     ,
   output          bdrst               ,
   output          rtcen               ,
   output [1:0]    rtcsel              ,
@@ -2980,6 +2982,10 @@ wire        cur_rcc_c2_apb4lpenr_syscfglpen ;
 wire        nxt_rcc_c2_apb4lpenr_syscfglpen ;
 wire        rcc_c2_apb4lpenr_syscfglpen_en  ;
 
+wire pllxon_clr_n;
+wire hseon_clr;
+wire hsi48on_clr;
+
 // ================================================================================
 // R/W INDICATOR
 // ================================================================================
@@ -3258,6 +3264,8 @@ assign rcc_cr_read = {{2{1'b0}}
 // --------------------------------------------------------------------------------
 // 29:29               pll3rdy             RO                  0b0                 
 // --------------------------------------------------------------------------------
+
+assign pllxon_clr = rst_n & ~(rcc_sys_stop | (rcc_hsecss_fail & cur_rcc_pllclkselr_pllsrc == 2'b10));
 assign cur_rcc_cr_pll3rdy = pll3_rdy;
 
 // --------------------------------------------------------------------------------
@@ -3266,12 +3274,13 @@ assign cur_rcc_cr_pll3rdy = pll3_rdy;
 assign rcc_cr_pll3on_en  = (|wr_req & rcc_cr_sel);
 assign nxt_rcc_cr_pll3on = wdata[28:28]          ;
 assign pll3on            = cur_rcc_cr_pll3on     ;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
 ) U_rcc_cr_pll3on (
   .clk  (clk              ),
-  .rst_n(rst_n            ),
+  .rst_n(pll3on_clr_n     ),
   .en   (rcc_cr_pll3on_en ),
   .din  (nxt_rcc_cr_pll3on),
   .dout (cur_rcc_cr_pll3on)
@@ -3280,7 +3289,9 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 27:27               pll2rdy             RO                  0b0                 
 // --------------------------------------------------------------------------------
+
 assign cur_rcc_cr_pll2rdy = pll2_rdy;
+
 
 // --------------------------------------------------------------------------------
 // 26:26               pll2on              RW                  0b0                 
@@ -3293,7 +3304,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_pll2on (
   .clk  (clk              ),
-  .rst_n(rst_n            ),
+  .rst_n(pllxon_clr       ),
   .en   (rcc_cr_pll2on_en ),
   .din  (nxt_rcc_cr_pll2on),
   .dout (cur_rcc_cr_pll2on)
@@ -3315,7 +3326,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_pll1on (
   .clk  (clk              ),
-  .rst_n(rst_n            ),
+  .rst_n(pllxon_clr       ),
   .en   (rcc_cr_pll1on_en ),
   .din  (nxt_rcc_cr_pll1on),
   .dout (cur_rcc_cr_pll1on)
@@ -3358,6 +3369,8 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 17:17               hserdy              RO                  0b0                 
 // --------------------------------------------------------------------------------
+
+assign hseon_clr_n = rst_n & ~(rcc_hsecss_fail | rcc_sys_stop);
 assign cur_rcc_cr_hserdy = hse_rdy;
 
 // --------------------------------------------------------------------------------
@@ -3371,7 +3384,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_hseon (
   .clk  (clk             ),
-  .rst_n(rst_n           ),
+  .rst_n(hseon_clr_n     ),
   .en   (rcc_cr_hseon_en ),
   .din  (nxt_rcc_cr_hseon),
   .dout (cur_rcc_cr_hseon)
@@ -3395,6 +3408,9 @@ assign cur_rcc_cr_hsi48rdy = hsi48_dry;
 // --------------------------------------------------------------------------------
 // 12:12               hsi48on             RW                  0b0                 
 // --------------------------------------------------------------------------------
+
+assign hsi48on_clr =  rst_n & ~rcc_sys_stop;
+
 assign rcc_cr_hsi48on_en  = (|wr_req & rcc_cr_sel);
 assign nxt_rcc_cr_hsi48on = wdata[12:12]          ;
 assign hsi48on            = cur_rcc_cr_hsi48on    ;
@@ -3403,7 +3419,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_hsi48on (
   .clk  (clk               ),
-  .rst_n(rst_n             ),
+  .rst_n(hsi48on_clr       ),
   .en   (rcc_cr_hsi48on_en ),
   .din  (nxt_rcc_cr_hsi48on),
   .dout (cur_rcc_cr_hsi48on)
