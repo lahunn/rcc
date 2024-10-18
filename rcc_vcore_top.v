@@ -27,18 +27,10 @@ module rcc_vcore_top(
     output wire pwr_vsw_rst_n,
     output wire sys_rst_n,
     output wire rcc_perx_rst_n,
-    output reg d1_rst_n,
-    output reg d2_rst_n,
-    output wire sdby_rst_n
-
-// reset signals 
-    input wire pwr_por_rst_n,
-    input wire pwr_vsw_rst_n,
-    input wire sys_rst_n,
-    input wire rcc_perx_rst_n,
-    input wire d1_rst_n,
-    input wire d2_rst_n,
-    input wire sdby_rst_n,
+    output wire d1_rst_n,
+    output wire d2_rst_n,
+    output wire sdby_rst_n,
+    
 // per_ker_clk_control Inputs
 //bus clock signals
     output wire rcc_axibridge_d1_clk,
@@ -240,9 +232,8 @@ module rcc_vcore_top(
     output wire  rcc_syscfg_pclk,
     output wire  rcc_iwdg2_pclk,
     output wire  rcc_iwdg1_pclk,
-    output wire  rcc_exti_pclk,
+    output wire  rcc_exti_pclk
 //end per_ker_clk_control region
-    
 );
 
 
