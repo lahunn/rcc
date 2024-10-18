@@ -1,6 +1,5 @@
 module rcc_vdd_reg(
     input wire wdata,
-    output wire [15:0] rdata,
     input wire rst_n,
     input wire rcc_c1_rsr_rmvf_wren,
     input wire rcc_c2_rsr_rmvf_wren,
@@ -297,13 +296,13 @@ end
 // 23:23               porrstf              RO                  1'b1                 
 // --------------------------------------------------------------------------------
 assign rcc_c1_rsr_porrstf_set = pwr_por_rst                                        ;
-assign rcc_c1_rsr_porrstf_clr = cur_rcc_c1_rsr_rmvf|~rst_n                                        ;
+assign rcc_c1_rsr_porrstf_clr = cur_rcc_c1_rsr_rmvf                                ;
 always @(*)begin
-    if(rcc_c1_rsr_porrstf_clr)begin
-        cur_rcc_c1_rsr_porrstf = 1'b0;
-    end
-    else if(rcc_c1_rsr_porrstf_set)begin
+    if(rcc_c1_rsr_porrstf_set)begin
         cur_rcc_c1_rsr_porrstf = 1'b1;
+    end
+    else if(rcc_c1_rsr_porrstf_clr)begin
+        cur_rcc_c1_rsr_porrstf = 1'b0;
     end
     else begin
         cur_rcc_c1_rsr_porrstf = cur_rcc_c1_rsr_porrstf;
