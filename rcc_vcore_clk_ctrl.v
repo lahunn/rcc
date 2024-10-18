@@ -41,9 +41,6 @@ module rcc_vcore_clk_ctrl(
     output  rcc_obl_rst,
     output  rcc_obl_clk,
     output  rcc_flash_rst,
-    output  rcc_flash_aclk1,
-    output  rcc_flash_aclk2,
-    output  rcc_flash_hclk,
     input  flash_obl_reload,
     input  Tamp_rst_req,
     input [7:0] flash_csi_opt,
@@ -61,7 +58,7 @@ module rcc_vcore_clk_ctrl(
 // signals connected to 总线时钟 
     output  rcc_bus_clk,
     output  rcc_bus_clk_en,
-// signals connected to 复位源 
+// signals connected to 复位�? 
     input  nrst_in,
     output  nrst_out,
     input  iwdg1_out_rst,
@@ -896,14 +893,6 @@ wire csi_ker_clk_req;
 //////////////////////////////////
 // rcc_sys_clk_gen Outputs /////////
 //////////////////////////////////
-wire    rcc_c2_clk;
-wire    rcc_fclk_c2;
-wire    rcc_c2_systick_clk;
-wire    rcc_c2_rst_n;
-wire    rcc_c1_clk;
-wire    rcc_fclk_c1;
-wire    rcc_c1_systick_clk;
-wire    rcc_c1_rst_n;
 
 wire    rcc_timx_ker_clk;
 wire    rcc_timy_ker_clk;

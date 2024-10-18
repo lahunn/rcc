@@ -1192,7 +1192,7 @@ rcc_ahb_lite_bus  u_rcc_ahb_lite_bus (
 rcc_reg #(
     .AW ( 29   ),
     .DW ( 32   ),
-    .WW ( DW/8 ))
+    .WW ( 4 ))
  u_rcc_reg (
     .clk                       ( clk                        ),
     .rst_n                     ( rst_n                      ),
