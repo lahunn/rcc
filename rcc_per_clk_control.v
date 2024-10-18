@@ -9,6 +9,8 @@ module per_ker_clk_control (
     input rcc_apb2bridge_d2_clk,
     input rcc_ahb4bridge_d3_clk,
     input rcc_apb4bridge_d3_clk,
+//rst signal
+    input sys_rst_n,
 // kernel clock sources
     input pll1_q_clk,
     input pll2_p_clk,
@@ -3049,7 +3051,7 @@ module per_ker_clk_control (
         .DIVISION(122)
     ) csi_ker_clk_122_divider(
         .clk_in(csi_ker_clk),
-        .clk_in(sys_rst_n),
+        .rst_n(sys_rst_n),
         .clk_out(csi_ker_clk_122_div)
     );
     // qspisel ker clock select logic

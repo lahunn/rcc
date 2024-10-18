@@ -19,11 +19,12 @@ module rcc_vsw_top(
 
     // register signals
     // rcc_vsw_reg Inputs
-    input wire   rcc_lsecss_fail,
-    input wire   lserdy,
     input wire   rcc_bdcr_byte2_wren,//low to high level, default 0
     input wire   rcc_bdcr_byte1_wren,//low to high level, default 0
     input wire   rcc_bdcr_byte0_wren,//low to high level, default 0
+
+    input wire   rcc_lsecss_fail,
+    input wire   lserdy,
     input wire   nxt_rcc_bdcr_bdrst,//low to high level, default 0
     input wire   nxt_rcc_bdcr_rtcen,//low to high level, default 0
     input wire   [1:0]  nxt_rcc_bdcr_rtcsel,//low to high level, default 0
@@ -119,7 +120,7 @@ module rcc_vsw_top(
 
 
 // level shift
-
+    // level shift should be added in integration
 // voltage isolation 
-    
+    // voltage isolation should be added in integration
 endmodule

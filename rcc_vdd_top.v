@@ -116,10 +116,9 @@ rcc_vdd_reg  u_rcc_vdd_reg (
 );
 
 
-//level shift
-
-//isolation
-
-
+// level shift
+    // level shift should be added in integration
+// voltage isolation 
+    // voltage isolation should be added in integration
 
 endmodule

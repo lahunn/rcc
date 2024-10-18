@@ -1,4 +1,4 @@
-module RCC #(
+module rcc_reg#(
 // ================================================================================
 // CONFIGURABLE PARAMETERS
 // ================================================================================
@@ -3463,7 +3463,7 @@ assign cur_rcc_cr_d1ckrdy = d1_clk_rdy;
 // --------------------------------------------------------------------------------
 // 13:13               hsi48rdy            RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign cur_rcc_cr_hsi48rdy = hsi48_dry;
+assign cur_rcc_cr_hsi48rdy = hsi48_rdy;
 
 // --------------------------------------------------------------------------------
 // 12:12               hsi48on             RW                  0b0                 
@@ -3913,10 +3913,10 @@ assign cur_rcc_cfgr_sws = cur_rcc_cfgr_sw;
 // --------------------------------------------------------------------------------
 // 2:0                 sw                  RW                  0b0                 
 // --------------------------------------------------------------------------------
-wire sw_clr_n[2:0];
-wire sw_set_n[2:0];
+wire [2:0]sw_clr_n;
+wire [2:0]sw_set_n;
 
-assign sw_clr_n = ({2{~(rcc_hse_fail|rcc_exit_sys_stop)},~(rcc_hse_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==0))}) & {3{rst_n}};
+assign sw_clr_n = ({{2{~(rcc_hsecss_fail|rcc_exit_sys_stop)}},~(rcc_hsecss_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck==0))}) & {3{rst_n}};
 assign sw_set_n = {2'b1,~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1)};
 
 assign rcc_cfgr_sw_en  = (|wr_req & rcc_cfgr_sel);
