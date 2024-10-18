@@ -4,7 +4,7 @@ module rcc_vsw_reg(
     output reg bdrst,
     output reg rtcen,
     output reg [1:0] rtcsel,
-    input wire lsecssd,
+    input wire rcc_lsecss_fail,
     output reg lsecsson,
     output reg [1:0] lsedrv,
     output reg lsebyp,
