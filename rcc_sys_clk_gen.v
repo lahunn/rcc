@@ -256,6 +256,4 @@ module rcc_sys_clk_gen (
         .clk_out(rcc_apb4bridge_d3_clk)
     );
 
-
-
 endmodule

@@ -146,6 +146,7 @@ module rcc_reg#(
   output          lseon               ,
   input           lsi_rdy             ,
   output          lsion               ,
+//peripheral reset
   output          sdmmc1rst           ,
   output          qspirst             ,
   output          fmcrst              ,
@@ -234,6 +235,8 @@ module rcc_reg#(
   output          spi6rst             ,
   output          lpuart1rst          ,
   output          syscfgrst           ,
+//reset end
+
   output          ww2rsc              ,
   output          ww1rsc              ,
   output          sram4amen           ,

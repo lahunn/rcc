@@ -58,7 +58,7 @@ module rcc_vcore_clk_ctrl(
 // signals connected to 总线时钟 
     output  rcc_bus_clk,
     output  rcc_bus_clk_en,
-// signals connected to 复位�? 
+// signals connected to 复位�? 
     input  nrst_in,
     output  nrst_out,
     input  iwdg1_out_rst,

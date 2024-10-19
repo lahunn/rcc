@@ -103,7 +103,7 @@ module rcc_top #(
     output  rcc_ahb4bridge_rst,
     output  rcc_apb4bridge_rst,
     output  rcc_bus_clk_en,
-// signals connected to 总线信号 
+// signals connected to 总线信号
     input wire ahb_hclk,
     input wire ahb_hresetn,
     input wire [31:0] ahb_haddr,
@@ -125,7 +125,7 @@ module rcc_top #(
     output  rcc_lsecss_it,
     output  rcc_hsecss_fail,
     output  rcc_lsecss_fail,
-// signals connected to 复位�?? 
+// signals connected to 复位�?? 
     input  iwdg1_out_rst,
     input  wwdg1_out_rst,
     input  iwdg2_out_rst,
@@ -203,6 +203,97 @@ module rcc_top #(
     input  lsi_rdy,
     output  lsi_on,
     input  lsi_clk,
+//peripheral reset
+    output  sdmmc1rst  ,
+    output  qspirst    ,
+    output  fmcrst     ,
+    output  jpgdecrst  ,
+    output  dma2drst   ,
+    output  mdmarst    ,
+    output  usb2otgrst ,
+    output  usb1otgrst ,
+    output  eth1macrst ,
+    output  adc12rst   ,
+    output  dma2rst    ,
+    output  dma1rst    ,
+    output  sdmmc2rst  ,
+    output  rngrst     ,
+    output  hashrst    ,
+    output  cryptrst   ,
+    output  dcmirst    ,
+    output  hsemrst    ,
+    output  adc3rst    ,
+    output  bdmarst    ,
+    output  crcrst     ,
+    output  gpiokrst   ,
+    output  gpiojrst   ,
+    output  gpioirst   ,
+    output  gpiohrst   ,
+    output  gpiogrst   ,
+    output  gpiofrst   ,
+    output  gpioerst   ,
+    output  gpiodrst   ,
+    output  gpiocrst   ,
+    output  gpiobrst   ,
+    output  gpioarst   ,
+    output  ltdcrst    ,
+    output  uart8rst   ,
+    output  uart7rst   ,
+    output  dac12rst   ,
+    output  hdmicecrst ,
+    output  i2c3rst    ,
+    output  i2c2rst    ,
+    output  i2c1rst    ,
+    output  uart5rst   ,
+    output  uart4rst   ,
+    output  usart3rst  ,
+    output  usart2rst  ,
+    output  spdifrxrst ,
+    output  spi3rst    ,
+    output  spi2rst    ,
+    output  lptim1rst  ,
+    output  tim14rst   ,
+    output  tim13rst   ,
+    output  tim12rst   ,
+    output  tim7rst    ,
+    output  tim6rst    ,
+    output  tim5rst    ,
+    output  tim4rst    ,
+    output  tim3rst    ,
+    output  tim2rst    ,
+    output  fdcanrst   ,
+    output  mdiosrst   ,
+    output  opamprst   ,
+    output  swprst     ,
+    output  crsrst     ,
+    output  hrtimrst   ,
+    output  dfsdm1rst  ,
+    output  sai3rst    ,
+    output  sai2rst    ,
+    output  sai1rst    ,
+    output  spi5rst    ,
+    output  tim17rst   ,
+    output  tim16rst   ,
+    output  tim15rst   ,
+    output  spi4rst    ,
+    output  spi1rst    ,
+    output  usart6rst  ,
+    output  usart1rst  ,
+    output  tim8rst    ,
+    output  tim1rst    ,
+    output  sai4rst    ,
+    output  vrefrst    ,
+    output  comp12rst  ,
+    output  lptim5rst  ,
+    output  lptim4rst  ,
+    output  lptim3rst  ,
+    output  lptim2rst  ,
+    output  i2c4rst    ,
+    output  spi6rst    ,
+    output  lpuart1rst ,
+    output  syscfgrst  ,
+//
+
 //per_ker_clk_control region
     output wire  rcc_qspi_aclk,
     output wire  rcc_qspi_hclk,
@@ -644,425 +735,6 @@ wire  spi6amen;
 wire  lpuart1amen;
 wire  bdmaamen;
 wire  rmvf;
-wire  rcc_c1_axisram_en;
-wire  rcc_c1_itcm_en;
-wire  rcc_c1_dtcm2_en;
-wire  rcc_c1_dtcm1_en;
-wire  rcc_c1_sdmmc1_en;
-wire  rcc_c1_qspi_en;
-wire  rcc_c1_fmc_en;
-wire  rcc_c1_flitf_en;
-wire  rcc_c1_jpgdec_en;
-wire  rcc_c1_dma2d_en;
-wire  rcc_c1_mdma_en;
-wire  rcc_c1_usb2ulpi_en;
-wire  rcc_c1_usb2otg_en;
-wire  rcc_c1_usb1ulpi_en;
-wire  rcc_c1_usb1otg_en;
-wire  rcc_c1_eth1rx_en;
-wire  rcc_c1_eth1tx_en;
-wire  rcc_c1_eth1mac_en;
-wire  rcc_c1_adc12_en;
-wire  rcc_c1_dma2_en;
-wire  rcc_c1_dma1_en;
-wire  rcc_c1_sram3_en;
-wire  rcc_c1_sram2_en;
-wire  rcc_c1_sram1_en;
-wire  rcc_c1_sdmmc2_en;
-wire  rcc_c1_rng_en;
-wire  rcc_c1_hash_en;
-wire  rcc_c1_crypt_en;
-wire  rcc_c1_dcmi_en;
-wire  rcc_c1_bkpram_en;
-wire  rcc_c1_hsem_en;
-wire  rcc_c1_adc3_en;
-wire  rcc_c1_bdma_en;
-wire  rcc_c1_crc_en;
-wire  rcc_c1_gpiok_en;
-wire  rcc_c1_gpioj_en;
-wire  rcc_c1_gpioi_en;
-wire  rcc_c1_gpioh_en;
-wire  rcc_c1_gpiog_en;
-wire  rcc_c1_gpiof_en;
-wire  rcc_c1_gpioe_en;
-wire  rcc_c1_gpiod_en;
-wire  rcc_c1_gpioc_en;
-wire  rcc_c1_gpiob_en;
-wire  rcc_c1_gpioa_en;
-wire  rcc_c1_wwdg1_en;
-wire  rcc_c1_ltdc_en;
-wire  rcc_c1_uart8_en;
-wire  rcc_c1_uart7_en;
-wire  rcc_c1_dac12_en;
-wire  rcc_c1_hdmicec_en;
-wire  rcc_c1_i2c3_en;
-wire  rcc_c1_i2c2_en;
-wire  rcc_c1_i2c1_en;
-wire  rcc_c1_uart5_en;
-wire  rcc_c1_uart4_en;
-wire  rcc_c1_usart3_en;
-wire  rcc_c1_usart2_en;
-wire  rcc_c1_spdifrx_en;
-wire  rcc_c1_spi3_en;
-wire  rcc_c1_spi2_en;
-wire  rcc_c1_wwdg2_en;
-wire  rcc_c1_lptim1_en;
-wire  rcc_c1_tim14_en;
-wire  rcc_c1_tim13_en;
-wire  rcc_c1_tim12_en;
-wire  rcc_c1_tim7_en;
-wire  rcc_c1_tim6_en;
-wire  rcc_c1_tim5_en;
-wire  rcc_c1_tim4_en;
-wire  rcc_c1_tim3_en;
-wire  rcc_c1_tim2_en;
-wire  rcc_c1_fdcan_en;
-wire  rcc_c1_mdios_en;
-wire  rcc_c1_opamp_en;
-wire  rcc_c1_swp_en;
-wire  rcc_c1_crs_en;
-wire  rcc_c1_hrtim_en;
-wire  rcc_c1_dfsdm1_en;
-wire  rcc_c1_sai3_en;
-wire  rcc_c1_sai2_en;
-wire  rcc_c1_sai1_en;
-wire  rcc_c1_spi5_en;
-wire  rcc_c1_tim17_en;
-wire  rcc_c1_tim16_en;
-wire  rcc_c1_tim15_en;
-wire  rcc_c1_spi4_en;
-wire  rcc_c1_spi1_en;
-wire  rcc_c1_usart6_en;
-wire  rcc_c1_usart1_en;
-wire  rcc_c1_tim8_en;
-wire  rcc_c1_tim1_en;
-wire  rcc_c1_sai4_en;
-wire  rcc_c1_rtcapb_en;
-wire  rcc_c1_vref_en;
-wire  rcc_c1_comp12_en;
-wire  rcc_c1_lptim5_en;
-wire  rcc_c1_lptim4_en;
-wire  rcc_c1_lptim3_en;
-wire  rcc_c1_lptim2_en;
-wire  rcc_c1_i2c4_en;
-wire  rcc_c1_spi6_en;
-wire  rcc_c1_lpuart1_en;
-wire  rcc_c1_syscfg_en;
-wire  rcc_c1_axisramlp_en;
-wire  rcc_c1_itcmlp_en;
-wire  rcc_c1_dtcm2lp_en;
-wire  rcc_c1_dtcm1lp_en;
-wire  rcc_c1_sdmmc1lp_en;
-wire  rcc_c1_qspilp_en;
-wire  rcc_c1_fmclp_en;
-wire  rcc_c1_flitflp_en;
-wire  rcc_c1_jpgdeclp_en;
-wire  rcc_c1_dma2dlp_en;
-wire  rcc_c1_mdmalp_en;
-wire  rcc_c1_usb2ulpilp_en;
-wire  rcc_c1_usb2otglp_en;
-wire  rcc_c1_usb1ulpilp_en;
-wire  rcc_c1_usb1otglp_en;
-wire  rcc_c1_eth1rxlp_en;
-wire  rcc_c1_eth1txlp_en;
-wire  rcc_c1_eth1maclp_en;
-wire  rcc_c1_adc12lp_en;
-wire  rcc_c1_dma2lp_en;
-wire  rcc_c1_dma1lp_en;
-wire  rcc_c1_sram3lp_en;
-wire  rcc_c1_sram2lp_en;
-wire  rcc_c1_sram1lp_en;
-wire  rcc_c1_sdmmc2lp_en;
-wire  rcc_c1_rnglp_en;
-wire  rcc_c1_hashlp_en;
-wire  rcc_c1_cryptlp_en;
-wire  rcc_c1_dcmilp_en;
-wire  rcc_c1_sram4lp_en;
-wire  rcc_c1_bkpramlp_en;
-wire  rcc_c1_adc3lp_en;
-wire  rcc_c1_bdmalp_en;
-wire  rcc_c1_crclp_en;
-wire  rcc_c1_gpioklp_en;
-wire  rcc_c1_gpiojlp_en;
-wire  rcc_c1_gpioilp_en;
-wire  rcc_c1_gpiohlp_en;
-wire  rcc_c1_gpioglp_en;
-wire  rcc_c1_gpioflp_en;
-wire  rcc_c1_gpioelp_en;
-wire  rcc_c1_gpiodlp_en;
-wire  rcc_c1_gpioclp_en;
-wire  rcc_c1_gpioblp_en;
-wire  rcc_c1_gpioalp_en;
-wire  rcc_c1_wwdg1lp_en;
-wire  rcc_c1_ltdclp_en;
-wire  rcc_c1_uart8lp_en;
-wire  rcc_c1_uart7lp_en;
-wire  rcc_c1_dac12lp_en;
-wire  rcc_c1_hdmiceclp_en;
-wire  rcc_c1_i2c3lp_en;
-wire  rcc_c1_i2c2lp_en;
-wire  rcc_c1_i2c1lp_en;
-wire  rcc_c1_uart5lp_en;
-wire  rcc_c1_uart4lp_en;
-wire  rcc_c1_usart3lp_en;
-wire  rcc_c1_usart2lp_en;
-wire  rcc_c1_spdifrxlp_en;
-wire  rcc_c1_spi3lp_en;
-wire  rcc_c1_spi2lp_en;
-wire  rcc_c1_wwdg2lp_en;
-wire  rcc_c1_lptim1lp_en;
-wire  rcc_c1_tim14lp_en;
-wire  rcc_c1_tim13lp_en;
-wire  rcc_c1_tim12lp_en;
-wire  rcc_c1_tim7lp_en;
-wire  rcc_c1_tim6lp_en;
-wire  rcc_c1_tim5lp_en;
-wire  rcc_c1_tim4lp_en;
-wire  rcc_c1_tim3lp_en;
-wire  rcc_c1_tim2lp_en;
-wire  rcc_c1_fdcanlp_en;
-wire  rcc_c1_mdioslp_en;
-wire  rcc_c1_opamplp_en;
-wire  rcc_c1_swplp_en;
-wire  rcc_c1_crslp_en;
-wire  rcc_c1_hrtimlp_en;
-wire  rcc_c1_dfsdm1lp_en;
-wire  rcc_c1_sai3lp_en;
-wire  rcc_c1_sai2lp_en;
-wire  rcc_c1_sai1lp_en;
-wire  rcc_c1_spi5lp_en;
-wire  rcc_c1_tim17lp_en;
-wire  rcc_c1_tim16lp_en;
-wire  rcc_c1_tim15lp_en;
-wire  rcc_c1_spi4lp_en;
-wire  rcc_c1_spi1lp_en;
-wire  rcc_c1_usart6lp_en;
-wire  rcc_c1_usart1lp_en;
-wire  rcc_c1_tim8lp_en;
-wire  rcc_c1_tim1lp_en;
-wire  rcc_c1_sai4lp_en;
-wire  rcc_c1_rtcapblp_en;
-wire  rcc_c1_vreflp_en;
-wire  rcc_c1_comp12lp_en;
-wire  rcc_c1_lptim5lp_en;
-wire  rcc_c1_lptim4lp_en;
-wire  rcc_c1_lptim3lp_en;
-wire  rcc_c1_lptim2lp_en;
-wire  rcc_c1_i2c4lp_en;
-wire  rcc_c1_spi6lp_en;
-wire  rcc_c1_lpuart1lp_en;
-wire  rcc_c1_syscfglp_en;
-wire  rcc_c2_axisram_en;
-wire  rcc_c2_itcm_en;
-wire  rcc_c2_dtcm2_en;
-wire  rcc_c2_dtcm1_en;
-wire  rcc_c2_sdmmc1_en;
-wire  rcc_c2_qspi_en;
-wire  rcc_c2_fmc_en;
-wire  rcc_c2_flitf_en;
-wire  rcc_c2_jpgdec_en;
-wire  rcc_c2_dma2d_en;
-wire  rcc_c2_mdma_en;
-wire  rcc_c2_usb2ulpi_en;
-wire  rcc_c2_usb2otg_en;
-wire  rcc_c2_usb1ulpi_en;
-wire  rcc_c2_usb1otg_en;
-wire  rcc_c2_eth1rx_en;
-wire  rcc_c2_eth1tx_en;
-wire  rcc_c2_eth1mac_en;
-wire  rcc_c2_adc12_en;
-wire  rcc_c2_dma2_en;
-wire  rcc_c2_dma1_en;
-wire  rcc_c2_sram3_en;
-wire  rcc_c2_sram2_en;
-wire  rcc_c2_sram1_en;
-wire  rcc_c2_sdmmc2_en;
-wire  rcc_c2_rng_en;
-wire  rcc_c2_hash_en;
-wire  rcc_c2_crypt_en;
-wire  rcc_c2_dcmi_en;
-wire  rcc_c2_bkpram_en;
-wire  rcc_c2_hsem_en;
-wire  rcc_c2_adc3_en;
-wire  rcc_c2_bdma_en;
-wire  rcc_c2_crc_en;
-wire  rcc_c2_gpiok_en;
-wire  rcc_c2_gpioj_en;
-wire  rcc_c2_gpioi_en;
-wire  rcc_c2_gpioh_en;
-wire  rcc_c2_gpiog_en;
-wire  rcc_c2_gpiof_en;
-wire  rcc_c2_gpioe_en;
-wire  rcc_c2_gpiod_en;
-wire  rcc_c2_gpioc_en;
-wire  rcc_c2_gpiob_en;
-wire  rcc_c2_gpioa_en;
-wire  rcc_c2_wwdg1_en;
-wire  rcc_c2_ltdc_en;
-wire  rcc_c2_uart8_en;
-wire  rcc_c2_uart7_en;
-wire  rcc_c2_dac12_en;
-wire  rcc_c2_hdmicec_en;
-wire  rcc_c2_i2c3_en;
-wire  rcc_c2_i2c2_en;
-wire  rcc_c2_i2c1_en;
-wire  rcc_c2_uart5_en;
-wire  rcc_c2_uart4_en;
-wire  rcc_c2_usart3_en;
-wire  rcc_c2_usart2_en;
-wire  rcc_c2_spdifrx_en;
-wire  rcc_c2_spi3_en;
-wire  rcc_c2_spi2_en;
-wire  rcc_c2_wwdg2_en;
-wire  rcc_c2_lptim1_en;
-wire  rcc_c2_tim14_en;
-wire  rcc_c2_tim13_en;
-wire  rcc_c2_tim12_en;
-wire  rcc_c2_tim7_en;
-wire  rcc_c2_tim6_en;
-wire  rcc_c2_tim5_en;
-wire  rcc_c2_tim4_en;
-wire  rcc_c2_tim3_en;
-wire  rcc_c2_tim2_en;
-wire  rcc_c2_fdcan_en;
-wire  rcc_c2_mdios_en;
-wire  rcc_c2_opamp_en;
-wire  rcc_c2_swp_en;
-wire  rcc_c2_crs_en;
-wire  rcc_c2_hrtim_en;
-wire  rcc_c2_dfsdm1_en;
-wire  rcc_c2_sai3_en;
-wire  rcc_c2_sai2_en;
-wire  rcc_c2_sai1_en;
-wire  rcc_c2_spi5_en;
-wire  rcc_c2_tim17_en;
-wire  rcc_c2_tim16_en;
-wire  rcc_c2_tim15_en;
-wire  rcc_c2_spi4_en;
-wire  rcc_c2_spi1_en;
-wire  rcc_c2_usart6_en;
-wire  rcc_c2_usart1_en;
-wire  rcc_c2_tim8_en;
-wire  rcc_c2_tim1_en;
-wire  rcc_c2_sai4_en;
-wire  rcc_c2_rtcapb_en;
-wire  rcc_c2_vref_en;
-wire  rcc_c2_comp12_en;
-wire  rcc_c2_lptim5_en;
-wire  rcc_c2_lptim4_en;
-wire  rcc_c2_lptim3_en;
-wire  rcc_c2_lptim2_en;
-wire  rcc_c2_i2c4_en;
-wire  rcc_c2_spi6_en;
-wire  rcc_c2_lpuart1_en;
-wire  rcc_c2_syscfg_en;
-wire  rcc_c2_axisramlp_en;
-wire  rcc_c2_itcmlp_en;
-wire  rcc_c2_dtcm2lp_en;
-wire  rcc_c2_dtcm1lp_en;
-wire  rcc_c2_sdmmc1lp_en;
-wire  rcc_c2_qspilp_en;
-wire  rcc_c2_fmclp_en;
-wire  rcc_c2_flitflp_en;
-wire  rcc_c2_jpgdeclp_en;
-wire  rcc_c2_dma2dlp_en;
-wire  rcc_c2_mdmalp_en;
-wire  rcc_c2_usb2ulpilp_en;
-wire  rcc_c2_usb2otglp_en;
-wire  rcc_c2_usb1ulpilp_en;
-wire  rcc_c2_usb1otglp_en;
-wire  rcc_c2_eth1rxlp_en;
-wire  rcc_c2_eth1txlp_en;
-wire  rcc_c2_eth1maclp_en;
-wire  rcc_c2_adc12lp_en;
-wire  rcc_c2_dma2lp_en;
-wire  rcc_c2_dma1lp_en;
-wire  rcc_c2_sram3lp_en;
-wire  rcc_c2_sram2lp_en;
-wire  rcc_c2_sram1lp_en;
-wire  rcc_c2_sdmmc2lp_en;
-wire  rcc_c2_rnglp_en;
-wire  rcc_c2_hashlp_en;
-wire  rcc_c2_cryptlp_en;
-wire  rcc_c2_dcmilp_en;
-wire  rcc_c2_sram4lp_en;
-wire  rcc_c2_bkpramlp_en;
-wire  rcc_c2_adc3lp_en;
-wire  rcc_c2_bdmalp_en;
-wire  rcc_c2_crclp_en;
-wire  rcc_c2_gpioklp_en;
-wire  rcc_c2_gpiojlp_en;
-wire  rcc_c2_gpioilp_en;
-wire  rcc_c2_gpiohlp_en;
-wire  rcc_c2_gpioglp_en;
-wire  rcc_c2_gpioflp_en;
-wire  rcc_c2_gpioelp_en;
-wire  rcc_c2_gpiodlp_en;
-wire  rcc_c2_gpioclp_en;
-wire  rcc_c2_gpioblp_en;
-wire  rcc_c2_gpioalp_en;
-wire  rcc_c2_wwdg1lp_en;
-wire  rcc_c2_ltdclp_en;
-wire  rcc_c2_uart8lp_en;
-wire  rcc_c2_uart7lp_en;
-wire  rcc_c2_dac12lp_en;
-wire  rcc_c2_hdmiceclp_en;
-wire  rcc_c2_i2c3lp_en;
-wire  rcc_c2_i2c2lp_en;
-wire  rcc_c2_i2c1lp_en;
-wire  rcc_c2_uart5lp_en;
-wire  rcc_c2_uart4lp_en;
-wire  rcc_c2_usart3lp_en;
-wire  rcc_c2_usart2lp_en;
-wire  rcc_c2_spdifrxlp_en;
-wire  rcc_c2_spi3lp_en;
-wire  rcc_c2_spi2lp_en;
-wire  rcc_c2_wwdg2lp_en;
-wire  rcc_c2_lptim1lp_en;
-wire  rcc_c2_tim14lp_en;
-wire  rcc_c2_tim13lp_en;
-wire  rcc_c2_tim12lp_en;
-wire  rcc_c2_tim7lp_en;
-wire  rcc_c2_tim6lp_en;
-wire  rcc_c2_tim5lp_en;
-wire  rcc_c2_tim4lp_en;
-wire  rcc_c2_tim3lp_en;
-wire  rcc_c2_tim2lp_en;
-wire  rcc_c2_fdcanlp_en;
-wire  rcc_c2_mdioslp_en;
-wire  rcc_c2_opamplp_en;
-wire  rcc_c2_swplp_en;
-wire  rcc_c2_crslp_en;
-wire  rcc_c2_hrtimlp_en;
-wire  rcc_c2_dfsdm1lp_en;
-wire  rcc_c2_sai3lp_en;
-wire  rcc_c2_sai2lp_en;
-wire  rcc_c2_sai1lp_en;
-wire  rcc_c2_spi5lp_en;
-wire  rcc_c2_tim17lp_en;
-wire  rcc_c2_tim16lp_en;
-wire  rcc_c2_tim15lp_en;
-wire  rcc_c2_spi4lp_en;
-wire  rcc_c2_spi1lp_en;
-wire  rcc_c2_usart6lp_en;
-wire  rcc_c2_usart1lp_en;
-wire  rcc_c2_tim8lp_en;
-wire  rcc_c2_tim1lp_en;
-wire  rcc_c2_sai4lp_en;
-wire  rcc_c2_rtcapblp_en;
-wire  rcc_c2_vreflp_en;
-wire  rcc_c2_comp12lp_en;
-wire  rcc_c2_lptim5lp_en;
-wire  rcc_c2_lptim4lp_en;
-wire  rcc_c2_lptim3lp_en;
-wire  rcc_c2_lptim2lp_en;
-wire  rcc_c2_i2c4lp_en;
-wire  rcc_c2_spi6lp_en;
-wire  rcc_c2_lpuart1lp_en;
-wire  rcc_c2_syscfglp_en;
-wire  rcc_c1_rsr_rmvf_wren;
-wire  rcc_c2_rsr_rmvf_wren;
-wire  rcc_csr_lsion_wren;
 //#endregion
 
 // rcc_vsw_top Outputs
@@ -1188,13 +860,18 @@ rcc_vcore_top  u_rcc_vcore_top (
     .c2_sleep                ( c2_sleep                ),
     .c1_deepsleep            ( c1_deepsleep            ),
     .c2_deepsleep            ( c2_deepsleep            ),
-    .pwr_por_rst_n           ( pwr_por_rst_n           ),
-    .pwr_vsw_rst_n           ( pwr_vsw_rst_n           ),
-    .sys_rst_n               ( sys_rst_n               ),
-    .rcc_perx_rst_n          ( rcc_perx_rst_n          ),
-    .d1_rst_n                ( d1_rst_n                ),
-    .d2_rst_n                ( d2_rst_n                ),
-    .sdby_rst_n              ( sdby_rst_n              ),
+    .ahb_hclk                ( ahb_hclk                ),
+    .ahb_hresetn             ( ahb_hresetn             ),
+    .ahb_haddr               ( ahb_haddr               ),
+    .ahb_hburst              ( ahb_hburst              ),
+    .ahb_hprot               ( ahb_hprot               ),
+    .ahb_hready_in           ( ahb_hready_in           ),
+    .ahb_hsize               ( ahb_hsize               ),
+    .ahb_htrans              ( ahb_htrans              ),
+    .ahb_hwdata              ( ahb_hwdata              ),
+    .ahb_hwrite              ( ahb_hwrite              ),
+    .ahb_hsel                ( ahb_hsel                ),
+    .ahb_hmaster             ( ahb_hmaster             ),
     .pll1_q_clk              ( pll1_q_clk              ),
     .pll2_p_clk              ( pll2_p_clk              ),
     .pll2_q_clk              ( pll2_q_clk              ),
@@ -1216,6 +893,9 @@ rcc_vcore_top  u_rcc_vcore_top (
     .d1_rst_n                ( d1_rst_n                ),
     .d2_rst_n                ( d2_rst_n                ),
     .sdby_rst_n              ( sdby_rst_n              ),
+    .ahb_hrdata              ( ahb_hrdata              ),
+    .ahb_hready_out          ( ahb_hready_out          ),
+    .ahb_hresp               ( ahb_hresp               ),
     .rcc_axibridge_d1_clk    ( rcc_axibridge_d1_clk    ),
     .rcc_ahb3bridge_d1_clk   ( rcc_ahb3bridge_d1_clk   ),
     .rcc_apb3bridge_d1_clk   ( rcc_apb3bridge_d1_clk   ),
@@ -1225,6 +905,94 @@ rcc_vcore_top  u_rcc_vcore_top (
     .rcc_apb2bridge_d2_clk   ( rcc_apb2bridge_d2_clk   ),
     .rcc_ahb4bridge_d3_clk   ( rcc_ahb4bridge_d3_clk   ),
     .rcc_apb4bridge_d3_clk   ( rcc_apb4bridge_d3_clk   ),
+    .sdmmc1rst               ( sdmmc1rst               ),
+    .qspirst                 ( qspirst                 ),
+    .fmcrst                  ( fmcrst                  ),
+    .jpgdecrst               ( jpgdecrst               ),
+    .dma2drst                ( dma2drst                ),
+    .mdmarst                 ( mdmarst                 ),
+    .usb2otgrst              ( usb2otgrst              ),
+    .usb1otgrst              ( usb1otgrst              ),
+    .eth1macrst              ( eth1macrst              ),
+    .adc12rst                ( adc12rst                ),
+    .dma2rst                 ( dma2rst                 ),
+    .dma1rst                 ( dma1rst                 ),
+    .sdmmc2rst               ( sdmmc2rst               ),
+    .rngrst                  ( rngrst                  ),
+    .hashrst                 ( hashrst                 ),
+    .cryptrst                ( cryptrst                ),
+    .dcmirst                 ( dcmirst                 ),
+    .hsemrst                 ( hsemrst                 ),
+    .adc3rst                 ( adc3rst                 ),
+    .bdmarst                 ( bdmarst                 ),
+    .crcrst                  ( crcrst                  ),
+    .gpiokrst                ( gpiokrst                ),
+    .gpiojrst                ( gpiojrst                ),
+    .gpioirst                ( gpioirst                ),
+    .gpiohrst                ( gpiohrst                ),
+    .gpiogrst                ( gpiogrst                ),
+    .gpiofrst                ( gpiofrst                ),
+    .gpioerst                ( gpioerst                ),
+    .gpiodrst                ( gpiodrst                ),
+    .gpiocrst                ( gpiocrst                ),
+    .gpiobrst                ( gpiobrst                ),
+    .gpioarst                ( gpioarst                ),
+    .ltdcrst                 ( ltdcrst                 ),
+    .uart8rst                ( uart8rst                ),
+    .uart7rst                ( uart7rst                ),
+    .dac12rst                ( dac12rst                ),
+    .hdmicecrst              ( hdmicecrst              ),
+    .i2c3rst                 ( i2c3rst                 ),
+    .i2c2rst                 ( i2c2rst                 ),
+    .i2c1rst                 ( i2c1rst                 ),
+    .uart5rst                ( uart5rst                ),
+    .uart4rst                ( uart4rst                ),
+    .usart3rst               ( usart3rst               ),
+    .usart2rst               ( usart2rst               ),
+    .spdifrxrst              ( spdifrxrst              ),
+    .spi3rst                 ( spi3rst                 ),
+    .spi2rst                 ( spi2rst                 ),
+    .lptim1rst               ( lptim1rst               ),
+    .tim14rst                ( tim14rst                ),
+    .tim13rst                ( tim13rst                ),
+    .tim12rst                ( tim12rst                ),
+    .tim7rst                 ( tim7rst                 ),
+    .tim6rst                 ( tim6rst                 ),
+    .tim5rst                 ( tim5rst                 ),
+    .tim4rst                 ( tim4rst                 ),
+    .tim3rst                 ( tim3rst                 ),
+    .tim2rst                 ( tim2rst                 ),
+    .fdcanrst                ( fdcanrst                ),
+    .mdiosrst                ( mdiosrst                ),
+    .opamprst                ( opamprst                ),
+    .swprst                  ( swprst                  ),
+    .crsrst                  ( crsrst                  ),
+    .hrtimrst                ( hrtimrst                ),
+    .dfsdm1rst               ( dfsdm1rst               ),
+    .sai3rst                 ( sai3rst                 ),
+    .sai2rst                 ( sai2rst                 ),
+    .sai1rst                 ( sai1rst                 ),
+    .spi5rst                 ( spi5rst                 ),
+    .tim17rst                ( tim17rst                ),
+    .tim16rst                ( tim16rst                ),
+    .tim15rst                ( tim15rst                ),
+    .spi4rst                 ( spi4rst                 ),
+    .spi1rst                 ( spi1rst                 ),
+    .usart6rst               ( usart6rst               ),
+    .usart1rst               ( usart1rst               ),
+    .tim8rst                 ( tim8rst                 ),
+    .tim1rst                 ( tim1rst                 ),
+    .sai4rst                 ( sai4rst                 ),
+    .vrefrst                 ( vrefrst                 ),
+    .comp12rst               ( comp12rst               ),
+    .lptim5rst               ( lptim5rst               ),
+    .lptim4rst               ( lptim4rst               ),
+    .lptim3rst               ( lptim3rst               ),
+    .lptim2rst               ( lptim2rst               ),
+    .i2c4rst                 ( i2c4rst                 ),
+    .spi6rst                 ( spi6rst                 ),
+    .lpuart1rst              ( lpuart1rst              ),
+    .syscfgrst               ( syscfgrst               ),
     .rcc_flash_aclk          ( rcc_flash_aclk          ),
     .rcc_flash_hclk          ( rcc_flash_hclk          ),
     .rcc_qspi_aclk           ( rcc_qspi_aclk           ),
@@ -1406,5 +1174,6 @@ rcc_vcore_top  u_rcc_vcore_top (
     .rcc_iwdg1_pclk          ( rcc_iwdg1_pclk          ),
     .rcc_exti_pclk           ( rcc_exti_pclk           )
 );
+
 
 endmodule
