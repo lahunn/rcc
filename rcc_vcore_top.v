@@ -4,7 +4,7 @@ module rcc_vcore_top #(
     parameter CLK_ON_AFTER_D1_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_D2_RST_RELEASE = 8
 )(
-    // signals connected to PWR 
+// signals connected to PWR 
     input [0:0] d3_deepsleep,
     input [0:0] pwr_d1_wkup,
     input [0:0] pwr_d2_wkup,
@@ -20,14 +20,19 @@ module rcc_vcore_top #(
     input [0:0] pwr_vcore_ok,
     input [0:0] backup_protect,
 
-    // signals connected to CPU
+// signals connected to CPU
     input [0:0] c1_sleep,
     input [0:0] c2_sleep,
     input [0:0] c1_deepsleep,
     input [0:0] c2_deepsleep,
+// signals connected to PAD 
+    output mco1,
+    output mco2,
+    input pad_rcc_eth_mii_tx_clk,
+    input pad_rcc_eth_mii_rx_clk,
+    input USB_PHY1,
 
-
-    // reset signals
+// reset signals
     output wire pwr_por_rst_n,
     output wire pwr_vsw_rst_n,
     output wire sys_rst_n,
@@ -65,6 +70,7 @@ module rcc_vcore_top #(
     output wire rcc_ahb4bridge_d3_clk,
     output wire rcc_apb4bridge_d3_clk,
 //pll , oscilator and pad clocks
+    input wire pll1_p_clk,
     input wire pll1_q_clk,
     input wire pll2_p_clk,
     input wire pll2_q_clk,
@@ -73,7 +79,65 @@ module rcc_vcore_top #(
     input wire pll3_q_clk,
     input wire pll3_r_clk,
     input wire I2S_clk_IN,
-
+// indicate busy state 
+    input  axibridge_d1_busy,
+    input  ahbbridge_d1_busy,
+    input  apbbridge_d1_busy,
+    input  ahb1bridge_d2_busy,
+    input  ahb2bridge_d2_busy,
+    input  apb1bridge_d2_busy,
+    input  apb2bridge_d2_busy,
+    input  ahb4bridge_d3_busy,
+    input  apb4bridge_d3_busy,
+    input  flash_busy,
+// signals connected to HSE
+    input  hse_css_fail,
+    input  hse_clk_pre,
+// lse lsi clock
+    input lse_clk,
+    input lsi_clk,
+// signals connected to HSI48 
+    input  hsi48_clk,
+// signals connected to CSI
+    input  csi_clk_pre,
+// signals connected to HSI
+    input  hsi_origin_clk,
+//register signals
+      // rcc_c1_rsr 
+    input cur_rcc_c1_rsr_lpwr2rstf,
+    input cur_rcc_c1_rsr_lpwr1rstf,
+    input cur_rcc_c1_rsr_wwdg2rstf,
+    input cur_rcc_c1_rsr_wwdg1rstf,
+    input cur_rcc_c1_rsr_iwdg2rstf,
+    input cur_rcc_c1_rsr_iwdg1rstf,
+    input cur_rcc_c1_rsr_sft2rstf,
+    input cur_rcc_c1_rsr_sft1rstf,
+    input cur_rcc_c1_rsr_porrstf,
+    input cur_rcc_c1_rsr_pinrstf,
+    input cur_rcc_c1_rsr_borrstf,
+    input cur_rcc_c1_rsr_d2rstf,
+    input cur_rcc_c1_rsr_d1rstf,
+    input cur_rcc_c1_rsr_oblrstf,
+    input cur_rcc_c1_rsr_rmvf,
+        // rcc_c2_rsr 
+    input cur_rcc_c2_rsr_lpwr2rstf,
+    input cur_rcc_c2_rsr_lpwr1rstf,
+    input cur_rcc_c2_rsr_wwdg2rstf,
+    input cur_rcc_c2_rsr_wwdg1rstf,
+    input cur_rcc_c2_rsr_iwdg2rstf,
+    input cur_rcc_c2_rsr_iwdg1rstf,
+    input cur_rcc_c2_rsr_sft2rstf,
+    input cur_rcc_c2_rsr_sft1rstf,
+    input cur_rcc_c2_rsr_porrstf,
+    input cur_rcc_c2_rsr_pinrstf,
+    input cur_rcc_c2_rsr_borrstf,
+    input cur_rcc_c2_rsr_d2rstf,
+    input cur_rcc_c2_rsr_d1rstf,
+    input cur_rcc_c2_rsr_oblrstf,
+    input cur_rcc_c2_rsr_rmvf,
+        // rcc_csr
+    input cur_rcc_csr_lsirdy,
+    input cur_rcc_csr_lsion,
 
 //per_ker_clk_control region
     output wire  rcc_flash_aclk,
@@ -257,20 +321,596 @@ module rcc_vcore_top #(
     output wire  rcc_iwdg1_pclk,
     output wire  rcc_exti_pclk
 //end per_ker_clk_control region
+
+
+
 );
 
 
 wire c1_per_alloc_d1;
 wire c2_per_alloc_d2;
 
-wire rcc_pwr_d1_req_rst_n;
-wire rcc_pwr_d2_req_rst_n;
-wire rcc_pwr_d3_req_rst_n;
+wire rcc_pwr_d1_req_set_n;
+wire rcc_pwr_d2_req_set_n;
+wire rcc_pwr_d3_req_set_n;
 wire rcc_d1_stop;
 wire rcc_d2_stop;
 wire rcc_sys_stop;
 
 wire sys_clk;
+
+//domain busy signals   
+wire rcc_d1_busy;
+wire rcc_d2_busy;
+wire rcc_d3_busy; 
+
+//peripheral reset signals from registers
+    wire   qspirst;
+    wire   fmcrst;
+    wire   dma2drst;
+    wire   mdmarst;
+    wire   ltdcrst;
+    wire   jpgdecrst;
+    wire   sdmmc1rst;
+    wire   usb2otgrst;
+    wire   usb1otgrst;
+    wire   eth1macrst;
+    wire   adc12rst;
+    wire   dma2rst;
+    wire   dma1rst;
+    wire   sdmmc2rst;
+    wire   rngrst;
+    wire   hashrst;
+    wire   cryptrst;
+    wire   dcmirst;
+    wire   uart8rst;
+    wire   uart7rst;
+    wire   dac12rst;
+    wire   hdmicecrst;
+    wire   i2c3rst;
+    wire   i2c2rst;
+    wire   i2c1rst;
+    wire   uart5rst;
+    wire   uart4rst;
+    wire   usart3rst;
+    wire   usart2rst;
+    wire   spdifrxrst;
+    wire   spi3rst;
+    wire   spi2rst;
+    wire   lptim1rst;
+    wire   tim14rst;
+    wire   tim13rst;
+    wire   tim12rst;
+    wire   tim7rst;
+    wire   tim6rst;
+    wire   tim5rst;
+    wire   tim4rst;
+    wire   tim3rst;
+    wire   tim2rst;
+    wire   fdcanrst;
+    wire   mdiosrst;
+    wire   opamprst;
+    wire   swpmirst;
+    wire   crsrst;
+    wire   hrtimrst;
+    wire   dfsdm1rst;
+    wire   sai3rst;
+    wire   sai2rst;
+    wire   sai1rst;
+    wire   spi5rst;
+    wire   tim17rst;
+    wire   tim16rst;
+    wire   tim15rst;
+    wire   spi4rst;
+    wire   spi1rst;
+    wire   usart6rst;
+    wire   usart1rst;
+    wire   tim8rst;
+    wire   tim1rst;
+    wire   hsemrst;
+    wire   adc3rst;
+    wire   bdmarst;
+    wire   crcrst;
+    wire   gpiokrst;
+    wire   gpiojrst;
+    wire   gpioirst;
+    wire   gpiohrst;
+    wire   gpiogrst;
+    wire   gpiofrst;
+    wire   gpioerst;
+    wire   gpiodrst;
+    wire   gpiocrst;
+    wire   gpiobrst;
+    wire   gpioarst;
+    wire   sai4rst;
+    wire   vrefrst;
+    wire   comp12rst;
+    wire   lptim5rst;
+    wire   lptim4rst;
+    wire   lptim3rst;
+    wire   lptim2rst;
+    wire   i2c4rst;
+    wire   spi6rst;
+    wire   lpuart1rst;
+    wire   syscfgrst;
+//clk sel signals from register
+    wire [1:0]  qspisel;
+    wire [1:0]  fmcsel;
+    wire   sdmmcsel;
+    wire [1:0]  usbsel;
+    wire [1:0]  adcsel;
+    wire [1:0]  rngsel;
+    wire [1:0]  cecsel;
+    wire [1:0]  i2c123sel;
+    wire [2:0]  usart234578sel;
+    wire [1:0]  spdifsel;
+    wire [2:0]  lptim1sel;
+    wire [1:0]  fdcansel;
+    wire   swpsel;
+    wire [2:0]  sai1sel;
+    wire   dfsdm1sel;
+    wire [2:0]  sai23sel;
+    wire [2:0]  spi45sel;
+    wire [2:0]  spi123sel;
+    wire [2:0]  usart16sel;
+    wire [2:0]  sai4asel;
+    wire [2:0]  sai4bsel;
+    wire [2:0]  lptim345sel;
+    wire [2:0]  lptim2sel;
+    wire [1:0]  i2c4sel;
+    wire [2:0]  spi6sel;
+    wire [2:0]  lpuart1sel;
+
+//rcc peripheral en and lpen signals
+    wire rcc_c2_flash_en;
+    wire rcc_c1_flash_lpen;
+    wire rcc_c2_flash_lpen;
+    wire rcc_c1_qspi_en;
+    wire rcc_c2_qspi_en;
+    wire rcc_c1_qspi_lpen;
+    wire rcc_c2_qspi_lpen;
+    wire rcc_c2_axisram_en;
+    wire rcc_c1_axisram_lpen;
+    wire rcc_c2_axisram_lpen;
+    wire rcc_c1_fmc_en;
+    wire rcc_c2_fmc_en;
+    wire rcc_c1_fmc_lpen;
+    wire rcc_c2_fmc_lpen;
+    wire rcc_c1_dma2d_en;
+    wire rcc_c2_dma2d_en;
+    wire rcc_c1_dma2d_lpen;
+    wire rcc_c2_dma2d_lpen;
+    wire rcc_c1_mdma_en;
+    wire rcc_c2_mdma_en;
+    wire rcc_c1_mdma_lpen;
+    wire rcc_c2_mdma_lpen;
+    wire rcc_c1_ltdc_en;
+    wire rcc_c2_ltdc_en;
+    wire rcc_c1_ltdc_lpen;
+    wire rcc_c2_ltdc_lpen;
+    wire rcc_c2_itcm_en;
+    wire rcc_c1_itcm_lpen;
+    wire rcc_c2_itcm_lpen;
+    wire rcc_c2_dtcm2_en;
+    wire rcc_c1_dtcm2_lpen;
+    wire rcc_c2_dtcm2_lpen;
+    wire rcc_c2_dtcm1_en;
+    wire rcc_c1_dtcm1_lpen;
+    wire rcc_c2_dtcm1_lpen;
+    wire rcc_c1_jpgdec_en;
+    wire rcc_c2_jpgdec_en;
+    wire rcc_c1_jpgdec_lpen;
+    wire rcc_c2_jpgdec_lpen;
+    wire rcc_c1_sdmmc1_en;
+    wire rcc_c2_sdmmc1_en;
+    wire rcc_c1_sdmmc1_lpen;
+    wire rcc_c2_sdmmc1_lpen;
+    wire rcc_c1_wwdg1_en;
+    wire rcc_c2_wwdg1_en;
+    wire rcc_c1_wwdg1_lpen;
+    wire rcc_c2_wwdg1_lpen;
+    wire rcc_c1_usb2ulpi_en;
+    wire rcc_c2_usb2ulpi_en;
+    wire rcc_c1_usb2ulpi_lpen;
+    wire rcc_c2_usb2ulpi_lpen;
+    wire rcc_c1_usb2otg_en;
+    wire rcc_c2_usb2otg_en;
+    wire rcc_c1_usb2otg_lpen;
+    wire rcc_c2_usb2otg_lpen;
+    wire rcc_c1_usb1ulpi_en;
+    wire rcc_c2_usb1ulpi_en;
+    wire rcc_c1_usb1ulpi_lpen;
+    wire rcc_c2_usb1ulpi_lpen;
+    wire rcc_c1_usb1otg_en;
+    wire rcc_c2_usb1otg_en;
+    wire rcc_c1_usb1otg_lpen;
+    wire rcc_c2_usb1otg_lpen;
+    wire rcc_c1_eth1rx_en;
+    wire rcc_c2_eth1rx_en;
+    wire rcc_c1_eth1rx_lpen;
+    wire rcc_c2_eth1rx_lpen;
+    wire rcc_c1_eth1tx_en;
+    wire rcc_c2_eth1tx_en;
+    wire rcc_c1_eth1tx_lpen;
+    wire rcc_c2_eth1tx_lpen;
+    wire rcc_c1_eth1mac_en;
+    wire rcc_c2_eth1mac_en;
+    wire rcc_c1_eth1mac_lpen;
+    wire rcc_c2_eth1mac_lpen;
+    wire rcc_c1_adc12_en;
+    wire rcc_c2_adc12_en;
+    wire rcc_c1_adc12_lpen;
+    wire rcc_c2_adc12_lpen;
+    wire rcc_c1_dma2_en;
+    wire rcc_c2_dma2_en;
+    wire rcc_c1_dma2_lpen;
+    wire rcc_c2_dma2_lpen;
+    wire rcc_c1_dma1_en;
+    wire rcc_c2_dma1_en;
+    wire rcc_c1_dma1_lpen;
+    wire rcc_c2_dma1_lpen;
+    wire rcc_c1_sram3_en;
+    wire rcc_c1_sram3_lpen;
+    wire rcc_c2_sram3_lpen;
+    wire rcc_c1_sram2_en;
+    wire rcc_c1_sram2_lpen;
+    wire rcc_c2_sram2_lpen;
+    wire rcc_c1_sram1_en;
+    wire rcc_c1_sram1_lpen;
+    wire rcc_c2_sram1_lpen;
+    wire rcc_c1_sdmmc2_en;
+    wire rcc_c2_sdmmc2_en;
+    wire rcc_c1_sdmmc2_lpen;
+    wire rcc_c2_sdmmc2_lpen;
+    wire rcc_c1_rng_en;
+    wire rcc_c2_rng_en;
+    wire rcc_c1_rng_lpen;
+    wire rcc_c2_rng_lpen;
+    wire rcc_c1_hash_en;
+    wire rcc_c2_hash_en;
+    wire rcc_c1_hash_lpen;
+    wire rcc_c2_hash_lpen;
+    wire rcc_c1_crypt_en;
+    wire rcc_c2_crypt_en;
+    wire rcc_c1_crypt_lpen;
+    wire rcc_c2_crypt_lpen;
+    wire rcc_c1_dcmi_en;
+    wire rcc_c2_dcmi_en;
+    wire rcc_c1_dcmi_lpen;
+    wire rcc_c2_dcmi_lpen;
+    wire rcc_c1_uart8_en;
+    wire rcc_c2_uart8_en;
+    wire rcc_c1_uart8_lpen;
+    wire rcc_c2_uart8_lpen;
+    wire uart8_ker_clk_req;
+    wire rcc_c1_uart7_en;
+    wire rcc_c2_uart7_en;
+    wire rcc_c1_uart7_lpen;
+    wire rcc_c2_uart7_lpen;
+    wire uart7_ker_clk_req;
+    wire rcc_c1_dac12_en;
+    wire rcc_c2_dac12_en;
+    wire rcc_c1_dac12_lpen;
+    wire rcc_c2_dac12_lpen;
+    wire rcc_c1_hdmicec_en;
+    wire rcc_c2_hdmicec_en;
+    wire rcc_c1_hdmicec_lpen;
+    wire rcc_c2_hdmicec_lpen;
+    wire rcc_c1_i2c3_en;
+    wire rcc_c2_i2c3_en;
+    wire rcc_c1_i2c3_lpen;
+    wire rcc_c2_i2c3_lpen;
+    wire i2c3_ker_clk_req;
+    wire rcc_c1_i2c2_en;
+    wire rcc_c2_i2c2_en;
+    wire rcc_c1_i2c2_lpen;
+    wire rcc_c2_i2c2_lpen;
+    wire i2c2_ker_clk_req;
+    wire rcc_c1_i2c1_en;
+    wire rcc_c2_i2c1_en;
+    wire rcc_c1_i2c1_lpen;
+    wire rcc_c2_i2c1_lpen;
+    wire i2c1_ker_clk_req;
+    wire rcc_c1_uart5_en;
+    wire rcc_c2_uart5_en;
+    wire rcc_c1_uart5_lpen;
+    wire rcc_c2_uart5_lpen;
+    wire uart5_ker_clk_req;
+    wire rcc_c1_uart4_en;
+    wire rcc_c2_uart4_en;
+    wire rcc_c1_uart4_lpen;
+    wire rcc_c2_uart4_lpen;
+    wire uart4_ker_clk_req;
+    wire rcc_c1_usart3_en;
+    wire rcc_c2_usart3_en;
+    wire rcc_c1_usart3_lpen;
+    wire rcc_c2_usart3_lpen;
+    wire usart3_ker_clk_req;
+    wire rcc_c1_usart2_en;
+    wire rcc_c2_usart2_en;
+    wire rcc_c1_usart2_lpen;
+    wire rcc_c2_usart2_lpen;
+    wire usart2_ker_clk_req;
+    wire rcc_c1_spdifrx_en;
+    wire rcc_c2_spdifrx_en;
+    wire rcc_c1_spdifrx_lpen;
+    wire rcc_c2_spdifrx_lpen;
+    wire rcc_c1_spi3_en;
+    wire rcc_c2_spi3_en;
+    wire rcc_c1_spi3_lpen;
+    wire rcc_c2_spi3_lpen;
+    wire rcc_c1_spi2_en;
+    wire rcc_c2_spi2_en;
+    wire rcc_c1_spi2_lpen;
+    wire rcc_c2_spi2_lpen;
+    wire rcc_c1_wwdg2_en;
+    wire rcc_c2_wwdg2_en;
+    wire rcc_c1_wwdg2_lpen;
+    wire rcc_c2_wwdg2_lpen;
+    wire rcc_c1_lptim1_en;
+    wire rcc_c2_lptim1_en;
+    wire rcc_c1_lptim1_lpen;
+    wire rcc_c2_lptim1_lpen;
+    wire rcc_c1_tim14_en;
+    wire rcc_c2_tim14_en;
+    wire rcc_c1_tim14_lpen;
+    wire rcc_c2_tim14_lpen;
+    wire rcc_c1_tim13_en;
+    wire rcc_c2_tim13_en;
+    wire rcc_c1_tim13_lpen;
+    wire rcc_c2_tim13_lpen;
+    wire rcc_c1_tim12_en;
+    wire rcc_c2_tim12_en;
+    wire rcc_c1_tim12_lpen;
+    wire rcc_c2_tim12_lpen;
+    wire rcc_c1_tim7_en;
+    wire rcc_c2_tim7_en;
+    wire rcc_c1_tim7_lpen;
+    wire rcc_c2_tim7_lpen;
+    wire rcc_c1_tim6_en;
+    wire rcc_c2_tim6_en;
+    wire rcc_c1_tim6_lpen;
+    wire rcc_c2_tim6_lpen;
+    wire rcc_c1_tim5_en;
+    wire rcc_c2_tim5_en;
+    wire rcc_c1_tim5_lpen;
+    wire rcc_c2_tim5_lpen;
+    wire rcc_c1_tim4_en;
+    wire rcc_c2_tim4_en;
+    wire rcc_c1_tim4_lpen;
+    wire rcc_c2_tim4_lpen;
+    wire rcc_c1_tim3_en;
+    wire rcc_c2_tim3_en;
+    wire rcc_c1_tim3_lpen;
+    wire rcc_c2_tim3_lpen;
+    wire rcc_c1_tim2_en;
+    wire rcc_c2_tim2_en;
+    wire rcc_c1_tim2_lpen;
+    wire rcc_c2_tim2_lpen;
+    wire rcc_c1_fdcan_en;
+    wire rcc_c2_fdcan_en;
+    wire rcc_c1_fdcan_lpen;
+    wire rcc_c2_fdcan_lpen;
+    wire rcc_c1_mdios_en;
+    wire rcc_c2_mdios_en;
+    wire rcc_c1_mdios_lpen;
+    wire rcc_c2_mdios_lpen;
+    wire rcc_c1_opamp_en;
+    wire rcc_c2_opamp_en;
+    wire rcc_c1_opamp_lpen;
+    wire rcc_c2_opamp_lpen;
+    wire rcc_c1_swpmi_en;
+    wire rcc_c2_swpmi_en;
+    wire rcc_c1_swpmi_lpen;
+    wire rcc_c2_swpmi_lpen;
+    wire rcc_c1_crs_en;
+    wire rcc_c2_crs_en;
+    wire rcc_c1_crs_lpen;
+    wire rcc_c2_crs_lpen;
+    wire rcc_c1_hrtim_en;
+    wire rcc_c2_hrtim_en;
+    wire rcc_c1_hrtim_lpen;
+    wire rcc_c2_hrtim_lpen;
+    wire rcc_c1_dfsdm1_en;
+    wire rcc_c2_dfsdm1_en;
+    wire rcc_c1_dfsdm1_lpen;
+    wire rcc_c2_dfsdm1_lpen;
+    wire rcc_c1_sai3_en;
+    wire rcc_c2_sai3_en;
+    wire rcc_c1_sai3_lpen;
+    wire rcc_c2_sai3_lpen;
+    wire rcc_c1_sai2_en;
+    wire rcc_c2_sai2_en;
+    wire rcc_c1_sai2_lpen;
+    wire rcc_c2_sai2_lpen;
+    wire rcc_c1_sai1_en;
+    wire rcc_c2_sai1_en;
+    wire rcc_c1_sai1_lpen;
+    wire rcc_c2_sai1_lpen;
+    wire rcc_c1_spi5_en;
+    wire rcc_c2_spi5_en;
+    wire rcc_c1_spi5_lpen;
+    wire rcc_c2_spi5_lpen;
+    wire rcc_c1_tim17_en;
+    wire rcc_c2_tim17_en;
+    wire rcc_c1_tim17_lpen;
+    wire rcc_c2_tim17_lpen;
+    wire rcc_c1_tim16_en;
+    wire rcc_c2_tim16_en;
+    wire rcc_c1_tim16_lpen;
+    wire rcc_c2_tim16_lpen;
+    wire rcc_c1_tim15_en;
+    wire rcc_c2_tim15_en;
+    wire rcc_c1_tim15_lpen;
+    wire rcc_c2_tim15_lpen;
+    wire rcc_c1_spi4_en;
+    wire rcc_c2_spi4_en;
+    wire rcc_c1_spi4_lpen;
+    wire rcc_c2_spi4_lpen;
+    wire rcc_c1_spi1_en;
+    wire rcc_c2_spi1_en;
+    wire rcc_c1_spi1_lpen;
+    wire rcc_c2_spi1_lpen;
+    wire rcc_c1_usart6_en;
+    wire rcc_c2_usart6_en;
+    wire rcc_c1_usart6_lpen;
+    wire rcc_c2_usart6_lpen;
+    wire usart6_ker_clk_req;
+    wire rcc_c1_usart1_en;
+    wire rcc_c2_usart1_en;
+    wire rcc_c1_usart1_lpen;
+    wire rcc_c2_usart1_lpen;
+    wire usart1_ker_clk_req;
+    wire rcc_c1_tim8_en;
+    wire rcc_c2_tim8_en;
+    wire rcc_c1_tim8_lpen;
+    wire rcc_c2_tim8_lpen;
+    wire rcc_c1_tim1_en;
+    wire rcc_c2_tim1_en;
+    wire rcc_c1_tim1_lpen;
+    wire rcc_c2_tim1_lpen;
+    wire rcc_c1_sram4_lpen;
+    wire rcc_c2_sram4_lpen;
+    wire rcc_sram4_amen;
+    wire rcc_c1_bkpram_en;
+    wire rcc_c2_bkpram_en;
+    wire rcc_c1_bkpram_lpen;
+    wire rcc_c2_bkpram_lpen;
+    wire rcc_bkpram_amen;
+    wire rcc_c1_hsem_en;
+    wire rcc_c2_hsem_en;
+    wire rcc_c1_adc3_en;
+    wire rcc_c2_adc3_en;
+    wire rcc_c1_adc3_lpen;
+    wire rcc_c2_adc3_lpen;
+    wire rcc_adc3_amen;
+    wire rcc_c1_bdma_en;
+    wire rcc_c2_bdma_en;
+    wire rcc_c1_bdma_lpen;
+    wire rcc_c2_bdma_lpen;
+    wire rcc_bdma_amen;
+    wire rcc_c1_crc_en;
+    wire rcc_c2_crc_en;
+    wire rcc_c1_crc_lpen;
+    wire rcc_c2_crc_lpen;
+    wire rcc_crc_amen;
+    wire rcc_c1_gpiok_en;
+    wire rcc_c2_gpiok_en;
+    wire rcc_c1_gpiok_lpen;
+    wire rcc_c2_gpiok_lpen;
+    wire rcc_gpiok_amen;
+    wire rcc_c1_gpioj_en;
+    wire rcc_c2_gpioj_en;
+    wire rcc_c1_gpioj_lpen;
+    wire rcc_c2_gpioj_lpen;
+    wire rcc_gpioj_amen;
+    wire rcc_c1_gpioi_en;
+    wire rcc_c2_gpioi_en;
+    wire rcc_c1_gpioi_lpen;
+    wire rcc_c2_gpioi_lpen;
+    wire rcc_gpioi_amen;
+    wire rcc_c1_gpioh_en;
+    wire rcc_c2_gpioh_en;
+    wire rcc_c1_gpioh_lpen;
+    wire rcc_c2_gpioh_lpen;
+    wire rcc_gpioh_amen;
+    wire rcc_c1_gpiog_en;
+    wire rcc_c2_gpiog_en;
+    wire rcc_c1_gpiog_lpen;
+    wire rcc_c2_gpiog_lpen;
+    wire rcc_gpiog_amen;
+    wire rcc_c1_gpiof_en;
+    wire rcc_c2_gpiof_en;
+    wire rcc_c1_gpiof_lpen;
+    wire rcc_c2_gpiof_lpen;
+    wire rcc_gpiof_amen;
+    wire rcc_c1_gpioe_en;
+    wire rcc_c2_gpioe_en;
+    wire rcc_c1_gpioe_lpen;
+    wire rcc_c2_gpioe_lpen;
+    wire rcc_gpioe_amen;
+    wire rcc_c1_gpiod_en;
+    wire rcc_c2_gpiod_en;
+    wire rcc_c1_gpiod_lpen;
+    wire rcc_c2_gpiod_lpen;
+    wire rcc_gpiod_amen;
+    wire rcc_c1_gpioc_en;
+    wire rcc_c2_gpioc_en;
+    wire rcc_c1_gpioc_lpen;
+    wire rcc_c2_gpioc_lpen;
+    wire rcc_gpioc_amen;
+    wire rcc_c1_gpiob_en;
+    wire rcc_c2_gpiob_en;
+    wire rcc_c1_gpiob_lpen;
+    wire rcc_c2_gpiob_lpen;
+    wire rcc_gpiob_amen;
+    wire rcc_c1_gpioa_en;
+    wire rcc_c2_gpioa_en;
+    wire rcc_c1_gpioa_lpen;
+    wire rcc_c2_gpioa_lpen;
+    wire rcc_gpioa_amen;
+    wire rcc_c1_sai4_en;
+    wire rcc_c2_sai4_en;
+    wire rcc_c1_sai4_lpen;
+    wire rcc_c2_sai4_lpen;
+    wire rcc_sai4_amen;
+    wire rcc_c1_rtc_en;
+    wire rcc_c2_rtc_en;
+    wire rcc_c1_rtc_lpen;
+    wire rcc_c2_rtc_lpen;
+    wire rcc_rtc_amen;
+    wire rcc_c1_vref_en;
+    wire rcc_c2_vref_en;
+    wire rcc_c1_vref_lpen;
+    wire rcc_c2_vref_lpen;
+    wire rcc_vref_amen;
+    wire rcc_c1_comp12_en;
+    wire rcc_c2_comp12_en;
+    wire rcc_c1_comp12_lpen;
+    wire rcc_c2_comp12_lpen;
+    wire rcc_comp12_amen;
+    wire rcc_c1_lptim5_en;
+    wire rcc_c2_lptim5_en;
+    wire rcc_c1_lptim5_lpen;
+    wire rcc_c2_lptim5_lpen;
+    wire rcc_lptim5_amen;
+    wire rcc_c1_lptim4_en;
+    wire rcc_c2_lptim4_en;
+    wire rcc_c1_lptim4_lpen;
+    wire rcc_c2_lptim4_lpen;
+    wire rcc_lptim4_amen;
+    wire rcc_c1_lptim3_en;
+    wire rcc_c2_lptim3_en;
+    wire rcc_c1_lptim3_lpen;
+    wire rcc_c2_lptim3_lpen;
+    wire rcc_lptim3_amen;
+    wire rcc_c1_lptim2_en;
+    wire rcc_c2_lptim2_en;
+    wire rcc_c1_lptim2_lpen;
+    wire rcc_c2_lptim2_lpen;
+    wire rcc_lptim2_amen;
+    wire rcc_c1_i2c4_en;
+    wire rcc_c2_i2c4_en;
+    wire rcc_c1_i2c4_lpen;
+    wire rcc_c2_i2c4_lpen;
+    wire rcc_i2c4_amen;
+    wire i2c4_ker_clk_req;
+    wire rcc_c1_spi6_en;
+    wire rcc_c2_spi6_en;
+    wire rcc_c1_spi6_lpen;
+    wire rcc_c2_spi6_lpen;
+    wire rcc_spi6_amen;
+    wire rcc_c1_lpuart1_en;
+    wire rcc_c2_lpuart1_en;
+    wire rcc_c1_lpuart1_lpen;
+    wire rcc_c2_lpuart1_lpen;
+    wire rcc_lpuart1_amen;
+    wire lpuart1_ker_clk_req;
+    wire rcc_c1_syscfg_en;
+    wire rcc_c2_syscfg_en;
+    wire rcc_c1_syscfg_lpen;
+    wire rcc_c2_syscfg_lpen;
+    wire rcc_syscfg_amen;
 
 // rcc_sys_async_reset_clk_gate Outputs
     wire  d1_clk_arcg_en;
@@ -507,28 +1147,58 @@ wire sys_clk;
 
 
 
+
+//register siganls need to be renamed
+    wire sram4amen;
+    wire bkpramamen;
+    wire adc3amen;
+    wire bdmaamen;
+    wire crcamen;
+    wire gpiokamen;
+    wire gpiojamen;
+    wire gpioiamen;
+    wire gpiohamen;
+    wire gpiogamen;
+    wire gpiofamen;
+    wire gpioeamen;
+    wire gpiodamen;
+    wire gpiocamen;
+    wire gpiobamen;
+    wire gpioaamen;
+    wire sai4amen;
+    wire rtcamen;
+    wire vrefamen;
+    wire comp12amen;
+    wire lptim5amen;
+    wire lptim4amen;
+    wire lptim3amen;
+    wire lptim2amen;
+    wire i2c4amen;
+    wire spi6amen;
+    wire lpuart1amen;
+    wire syscfgamen;
 ///////////////////////////////////////
 // dx_req signal generate /////////////
 ///////////////////////////////////////
 
-    assign rcc_d1_busy = axibridge_d1_busy | ahbbridge_d1_busy | apbbridge_d1_busy  | flash_busy;
-    assign rcc_d2_busy = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
-    assign rcc_d3_busy = d1_busy | d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
+assign rcc_d1_busy = axibridge_d1_busy | ahbbridge_d1_busy | apbbridge_d1_busy  | flash_busy;
+assign rcc_d2_busy = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
+assign rcc_d3_busy = rcc_d1_busy | rcc_d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
 
 
-    assign rcc_d1_stop = (~c1_deepsleep | (c2_per_alloc_d1 & ~c2_deepsleep) | d1_busy);
-    assign rcc_d2_stop = (~c2_deepsleep | (c1_per_alloc_d2 & ~c1_deepsleep) | d2_busy);
-    assign rcc_sys_stop = (c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~d3_busy ;
+assign rcc_d1_stop = (~c1_deepsleep | (c2_per_alloc_d1 & ~c2_deepsleep) | rcc_d1_busy);
+assign rcc_d2_stop = (~c2_deepsleep | (c1_per_alloc_d2 & ~c1_deepsleep) | rcc_d2_busy);
+assign rcc_sys_stop = (c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~rcc_d3_busy ;
 
 assign rcc_pwr_d1_req_set_n = ~rcc_d1_stop;
 assign rcc_pwr_d2_req_set_n = ~rcc_d2_stop;
 assign rcc_pwr_d3_req_set_n = ~rcc_sys_stop;//& hse_off & hsi48_off & pll_off   do we need to add these signals?
 
-always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d1_req_rst_n)begin
+always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d1_req_set_n)begin
     if(~sys_rst_n) begin
         rcc_pwr_d1_req <= 1'b0;
     end
-    else if(~rcc_pwr_d1_req_rst_n)begin
+    else if(~rcc_pwr_d1_req_set_n)begin
         rcc_pwr_d1_req <= 1'b1;
     end
     else begin
@@ -537,11 +1207,11 @@ always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d1_req_rst_n)begin
     end
 end
 
-always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d2_req_rst_n) begin
+always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d2_req_set_n) begin
     if(~sys_rst_n) begin
         rcc_pwr_d2_req <= 1'b0;
     end
-    else if(~rcc_pwr_d2_req_rst_n) begin
+    else if(~rcc_pwr_d2_req_set_n) begin
         rcc_pwr_d2_req <= 1'b1;
     end
     else begin
@@ -550,11 +1220,11 @@ always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d2_req_rst_n) begin
     end
 end
 
-always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d3_req_rst_n) begin
+always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d3_req_set_n) begin
     if(~sys_rst_n) begin
         rcc_pwr_d3_req <= 1'b0;
     end
-    else if(~rcc_pwr_d3_req_rst_n) begin
+    else if(~rcc_pwr_d3_req_set_n) begin
         rcc_pwr_d3_req <= 1'b1;
     end
     else begin
@@ -562,6 +1232,8 @@ always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d3_req_rst_n) begin
             rcc_pwr_d3_req <= 1'b0;
     end
 end
+
+assign pll_src_sel = pllsrc;
 
 rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .pad_rcc_eth_mii_tx_clk     ( pad_rcc_eth_mii_tx_clk      ),
@@ -572,16 +1244,9 @@ rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .c2_deepsleep               ( c2_deepsleep                ),
     .c1_sleep                   ( c1_sleep                    ),
     .c1_deepsleep               ( c1_deepsleep                ),
-    .axibridge_d1_busy          ( axibridge_d1_busy           ),
-    .ahbbridge_d1_busy          ( ahbbridge_d1_busy           ),
-    .apbbridge_d1_busy          ( apbbridge_d1_busy           ),
-    .ahb1bridge_d2_busy         ( ahb1bridge_d2_busy          ),
-    .ahb2bridge_d2_busy         ( ahb2bridge_d2_busy          ),
-    .apb1bridge_d2_busy         ( apb1bridge_d2_busy          ),
-    .apb2bridge_d2_busy         ( apb2bridge_d2_busy          ),
-    .ahb4bridge_d3_busy         ( ahb4bridge_d3_busy          ),
-    .apb4bridge_d3_busy         ( apb4bridge_d3_busy          ),
-    .flash_busy                 ( flash_busy                  ),
+    .rcc_d1_stop                ( rcc_d1_stop                 ),
+    .rcc_d2_stop                ( rcc_d2_stop                 ),
+    .rcc_sys_stop               ( rcc_sys_stop                ),
     .hse_css_fail               ( hse_css_fail                ),
     .hse_clk_pre                ( hse_clk_pre                 ),
     .lse_clk                    ( lse_clk                     ),
@@ -2164,7 +2829,7 @@ rcc_ahb_lite_bus  u_rcc_ahb_lite_bus (
 );
 
 rcc_reg #(
-    .AW ( 29   ),
+    .AW ( 32   ),
     .DW ( 32   ),
     .WW ( 4 ))
  u_rcc_reg (
@@ -2870,4 +3535,36 @@ rcc_reg #(
     .rcc_csr_lsion_wren        ( rcc_csr_lsion_wren         )
 );
 
+
+///////////////////////////////////////
+//signals rename //////////////////////
+///////////////////////////////////////
+    assign rcc_sram4_amen = sram4amen;
+    assign rcc_bkpram_amen = bkpramamen;
+    assign rcc_adc3_amen = adc3amen;
+    assign rcc_bdma_amen = bdmaamen;
+    assign rcc_crc_amen = crcamen;
+    assign rcc_gpiok_amen = gpiokamen;
+    assign rcc_gpioj_amen = gpiojamen;
+    assign rcc_gpioi_amen = gpioiamen;
+    assign rcc_gpioh_amen = gpiohamen;
+    assign rcc_gpiog_amen = gpiogamen;
+    assign rcc_gpiof_amen = gpiofamen;
+    assign rcc_gpioe_amen = gpioeamen;
+    assign rcc_gpiod_amen = gpiodamen;
+    assign rcc_gpioc_amen = gpiocamen;
+    assign rcc_gpiob_amen = gpiobamen;
+    assign rcc_gpioa_amen = gpioaamen;
+    assign rcc_sai4_amen = sai4amen;
+    assign rcc_rtc_amen = rtcamen;
+    assign rcc_vref_amen = vrefamen;
+    assign rcc_comp12_amen = comp12amen;
+    assign rcc_lptim5_amen = lptim5amen;
+    assign rcc_lptim4_amen = lptim4amen;
+    assign rcc_lptim3_amen = lptim3amen;
+    assign rcc_lptim2_amen = lptim2amen;
+    assign rcc_i2c4_amen = i2c4amen;
+    assign rcc_spi6_amen = spi6amen;
+    assign rcc_lpuart1_amen = lpuart1amen;
+    assign rcc_syscfg_amen = syscfgamen;
 endmodule

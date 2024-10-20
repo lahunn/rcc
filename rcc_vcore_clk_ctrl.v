@@ -29,17 +29,10 @@ module rcc_vcore_clk_ctrl(
 //rtc clocks
     output wire hse_rtc_clk,
 
-// signals connected to busy 指示信号 
-    input  axibridge_d1_busy,
-    input  ahbbridge_d1_busy,
-    input  apbbridge_d1_busy,
-    input  ahb1bridge_d2_busy,
-    input  ahb2bridge_d2_busy,
-    input  apb1bridge_d2_busy,
-    input  apb2bridge_d2_busy,
-    input  ahb4bridge_d3_busy,
-    input  apb4bridge_d3_busy,
-    input  flash_busy,
+// stop mode signals
+    input wire rcc_d1_stop,
+    input wire rcc_d2_stop,
+    input wire rcc_sys_stop,
 // signals connected to HSE
     input  hse_css_fail,
     input  hse_clk_pre,
@@ -917,7 +910,6 @@ wire per_clk;
 wire pll_src_clk;
 
 wire sys_clk;
-wire sys_stop;
 wire hsi_ker_clk_req;
 wire csi_ker_clk_req;
 
@@ -931,9 +923,9 @@ wire mco2_clk_pre;
 // HSI CSI clock control /////////
 //////////////////////////////////
 
-assign hsi_clk_en = ~sys_stop;
-assign hsi_ker_clk_en = ~sys_stop | hsi_ker_clk_req;
-assign csi_clk_en = ~sys_stop;
+assign hsi_clk_en = ~rcc_sys_stop;
+assign hsi_ker_clk_en = ~rcc_sys_stop | hsi_ker_clk_req;
+assign csi_clk_en = ~rcc_sys_stop;
 assign csi_ker_clk_en = csi_clk_en | csi_ker_clk_req;
 
 
@@ -1123,8 +1115,6 @@ pll3_src_clk_div (
 
 rcc_sys_clk_gen  u_rcc_sys_clk_gen (
     .sys_rst_n                  ( sys_rst_n                   ),
-    .sys_stop                   ( sys_stop                    ),
-    .sys_clk                    ( sys_clk                     ),
     .hsi_clk                    ( hsi_clk                     ),
     .csi_clk                    ( csi_clk                     ),
     .hse_clk                    ( hse_clk                     ),
@@ -1142,22 +1132,12 @@ rcc_sys_clk_gen  u_rcc_sys_clk_gen (
     .c2_deepsleep               ( c2_deepsleep                ),
     .c1_sleep                   ( c1_sleep                    ),
     .c1_deepsleep               ( c1_deepsleep                ),
-    .d3_deepsleep               ( d3_deepsleep                ),
-    .c2_per_alloc_d1            ( c2_per_alloc_d1             ),
-    .c1_per_alloc_d2            ( c1_per_alloc_d2             ),
     .d1_clk_arcg_en             ( d1_clk_arcg_en              ),
     .d2_clk_arcg_en             ( d2_clk_arcg_en              ),
     .sys_clk_arcg_en            ( sys_clk_arcg_en             ),
-    .axibridge_d1_busy          ( axibridge_d1_busy           ),
-    .ahbbridge_d1_busy          ( ahbbridge_d1_busy           ),
-    .apbbridge_d1_busy          ( apbbridge_d1_busy           ),
-    .ahb1bridge_d2_busy         ( ahb1bridge_d2_busy          ),
-    .ahb2bridge_d2_busy         ( ahb2bridge_d2_busy          ),
-    .apb1bridge_d2_busy         ( apb1bridge_d2_busy          ),
-    .apb2bridge_d2_busy         ( apb2bridge_d2_busy          ),
-    .ahb4bridge_d3_busy         ( ahb4bridge_d3_busy          ),
-    .apb4bridge_d3_busy         ( apb4bridge_d3_busy          ),
-    .flash_busy                 ( flash_busy                  ),
+    .rcc_d1_stop                ( rcc_d1_stop                 ),
+    .rcc_d2_stop                ( rcc_d2_stop                 ),
+    .rcc_sys_stop               ( rcc_sys_stop                ),
 
     .rcc_c2_clk                 ( rcc_c2_clk                  ),
     .rcc_fclk_c2                ( rcc_fclk_c2                 ),
@@ -1178,7 +1158,8 @@ rcc_sys_clk_gen  u_rcc_sys_clk_gen (
     .rcc_timy_ker_clk           ( rcc_timy_ker_clk            ),
     .rcc_hrtimer_prescalar_clk  ( rcc_hrtimer_prescalar_clk   ),
     .sys_d1cpre_clk             ( sys_d1cpre_clk              ),
-    .sys_hpre_clk               ( sys_hpre_clk                )
+    .sys_hpre_clk               ( sys_hpre_clk                ),
+    .sys_clk                    ( sys_clk                     )
 );
 
 rcc_eth_ker_clk_ctrl  u_rcc_eth_ker_clk_ctrl (

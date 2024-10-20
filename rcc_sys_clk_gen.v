@@ -26,9 +26,6 @@ module rcc_sys_clk_gen (
     input wire  c2_deepsleep,
     input wire  c1_sleep,
     input wire  c1_deepsleep,
-    input wire d3_deepsleep,
-    input wire c2_per_alloc_d1,
-    input wire c1_per_alloc_d2,
 
     //output clocks
     output wire rcc_c2_clk,
