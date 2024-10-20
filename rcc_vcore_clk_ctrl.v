@@ -881,7 +881,7 @@ module rcc_vcore_clk_ctrl(
     input [2:0] d3ppre,
     input timpre,
     input hrtimsel,
-    input [1:0] ckpersel,
+    input [1:0] clkpersel,
     input [5:0] divm1,
     input [5:0] divm2,
     input [5:0] divm3
@@ -1060,7 +1060,7 @@ glitch_free_clk_switch #(
  per_clk_switch (
     .clk_in                  ( {hse_clk,csi_ker_clk,hsi_ker_clk}    ),
     .rst_n                   ( sys_rst_n ),
-    .sel                     ( ckpersel  ),
+    .sel                     ( clkpersel  ),
     .clk_out                 ( per_clk   )
 );
 

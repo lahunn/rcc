@@ -4,27 +4,55 @@ module rcc_vcore_top #(
     parameter CLK_ON_AFTER_D1_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_D2_RST_RELEASE = 8
 )(
+// signals connected to 复位源 
+    input  nrst_in,
+    input  iwdg1_out_rst,
+    input  wwdg1_out_rst,
+    input  iwdg2_out_rst,
+    input  wwdg2_out_rst,
+    input  lpwr2_rst,
+    input  lpwr1_rst,
+    input  pwr_bor_rst,
+    input  pwr_por_rst,
+    input  cpu2_sftrst,
+    input  cpu1_sftrst,
+    output nrst_out,
+
 // signals connected to PWR 
-    input [0:0] d3_deepsleep,
-    input [0:0] pwr_d1_wkup,
-    input [0:0] pwr_d2_wkup,
-    input [0:0] pwr_d3_wkup,
+    input  d3_deepsleep,
+    input  pwr_d1_wkup,
+    input  pwr_d2_wkup,
+    input  pwr_d3_wkup,
     output reg rcc_pwr_d1_req,
     output reg rcc_pwr_d2_req,
     output reg rcc_pwr_d3_req,
-    output [0:0] c2_per_alloc_d1,
-    output [0:0] c1_per_alloc_d2,
-    input [0:0] flash_power_ok,
-    input [0:0] pwr_d1_ok,
-    input [0:0] pwr_d2_ok,
-    input [0:0] pwr_vcore_ok,
-    input [0:0] backup_protect,
+    output  c2_per_alloc_d1,
+    output  c1_per_alloc_d2,
+    input  flash_power_ok,
+    input  pwr_d1_ok,
+    input  pwr_d2_ok,
+    input  pwr_vcore_ok,
+    input  backup_protect,
 
-// signals connected to CPU
-    input [0:0] c1_sleep,
-    input [0:0] c2_sleep,
-    input [0:0] c1_deepsleep,
-    input [0:0] c2_deepsleep,
+// signals connected to CPU 
+    input  c2_sleep,
+    input  c2_deepsleep,
+    input  c1_sleep,
+    input  c1_deepsleep,
+    output  rcc_c2_clk,
+    output  rcc_fclk_c2,
+    output  rcc_c2_systick_clk,
+    output  rcc_c1_clk,
+    output  rcc_fclk_c1,
+    output  rcc_c1_systick_clk,
+// timer clocks
+    output wire rcc_timx_ker_clk,
+    output wire rcc_timy_ker_clk,
+    output wire rcc_hrtimer_prescalar_clk,
+    output wire sys_d1cpre_clk,
+    output wire sys_hpre_clk,
+//rtc clocks
+    output wire hse_rtc_clk,
 // signals connected to PAD 
     output mco1,
     output mco2,
@@ -39,7 +67,121 @@ module rcc_vcore_top #(
     output wire d1_rst_n,
     output wire d2_rst_n,
     output wire sdby_rst_n,
-
+//per rst signals
+    output  rcc_flash_arcg_rst_n,
+    output  rcc_qspi_arcg_rst_n,
+    output  rcc_axisram_arcg_rst_n,
+    output  rcc_fmc_arcg_rst_n,
+    output  rcc_dma2d_arcg_rst_n,
+    output  rcc_mdma_arcg_rst_n,
+    output  rcc_ltdc_arcg_rst_n,
+    output  rcc_ramecc1_arcg_rst_n,
+    output  rcc_gpv_arcg_rst_n,
+    output  rcc_itcm_arcg_rst_n,
+    output  rcc_dtcm2_arcg_rst_n,
+    output  rcc_dtcm1_arcg_rst_n,
+    output  rcc_jpgdec_arcg_rst_n,
+    output  rcc_sdmmc1_arcg_rst_n,
+    output  rcc_wwdg1_arcg_rst_n,
+    output  rcc_usb2ulpi_arcg_rst_n,
+    output  rcc_usb2otg_arcg_rst_n,
+    output  rcc_usb1ulpi_arcg_rst_n,
+    output  rcc_usb1otg_arcg_rst_n,
+    output  rcc_eth1rx_arcg_rst_n,
+    output  rcc_eth1tx_arcg_rst_n,
+    output  rcc_eth1mac_arcg_rst_n,
+    output  rcc_adc12_arcg_rst_n,
+    output  rcc_dma2_arcg_rst_n,
+    output  rcc_dma1_arcg_rst_n,
+    output  rcc_sram3_arcg_rst_n,
+    output  rcc_sram2_arcg_rst_n,
+    output  rcc_sram1_arcg_rst_n,
+    output  rcc_sdmmc2_arcg_rst_n,
+    output  rcc_rng_arcg_rst_n,
+    output  rcc_hash_arcg_rst_n,
+    output  rcc_crypt_arcg_rst_n,
+    output  rcc_dcmi_arcg_rst_n,
+    output  rcc_ramecc2_arcg_rst_n,
+    output  rcc_uart8_arcg_rst_n,
+    output  rcc_uart7_arcg_rst_n,
+    output  rcc_dac12_arcg_rst_n,
+    output  rcc_hdmicec_arcg_rst_n,
+    output  rcc_i2c3_arcg_rst_n,
+    output  rcc_i2c2_arcg_rst_n,
+    output  rcc_i2c1_arcg_rst_n,
+    output  rcc_uart5_arcg_rst_n,
+    output  rcc_uart4_arcg_rst_n,
+    output  rcc_usart3_arcg_rst_n,
+    output  rcc_usart2_arcg_rst_n,
+    output  rcc_spdifrx_arcg_rst_n,
+    output  rcc_spi3_arcg_rst_n,
+    output  rcc_spi2_arcg_rst_n,
+    output  rcc_wwdg2_arcg_rst_n,
+    output  rcc_lptim1_arcg_rst_n,
+    output  rcc_tim14_arcg_rst_n,
+    output  rcc_tim13_arcg_rst_n,
+    output  rcc_tim12_arcg_rst_n,
+    output  rcc_tim7_arcg_rst_n,
+    output  rcc_tim6_arcg_rst_n,
+    output  rcc_tim5_arcg_rst_n,
+    output  rcc_tim4_arcg_rst_n,
+    output  rcc_tim3_arcg_rst_n,
+    output  rcc_tim2_arcg_rst_n,
+    output  rcc_fdcan_arcg_rst_n,
+    output  rcc_mdios_arcg_rst_n,
+    output  rcc_opamp_arcg_rst_n,
+    output  rcc_swpmi_arcg_rst_n,
+    output  rcc_crs_arcg_rst_n,
+    output  rcc_hrtim_arcg_rst_n,
+    output  rcc_dfsdm1_arcg_rst_n,
+    output  rcc_sai3_arcg_rst_n,
+    output  rcc_sai2_arcg_rst_n,
+    output  rcc_sai1_arcg_rst_n,
+    output  rcc_spi5_arcg_rst_n,
+    output  rcc_tim17_arcg_rst_n,
+    output  rcc_tim16_arcg_rst_n,
+    output  rcc_tim15_arcg_rst_n,
+    output  rcc_spi4_arcg_rst_n,
+    output  rcc_spi1_arcg_rst_n,
+    output  rcc_usart6_arcg_rst_n,
+    output  rcc_usart1_arcg_rst_n,
+    output  rcc_tim8_arcg_rst_n,
+    output  rcc_tim1_arcg_rst_n,
+    output  rcc_sram4_arcg_rst_n,
+    output  rcc_bkpram_arcg_rst_n,
+    output  rcc_ramecc3_arcg_rst_n,
+    output  rcc_hsem_arcg_rst_n,
+    output  rcc_adc3_arcg_rst_n,
+    output  rcc_bdma_arcg_rst_n,
+    output  rcc_crc_arcg_rst_n,
+    output  rcc_gpiok_arcg_rst_n,
+    output  rcc_gpioj_arcg_rst_n,
+    output  rcc_gpioi_arcg_rst_n,
+    output  rcc_gpioh_arcg_rst_n,
+    output  rcc_gpiog_arcg_rst_n,
+    output  rcc_gpiof_arcg_rst_n,
+    output  rcc_gpioe_arcg_rst_n,
+    output  rcc_gpiod_arcg_rst_n,
+    output  rcc_gpioc_arcg_rst_n,
+    output  rcc_gpiob_arcg_rst_n,
+    output  rcc_gpioa_arcg_rst_n,
+    output  rcc_rcc_arcg_rst_n,
+    output  rcc_pwr_arcg_rst_n,
+    output  rcc_sai4_arcg_rst_n,
+    output  rcc_rtc_arcg_rst_n,
+    output  rcc_vref_arcg_rst_n,
+    output  rcc_comp12_arcg_rst_n,
+    output  rcc_lptim5_arcg_rst_n,
+    output  rcc_lptim4_arcg_rst_n,
+    output  rcc_lptim3_arcg_rst_n,
+    output  rcc_lptim2_arcg_rst_n,
+    output  rcc_i2c4_arcg_rst_n,
+    output  rcc_spi6_arcg_rst_n,
+    output  rcc_lpuart1_arcg_rst_n,
+    output  rcc_syscfg_arcg_rst_n,
+    output  rcc_iwdg2_arcg_rst_n,
+    output  rcc_iwdg1_arcg_rst_n,
+    output  rcc_exti_arcg_rst_n,
 // ahb bus signals
     input wire ahb_hclk,
     input wire ahb_hresetn,
@@ -69,6 +211,9 @@ module rcc_vcore_top #(
     output wire rcc_ahb4bridge_d3_clk,
     output wire rcc_apb4bridge_d3_clk,
 //pll , oscilator and pad clocks
+    output pll1_src_clk,
+    output pll2_src_clk,
+    output pll3_src_clk,
     input wire pll1_p_clk,
     input wire pll1_q_clk,
     input wire pll2_p_clk,
@@ -78,6 +223,54 @@ module rcc_vcore_top #(
     input wire pll3_q_clk,
     input wire pll3_r_clk,
     input wire I2S_clk_IN,
+//pll osc control signals
+    output  pll3on,
+    output  pll2on,
+    output  pll1on,
+    output  hsecsson,
+    output  hsebyp,
+    output  hseon,
+    output  hsi48on,
+    output  csikeron,
+    output  csion,
+    output  [1:0]  hsidiv,
+    output  hsikeron,
+    output  hsion,
+    output  [4:0]  csitrim,
+    output  [5:0]  hsitrim,
+    output  divr3en,
+    output  divq3en,
+    output  divp3en,
+    output  divr2en,
+    output  divq2en,
+    output  divp2en,
+    output  divr1en,
+    output  divq1en,
+    output  divp1en,
+    output  [1:0]  pll3rge,
+    output  pll3vcosel,
+    output  pll3fracen,
+    output  [1:0]  pll2rge,
+    output  pll2vcosel,
+    output  pll2fracen,
+    output  [1:0]  pll1rge,
+    output  pll1vcosel,
+    output  pll1fracen,
+    output  [6:0]  divr1,
+    output  [6:0]  divq1,
+    output  [6:0]  divp1,
+    output  [8:0]  divn1,
+    output  [12:0]  fracn1,
+    output  [6:0]  divr2,
+    output  [6:0]  divq2,
+    output  [6:0]  divp2,
+    output  [8:0]  divn2,
+    output  [12:0]  fracn2,
+    output  [6:0]  divr3,
+    output  [6:0]  divq3,
+    output  [6:0]  divp3,
+    output  [8:0]  divn3,
+    output  [12:0]  fracn3,
 // indicate busy state 
     input  axibridge_d1_busy,
     input  ahbbridge_d1_busy,
@@ -104,7 +297,34 @@ module rcc_vcore_top #(
 //signals from eth 
     input eth_rcc_fes,
     input eth_rcc_epis_2,
+    output rcc_eth_mii_tx_clk,
+    output rcc_eth_mii_rx_clk,
+    output rcc_eth_rmii_ref_clk,
+
 //register signals
+    output rcc_c1_rsr_rmvf_wren,
+    output rcc_c2_rsr_rmvf_wren,
+    output rcc_csr_lsion_wren,
+    output rcc_bdcr_byte2_wren,
+    output rcc_bdcr_byte1_wren,
+    output rcc_bdcr_byte0_wren,
+    // rcc_bdcr 
+    input cur_rcc_bdcr_bdrst,
+    output nxt_rcc_bdcr_bdrst,
+    input cur_rcc_bdcr_rtcen,
+    output nxt_rcc_bdcr_rtcen,
+    input [1:0]cur_rcc_bdcr_rtcsel,
+    output [1:0]nxt_rcc_bdcr_rtcsel,
+    input cur_rcc_bdcr_lsecssd,
+    input cur_rcc_bdcr_lsecsson,
+    output nxt_rcc_bdcr_lsecsson,
+    input [1:0]cur_rcc_bdcr_lsedrv,
+    output [1:0]nxt_rcc_bdcr_lsedrv,
+    input cur_rcc_bdcr_lsebyp,
+    output nxt_rcc_bdcr_lsebyp,
+    input cur_rcc_bdcr_lserdy,
+    input cur_rcc_bdcr_lseon,
+    output nxt_rcc_bdcr_lseon,
       // rcc_c1_rsr 
     input cur_rcc_c1_rsr_lpwr2rstf,
     input cur_rcc_c1_rsr_lpwr1rstf,
@@ -142,6 +362,7 @@ module rcc_vcore_top #(
     input cur_rcc_csr_lsion,
 
 //per_ker_clk_control region
+    output wire  rcc_rtc_pclk,
     output wire  rcc_flash_aclk,
     output wire  rcc_flash_hclk,
     output wire  rcc_qspi_aclk,
@@ -551,38 +772,53 @@ wire rcc_d3_busy;
     wire rcc_iwdg1_rst_n;
     wire rcc_exti_rst_n;
 //clk sel signals from register
-    wire [1:0]  qspisel;
-    wire [1:0]  fmcsel;
-    wire   sdmmcsel;
-    wire [1:0]  usbsel;
-    wire [1:0]  adcsel;
-    wire [1:0]  rngsel;
-    wire [1:0]  cecsel;
-    wire [1:0]  i2c123sel;
-    wire [2:0]  usart234578sel;
-    wire [1:0]  spdifsel;
-    wire [2:0]  lptim1sel;
-    wire [1:0]  fdcansel;
-    wire   swpsel;
-    wire [2:0]  sai1sel;
-    wire   dfsdm1sel;
-    wire [2:0]  sai23sel;
-    wire [2:0]  spi45sel;
-    wire [2:0]  spi123sel;
-    wire [2:0]  usart16sel;
-    wire [2:0]  sai4asel;
-    wire [2:0]  sai4bsel;
-    wire [2:0]  lptim345sel;
-    wire [2:0]  lptim2sel;
-    wire [1:0]  i2c4sel;
-    wire [2:0]  spi6sel;
-    wire [2:0]  lpuart1sel;
-    wire [2:0]  mco1sel;
-    wire [2:0]  mco2sel;
-
-    wire [3:0]  mco1pre;
-    wire [3:0]  mco2pre;
-    wire [1:0]  rtcpre;
+    wire  [2:0]  mco2sel;
+    wire  [3:0]  mco2pre;
+    wire  [2:0]  mco1sel;
+    wire  [3:0]  mco1pre;
+    wire  timpre;
+    wire  hrtimsel;
+    wire  [5:0]  rtcpre;
+    wire  stopkerwuck;
+    wire  stopwuck;
+    wire  [2:0]  sw;
+    wire  [3:0]  d1cpre;
+    wire  [2:0]  d1ppre;
+    wire  [3:0]  hpre;
+    wire  [2:0]  d2ppre2;
+    wire  [2:0]  d2ppre1;
+    wire  [2:0]  d3ppre;
+    wire  [5:0]  divm3;
+    wire  [5:0]  divm2;
+    wire  [5:0]  divm1;
+    wire  [1:0]  pllsrc;
+    wire  [1:0]  clkpersel;
+    wire  sdmmcsel;
+    wire  [1:0]  qspisel;
+    wire  [1:0]  fmcsel;
+    wire  swpsel;
+    wire  [1:0]  fdcansel;
+    wire  dfsdm1sel;
+    wire  [1:0]  spdifsel;
+    wire  [2:0]  spi45sel;
+    wire  [2:0]  spi123sel;
+    wire  [2:0]  sai23sel;
+    wire  [1:0]  sai1sel;
+    wire  [2:0]  lptim1sel;
+    wire  [1:0]  cecsel;
+    wire  [1:0]  usbsel;
+    wire  [1:0]  i2c123sel;
+    wire  [1:0]  rngsel;
+    wire  [2:0]  usart16sel;
+    wire  [2:0]  usart234578sel;
+    wire  [2:0]  spi6sel;
+    wire  [2:0]  sai4bsel;
+    wire  [2:0]  sai4asel;
+    wire  [1:0]  adcsel;
+    wire  [2:0]  lptim345sel;
+    wire  [2:0]  lptim2sel;
+    wire  [1:0]  i2c4sel;
+    wire  [2:0]  lpuart1sel;
 
 
 //rcc peripheral en and lpen signals
@@ -1040,233 +1276,119 @@ wire rcc_d3_busy;
     wire  d1_clk_arcg_en;
     wire  d2_clk_arcg_en;
     wire  sys_clk_arcg_en;
-    wire  rcc_flash_arcg_rst_n;
     wire  rcc_flash_arcg_clk_en;
-    wire  rcc_qspi_arcg_rst_n;
     wire  rcc_qspi_arcg_clk_en;
-    wire  rcc_axisram_arcg_rst_n;
     wire  rcc_axisram_arcg_clk_en;
-    wire  rcc_fmc_arcg_rst_n;
     wire  rcc_fmc_arcg_clk_en;
-    wire  rcc_dma2d_arcg_rst_n;
     wire  rcc_dma2d_arcg_clk_en;
-    wire  rcc_mdma_arcg_rst_n;
     wire  rcc_mdma_arcg_clk_en;
-    wire  rcc_ltdc_arcg_rst_n;
     wire  rcc_ltdc_arcg_clk_en;
-    wire  rcc_ramecc1_arcg_rst_n;
     wire  rcc_ramecc1_arcg_clk_en;
-    wire  rcc_gpv_arcg_rst_n;
     wire  rcc_gpv_arcg_clk_en;
-    wire  rcc_itcm_arcg_rst_n;
     wire  rcc_itcm_arcg_clk_en;
-    wire  rcc_dtcm2_arcg_rst_n;
     wire  rcc_dtcm2_arcg_clk_en;
-    wire  rcc_dtcm1_arcg_rst_n;
     wire  rcc_dtcm1_arcg_clk_en;
-    wire  rcc_jpgdec_arcg_rst_n;
     wire  rcc_jpgdec_arcg_clk_en;
-    wire  rcc_sdmmc1_arcg_rst_n;
     wire  rcc_sdmmc1_arcg_clk_en;
-    wire  rcc_wwdg1_arcg_rst_n;
     wire  rcc_wwdg1_arcg_clk_en;
-    wire  rcc_usb2ulpi_arcg_rst_n;
     wire  rcc_usb2ulpi_arcg_clk_en;
-    wire  rcc_usb2otg_arcg_rst_n;
     wire  rcc_usb2otg_arcg_clk_en;
-    wire  rcc_usb1ulpi_arcg_rst_n;
     wire  rcc_usb1ulpi_arcg_clk_en;
-    wire  rcc_usb1otg_arcg_rst_n;
     wire  rcc_usb1otg_arcg_clk_en;
-    wire  rcc_eth1rx_arcg_rst_n;
     wire  rcc_eth1rx_arcg_clk_en;
-    wire  rcc_eth1tx_arcg_rst_n;
     wire  rcc_eth1tx_arcg_clk_en;
-    wire  rcc_eth1mac_arcg_rst_n;
     wire  rcc_eth1mac_arcg_clk_en;
-    wire  rcc_adc12_arcg_rst_n;
     wire  rcc_adc12_arcg_clk_en;
-    wire  rcc_dma2_arcg_rst_n;
     wire  rcc_dma2_arcg_clk_en;
-    wire  rcc_dma1_arcg_rst_n;
     wire  rcc_dma1_arcg_clk_en;
-    wire  rcc_sram3_arcg_rst_n;
     wire  rcc_sram3_arcg_clk_en;
-    wire  rcc_sram2_arcg_rst_n;
     wire  rcc_sram2_arcg_clk_en;
-    wire  rcc_sram1_arcg_rst_n;
     wire  rcc_sram1_arcg_clk_en;
-    wire  rcc_sdmmc2_arcg_rst_n;
     wire  rcc_sdmmc2_arcg_clk_en;
-    wire  rcc_rng_arcg_rst_n;
     wire  rcc_rng_arcg_clk_en;
-    wire  rcc_hash_arcg_rst_n;
     wire  rcc_hash_arcg_clk_en;
-    wire  rcc_crypt_arcg_rst_n;
     wire  rcc_crypt_arcg_clk_en;
-    wire  rcc_dcmi_arcg_rst_n;
     wire  rcc_dcmi_arcg_clk_en;
-    wire  rcc_ramecc2_arcg_rst_n;
     wire  rcc_ramecc2_arcg_clk_en;
-    wire  rcc_uart8_arcg_rst_n;
     wire  rcc_uart8_arcg_clk_en;
-    wire  rcc_uart7_arcg_rst_n;
     wire  rcc_uart7_arcg_clk_en;
-    wire  rcc_dac12_arcg_rst_n;
     wire  rcc_dac12_arcg_clk_en;
-    wire  rcc_hdmicec_arcg_rst_n;
     wire  rcc_hdmicec_arcg_clk_en;
-    wire  rcc_i2c3_arcg_rst_n;
     wire  rcc_i2c3_arcg_clk_en;
-    wire  rcc_i2c2_arcg_rst_n;
     wire  rcc_i2c2_arcg_clk_en;
-    wire  rcc_i2c1_arcg_rst_n;
     wire  rcc_i2c1_arcg_clk_en;
-    wire  rcc_uart5_arcg_rst_n;
     wire  rcc_uart5_arcg_clk_en;
-    wire  rcc_uart4_arcg_rst_n;
     wire  rcc_uart4_arcg_clk_en;
-    wire  rcc_usart3_arcg_rst_n;
     wire  rcc_usart3_arcg_clk_en;
-    wire  rcc_usart2_arcg_rst_n;
     wire  rcc_usart2_arcg_clk_en;
-    wire  rcc_spdifrx_arcg_rst_n;
     wire  rcc_spdifrx_arcg_clk_en;
-    wire  rcc_spi3_arcg_rst_n;
     wire  rcc_spi3_arcg_clk_en;
-    wire  rcc_spi2_arcg_rst_n;
     wire  rcc_spi2_arcg_clk_en;
-    wire  rcc_wwdg2_arcg_rst_n;
     wire  rcc_wwdg2_arcg_clk_en;
-    wire  rcc_lptim1_arcg_rst_n;
     wire  rcc_lptim1_arcg_clk_en;
-    wire  rcc_tim14_arcg_rst_n;
     wire  rcc_tim14_arcg_clk_en;
-    wire  rcc_tim13_arcg_rst_n;
     wire  rcc_tim13_arcg_clk_en;
-    wire  rcc_tim12_arcg_rst_n;
     wire  rcc_tim12_arcg_clk_en;
-    wire  rcc_tim7_arcg_rst_n;
     wire  rcc_tim7_arcg_clk_en;
-    wire  rcc_tim6_arcg_rst_n;
     wire  rcc_tim6_arcg_clk_en;
-    wire  rcc_tim5_arcg_rst_n;
     wire  rcc_tim5_arcg_clk_en;
-    wire  rcc_tim4_arcg_rst_n;
     wire  rcc_tim4_arcg_clk_en;
-    wire  rcc_tim3_arcg_rst_n;
     wire  rcc_tim3_arcg_clk_en;
-    wire  rcc_tim2_arcg_rst_n;
     wire  rcc_tim2_arcg_clk_en;
-    wire  rcc_fdcan_arcg_rst_n;
     wire  rcc_fdcan_arcg_clk_en;
-    wire  rcc_mdios_arcg_rst_n;
     wire  rcc_mdios_arcg_clk_en;
-    wire  rcc_opamp_arcg_rst_n;
     wire  rcc_opamp_arcg_clk_en;
-    wire  rcc_swpmi_arcg_rst_n;
     wire  rcc_swpmi_arcg_clk_en;
-    wire  rcc_crs_arcg_rst_n;
     wire  rcc_crs_arcg_clk_en;
-    wire  rcc_hrtim_arcg_rst_n;
     wire  rcc_hrtim_arcg_clk_en;
-    wire  rcc_dfsdm1_arcg_rst_n;
     wire  rcc_dfsdm1_arcg_clk_en;
-    wire  rcc_sai3_arcg_rst_n;
     wire  rcc_sai3_arcg_clk_en;
-    wire  rcc_sai2_arcg_rst_n;
     wire  rcc_sai2_arcg_clk_en;
-    wire  rcc_sai1_arcg_rst_n;
     wire  rcc_sai1_arcg_clk_en;
-    wire  rcc_spi5_arcg_rst_n;
     wire  rcc_spi5_arcg_clk_en;
-    wire  rcc_tim17_arcg_rst_n;
     wire  rcc_tim17_arcg_clk_en;
-    wire  rcc_tim16_arcg_rst_n;
     wire  rcc_tim16_arcg_clk_en;
-    wire  rcc_tim15_arcg_rst_n;
     wire  rcc_tim15_arcg_clk_en;
-    wire  rcc_spi4_arcg_rst_n;
     wire  rcc_spi4_arcg_clk_en;
-    wire  rcc_spi1_arcg_rst_n;
     wire  rcc_spi1_arcg_clk_en;
-    wire  rcc_usart6_arcg_rst_n;
     wire  rcc_usart6_arcg_clk_en;
-    wire  rcc_usart1_arcg_rst_n;
     wire  rcc_usart1_arcg_clk_en;
-    wire  rcc_tim8_arcg_rst_n;
     wire  rcc_tim8_arcg_clk_en;
-    wire  rcc_tim1_arcg_rst_n;
     wire  rcc_tim1_arcg_clk_en;
-    wire  rcc_sram4_arcg_rst_n;
     wire  rcc_sram4_arcg_clk_en;
-    wire  rcc_bkpram_arcg_rst_n;
     wire  rcc_bkpram_arcg_clk_en;
-    wire  rcc_ramecc3_arcg_rst_n;
     wire  rcc_ramecc3_arcg_clk_en;
-    wire  rcc_hsem_arcg_rst_n;
     wire  rcc_hsem_arcg_clk_en;
-    wire  rcc_adc3_arcg_rst_n;
     wire  rcc_adc3_arcg_clk_en;
-    wire  rcc_bdma_arcg_rst_n;
     wire  rcc_bdma_arcg_clk_en;
-    wire  rcc_crc_arcg_rst_n;
     wire  rcc_crc_arcg_clk_en;
-    wire  rcc_gpiok_arcg_rst_n;
     wire  rcc_gpiok_arcg_clk_en;
-    wire  rcc_gpioj_arcg_rst_n;
     wire  rcc_gpioj_arcg_clk_en;
-    wire  rcc_gpioi_arcg_rst_n;
     wire  rcc_gpioi_arcg_clk_en;
-    wire  rcc_gpioh_arcg_rst_n;
     wire  rcc_gpioh_arcg_clk_en;
-    wire  rcc_gpiog_arcg_rst_n;
     wire  rcc_gpiog_arcg_clk_en;
-    wire  rcc_gpiof_arcg_rst_n;
     wire  rcc_gpiof_arcg_clk_en;
-    wire  rcc_gpioe_arcg_rst_n;
     wire  rcc_gpioe_arcg_clk_en;
-    wire  rcc_gpiod_arcg_rst_n;
     wire  rcc_gpiod_arcg_clk_en;
-    wire  rcc_gpioc_arcg_rst_n;
     wire  rcc_gpioc_arcg_clk_en;
-    wire  rcc_gpiob_arcg_rst_n;
     wire  rcc_gpiob_arcg_clk_en;
-    wire  rcc_gpioa_arcg_rst_n;
     wire  rcc_gpioa_arcg_clk_en;
-    wire  rcc_rcc_arcg_rst_n;
     wire  rcc_rcc_arcg_clk_en;
-    wire  rcc_pwr_arcg_rst_n;
     wire  rcc_pwr_arcg_clk_en;
-    wire  rcc_sai4_arcg_rst_n;
     wire  rcc_sai4_arcg_clk_en;
-    wire  rcc_rtc_arcg_rst_n;
     wire  rcc_rtc_arcg_clk_en;
-    wire  rcc_vref_arcg_rst_n;
     wire  rcc_vref_arcg_clk_en;
-    wire  rcc_comp12_arcg_rst_n;
     wire  rcc_comp12_arcg_clk_en;
-    wire  rcc_lptim5_arcg_rst_n;
     wire  rcc_lptim5_arcg_clk_en;
-    wire  rcc_lptim4_arcg_rst_n;
     wire  rcc_lptim4_arcg_clk_en;
-    wire  rcc_lptim3_arcg_rst_n;
     wire  rcc_lptim3_arcg_clk_en;
-    wire  rcc_lptim2_arcg_rst_n;
     wire  rcc_lptim2_arcg_clk_en;
-    wire  rcc_i2c4_arcg_rst_n;
     wire  rcc_i2c4_arcg_clk_en;
-    wire  rcc_spi6_arcg_rst_n;
     wire  rcc_spi6_arcg_clk_en;
-    wire  rcc_lpuart1_arcg_rst_n;
     wire  rcc_lpuart1_arcg_clk_en;
-    wire  rcc_syscfg_arcg_rst_n;
     wire  rcc_syscfg_arcg_clk_en;
-    wire  rcc_iwdg2_arcg_rst_n;
     wire  rcc_iwdg2_arcg_clk_en;
-    wire  rcc_iwdg1_arcg_rst_n;
     wire  rcc_iwdg1_arcg_clk_en;
-    wire  rcc_exti_arcg_rst_n;
     wire  rcc_exti_arcg_clk_en;
 
 
@@ -1969,7 +2091,7 @@ rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .d3ppre                     ( d3ppre                      ),
     .timpre                     ( timpre                      ),
     .hrtimsel                   ( hrtimsel                    ),
-    .ckpersel                   ( ckpersel                    ),
+    .clkpersel                   ( clkpersel                    ),
     .divm1                      ( divm1                       ),
     .divm2                      ( divm2                       ),
     .divm3                      ( divm3                       ),
@@ -3641,6 +3763,17 @@ rcc_reg #(
 ///////////////////////////////////////
 wire pllsrc;
 wire pll_src_sel;
+wire [2:0] sys_clk_sw;
+wire clk;
+wire rst_n;
+wire req;
+wire [3:0] we;
+wire [28:0] addr;
+wire [31:0] wdata;
+wire [31:0] rdata;
+wire [1:0] rsp;
+
+assign sys_clk_sw = sw;
 assign pll_src_sel = pllsrc;
 
 
