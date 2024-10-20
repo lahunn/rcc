@@ -2,7 +2,7 @@ module rcc_reg#(
 // ================================================================================
 // CONFIGURABLE PARAMETERS
 // ================================================================================
-  parameter AW = 29  ,
+  parameter AW = 32  ,
   parameter DW = 32  ,
   parameter WW = DW/8
 ) (
@@ -134,8 +134,6 @@ module rcc_reg#(
   output          hsirdyie            ,
   output          lserdyie            ,
   output          lsirdyie            ,
-  input           rcc_hsecss_fail_it  ,
-  input           rcc_lsecss_fail_it  ,
   output          bdrst               ,
   output          rtcen               ,
   output [1:0]    rtcsel              ,
@@ -146,7 +144,6 @@ module rcc_reg#(
   output          lseon               ,
   input           lsi_rdy             ,
   output          lsion               ,
-//peripheral reset
   output          sdmmc1rst           ,
   output          qspirst             ,
   output          fmcrst              ,
@@ -1263,36 +1260,58 @@ wire        rcc_cicr_sel          ;
 wire        cur_rcc_cicr_hsecssc  ;
 wire        nxt_rcc_cicr_hsecssc  ;
 wire        rcc_cicr_hsecssc_en   ;
+wire        rcc_cicr_hsecssc_clr  ;
+wire        rcc_cicr_hsecssc_set  ;
 wire        cur_rcc_cicr_lsecssc  ;
 wire        nxt_rcc_cicr_lsecssc  ;
 wire        rcc_cicr_lsecssc_en   ;
+wire        rcc_cicr_lsecssc_clr  ;
+wire        rcc_cicr_lsecssc_set  ;
 wire        cur_rcc_cicr_pll3rdyc ;
 wire        nxt_rcc_cicr_pll3rdyc ;
 wire        rcc_cicr_pll3rdyc_en  ;
+wire        rcc_cicr_pll3rdyc_clr ;
+wire        rcc_cicr_pll3rdyc_set ;
 wire        cur_rcc_cicr_pll2rdyc ;
 wire        nxt_rcc_cicr_pll2rdyc ;
 wire        rcc_cicr_pll2rdyc_en  ;
+wire        rcc_cicr_pll2rdyc_clr ;
+wire        rcc_cicr_pll2rdyc_set ;
 wire        cur_rcc_cicr_pll1rdyc ;
 wire        nxt_rcc_cicr_pll1rdyc ;
 wire        rcc_cicr_pll1rdyc_en  ;
+wire        rcc_cicr_pll1rdyc_clr ;
+wire        rcc_cicr_pll1rdyc_set ;
 wire        cur_rcc_cicr_hsi48rdyc;
 wire        nxt_rcc_cicr_hsi48rdyc;
 wire        rcc_cicr_hsi48rdyc_en ;
+wire        rcc_cicr_hsi48rdyc_clr;
+wire        rcc_cicr_hsi48rdyc_set;
 wire        cur_rcc_cicr_csirdyc  ;
 wire        nxt_rcc_cicr_csirdyc  ;
 wire        rcc_cicr_csirdyc_en   ;
+wire        rcc_cicr_csirdyc_clr  ;
+wire        rcc_cicr_csirdyc_set  ;
 wire        cur_rcc_cicr_hserdyc  ;
 wire        nxt_rcc_cicr_hserdyc  ;
 wire        rcc_cicr_hserdyc_en   ;
+wire        rcc_cicr_hserdyc_clr  ;
+wire        rcc_cicr_hserdyc_set  ;
 wire        cur_rcc_cicr_hsirdyc  ;
 wire        nxt_rcc_cicr_hsirdyc  ;
 wire        rcc_cicr_hsirdyc_en   ;
+wire        rcc_cicr_hsirdyc_clr  ;
+wire        rcc_cicr_hsirdyc_set  ;
 wire        cur_rcc_cicr_lserdyc  ;
 wire        nxt_rcc_cicr_lserdyc  ;
 wire        rcc_cicr_lserdyc_en   ;
+wire        rcc_cicr_lserdyc_clr  ;
+wire        rcc_cicr_lserdyc_set  ;
 wire        cur_rcc_cicr_lsirdyc  ;
 wire        nxt_rcc_cicr_lsirdyc  ;
 wire        rcc_cicr_lsirdyc_en   ;
+wire        rcc_cicr_lsirdyc_clr  ;
+wire        rcc_cicr_lsirdyc_set  ;
 // rcc_bdcr
 wire [31:0] rcc_bdcr_read        ;
 wire        rcc_bdcr_sel         ;
@@ -3339,7 +3358,6 @@ assign cur_rcc_cr_pll3rdy = pll3_rdy;
 assign rcc_cr_pll3on_en  = (|wr_req & rcc_cr_sel);
 assign nxt_rcc_cr_pll3on = wdata[28:28]          ;
 assign pll3on            = cur_rcc_cr_pll3on     ;
-
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -3541,7 +3559,6 @@ BB_dfflrs #(
 // --------------------------------------------------------------------------------
 // 5:5                 hsidivf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-
 assign rcc_cr_hsidivf_set = cur_rcc_cr_hsidiv == eff_hsidiv        ;
 assign rcc_cr_hsidivf_clr = cur_rcc_cr_hsidiv != eff_hsidiv        ;
 assign rcc_cr_hsidivf_en  = rcc_cr_hsidivf_set | rcc_cr_hsidivf_clr;
@@ -3933,14 +3950,14 @@ generate
   genvar i;
   for(i=0;i<=2;i=i+1) begin: blk_rcc_cfgr_sw_field
 BB_dfflr #(
-      .DW     (1  ),
-  .RST_VAL('h0)
+    .DW     (1  ),
+    .RST_VAL('h0)
 ) U_rcc_cfgr_sw (
-  .clk  (clk            ),
-  .rst_n(rst_n          ),
-  .en   (rcc_cfgr_sw_en ),
-      .din  (nxt_rcc_cfgr_sw[i]),
-      .dout (cur_rcc_cfgr_sw[i])
+    .clk  (clk            ),
+    .rst_n(rst_n          ),
+    .en   (rcc_cfgr_sw_en ),
+    .din  (nxt_rcc_cfgr_sw[i]),
+    .dout (cur_rcc_cfgr_sw[i])
 );
   end
 endgenerate
@@ -6043,8 +6060,10 @@ assign rcc_cicr_read = {{21{1'b0}}
 // --------------------------------------------------------------------------------
 // 10:10               hsecssc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_hsecssc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_hsecssc = wdata[10:10]            ;
+assign rcc_cicr_hsecssc_set = wdata[10]                                  ;
+assign rcc_cicr_hsecssc_clr = ~cur_rcc_cifr_hsecssf                      ;
+assign rcc_cicr_hsecssc_en  = rcc_cicr_hsecssc_set | rcc_cicr_hsecssc_clr;
+assign nxt_rcc_cicr_hsecssc = ~rcc_cicr_hsecssc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6059,8 +6078,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 9:9                 lsecssc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_lsecssc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_lsecssc = wdata[9:9]              ;
+assign rcc_cicr_lsecssc_set = wdata[9]                                   ;
+assign rcc_cicr_lsecssc_clr = ~cur_rcc_cifr_lsecssf                      ;
+assign rcc_cicr_lsecssc_en  = rcc_cicr_lsecssc_set | rcc_cicr_lsecssc_clr;
+assign nxt_rcc_cicr_lsecssc = ~rcc_cicr_lsecssc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6075,8 +6096,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 8:8                 pll3rdyc            W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_pll3rdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_pll3rdyc = wdata[8:8]              ;
+assign rcc_cicr_pll3rdyc_set = wdata[8]                                     ;
+assign rcc_cicr_pll3rdyc_clr = ~cur_rcc_cifr_pll3rdyf                       ;
+assign rcc_cicr_pll3rdyc_en  = rcc_cicr_pll3rdyc_set | rcc_cicr_pll3rdyc_clr;
+assign nxt_rcc_cicr_pll3rdyc = ~rcc_cicr_pll3rdyc_clr                       ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6091,8 +6114,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 7:7                 pll2rdyc            W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_pll2rdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_pll2rdyc = wdata[7:7]              ;
+assign rcc_cicr_pll2rdyc_set = wdata[7]                                     ;
+assign rcc_cicr_pll2rdyc_clr = ~cur_rcc_cifr_pll2rdyf                       ;
+assign rcc_cicr_pll2rdyc_en  = rcc_cicr_pll2rdyc_set | rcc_cicr_pll2rdyc_clr;
+assign nxt_rcc_cicr_pll2rdyc = ~rcc_cicr_pll2rdyc_clr                       ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6107,8 +6132,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 6:6                 pll1rdyc            W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_pll1rdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_pll1rdyc = wdata[6:6]              ;
+assign rcc_cicr_pll1rdyc_set = wdata[6]                                     ;
+assign rcc_cicr_pll1rdyc_clr = ~cur_rcc_cifr_pll1rdyf                       ;
+assign rcc_cicr_pll1rdyc_en  = rcc_cicr_pll1rdyc_set | rcc_cicr_pll1rdyc_clr;
+assign nxt_rcc_cicr_pll1rdyc = ~rcc_cicr_pll1rdyc_clr                       ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6123,8 +6150,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 5:5                 hsi48rdyc           W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_hsi48rdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_hsi48rdyc = wdata[5:5]              ;
+assign rcc_cicr_hsi48rdyc_set = wdata[5]                                       ;
+assign rcc_cicr_hsi48rdyc_clr = ~cur_rcc_cifr_hsi48rdyf                        ;
+assign rcc_cicr_hsi48rdyc_en  = rcc_cicr_hsi48rdyc_set | rcc_cicr_hsi48rdyc_clr;
+assign nxt_rcc_cicr_hsi48rdyc = ~rcc_cicr_hsi48rdyc_clr                        ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6139,8 +6168,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 4:4                 csirdyc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_csirdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_csirdyc = wdata[4:4]              ;
+assign rcc_cicr_csirdyc_set = wdata[4]                                   ;
+assign rcc_cicr_csirdyc_clr = ~cur_rcc_cifr_csirdyf                      ;
+assign rcc_cicr_csirdyc_en  = rcc_cicr_csirdyc_set | rcc_cicr_csirdyc_clr;
+assign nxt_rcc_cicr_csirdyc = ~rcc_cicr_csirdyc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6155,8 +6186,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 3:3                 hserdyc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_hserdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_hserdyc = wdata[3:3]              ;
+assign rcc_cicr_hserdyc_set = wdata[3]                                   ;
+assign rcc_cicr_hserdyc_clr = ~cur_rcc_cifr_hserdyf                      ;
+assign rcc_cicr_hserdyc_en  = rcc_cicr_hserdyc_set | rcc_cicr_hserdyc_clr;
+assign nxt_rcc_cicr_hserdyc = ~rcc_cicr_hserdyc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6171,8 +6204,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 2:2                 hsirdyc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_hsirdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_hsirdyc = wdata[2:2]              ;
+assign rcc_cicr_hsirdyc_set = wdata[2]                                   ;
+assign rcc_cicr_hsirdyc_clr = ~cur_rcc_cifr_hsirdyf                      ;
+assign rcc_cicr_hsirdyc_en  = rcc_cicr_hsirdyc_set | rcc_cicr_hsirdyc_clr;
+assign nxt_rcc_cicr_hsirdyc = ~rcc_cicr_hsirdyc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6187,8 +6222,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 1:1                 lserdyc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_lserdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_lserdyc = wdata[1:1]              ;
+assign rcc_cicr_lserdyc_set = wdata[1]                                   ;
+assign rcc_cicr_lserdyc_clr = ~cur_rcc_cifr_lserdyf                      ;
+assign rcc_cicr_lserdyc_en  = rcc_cicr_lserdyc_set | rcc_cicr_lserdyc_clr;
+assign nxt_rcc_cicr_lserdyc = ~rcc_cicr_lserdyc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -6203,8 +6240,10 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 0:0                 lsirdyc             W1C                 0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cicr_lsirdyc_en  = (|wr_req & rcc_cicr_sel);
-assign nxt_rcc_cicr_lsirdyc = wdata[0:0]              ;
+assign rcc_cicr_lsirdyc_set = wdata[0]                                   ;
+assign rcc_cicr_lsirdyc_clr = ~cur_rcc_cifr_lsirdyf                      ;
+assign rcc_cicr_lsirdyc_en  = rcc_cicr_lsirdyc_set | rcc_cicr_lsirdyc_clr;
+assign nxt_rcc_cicr_lsirdyc = ~rcc_cicr_lsirdyc_clr                      ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
