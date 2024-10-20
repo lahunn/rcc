@@ -2693,6 +2693,7 @@ wire        rcc_c2_apb4enr_lpuart1en_en ;
 wire        cur_rcc_c2_apb4enr_syscfgen ;
 wire        nxt_rcc_c2_apb4enr_syscfgen ;
 wire        rcc_c2_apb4enr_syscfgen_en  ;
+wire        rcc_csr_sel;
 // rcc_c2_ahb3lpenr
 wire [31:0] rcc_c2_ahb3lpenr_read           ;
 wire        rcc_c2_ahb3lpenr_sel            ;
@@ -3038,6 +3039,9 @@ wire hseon_clr_n;
 wire hsi48on_clr_n;
 wire [1:0]  eff_hsidiv;
 wire rcc_eff_hsidiv_en;
+wire rcc_bdcr_byte2_wren;
+wire rcc_bdcr_byte1_wren;
+wire rcc_bdcr_byte0_wren;
 
 // rcc_csr
 wire [31:0] rcc_csr_read      ;
@@ -3328,7 +3332,7 @@ assign rcc_cr_read = {{2{1'b0}}
 // 29:29               pll3rdy             RO                  0b0                 
 // --------------------------------------------------------------------------------
 
-assign pllxon_clr = rst_n & ~(rcc_sys_stop | (rcc_hsecss_fail & cur_rcc_pllclkselr_pllsrc == 2'b10));
+assign pllxon_clr_n = rst_n & ~(rcc_sys_stop | (rcc_hsecss_fail & cur_rcc_pllclkselr_pllsrc == 2'b10));
 assign cur_rcc_cr_pll3rdy = pll3_rdy;
 
 // --------------------------------------------------------------------------------
@@ -3343,7 +3347,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_pll3on (
   .clk  (clk              ),
-  .rst_n(pll3on_clr_n     ),
+  .rst_n(pllxon_clr_n     ),
   .en   (rcc_cr_pll3on_en ),
   .din  (nxt_rcc_cr_pll3on),
   .dout (cur_rcc_cr_pll3on)
@@ -3367,7 +3371,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_pll2on (
   .clk  (clk              ),
-  .rst_n(pllxon_clr       ),
+  .rst_n(pllxon_clr_n       ),
   .en   (rcc_cr_pll2on_en ),
   .din  (nxt_rcc_cr_pll2on),
   .dout (cur_rcc_cr_pll2on)
@@ -3389,7 +3393,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_pll1on (
   .clk  (clk              ),
-  .rst_n(pllxon_clr       ),
+  .rst_n(pllxon_clr_n       ),
   .en   (rcc_cr_pll1on_en ),
   .din  (nxt_rcc_cr_pll1on),
   .dout (cur_rcc_cr_pll1on)
@@ -3472,7 +3476,7 @@ assign cur_rcc_cr_hsi48rdy = hsi48_rdy;
 // 12:12               hsi48on             RW                  0b0                 
 // --------------------------------------------------------------------------------
 
-assign hsi48on_clr =  rst_n & ~rcc_sys_stop;
+assign hsi48on_clr_n =  rst_n & ~rcc_sys_stop;
 
 assign rcc_cr_hsi48on_en  = (|wr_req & rcc_cr_sel);
 assign nxt_rcc_cr_hsi48on = wdata[12:12]          ;
@@ -3482,7 +3486,7 @@ BB_dfflr #(
   .RST_VAL('h0)
 ) U_rcc_cr_hsi48on (
   .clk  (clk               ),
-  .rst_n(hsi48on_clr       ),
+  .rst_n(hsi48on_clr_n       ),
   .en   (rcc_cr_hsi48on_en ),
   .din  (nxt_rcc_cr_hsi48on),
   .dout (cur_rcc_cr_hsi48on)

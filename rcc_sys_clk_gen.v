@@ -5,10 +5,10 @@ module rcc_sys_clk_gen (
     input wire hsi_clk,
     input wire csi_clk,
     input wire hse_clk,
-    input wire pll1_pclk,
+    input wire pll1_p_clk,
 
     //clock select
-    input wire sys_clk_sw,
+    input wire [1:0] sys_clk_sw,
 
     //divide factor
     input wire [3:0] d1cpre,
@@ -22,54 +22,51 @@ module rcc_sys_clk_gen (
     input wire hrtimsel,
 
     //control signals of sys_clk
-    input wire [0:0] c2_sleep,
-    input wire [0:0] c2_deepsleep,
-    input wire [0:0] c1_sleep,
-    input wire [0:0] c1_deepsleep,
+    input wire  c2_sleep,
+    input wire  c2_deepsleep,
+    input wire  c1_sleep,
+    input wire  c1_deepsleep,
     input wire d3_deepsleep,
     input wire c2_per_alloc_d1,
     input wire c1_per_alloc_d2,
 
     //output clocks
-    output wire [0:0] rcc_c2_clk,
-    output wire [0:0] rcc_fclk_c2,
-    output wire [0:0] rcc_c2_systick_clk,
-    output wire [0:0] rcc_c2_rst_n,
-    output wire [0:0] rcc_c1_clk,
-    output wire [0:0] rcc_fclk_c1,
-    output wire [0:0] rcc_c1_systick_clk,
-    output wire [0:0] rcc_c1_rst_n,
-    output wire [0:0] rcc_axibridge_d1_clk,
-    output wire [0:0] rcc_ahb3bridge_d1_clk,
-    output wire [0:0] rcc_apb3bridge_d1_clk,
-    output wire [0:0] rcc_ahb1bridge_d2_clk,
-    output wire [0:0] rcc_ahb2bridge_d2_clk,
-    output wire [0:0] rcc_apb1bridge_d2_clk,
-    output wire [0:0] rcc_apb2bridge_d2_clk,
-    output wire [0:0] rcc_ahb4bridge_d3_clk,
-    output wire [0:0] rcc_apb4bridge_d3_clk,
-    output wire [0:0] rcc_timx_ker_clk,
-    output wire [0:0] rcc_timy_ker_clk,
-    output wire [0:0] rcc_hrtimer_ker_clk,
+    output wire rcc_c2_clk,
+    output wire rcc_fclk_c2,
+    output wire rcc_c2_systick_clk,
+    output wire rcc_c1_clk,
+    output wire rcc_fclk_c1,
+    output wire rcc_c1_systick_clk,
+    output wire rcc_axibridge_d1_clk,
+    output wire rcc_ahb3bridge_d1_clk,
+    output wire rcc_apb3bridge_d1_clk,
+    output wire rcc_ahb1bridge_d2_clk,
+    output wire rcc_ahb2bridge_d2_clk,
+    output wire rcc_apb1bridge_d2_clk,
+    output wire rcc_apb2bridge_d2_clk,
+    output wire rcc_ahb4bridge_d3_clk,
+    output wire rcc_apb4bridge_d3_clk,
+    output wire rcc_timx_ker_clk,
+    output wire rcc_timy_ker_clk,
+    output wire rcc_hrtimer_prescalar_clk,
     output wire sys_d1cpre_clk,
     output wire sys_hpre_clk,
 
-    // signals connected to busy 指示信号 
-    input axibridge_d1_busy,
-    input ahbbridge_d1_busy,
-    input apbbridge_d1_busy,
-    input ahb1bridge_d2_busy,
-    input ahb2bridge_d2_busy,
-    input apb1bridge_d2_busy,
-    input apb2bridge_d2_busy,
-    input ahb4bridge_d3_busy,
-    input apb4bridge_d3_busy,
-    input flash_busy
+//arcg enable signal
+    input  d1_clk_arcg_en,
+    input  d2_clk_arcg_en,
+    input  sys_clk_arcg_en,
+
+//system stop signal
+    input rcc_d1_stop,
+    input rcc_d2_stop,
+    input rcc_sys_stop,
+//system clock
+    output sys_clk
 );
 
 // sys_clk_generate
     wire sys_clk_pre;
-    wire sys_clk_gated;
     wire sys_clk_en;
 
     wire rcc_d1_bus_clk;
@@ -80,28 +77,18 @@ module rcc_sys_clk_gen (
     wire rcc_d2_bus_clk_en;
     wire rcc_d3_bus_clk_en;
     wire rcc_c1_clk_en;
-
-    wire hrtim_ker_clk_hspeed;
-
-    wire d1_busy;
-    wire d2_busy;
-    wire d3_busy;
-
+    wire rcc_c2_clk_en;
 
 ///////////////////////////////////////
 // clock gate control /////////////////
 ///////////////////////////////////////
 
-    assign d1_busy = axibridge_d1_busy | ahbbridge_d1_busy | apbbridge_d1_busy  | flash_busy;
-    assign d2_busy = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
-    assign d3_busy = d1_busy | d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
-    
-    assign sys_clk_en = (~(c1_deepsleep & c2_deepsleep & d3_deepsleep)) | d3_busy | rcc_d1_bus_clk_en | rcc_d2_bus_clk_en;
+    assign sys_clk_en = ~rcc_sys_stop & sys_clk_arcg_en;
     assign rcc_c1_clk_en = ~c1_deepsleep & ~c1_sleep;
     assign rcc_c2_clk_en = ~c2_deepsleep & ~c2_sleep;
 
-    assign rcc_d1_bus_clk_en = ~c1_deepsleep | (c2_per_alloc_d1 & ~c2_deepsleep) | d1_busy;
-    assign rcc_d2_bus_clk_en = ~c2_deepsleep | (c1_per_alloc_d2 & ~c1_deepsleep) | d2_busy;
+    assign rcc_d1_bus_clk_en = rcc_d1_stop & d1_clk_arcg_en;
+    assign rcc_d2_bus_clk_en = rcc_d2_stop & d2_clk_arcg_en;
     assign rcc_d3_bus_clk_en = sys_clk_en;
 
 
@@ -113,14 +100,15 @@ module rcc_sys_clk_gen (
     glitch_free_clk_switch #(
         .CLK_NUM(4)
     ) sys_clk_switch (
-        .clk_in({pll1_pclk, hse_clk, csi_clk, hsi_clk}),
+        .clk_in({pll1_p_clk, hse_clk, csi_clk, hsi_clk}),
+        .rst_n(sys_rst_n),
         .sel(sys_clk_sw),
         .clk_out(sys_clk_pre)
     );
     rcc_clk_gate_cell sys_clk_gate(
         .clk_in(sys_clk_pre),
-        .clk_out(sys_clk_gated),
-        .clk_gate(sys_clk_en)
+        .clk_out(sys_clk),
+        .clk_en(sys_clk_en)
     );
 
     div_x_stage #(
@@ -128,7 +116,8 @@ module rcc_sys_clk_gen (
         .IS_STAGE_REMOVE(1),
         .STAGE_REMOVED(5)  // remove 32 divided clock
     ) sys_d1cpre_clk_divider(
-        .clk_in(sys_clk_gated),
+        .clk_in(sys_clk),
+        .rst_n(sys_rst_n),
         .div_sel(d1cpre),
         .clk_out(sys_d1cpre_clk)
     );
@@ -139,7 +128,7 @@ module rcc_sys_clk_gen (
     rcc_clk_gate_cell rcc_c1_clk_gate(
         .clk_in(sys_d1cpre_clk),
         .clk_out(rcc_c1_clk),
-        .clk_gate(rcc_c1_clk_en)
+        .clk_en(rcc_c1_clk_en)
     );
     assign rcc_fclk_c1 = rcc_c1_clk;
 
@@ -147,6 +136,7 @@ module rcc_sys_clk_gen (
         .SQUARE(3)
     ) c1_systick_clk_div(
         .clk_in(rcc_c1_clk),
+        .rst_n(sys_rst_n),
         .clk_out(rcc_c1_systick_clk)
     );
 
@@ -156,6 +146,7 @@ module rcc_sys_clk_gen (
         .STAGE_REMOVED(5)  // remove 32 divided clock
     ) sys_hpre_clk_divider(
         .clk_in(sys_d1cpre_clk),
+        .rst_n(sys_rst_n),
         .div_sel(hpre),
         .clk_out(sys_hpre_clk)
     );
@@ -163,11 +154,12 @@ module rcc_sys_clk_gen (
     rcc_clk_gate_cell rcc_d1_bus_clk_gate(
         .clk_in(sys_hpre_clk),
         .clk_out(rcc_d1_bus_clk),
-        .clk_gate(rcc_d1_bus_clk_en)
+        .clk_en(rcc_d1_bus_clk_en)
     );
 
     assign rcc_axibridge_d1_clk = rcc_d1_bus_clk;
-    assign rcc_ahbbridge_d1_clk = rcc_d1_bus_clk;
+    assign rcc_ahb3bridge_d1_clk = rcc_d1_bus_clk;
+    
     
     div_x_stage #(
         .STAGE_NUM(4), // 2 ^ 4 = 16
@@ -175,6 +167,7 @@ module rcc_sys_clk_gen (
         .STAGE_REMOVED(0)
     ) rcc_d2_bus_clk_divider(
         .clk_in(rcc_d1_bus_clk),
+        .rst_n(sys_rst_n),
         .div_sel(d1ppre),
         .clk_out(rcc_apb3bridge_d1_clk)
     );
@@ -186,7 +179,7 @@ module rcc_sys_clk_gen (
     rcc_clk_gate_cell rcc_c2_clk_gate(
         .clk_in(sys_hpre_clk),
         .clk_out(rcc_c2_clk),
-        .clk_gate(rcc_c2_clk_en)
+        .clk_en(rcc_c2_clk_en)
     );
 
     assign rcc_fclk_c2 = rcc_c2_clk;
@@ -195,13 +188,14 @@ module rcc_sys_clk_gen (
         .SQUARE(3)
     ) c2_systick_clk_div(
         .clk_in(rcc_c2_clk),
+        .rst_n(sys_rst_n),
         .clk_out(rcc_c2_systick_clk)
     );
 
     rcc_clk_gate_cell rcc_d2_bus_clk_gate(
         .clk_in(sys_hpre_clk),
         .clk_out(rcc_d2_bus_clk),
-        .clk_gate(rcc_d2_bus_clk_en)
+        .clk_en(rcc_d2_bus_clk_en)
     );
 
     assign rcc_ahb1bridge_d2_clk = rcc_d2_bus_clk;
@@ -225,13 +219,8 @@ module rcc_sys_clk_gen (
         .pclk(rcc_apb2bridge_d2_clk)
     );
 
-    rcc_clk_gate_cell hrtim_ker_clk_hspeed_gate(
-        .clk_in(sys_d1cpre_clk),
-        .clk_out(hrtim_ker_clk_hspeed),
-        .clk_gate(hrtim_ker_clk_hspeed_en)
-    );
 
-    assign rcc_hrtimer_ker_clk = hrtimsel ? rcc_timy_ker_clk : hrtim_ker_clk_hspeed;
+    assign rcc_hrtimer_prescalar_clk = hrtimsel ? rcc_timy_ker_clk : rcc_c1_clk;
 
 ///////////////////////////////////////
 // d2 domian clock generate///////////
@@ -240,7 +229,7 @@ module rcc_sys_clk_gen (
     rcc_clk_gate_cell rcc_d3_bus_clk_gate(
         .clk_in(sys_hpre_clk),
         .clk_out(rcc_d3_bus_clk),
-        .clk_gate(rcc_d3_bus_clk_en)
+        .clk_en(rcc_d3_bus_clk_en)
     );
 
     assign rcc_ahb4bridge_d3_clk = rcc_d3_bus_clk;

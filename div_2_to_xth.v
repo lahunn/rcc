@@ -1,6 +1,6 @@
 module div_2_to_xth
 #(
-    parameter SQUARE = 0
+    parameter SQUARE = 1  // the max divide factor , must be larger than 1
 )
 (
     input wire clk_in,
@@ -14,11 +14,15 @@ module div_2_to_xth
     genvar i;
     generate
         for(i = 0; i < SQUARE; i = i + 1) begin : div_2_gen
-            dff_cell dff_cell_inst (
-                .clk(clk_temp[i]),
-                .rst_n(rst_n),
-                .d(~clk_temp[i+1]),
-                .q(clk_temp[i+1])
+            BB_dfflr #(
+                .DW      ( 1 ),
+                .RST_VAL ( 0 ))
+            u_BB_dfflr (
+                .clk                     ( clk_temp[i]),
+                .rst_n                   ( rst_n   ),
+                .en                      ( 1'b1    ),
+                .din                     ( ~clk_temp[i+1]   ),
+                .dout                    ( clk_temp[i+1]    )
             );
         end
     endgenerate

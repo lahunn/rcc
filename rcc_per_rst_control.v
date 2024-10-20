@@ -1,4 +1,4 @@
-module per_ker_rst_control (
+module rcc_per_rst_control (
     output rcc_flash_rst_n,
     input qspirst,
     output rcc_qspi_rst_n,

@@ -11,6 +11,7 @@ module div_x_stage
     output wire clk_out
 );
     wire [STAGE_NUM:0] clk_temp;
+    wire clk_out_0;
     assign clk_temp[0] = clk_in;
 
 
@@ -18,11 +19,16 @@ module div_x_stage
     genvar i;
     generate
         for(i = 0; i < STAGE_NUM; i = i + 1) begin : div_2_gen
-            dff_cell dff_cell_inst (
-                .clk(clk_temp[i]),
-                .rst_n(rst_n),
-                .d(~clk_temp[i+1]),
-                .q(clk_temp[i+1])
+            BB_dfflr #(
+                .DW      ( 1 ),
+                .RST_VAL ( 0 ))
+            u_BB_dfflr (
+                .clk                     ( clk_temp[i]    ),
+                .rst_n                   ( rst_n   ),
+                .en                      ( 1'b1     ),
+                .din                     ( ~clk_temp[i+1]    ),
+
+                .dout                    ( clk_temp[i+1]    )
             );
         end
     endgenerate
@@ -35,6 +41,7 @@ module div_x_stage
             )
             glitch_free_clk_switch_inst_0 (
                 .clk_in(clk_temp[STAGE_NUM:1]),
+                .rst_n(rst_n),
                 .sel(div_sel[$clog2(STAGE_NUM)-1:0]),
                 .clk_out(clk_out_0)
             );  // select clock from 2 to 2^STAGE_NUM
@@ -42,6 +49,7 @@ module div_x_stage
                 .CLK_NUM(2)
             )glitch_free_clk_switch_inst_1 (
                 .clk_in({clk_out_0, clk_in}),
+                .rst_n(rst_n),
                 .sel(div_sel[$clog2(STAGE_NUM)]),
                 .clk_out(clk_out)
             );
@@ -52,6 +60,7 @@ module div_x_stage
             )
             glitch_free_clk_switch_inst_0 (
                 .clk_in({clk_temp[STAGE_NUM:2]}),
+                .rst_n(rst_n),
                 .sel(div_sel[$clog2(STAGE_NUM-1)-1:0]),
                 .clk_out(clk_out_0)
             );  // select clock from 2 to 2^STAGE_NUM
@@ -59,6 +68,7 @@ module div_x_stage
                 .CLK_NUM(2)
             )glitch_free_clk_switch_inst_1 (
                 .clk_in({clk_out_0, clk_in}),
+                .rst_n(rst_n),
                 .sel(div_sel[$clog2(STAGE_NUM-1)]),
                 .clk_out(clk_out)
             );
@@ -69,6 +79,7 @@ module div_x_stage
             )
             glitch_free_clk_switch_inst_0 (
                 .clk_in({clk_temp[STAGE_NUM:STAGE_REMOVED+1], clk_temp[STAGE_REMOVED-1:1]}),
+                .rst_n(rst_n),
                 .sel(div_sel[$clog2(STAGE_NUM-1)-1:0]),
                 .clk_out(clk_out_0)
             );  // select clock from 2 to 2^STAGE_NUM
@@ -76,6 +87,7 @@ module div_x_stage
                 .CLK_NUM(2)
             )glitch_free_clk_switch_inst_1 (
                 .clk_in({clk_out_0, clk_in}),
+                .rst_n(rst_n),
                 .sel(div_sel[$clog2(STAGE_NUM-1)]),
                 .clk_out(clk_out)
             );

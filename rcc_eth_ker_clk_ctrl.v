@@ -5,7 +5,7 @@ module rcc_eth_ker_clk_ctrl (
     input wire eth_rcc_epis_2,
 
     // reset signal
-    input wire sys_rst_n,
+    input wire rst_n,
 
     //output
     output wire rcc_eth_mii_tx_clk,
@@ -47,6 +47,7 @@ module rcc_eth_ker_clk_ctrl (
     .CLK_NUM ( 2 ))
     eth_mii_tx_clk_switch (
         .clk_in                  ( {pad_rcc_eth_mii_rx_clk_divided,pad_rcc_eth_mii_tx_clk}    ),
+        .rst_n                   ( rst_n     ),
         .sel                     ( eth_rcc_epis_2       ),
 
         .clk_out                 ( rcc_eth_mii_tx_clk_pre   )
@@ -56,16 +57,15 @@ module rcc_eth_ker_clk_ctrl (
     .CLK_NUM ( 2 ))
     eth_mii_rx_clk_switch (
         .clk_in                  ( {pad_rcc_eth_mii_rx_clk_divided,pad_rcc_eth_mii_rx_clk}    ),
+        .rst_n                   ( rst_n     ),
         .sel                     ( eth_rcc_epis_2       ),
 
         .clk_out                 ( rcc_eth_mii_rx_clk_pre   )
     );
 
-    div_even_stable #(
-    .DIVISION ( 2 ))
-    eth_mii_rx_clk_divider_2 (
+    div_2 eth_mii_rx_clk_divider_2 (
         .clk_in                  ( pad_rcc_eth_mii_rx_clk    ),
-        .rst_n                   ( sys_rst_n     ),
+        .rst_n                   ( rst_n     ),
 
         .clk_out                 ( pad_rcc_eth_mii_rx_clk_div_2   )
     );
@@ -74,7 +74,7 @@ module rcc_eth_ker_clk_ctrl (
     .DIVISION ( 20 ))
     eth_mii_rx_clk_divider_20 (
         .clk_in                  ( pad_rcc_eth_mii_rx_clk    ),
-        .rst_n                   ( sys_rst_n     ),
+        .rst_n                   ( rst_n     ),
 
         .clk_out                 ( pad_rcc_eth_mii_rx_clk_div_20   )
     );

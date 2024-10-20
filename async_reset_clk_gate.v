@@ -12,9 +12,9 @@ module async_reset_clk_gate #(
 wire rst_n_f;//
 wire rst_n_ff;//
 reg clk_en_f;
-reg [$clog2(DELAY)-1:0] counter;
+reg [$clog2(DELAY):0] counter;
 
-assign clk_en = aarcg_on ? clk_en_f : 1'b1;
+assign clk_en = arcg_on ? clk_en_f : 1'b1;
 
 BB_dfflr #(
   .DW     (1  ),
@@ -30,7 +30,7 @@ BB_dfflr #(
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
-) reset_sync_1 (
+) reset_sync_2 (
   .clk  (clk_in                   ),
   .rst_n(rst_n_f                  ),
   .en   (1'b1 ),
@@ -42,7 +42,7 @@ always @(posedge clk_in or negedge rst_n_ff)begin
     if(~rst_n_ff)begin
         rst_n_clk_g <= 1'b0;
         clk_en_f <= 1'b0;
-        counter <= {$clog2(DELAY){1'b0}};
+        counter <= 'b0;
     end else begin
         rst_n_clk_g <= 1'b1;
         if(counter < DELAY)begin
