@@ -36,7 +36,6 @@ module rcc_vcore_top #(
     output wire pwr_por_rst_n,
     output wire pwr_vsw_rst_n,
     output wire sys_rst_n,
-    output wire rcc_perx_rst_n,
     output wire d1_rst_n,
     output wire d2_rst_n,
     output wire sdby_rst_n,
@@ -102,6 +101,9 @@ module rcc_vcore_top #(
     input  csi_clk_pre,
 // signals connected to HSI
     input  hsi_origin_clk,
+//signals from eth 
+    input eth_rcc_fes,
+    input eth_rcc_epis_2,
 //register signals
       // rcc_c1_rsr 
     input cur_rcc_c1_rsr_lpwr2rstf,
@@ -433,6 +435,121 @@ wire rcc_d3_busy;
     wire   spi6rst;
     wire   lpuart1rst;
     wire   syscfgrst;
+//reset signals to peripherals
+    wire rcc_flash_rst_n;
+    wire rcc_qspi_rst_n;
+    wire rcc_axisram_rst_n;
+    wire rcc_fmc_rst_n;
+    wire rcc_dma2d_rst_n;
+    wire rcc_mdma_rst_n;
+    wire rcc_ltdc_rst_n;
+    wire rcc_ramecc1_rst_n;
+    wire rcc_gpv_rst_n;
+    wire rcc_itcm_rst_n;
+    wire rcc_dtcm2_rst_n;
+    wire rcc_dtcm1_rst_n;
+    wire rcc_jpgdec_rst_n;
+    wire rcc_sdmmc1_rst_n;
+    wire rcc_wwdg1_rst_n;
+    wire rcc_usb2ulpi_rst_n;
+    wire rcc_usb2otg_rst_n;
+    wire rcc_usb1ulpi_rst_n;
+    wire rcc_usb1otg_rst_n;
+    wire rcc_eth1rx_rst_n;
+    wire rcc_eth1tx_rst_n;
+    wire rcc_eth1mac_rst_n;
+    wire rcc_adc12_rst_n;
+    wire rcc_dma2_rst_n;
+    wire rcc_dma1_rst_n;
+    wire rcc_sram3_rst_n;
+    wire rcc_sram2_rst_n;
+    wire rcc_sram1_rst_n;
+    wire rcc_sdmmc2_rst_n;
+    wire rcc_rng_rst_n;
+    wire rcc_hash_rst_n;
+    wire rcc_crypt_rst_n;
+    wire rcc_dcmi_rst_n;
+    wire rcc_ramecc2_rst_n;
+    wire rcc_uart8_rst_n;
+    wire rcc_uart7_rst_n;
+    wire rcc_dac12_rst_n;
+    wire rcc_hdmicec_rst_n;
+    wire rcc_i2c3_rst_n;
+    wire rcc_i2c2_rst_n;
+    wire rcc_i2c1_rst_n;
+    wire rcc_uart5_rst_n;
+    wire rcc_uart4_rst_n;
+    wire rcc_usart3_rst_n;
+    wire rcc_usart2_rst_n;
+    wire rcc_spdifrx_rst_n;
+    wire rcc_spi3_rst_n;
+    wire rcc_spi2_rst_n;
+    wire rcc_wwdg2_rst_n;
+    wire rcc_lptim1_rst_n;
+    wire rcc_tim14_rst_n;
+    wire rcc_tim13_rst_n;
+    wire rcc_tim12_rst_n;
+    wire rcc_tim7_rst_n;
+    wire rcc_tim6_rst_n;
+    wire rcc_tim5_rst_n;
+    wire rcc_tim4_rst_n;
+    wire rcc_tim3_rst_n;
+    wire rcc_tim2_rst_n;
+    wire rcc_fdcan_rst_n;
+    wire rcc_mdios_rst_n;
+    wire rcc_opamp_rst_n;
+    wire rcc_swpmi_rst_n;
+    wire rcc_crs_rst_n;
+    wire rcc_hrtim_rst_n;
+    wire rcc_dfsdm1_rst_n;
+    wire rcc_sai3_rst_n;
+    wire rcc_sai2_rst_n;
+    wire rcc_sai1_rst_n;
+    wire rcc_spi5_rst_n;
+    wire rcc_tim17_rst_n;
+    wire rcc_tim16_rst_n;
+    wire rcc_tim15_rst_n;
+    wire rcc_spi4_rst_n;
+    wire rcc_spi1_rst_n;
+    wire rcc_usart6_rst_n;
+    wire rcc_usart1_rst_n;
+    wire rcc_tim8_rst_n;
+    wire rcc_tim1_rst_n;
+    wire rcc_sram4_rst_n;
+    wire rcc_bkpram_rst_n;
+    wire rcc_ramecc3_rst_n;
+    wire rcc_hsem_rst_n;
+    wire rcc_adc3_rst_n;
+    wire rcc_bdma_rst_n;
+    wire rcc_crc_rst_n;
+    wire rcc_gpiok_rst_n;
+    wire rcc_gpioj_rst_n;
+    wire rcc_gpioi_rst_n;
+    wire rcc_gpioh_rst_n;
+    wire rcc_gpiog_rst_n;
+    wire rcc_gpiof_rst_n;
+    wire rcc_gpioe_rst_n;
+    wire rcc_gpiod_rst_n;
+    wire rcc_gpioc_rst_n;
+    wire rcc_gpiob_rst_n;
+    wire rcc_gpioa_rst_n;
+    wire rcc_rcc_rst_n;
+    wire rcc_pwr_rst_n;
+    wire rcc_sai4_rst_n;
+    wire rcc_rtc_rst_n;
+    wire rcc_vref_rst_n;
+    wire rcc_comp12_rst_n;
+    wire rcc_lptim5_rst_n;
+    wire rcc_lptim4_rst_n;
+    wire rcc_lptim3_rst_n;
+    wire rcc_lptim2_rst_n;
+    wire rcc_i2c4_rst_n;
+    wire rcc_spi6_rst_n;
+    wire rcc_lpuart1_rst_n;
+    wire rcc_syscfg_rst_n;
+    wire rcc_iwdg2_rst_n;
+    wire rcc_iwdg1_rst_n;
+    wire rcc_exti_rst_n;
 //clk sel signals from register
     wire [1:0]  qspisel;
     wire [1:0]  fmcsel;
@@ -460,6 +577,13 @@ wire rcc_d3_busy;
     wire [1:0]  i2c4sel;
     wire [2:0]  spi6sel;
     wire [2:0]  lpuart1sel;
+    wire [2:0]  mco1sel;
+    wire [2:0]  mco2sel;
+
+    wire [3:0]  mco1pre;
+    wire [3:0]  mco2pre;
+    wire [1:0]  rtcpre;
+
 
 //rcc peripheral en and lpen signals
     wire rcc_c2_flash_en;
@@ -1149,34 +1273,7 @@ wire rcc_d3_busy;
 
 
 //register siganls need to be renamed
-    wire sram4amen;
-    wire bkpramamen;
-    wire adc3amen;
-    wire bdmaamen;
-    wire crcamen;
-    wire gpiokamen;
-    wire gpiojamen;
-    wire gpioiamen;
-    wire gpiohamen;
-    wire gpiogamen;
-    wire gpiofamen;
-    wire gpioeamen;
-    wire gpiodamen;
-    wire gpiocamen;
-    wire gpiobamen;
-    wire gpioaamen;
-    wire sai4amen;
-    wire rtcamen;
-    wire vrefamen;
-    wire comp12amen;
-    wire lptim5amen;
-    wire lptim4amen;
-    wire lptim3amen;
-    wire lptim2amen;
-    wire i2c4amen;
-    wire spi6amen;
-    wire lpuart1amen;
-    wire syscfgamen;
+    
 ///////////////////////////////////////
 // dx_req signal generate /////////////
 ///////////////////////////////////////
@@ -1232,8 +1329,6 @@ always @(posedge sys_clk or negedge sys_rst_n or rcc_pwr_d3_req_set_n) begin
             rcc_pwr_d3_req <= 1'b0;
     end
 end
-
-assign pll_src_sel = pllsrc;
 
 rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .pad_rcc_eth_mii_tx_clk     ( pad_rcc_eth_mii_tx_clk      ),
@@ -2831,7 +2926,7 @@ rcc_ahb_lite_bus  u_rcc_ahb_lite_bus (
 rcc_reg #(
     .AW ( 32   ),
     .DW ( 32   ),
-    .WW ( 4 ))
+    .WW ( 4    ))
  u_rcc_reg (
     .clk                       ( clk                        ),
     .rst_n                     ( rst_n                      ),
@@ -2851,14 +2946,19 @@ rcc_reg #(
     .flash_csi_opt             ( flash_csi_opt              ),
     .flash_hsi_opt             ( flash_hsi_opt              ),
     .crs_hsi48_trim            ( crs_hsi48_trim             ),
-    .rcc_hsecss_fail_it        ( rcc_hsecss_fail_it         ),
-    .rcc_lsecss_fail_it        ( rcc_lsecss_fail_it         ),
-    .lse_rdy                   ( lse_rdy                    ),
-    .lsi_rdy                   ( lsi_rdy                    ),
     .rcc_sys_stop              ( rcc_sys_stop               ),
     .rcc_hsecss_fail           ( rcc_hsecss_fail            ),
     .rcc_exit_sys_stop         ( rcc_exit_sys_stop          ),
     .rcc_lsecss_fail           ( rcc_lsecss_fail            ),
+    .cur_rcc_bdcr_bdrst        ( cur_rcc_bdcr_bdrst         ),
+    .cur_rcc_bdcr_rtcen        ( cur_rcc_bdcr_rtcen         ),
+    .cur_rcc_bdcr_rtcsel       ( cur_rcc_bdcr_rtcsel        ),
+    .cur_rcc_bdcr_lsecssd      ( cur_rcc_bdcr_lsecssd       ),
+    .cur_rcc_bdcr_lsecsson     ( cur_rcc_bdcr_lsecsson      ),
+    .cur_rcc_bdcr_lsedrv       ( cur_rcc_bdcr_lsedrv        ),
+    .cur_rcc_bdcr_lsebyp       ( cur_rcc_bdcr_lsebyp        ),
+    .cur_rcc_bdcr_lserdy       ( cur_rcc_bdcr_lserdy        ),
+    .cur_rcc_bdcr_lseon        ( cur_rcc_bdcr_lseon         ),
     .cur_rcc_c1_rsr_lpwr2rstf  ( cur_rcc_c1_rsr_lpwr2rstf   ),
     .cur_rcc_c1_rsr_lpwr1rstf  ( cur_rcc_c1_rsr_lpwr1rstf   ),
     .cur_rcc_c1_rsr_wwdg2rstf  ( cur_rcc_c1_rsr_wwdg2rstf   ),
@@ -2908,9 +3008,9 @@ rcc_reg #(
     .hsion                     ( hsion                      ),
     .csitrim                   ( csitrim                    ),
     .hsitrim                   ( hsitrim                    ),
-    .mco2                      ( mco2                       ),
+    .mco2sel                   ( mco2sel                    ),
     .mco2pre                   ( mco2pre                    ),
-    .mco1                      ( mco1                       ),
+    .mco1sel                   ( mco1sel                    ),
     .mco1pre                   ( mco1pre                    ),
     .timpre                    ( timpre                     ),
     .hrtimsel                  ( hrtimsel                   ),
@@ -2999,14 +3099,6 @@ rcc_reg #(
     .hsirdyie                  ( hsirdyie                   ),
     .lserdyie                  ( lserdyie                   ),
     .lsirdyie                  ( lsirdyie                   ),
-    .bdrst                     ( bdrst                      ),
-    .rtcen                     ( rtcen                      ),
-    .rtcsel                    ( rtcsel                     ),
-    .lsecsson                  ( lsecsson                   ),
-    .lsedrv                    ( lsedrv                     ),
-    .lsebyp                    ( lsebyp                     ),
-    .lseon                     ( lseon                      ),
-    .lsion                     ( lsion                      ),
     .sdmmc1rst                 ( sdmmc1rst                  ),
     .qspirst                   ( qspirst                    ),
     .fmcrst                    ( fmcrst                     ),
@@ -3097,23 +3189,22 @@ rcc_reg #(
     .syscfgrst                 ( syscfgrst                  ),
     .ww2rsc                    ( ww2rsc                     ),
     .ww1rsc                    ( ww1rsc                     ),
-    .sram4amen                 ( sram4amen                  ),
-    .bkpramamen                ( bkpramamen                 ),
-    .adc3amen                  ( adc3amen                   ),
-    .sai4amen                  ( sai4amen                   ),
-    .crcamen                   ( crcamen                    ),
-    .rtcamen                   ( rtcamen                    ),
-    .vrefamen                  ( vrefamen                   ),
-    .comp12amen                ( comp12amen                 ),
-    .lptim5amen                ( lptim5amen                 ),
-    .lptim4amen                ( lptim4amen                 ),
-    .lptim3amen                ( lptim3amen                 ),
-    .lptim2amen                ( lptim2amen                 ),
-    .i2c4amen                  ( i2c4amen                   ),
-    .spi6amen                  ( spi6amen                   ),
-    .lpuart1amen               ( lpuart1amen                ),
-    .bdmaamen                  ( bdmaamen                   ),
-    .rmvf                      ( rmvf                       ),
+    .rcc_sram4_amen            ( rcc_sram4_amen             ),
+    .rcc_bkpram_amen           ( rcc_bkpram_amen            ),
+    .rcc_adc3_amen             ( rcc_adc3_amen              ),
+    .rcc_sai4_amen             ( rcc_sai4_amen              ),
+    .rcc_crc_amen              ( rcc_crc_amen               ),
+    .rcc_rtc_amen              ( rcc_rtc_amen               ),
+    .rcc_vref_amen             ( rcc_vref_amen              ),
+    .rcc_comp12_amen           ( rcc_comp12_amen            ),
+    .rcc_lptim5_amen           ( rcc_lptim5_amen            ),
+    .rcc_lptim4_amen           ( rcc_lptim4_amen            ),
+    .rcc_lptim3_amen           ( rcc_lptim3_amen            ),
+    .rcc_lptim2_amen           ( rcc_lptim2_amen            ),
+    .rcc_i2c4_amen             ( rcc_i2c4_amen              ),
+    .rcc_spi6_amen             ( rcc_spi6_amen              ),
+    .rcc_lpuart1_amen          ( rcc_lpuart1_amen           ),
+    .rcc_bdma_amen             ( rcc_bdma_amen              ),
     .rcc_c1_axisram_en         ( rcc_c1_axisram_en          ),
     .rcc_c1_itcm_en            ( rcc_c1_itcm_en             ),
     .rcc_c1_dtcm2_en           ( rcc_c1_dtcm2_en            ),
@@ -3218,110 +3309,110 @@ rcc_reg #(
     .rcc_c1_spi6_en            ( rcc_c1_spi6_en             ),
     .rcc_c1_lpuart1_en         ( rcc_c1_lpuart1_en          ),
     .rcc_c1_syscfg_en          ( rcc_c1_syscfg_en           ),
-    .rcc_c1_axisramlp_en       ( rcc_c1_axisramlp_en        ),
-    .rcc_c1_itcmlp_en          ( rcc_c1_itcmlp_en           ),
-    .rcc_c1_dtcm2lp_en         ( rcc_c1_dtcm2lp_en          ),
-    .rcc_c1_dtcm1lp_en         ( rcc_c1_dtcm1lp_en          ),
-    .rcc_c1_sdmmc1lp_en        ( rcc_c1_sdmmc1lp_en         ),
-    .rcc_c1_qspilp_en          ( rcc_c1_qspilp_en           ),
-    .rcc_c1_fmclp_en           ( rcc_c1_fmclp_en            ),
-    .rcc_c1_flitflp_en         ( rcc_c1_flitflp_en          ),
-    .rcc_c1_jpgdeclp_en        ( rcc_c1_jpgdeclp_en         ),
-    .rcc_c1_dma2dlp_en         ( rcc_c1_dma2dlp_en          ),
-    .rcc_c1_mdmalp_en          ( rcc_c1_mdmalp_en           ),
-    .rcc_c1_usb2ulpilp_en      ( rcc_c1_usb2ulpilp_en       ),
-    .rcc_c1_usb2otglp_en       ( rcc_c1_usb2otglp_en        ),
-    .rcc_c1_usb1ulpilp_en      ( rcc_c1_usb1ulpilp_en       ),
-    .rcc_c1_usb1otglp_en       ( rcc_c1_usb1otglp_en        ),
-    .rcc_c1_eth1rxlp_en        ( rcc_c1_eth1rxlp_en         ),
-    .rcc_c1_eth1txlp_en        ( rcc_c1_eth1txlp_en         ),
-    .rcc_c1_eth1maclp_en       ( rcc_c1_eth1maclp_en        ),
-    .rcc_c1_adc12lp_en         ( rcc_c1_adc12lp_en          ),
-    .rcc_c1_dma2lp_en          ( rcc_c1_dma2lp_en           ),
-    .rcc_c1_dma1lp_en          ( rcc_c1_dma1lp_en           ),
-    .rcc_c1_sram3lp_en         ( rcc_c1_sram3lp_en          ),
-    .rcc_c1_sram2lp_en         ( rcc_c1_sram2lp_en          ),
-    .rcc_c1_sram1lp_en         ( rcc_c1_sram1lp_en          ),
-    .rcc_c1_sdmmc2lp_en        ( rcc_c1_sdmmc2lp_en         ),
-    .rcc_c1_rnglp_en           ( rcc_c1_rnglp_en            ),
-    .rcc_c1_hashlp_en          ( rcc_c1_hashlp_en           ),
-    .rcc_c1_cryptlp_en         ( rcc_c1_cryptlp_en          ),
-    .rcc_c1_dcmilp_en          ( rcc_c1_dcmilp_en           ),
-    .rcc_c1_sram4lp_en         ( rcc_c1_sram4lp_en          ),
-    .rcc_c1_bkpramlp_en        ( rcc_c1_bkpramlp_en         ),
-    .rcc_c1_adc3lp_en          ( rcc_c1_adc3lp_en           ),
-    .rcc_c1_bdmalp_en          ( rcc_c1_bdmalp_en           ),
-    .rcc_c1_crclp_en           ( rcc_c1_crclp_en            ),
-    .rcc_c1_gpioklp_en         ( rcc_c1_gpioklp_en          ),
-    .rcc_c1_gpiojlp_en         ( rcc_c1_gpiojlp_en          ),
-    .rcc_c1_gpioilp_en         ( rcc_c1_gpioilp_en          ),
-    .rcc_c1_gpiohlp_en         ( rcc_c1_gpiohlp_en          ),
-    .rcc_c1_gpioglp_en         ( rcc_c1_gpioglp_en          ),
-    .rcc_c1_gpioflp_en         ( rcc_c1_gpioflp_en          ),
-    .rcc_c1_gpioelp_en         ( rcc_c1_gpioelp_en          ),
-    .rcc_c1_gpiodlp_en         ( rcc_c1_gpiodlp_en          ),
-    .rcc_c1_gpioclp_en         ( rcc_c1_gpioclp_en          ),
-    .rcc_c1_gpioblp_en         ( rcc_c1_gpioblp_en          ),
-    .rcc_c1_gpioalp_en         ( rcc_c1_gpioalp_en          ),
-    .rcc_c1_wwdg1lp_en         ( rcc_c1_wwdg1lp_en          ),
-    .rcc_c1_ltdclp_en          ( rcc_c1_ltdclp_en           ),
-    .rcc_c1_uart8lp_en         ( rcc_c1_uart8lp_en          ),
-    .rcc_c1_uart7lp_en         ( rcc_c1_uart7lp_en          ),
-    .rcc_c1_dac12lp_en         ( rcc_c1_dac12lp_en          ),
-    .rcc_c1_hdmiceclp_en       ( rcc_c1_hdmiceclp_en        ),
-    .rcc_c1_i2c3lp_en          ( rcc_c1_i2c3lp_en           ),
-    .rcc_c1_i2c2lp_en          ( rcc_c1_i2c2lp_en           ),
-    .rcc_c1_i2c1lp_en          ( rcc_c1_i2c1lp_en           ),
-    .rcc_c1_uart5lp_en         ( rcc_c1_uart5lp_en          ),
-    .rcc_c1_uart4lp_en         ( rcc_c1_uart4lp_en          ),
-    .rcc_c1_usart3lp_en        ( rcc_c1_usart3lp_en         ),
-    .rcc_c1_usart2lp_en        ( rcc_c1_usart2lp_en         ),
-    .rcc_c1_spdifrxlp_en       ( rcc_c1_spdifrxlp_en        ),
-    .rcc_c1_spi3lp_en          ( rcc_c1_spi3lp_en           ),
-    .rcc_c1_spi2lp_en          ( rcc_c1_spi2lp_en           ),
-    .rcc_c1_wwdg2lp_en         ( rcc_c1_wwdg2lp_en          ),
-    .rcc_c1_lptim1lp_en        ( rcc_c1_lptim1lp_en         ),
-    .rcc_c1_tim14lp_en         ( rcc_c1_tim14lp_en          ),
-    .rcc_c1_tim13lp_en         ( rcc_c1_tim13lp_en          ),
-    .rcc_c1_tim12lp_en         ( rcc_c1_tim12lp_en          ),
-    .rcc_c1_tim7lp_en          ( rcc_c1_tim7lp_en           ),
-    .rcc_c1_tim6lp_en          ( rcc_c1_tim6lp_en           ),
-    .rcc_c1_tim5lp_en          ( rcc_c1_tim5lp_en           ),
-    .rcc_c1_tim4lp_en          ( rcc_c1_tim4lp_en           ),
-    .rcc_c1_tim3lp_en          ( rcc_c1_tim3lp_en           ),
-    .rcc_c1_tim2lp_en          ( rcc_c1_tim2lp_en           ),
-    .rcc_c1_fdcanlp_en         ( rcc_c1_fdcanlp_en          ),
-    .rcc_c1_mdioslp_en         ( rcc_c1_mdioslp_en          ),
-    .rcc_c1_opamplp_en         ( rcc_c1_opamplp_en          ),
-    .rcc_c1_swplp_en           ( rcc_c1_swplp_en            ),
-    .rcc_c1_crslp_en           ( rcc_c1_crslp_en            ),
-    .rcc_c1_hrtimlp_en         ( rcc_c1_hrtimlp_en          ),
-    .rcc_c1_dfsdm1lp_en        ( rcc_c1_dfsdm1lp_en         ),
-    .rcc_c1_sai3lp_en          ( rcc_c1_sai3lp_en           ),
-    .rcc_c1_sai2lp_en          ( rcc_c1_sai2lp_en           ),
-    .rcc_c1_sai1lp_en          ( rcc_c1_sai1lp_en           ),
-    .rcc_c1_spi5lp_en          ( rcc_c1_spi5lp_en           ),
-    .rcc_c1_tim17lp_en         ( rcc_c1_tim17lp_en          ),
-    .rcc_c1_tim16lp_en         ( rcc_c1_tim16lp_en          ),
-    .rcc_c1_tim15lp_en         ( rcc_c1_tim15lp_en          ),
-    .rcc_c1_spi4lp_en          ( rcc_c1_spi4lp_en           ),
-    .rcc_c1_spi1lp_en          ( rcc_c1_spi1lp_en           ),
-    .rcc_c1_usart6lp_en        ( rcc_c1_usart6lp_en         ),
-    .rcc_c1_usart1lp_en        ( rcc_c1_usart1lp_en         ),
-    .rcc_c1_tim8lp_en          ( rcc_c1_tim8lp_en           ),
-    .rcc_c1_tim1lp_en          ( rcc_c1_tim1lp_en           ),
-    .rcc_c1_sai4lp_en          ( rcc_c1_sai4lp_en           ),
-    .rcc_c1_rtcapblp_en        ( rcc_c1_rtcapblp_en         ),
-    .rcc_c1_vreflp_en          ( rcc_c1_vreflp_en           ),
-    .rcc_c1_comp12lp_en        ( rcc_c1_comp12lp_en         ),
-    .rcc_c1_lptim5lp_en        ( rcc_c1_lptim5lp_en         ),
-    .rcc_c1_lptim4lp_en        ( rcc_c1_lptim4lp_en         ),
-    .rcc_c1_lptim3lp_en        ( rcc_c1_lptim3lp_en         ),
-    .rcc_c1_lptim2lp_en        ( rcc_c1_lptim2lp_en         ),
-    .rcc_c1_i2c4lp_en          ( rcc_c1_i2c4lp_en           ),
-    .rcc_c1_spi6lp_en          ( rcc_c1_spi6lp_en           ),
-    .rcc_c1_lpuart1lp_en       ( rcc_c1_lpuart1lp_en        ),
-    .rcc_c1_syscfglp_en        ( rcc_c1_syscfglp_en         ),
+    .rcc_c1_axisram_lpen       ( rcc_c1_axisram_lpen        ),
+    .rcc_c1_itcm_lpen          ( rcc_c1_itcm_lpen           ),
+    .rcc_c1_dtcm2_lpen         ( rcc_c1_dtcm2_lpen          ),
+    .rcc_c1_dtcm1_lpen         ( rcc_c1_dtcm1_lpen          ),
+    .rcc_c1_sdmmc1_lpen        ( rcc_c1_sdmmc1_lpen         ),
+    .rcc_c1_qspi_lpen          ( rcc_c1_qspi_lpen           ),
+    .rcc_c1_fmc_lpen           ( rcc_c1_fmc_lpen            ),
+    .rcc_c1_flitf_lpen         ( rcc_c1_flitf_lpen          ),
+    .rcc_c1_jpgdec_lpen        ( rcc_c1_jpgdec_lpen         ),
+    .rcc_c1_dma2d_lpen         ( rcc_c1_dma2d_lpen          ),
+    .rcc_c1_mdma_lpen          ( rcc_c1_mdma_lpen           ),
+    .rcc_c1_usb2ulpi_lpen      ( rcc_c1_usb2ulpi_lpen       ),
+    .rcc_c1_usb2otg_lpen       ( rcc_c1_usb2otg_lpen        ),
+    .rcc_c1_usb1ulpi_lpen      ( rcc_c1_usb1ulpi_lpen       ),
+    .rcc_c1_usb1otg_lpen       ( rcc_c1_usb1otg_lpen        ),
+    .rcc_c1_eth1rx_lpen        ( rcc_c1_eth1rx_lpen         ),
+    .rcc_c1_eth1tx_lpen        ( rcc_c1_eth1tx_lpen         ),
+    .rcc_c1_eth1mac_lpen       ( rcc_c1_eth1mac_lpen        ),
+    .rcc_c1_adc12_lpen         ( rcc_c1_adc12_lpen          ),
+    .rcc_c1_dma2_lpen          ( rcc_c1_dma2_lpen           ),
+    .rcc_c1_dma1_lpen          ( rcc_c1_dma1_lpen           ),
+    .rcc_c1_sram3_lpen         ( rcc_c1_sram3_lpen          ),
+    .rcc_c1_sram2_lpen         ( rcc_c1_sram2_lpen          ),
+    .rcc_c1_sram1_lpen         ( rcc_c1_sram1_lpen          ),
+    .rcc_c1_sdmmc2_lpen        ( rcc_c1_sdmmc2_lpen         ),
+    .rcc_c1_rng_lpen           ( rcc_c1_rng_lpen            ),
+    .rcc_c1_hash_lpen          ( rcc_c1_hash_lpen           ),
+    .rcc_c1_crypt_lpen         ( rcc_c1_crypt_lpen          ),
+    .rcc_c1_dcmi_lpen          ( rcc_c1_dcmi_lpen           ),
+    .rcc_c1_sram4_lpen         ( rcc_c1_sram4_lpen          ),
+    .rcc_c1_bkpram_lpen        ( rcc_c1_bkpram_lpen         ),
+    .rcc_c1_adc3_lpen          ( rcc_c1_adc3_lpen           ),
+    .rcc_c1_bdma_lpen          ( rcc_c1_bdma_lpen           ),
+    .rcc_c1_crc_lpen           ( rcc_c1_crc_lpen            ),
+    .rcc_c1_gpiok_lpen         ( rcc_c1_gpiok_lpen          ),
+    .rcc_c1_gpioj_lpen         ( rcc_c1_gpioj_lpen          ),
+    .rcc_c1_gpioi_lpen         ( rcc_c1_gpioi_lpen          ),
+    .rcc_c1_gpioh_lpen         ( rcc_c1_gpioh_lpen          ),
+    .rcc_c1_gpiog_lpen         ( rcc_c1_gpiog_lpen          ),
+    .rcc_c1_gpiof_lpen         ( rcc_c1_gpiof_lpen          ),
+    .rcc_c1_gpioe_lpen         ( rcc_c1_gpioe_lpen          ),
+    .rcc_c1_gpiod_lpen         ( rcc_c1_gpiod_lpen          ),
+    .rcc_c1_gpioc_lpen         ( rcc_c1_gpioc_lpen          ),
+    .rcc_c1_gpiob_lpen         ( rcc_c1_gpiob_lpen          ),
+    .rcc_c1_gpioa_lpen         ( rcc_c1_gpioa_lpen          ),
+    .rcc_c1_wwdg1_lpen         ( rcc_c1_wwdg1_lpen          ),
+    .rcc_c1_ltdc_lpen          ( rcc_c1_ltdc_lpen           ),
+    .rcc_c1_uart8_lpen         ( rcc_c1_uart8_lpen          ),
+    .rcc_c1_uart7_lpen         ( rcc_c1_uart7_lpen          ),
+    .rcc_c1_dac12_lpen         ( rcc_c1_dac12_lpen          ),
+    .rcc_c1_hdmicec_lpen       ( rcc_c1_hdmicec_lpen        ),
+    .rcc_c1_i2c3_lpen          ( rcc_c1_i2c3_lpen           ),
+    .rcc_c1_i2c2_lpen          ( rcc_c1_i2c2_lpen           ),
+    .rcc_c1_i2c1_lpen          ( rcc_c1_i2c1_lpen           ),
+    .rcc_c1_uart5_lpen         ( rcc_c1_uart5_lpen          ),
+    .rcc_c1_uart4_lpen         ( rcc_c1_uart4_lpen          ),
+    .rcc_c1_usart3_lpen        ( rcc_c1_usart3_lpen         ),
+    .rcc_c1_usart2_lpen        ( rcc_c1_usart2_lpen         ),
+    .rcc_c1_spdifrx_lpen       ( rcc_c1_spdifrx_lpen        ),
+    .rcc_c1_spi3_lpen          ( rcc_c1_spi3_lpen           ),
+    .rcc_c1_spi2_lpen          ( rcc_c1_spi2_lpen           ),
+    .rcc_c1_wwdg2_lpen         ( rcc_c1_wwdg2_lpen          ),
+    .rcc_c1_lptim1_lpen        ( rcc_c1_lptim1_lpen         ),
+    .rcc_c1_tim14_lpen         ( rcc_c1_tim14_lpen          ),
+    .rcc_c1_tim13_lpen         ( rcc_c1_tim13_lpen          ),
+    .rcc_c1_tim12_lpen         ( rcc_c1_tim12_lpen          ),
+    .rcc_c1_tim7_lpen          ( rcc_c1_tim7_lpen           ),
+    .rcc_c1_tim6_lpen          ( rcc_c1_tim6_lpen           ),
+    .rcc_c1_tim5_lpen          ( rcc_c1_tim5_lpen           ),
+    .rcc_c1_tim4_lpen          ( rcc_c1_tim4_lpen           ),
+    .rcc_c1_tim3_lpen          ( rcc_c1_tim3_lpen           ),
+    .rcc_c1_tim2_lpen          ( rcc_c1_tim2_lpen           ),
+    .rcc_c1_fdcan_lpen         ( rcc_c1_fdcan_lpen          ),
+    .rcc_c1_mdios_lpen         ( rcc_c1_mdios_lpen          ),
+    .rcc_c1_opamp_lpen         ( rcc_c1_opamp_lpen          ),
+    .rcc_c1_swp_lpen           ( rcc_c1_swp_lpen            ),
+    .rcc_c1_crs_lpen           ( rcc_c1_crs_lpen            ),
+    .rcc_c1_hrtim_lpen         ( rcc_c1_hrtim_lpen          ),
+    .rcc_c1_dfsdm1_lpen        ( rcc_c1_dfsdm1_lpen         ),
+    .rcc_c1_sai3_lpen          ( rcc_c1_sai3_lpen           ),
+    .rcc_c1_sai2_lpen          ( rcc_c1_sai2_lpen           ),
+    .rcc_c1_sai1_lpen          ( rcc_c1_sai1_lpen           ),
+    .rcc_c1_spi5_lpen          ( rcc_c1_spi5_lpen           ),
+    .rcc_c1_tim17_lpen         ( rcc_c1_tim17_lpen          ),
+    .rcc_c1_tim16_lpen         ( rcc_c1_tim16_lpen          ),
+    .rcc_c1_tim15_lpen         ( rcc_c1_tim15_lpen          ),
+    .rcc_c1_spi4_lpen          ( rcc_c1_spi4_lpen           ),
+    .rcc_c1_spi1_lpen          ( rcc_c1_spi1_lpen           ),
+    .rcc_c1_usart6_lpen        ( rcc_c1_usart6_lpen         ),
+    .rcc_c1_usart1_lpen        ( rcc_c1_usart1_lpen         ),
+    .rcc_c1_tim8_lpen          ( rcc_c1_tim8_lpen           ),
+    .rcc_c1_tim1_lpen          ( rcc_c1_tim1_lpen           ),
+    .rcc_c1_sai4_lpen          ( rcc_c1_sai4_lpen           ),
+    .rcc_c1_rtcapb_lpen        ( rcc_c1_rtcapb_lpen         ),
+    .rcc_c1_vref_lpen          ( rcc_c1_vref_lpen           ),
+    .rcc_c1_comp12_lpen        ( rcc_c1_comp12_lpen         ),
+    .rcc_c1_lptim5_lpen        ( rcc_c1_lptim5_lpen         ),
+    .rcc_c1_lptim4_lpen        ( rcc_c1_lptim4_lpen         ),
+    .rcc_c1_lptim3_lpen        ( rcc_c1_lptim3_lpen         ),
+    .rcc_c1_lptim2_lpen        ( rcc_c1_lptim2_lpen         ),
+    .rcc_c1_i2c4_lpen          ( rcc_c1_i2c4_lpen           ),
+    .rcc_c1_spi6_lpen          ( rcc_c1_spi6_lpen           ),
+    .rcc_c1_lpuart1_lpen       ( rcc_c1_lpuart1_lpen        ),
+    .rcc_c1_syscfg_lpen        ( rcc_c1_syscfg_lpen         ),
     .rcc_c2_axisram_en         ( rcc_c2_axisram_en          ),
     .rcc_c2_itcm_en            ( rcc_c2_itcm_en             ),
     .rcc_c2_dtcm2_en           ( rcc_c2_dtcm2_en            ),
@@ -3426,145 +3517,131 @@ rcc_reg #(
     .rcc_c2_spi6_en            ( rcc_c2_spi6_en             ),
     .rcc_c2_lpuart1_en         ( rcc_c2_lpuart1_en          ),
     .rcc_c2_syscfg_en          ( rcc_c2_syscfg_en           ),
-    .rcc_c2_axisramlp_en       ( rcc_c2_axisramlp_en        ),
-    .rcc_c2_itcmlp_en          ( rcc_c2_itcmlp_en           ),
-    .rcc_c2_dtcm2lp_en         ( rcc_c2_dtcm2lp_en          ),
-    .rcc_c2_dtcm1lp_en         ( rcc_c2_dtcm1lp_en          ),
-    .rcc_c2_sdmmc1lp_en        ( rcc_c2_sdmmc1lp_en         ),
-    .rcc_c2_qspilp_en          ( rcc_c2_qspilp_en           ),
-    .rcc_c2_fmclp_en           ( rcc_c2_fmclp_en            ),
-    .rcc_c2_flitflp_en         ( rcc_c2_flitflp_en          ),
-    .rcc_c2_jpgdeclp_en        ( rcc_c2_jpgdeclp_en         ),
-    .rcc_c2_dma2dlp_en         ( rcc_c2_dma2dlp_en          ),
-    .rcc_c2_mdmalp_en          ( rcc_c2_mdmalp_en           ),
-    .rcc_c2_usb2ulpilp_en      ( rcc_c2_usb2ulpilp_en       ),
-    .rcc_c2_usb2otglp_en       ( rcc_c2_usb2otglp_en        ),
-    .rcc_c2_usb1ulpilp_en      ( rcc_c2_usb1ulpilp_en       ),
-    .rcc_c2_usb1otglp_en       ( rcc_c2_usb1otglp_en        ),
-    .rcc_c2_eth1rxlp_en        ( rcc_c2_eth1rxlp_en         ),
-    .rcc_c2_eth1txlp_en        ( rcc_c2_eth1txlp_en         ),
-    .rcc_c2_eth1maclp_en       ( rcc_c2_eth1maclp_en        ),
-    .rcc_c2_adc12lp_en         ( rcc_c2_adc12lp_en          ),
-    .rcc_c2_dma2lp_en          ( rcc_c2_dma2lp_en           ),
-    .rcc_c2_dma1lp_en          ( rcc_c2_dma1lp_en           ),
-    .rcc_c2_sram3lp_en         ( rcc_c2_sram3lp_en          ),
-    .rcc_c2_sram2lp_en         ( rcc_c2_sram2lp_en          ),
-    .rcc_c2_sram1lp_en         ( rcc_c2_sram1lp_en          ),
-    .rcc_c2_sdmmc2lp_en        ( rcc_c2_sdmmc2lp_en         ),
-    .rcc_c2_rnglp_en           ( rcc_c2_rnglp_en            ),
-    .rcc_c2_hashlp_en          ( rcc_c2_hashlp_en           ),
-    .rcc_c2_cryptlp_en         ( rcc_c2_cryptlp_en          ),
-    .rcc_c2_dcmilp_en          ( rcc_c2_dcmilp_en           ),
-    .rcc_c2_sram4lp_en         ( rcc_c2_sram4lp_en          ),
-    .rcc_c2_bkpramlp_en        ( rcc_c2_bkpramlp_en         ),
-    .rcc_c2_adc3lp_en          ( rcc_c2_adc3lp_en           ),
-    .rcc_c2_bdmalp_en          ( rcc_c2_bdmalp_en           ),
-    .rcc_c2_crclp_en           ( rcc_c2_crclp_en            ),
-    .rcc_c2_gpioklp_en         ( rcc_c2_gpioklp_en          ),
-    .rcc_c2_gpiojlp_en         ( rcc_c2_gpiojlp_en          ),
-    .rcc_c2_gpioilp_en         ( rcc_c2_gpioilp_en          ),
-    .rcc_c2_gpiohlp_en         ( rcc_c2_gpiohlp_en          ),
-    .rcc_c2_gpioglp_en         ( rcc_c2_gpioglp_en          ),
-    .rcc_c2_gpioflp_en         ( rcc_c2_gpioflp_en          ),
-    .rcc_c2_gpioelp_en         ( rcc_c2_gpioelp_en          ),
-    .rcc_c2_gpiodlp_en         ( rcc_c2_gpiodlp_en          ),
-    .rcc_c2_gpioclp_en         ( rcc_c2_gpioclp_en          ),
-    .rcc_c2_gpioblp_en         ( rcc_c2_gpioblp_en          ),
-    .rcc_c2_gpioalp_en         ( rcc_c2_gpioalp_en          ),
-    .rcc_c2_wwdg1lp_en         ( rcc_c2_wwdg1lp_en          ),
-    .rcc_c2_ltdclp_en          ( rcc_c2_ltdclp_en           ),
-    .rcc_c2_uart8lp_en         ( rcc_c2_uart8lp_en          ),
-    .rcc_c2_uart7lp_en         ( rcc_c2_uart7lp_en          ),
-    .rcc_c2_dac12lp_en         ( rcc_c2_dac12lp_en          ),
-    .rcc_c2_hdmiceclp_en       ( rcc_c2_hdmiceclp_en        ),
-    .rcc_c2_i2c3lp_en          ( rcc_c2_i2c3lp_en           ),
-    .rcc_c2_i2c2lp_en          ( rcc_c2_i2c2lp_en           ),
-    .rcc_c2_i2c1lp_en          ( rcc_c2_i2c1lp_en           ),
-    .rcc_c2_uart5lp_en         ( rcc_c2_uart5lp_en          ),
-    .rcc_c2_uart4lp_en         ( rcc_c2_uart4lp_en          ),
-    .rcc_c2_usart3lp_en        ( rcc_c2_usart3lp_en         ),
-    .rcc_c2_usart2lp_en        ( rcc_c2_usart2lp_en         ),
-    .rcc_c2_spdifrxlp_en       ( rcc_c2_spdifrxlp_en        ),
-    .rcc_c2_spi3lp_en          ( rcc_c2_spi3lp_en           ),
-    .rcc_c2_spi2lp_en          ( rcc_c2_spi2lp_en           ),
-    .rcc_c2_wwdg2lp_en         ( rcc_c2_wwdg2lp_en          ),
-    .rcc_c2_lptim1lp_en        ( rcc_c2_lptim1lp_en         ),
-    .rcc_c2_tim14lp_en         ( rcc_c2_tim14lp_en          ),
-    .rcc_c2_tim13lp_en         ( rcc_c2_tim13lp_en          ),
-    .rcc_c2_tim12lp_en         ( rcc_c2_tim12lp_en          ),
-    .rcc_c2_tim7lp_en          ( rcc_c2_tim7lp_en           ),
-    .rcc_c2_tim6lp_en          ( rcc_c2_tim6lp_en           ),
-    .rcc_c2_tim5lp_en          ( rcc_c2_tim5lp_en           ),
-    .rcc_c2_tim4lp_en          ( rcc_c2_tim4lp_en           ),
-    .rcc_c2_tim3lp_en          ( rcc_c2_tim3lp_en           ),
-    .rcc_c2_tim2lp_en          ( rcc_c2_tim2lp_en           ),
-    .rcc_c2_fdcanlp_en         ( rcc_c2_fdcanlp_en          ),
-    .rcc_c2_mdioslp_en         ( rcc_c2_mdioslp_en          ),
-    .rcc_c2_opamplp_en         ( rcc_c2_opamplp_en          ),
-    .rcc_c2_swplp_en           ( rcc_c2_swplp_en            ),
-    .rcc_c2_crslp_en           ( rcc_c2_crslp_en            ),
-    .rcc_c2_hrtimlp_en         ( rcc_c2_hrtimlp_en          ),
-    .rcc_c2_dfsdm1lp_en        ( rcc_c2_dfsdm1lp_en         ),
-    .rcc_c2_sai3lp_en          ( rcc_c2_sai3lp_en           ),
-    .rcc_c2_sai2lp_en          ( rcc_c2_sai2lp_en           ),
-    .rcc_c2_sai1lp_en          ( rcc_c2_sai1lp_en           ),
-    .rcc_c2_spi5lp_en          ( rcc_c2_spi5lp_en           ),
-    .rcc_c2_tim17lp_en         ( rcc_c2_tim17lp_en          ),
-    .rcc_c2_tim16lp_en         ( rcc_c2_tim16lp_en          ),
-    .rcc_c2_tim15lp_en         ( rcc_c2_tim15lp_en          ),
-    .rcc_c2_spi4lp_en          ( rcc_c2_spi4lp_en           ),
-    .rcc_c2_spi1lp_en          ( rcc_c2_spi1lp_en           ),
-    .rcc_c2_usart6lp_en        ( rcc_c2_usart6lp_en         ),
-    .rcc_c2_usart1lp_en        ( rcc_c2_usart1lp_en         ),
-    .rcc_c2_tim8lp_en          ( rcc_c2_tim8lp_en           ),
-    .rcc_c2_tim1lp_en          ( rcc_c2_tim1lp_en           ),
-    .rcc_c2_sai4lp_en          ( rcc_c2_sai4lp_en           ),
-    .rcc_c2_rtcapblp_en        ( rcc_c2_rtcapblp_en         ),
-    .rcc_c2_vreflp_en          ( rcc_c2_vreflp_en           ),
-    .rcc_c2_comp12lp_en        ( rcc_c2_comp12lp_en         ),
-    .rcc_c2_lptim5lp_en        ( rcc_c2_lptim5lp_en         ),
-    .rcc_c2_lptim4lp_en        ( rcc_c2_lptim4lp_en         ),
-    .rcc_c2_lptim3lp_en        ( rcc_c2_lptim3lp_en         ),
-    .rcc_c2_lptim2lp_en        ( rcc_c2_lptim2lp_en         ),
-    .rcc_c2_i2c4lp_en          ( rcc_c2_i2c4lp_en           ),
-    .rcc_c2_spi6lp_en          ( rcc_c2_spi6lp_en           ),
-    .rcc_c2_lpuart1lp_en       ( rcc_c2_lpuart1lp_en        ),
-    .rcc_c2_syscfglp_en        ( rcc_c2_syscfglp_en         ),
+    .rcc_c2_axisram_lpen       ( rcc_c2_axisram_lpen        ),
+    .rcc_c2_itcm_lpen          ( rcc_c2_itcm_lpen           ),
+    .rcc_c2_dtcm2_lpen         ( rcc_c2_dtcm2_lpen          ),
+    .rcc_c2_dtcm1_lpen         ( rcc_c2_dtcm1_lpen          ),
+    .rcc_c2_sdmmc1_lpen        ( rcc_c2_sdmmc1_lpen         ),
+    .rcc_c2_qspi_lpen          ( rcc_c2_qspi_lpen           ),
+    .rcc_c2_fmc_lpen           ( rcc_c2_fmc_lpen            ),
+    .rcc_c2_flitf_lpen         ( rcc_c2_flitf_lpen          ),
+    .rcc_c2_jpgdec_lpen        ( rcc_c2_jpgdec_lpen         ),
+    .rcc_c2_dma2d_lpen         ( rcc_c2_dma2d_lpen          ),
+    .rcc_c2_mdma_lpen          ( rcc_c2_mdma_lpen           ),
+    .rcc_c2_usb2ulpi_lpen      ( rcc_c2_usb2ulpi_lpen       ),
+    .rcc_c2_usb2otg_lpen       ( rcc_c2_usb2otg_lpen        ),
+    .rcc_c2_usb1ulpi_lpen      ( rcc_c2_usb1ulpi_lpen       ),
+    .rcc_c2_usb1otg_lpen       ( rcc_c2_usb1otg_lpen        ),
+    .rcc_c2_eth1rx_lpen        ( rcc_c2_eth1rx_lpen         ),
+    .rcc_c2_eth1tx_lpen        ( rcc_c2_eth1tx_lpen         ),
+    .rcc_c2_eth1mac_lpen       ( rcc_c2_eth1mac_lpen        ),
+    .rcc_c2_adc12_lpen         ( rcc_c2_adc12_lpen          ),
+    .rcc_c2_dma2_lpen          ( rcc_c2_dma2_lpen           ),
+    .rcc_c2_dma1_lpen          ( rcc_c2_dma1_lpen           ),
+    .rcc_c2_sram3_lpen         ( rcc_c2_sram3_lpen          ),
+    .rcc_c2_sram2_lpen         ( rcc_c2_sram2_lpen          ),
+    .rcc_c2_sram1_lpen         ( rcc_c2_sram1_lpen          ),
+    .rcc_c2_sdmmc2_lpen        ( rcc_c2_sdmmc2_lpen         ),
+    .rcc_c2_rng_lpen           ( rcc_c2_rng_lpen            ),
+    .rcc_c2_hash_lpen          ( rcc_c2_hash_lpen           ),
+    .rcc_c2_crypt_lpen         ( rcc_c2_crypt_lpen          ),
+    .rcc_c2_dcmi_lpen          ( rcc_c2_dcmi_lpen           ),
+    .rcc_c2_sram4_lpen         ( rcc_c2_sram4_lpen          ),
+    .rcc_c2_bkpram_lpen        ( rcc_c2_bkpram_lpen         ),
+    .rcc_c2_adc3_lpen          ( rcc_c2_adc3_lpen           ),
+    .rcc_c2_bdma_lpen          ( rcc_c2_bdma_lpen           ),
+    .rcc_c2_crc_lpen           ( rcc_c2_crc_lpen            ),
+    .rcc_c2_gpiok_lpen         ( rcc_c2_gpiok_lpen          ),
+    .rcc_c2_gpioj_lpen         ( rcc_c2_gpioj_lpen          ),
+    .rcc_c2_gpioi_lpen         ( rcc_c2_gpioi_lpen          ),
+    .rcc_c2_gpioh_lpen         ( rcc_c2_gpioh_lpen          ),
+    .rcc_c2_gpiog_lpen         ( rcc_c2_gpiog_lpen          ),
+    .rcc_c2_gpiof_lpen         ( rcc_c2_gpiof_lpen          ),
+    .rcc_c2_gpioe_lpen         ( rcc_c2_gpioe_lpen          ),
+    .rcc_c2_gpiod_lpen         ( rcc_c2_gpiod_lpen          ),
+    .rcc_c2_gpioc_lpen         ( rcc_c2_gpioc_lpen          ),
+    .rcc_c2_gpiob_lpen         ( rcc_c2_gpiob_lpen          ),
+    .rcc_c2_gpioa_lpen         ( rcc_c2_gpioa_lpen          ),
+    .rcc_c2_wwdg1_lpen         ( rcc_c2_wwdg1_lpen          ),
+    .rcc_c2_ltdc_lpen          ( rcc_c2_ltdc_lpen           ),
+    .rcc_c2_uart8_lpen         ( rcc_c2_uart8_lpen          ),
+    .rcc_c2_uart7_lpen         ( rcc_c2_uart7_lpen          ),
+    .rcc_c2_dac12_lpen         ( rcc_c2_dac12_lpen          ),
+    .rcc_c2_hdmicec_lpen       ( rcc_c2_hdmicec_lpen        ),
+    .rcc_c2_i2c3_lpen          ( rcc_c2_i2c3_lpen           ),
+    .rcc_c2_i2c2_lpen          ( rcc_c2_i2c2_lpen           ),
+    .rcc_c2_i2c1_lpen          ( rcc_c2_i2c1_lpen           ),
+    .rcc_c2_uart5_lpen         ( rcc_c2_uart5_lpen          ),
+    .rcc_c2_uart4_lpen         ( rcc_c2_uart4_lpen          ),
+    .rcc_c2_usart3_lpen        ( rcc_c2_usart3_lpen         ),
+    .rcc_c2_usart2_lpen        ( rcc_c2_usart2_lpen         ),
+    .rcc_c2_spdifrx_lpen       ( rcc_c2_spdifrx_lpen        ),
+    .rcc_c2_spi3_lpen          ( rcc_c2_spi3_lpen           ),
+    .rcc_c2_spi2_lpen          ( rcc_c2_spi2_lpen           ),
+    .rcc_c2_wwdg2_lpen         ( rcc_c2_wwdg2_lpen          ),
+    .rcc_c2_lptim1_lpen        ( rcc_c2_lptim1_lpen         ),
+    .rcc_c2_tim14_lpen         ( rcc_c2_tim14_lpen          ),
+    .rcc_c2_tim13_lpen         ( rcc_c2_tim13_lpen          ),
+    .rcc_c2_tim12_lpen         ( rcc_c2_tim12_lpen          ),
+    .rcc_c2_tim7_lpen          ( rcc_c2_tim7_lpen           ),
+    .rcc_c2_tim6_lpen          ( rcc_c2_tim6_lpen           ),
+    .rcc_c2_tim5_lpen          ( rcc_c2_tim5_lpen           ),
+    .rcc_c2_tim4_lpen          ( rcc_c2_tim4_lpen           ),
+    .rcc_c2_tim3_lpen          ( rcc_c2_tim3_lpen           ),
+    .rcc_c2_tim2_lpen          ( rcc_c2_tim2_lpen           ),
+    .rcc_c2_fdcan_lpen         ( rcc_c2_fdcan_lpen          ),
+    .rcc_c2_mdios_lpen         ( rcc_c2_mdios_lpen          ),
+    .rcc_c2_opamp_lpen         ( rcc_c2_opamp_lpen          ),
+    .rcc_c2_swp_lpen           ( rcc_c2_swp_lpen            ),
+    .rcc_c2_crs_lpen           ( rcc_c2_crs_lpen            ),
+    .rcc_c2_hrtim_lpen         ( rcc_c2_hrtim_lpen          ),
+    .rcc_c2_dfsdm1_lpen        ( rcc_c2_dfsdm1_lpen         ),
+    .rcc_c2_sai3_lpen          ( rcc_c2_sai3_lpen           ),
+    .rcc_c2_sai2_lpen          ( rcc_c2_sai2_lpen           ),
+    .rcc_c2_sai1_lpen          ( rcc_c2_sai1_lpen           ),
+    .rcc_c2_spi5_lpen          ( rcc_c2_spi5_lpen           ),
+    .rcc_c2_tim17_lpen         ( rcc_c2_tim17_lpen          ),
+    .rcc_c2_tim16_lpen         ( rcc_c2_tim16_lpen          ),
+    .rcc_c2_tim15_lpen         ( rcc_c2_tim15_lpen          ),
+    .rcc_c2_spi4_lpen          ( rcc_c2_spi4_lpen           ),
+    .rcc_c2_spi1_lpen          ( rcc_c2_spi1_lpen           ),
+    .rcc_c2_usart6_lpen        ( rcc_c2_usart6_lpen         ),
+    .rcc_c2_usart1_lpen        ( rcc_c2_usart1_lpen         ),
+    .rcc_c2_tim8_lpen          ( rcc_c2_tim8_lpen           ),
+    .rcc_c2_tim1_lpen          ( rcc_c2_tim1_lpen           ),
+    .rcc_c2_sai4_lpen          ( rcc_c2_sai4_lpen           ),
+    .rcc_c2_rtcapb_lpen        ( rcc_c2_rtcapb_lpen         ),
+    .rcc_c2_vref_lpen          ( rcc_c2_vref_lpen           ),
+    .rcc_c2_comp12_lpen        ( rcc_c2_comp12_lpen         ),
+    .rcc_c2_lptim5_lpen        ( rcc_c2_lptim5_lpen         ),
+    .rcc_c2_lptim4_lpen        ( rcc_c2_lptim4_lpen         ),
+    .rcc_c2_lptim3_lpen        ( rcc_c2_lptim3_lpen         ),
+    .rcc_c2_lptim2_lpen        ( rcc_c2_lptim2_lpen         ),
+    .rcc_c2_i2c4_lpen          ( rcc_c2_i2c4_lpen           ),
+    .rcc_c2_spi6_lpen          ( rcc_c2_spi6_lpen           ),
+    .rcc_c2_lpuart1_lpen       ( rcc_c2_lpuart1_lpen        ),
+    .rcc_c2_syscfg_lpen        ( rcc_c2_syscfg_lpen         ),
+    .nxt_rcc_bdcr_bdrst        ( nxt_rcc_bdcr_bdrst         ),
+    .nxt_rcc_bdcr_rtcen        ( nxt_rcc_bdcr_rtcen         ),
+    .nxt_rcc_bdcr_rtcsel       ( nxt_rcc_bdcr_rtcsel        ),
+    .nxt_rcc_bdcr_lsecsson     ( nxt_rcc_bdcr_lsecsson      ),
+    .nxt_rcc_bdcr_lsedrv       ( nxt_rcc_bdcr_lsedrv        ),
+    .nxt_rcc_bdcr_lsebyp       ( nxt_rcc_bdcr_lsebyp        ),
+    .nxt_rcc_bdcr_lseon        ( nxt_rcc_bdcr_lseon         ),
     .rcc_c1_rsr_rmvf_wren      ( rcc_c1_rsr_rmvf_wren       ),
     .rcc_c2_rsr_rmvf_wren      ( rcc_c2_rsr_rmvf_wren       ),
-    .rcc_csr_lsion_wren        ( rcc_csr_lsion_wren         )
+    .rcc_csr_lsion_wren        ( rcc_csr_lsion_wren         ),
+    .rcc_bdcr_byte2_wren       ( rcc_bdcr_byte2_wren        ),
+    .rcc_bdcr_byte1_wren       ( rcc_bdcr_byte1_wren        ),
+    .rcc_bdcr_byte0_wren       ( rcc_bdcr_byte0_wren        )
 );
-
 
 ///////////////////////////////////////
 //signals rename //////////////////////
 ///////////////////////////////////////
-    assign rcc_sram4_amen = sram4amen;
-    assign rcc_bkpram_amen = bkpramamen;
-    assign rcc_adc3_amen = adc3amen;
-    assign rcc_bdma_amen = bdmaamen;
-    assign rcc_crc_amen = crcamen;
-    assign rcc_gpiok_amen = gpiokamen;
-    assign rcc_gpioj_amen = gpiojamen;
-    assign rcc_gpioi_amen = gpioiamen;
-    assign rcc_gpioh_amen = gpiohamen;
-    assign rcc_gpiog_amen = gpiogamen;
-    assign rcc_gpiof_amen = gpiofamen;
-    assign rcc_gpioe_amen = gpioeamen;
-    assign rcc_gpiod_amen = gpiodamen;
-    assign rcc_gpioc_amen = gpiocamen;
-    assign rcc_gpiob_amen = gpiobamen;
-    assign rcc_gpioa_amen = gpioaamen;
-    assign rcc_sai4_amen = sai4amen;
-    assign rcc_rtc_amen = rtcamen;
-    assign rcc_vref_amen = vrefamen;
-    assign rcc_comp12_amen = comp12amen;
-    assign rcc_lptim5_amen = lptim5amen;
-    assign rcc_lptim4_amen = lptim4amen;
-    assign rcc_lptim3_amen = lptim3amen;
-    assign rcc_lptim2_amen = lptim2amen;
-    assign rcc_i2c4_amen = i2c4amen;
-    assign rcc_spi6_amen = spi6amen;
-    assign rcc_lpuart1_amen = lpuart1amen;
-    assign rcc_syscfg_amen = syscfgamen;
+wire pllsrc;
+wire pll_src_sel;
+assign pll_src_sel = pllsrc;
+
+
 endmodule

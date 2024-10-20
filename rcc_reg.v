@@ -134,16 +134,6 @@ module rcc_reg#(
   output          hsirdyie            ,
   output          lserdyie            ,
   output          lsirdyie            ,
-  output          bdrst               ,
-  output          rtcen               ,
-  output [1:0]    rtcsel              ,
-  output          lsecsson            ,
-  output [1:0]    lsedrv              ,
-  output          lsebyp              ,
-  input           lse_rdy             ,
-  output          lseon               ,
-  input           lsi_rdy             ,
-  output          lsion               ,
   output          sdmmc1rst           ,
   output          qspirst             ,
   output          fmcrst              ,
@@ -250,7 +240,6 @@ module rcc_reg#(
   output          rcc_spi6_amen       ,
   output          rcc_lpuart1_amen    ,
   output          rcc_bdma_amen       ,
-  output          rmvf                ,
   output          rcc_c1_axisram_en   ,
   output          rcc_c1_itcm_en      ,
   output          rcc_c1_dtcm2_en     ,
@@ -355,110 +344,110 @@ module rcc_reg#(
   output          rcc_c1_spi6_en      ,
   output          rcc_c1_lpuart1_en   ,
   output          rcc_c1_syscfg_en    ,
-  output          rcc_c1_axisramlp_en ,
-  output          rcc_c1_itcmlp_en    ,
-  output          rcc_c1_dtcm2lp_en   ,
-  output          rcc_c1_dtcm1lp_en   ,
-  output          rcc_c1_sdmmc1lp_en  ,
-  output          rcc_c1_qspilp_en    ,
-  output          rcc_c1_fmclp_en     ,
-  output          rcc_c1_flitflp_en   ,
-  output          rcc_c1_jpgdeclp_en  ,
-  output          rcc_c1_dma2dlp_en   ,
-  output          rcc_c1_mdmalp_en    ,
-  output          rcc_c1_usb2ulpilp_en,
-  output          rcc_c1_usb2otglp_en ,
-  output          rcc_c1_usb1ulpilp_en,
-  output          rcc_c1_usb1otglp_en ,
-  output          rcc_c1_eth1rxlp_en  ,
-  output          rcc_c1_eth1txlp_en  ,
-  output          rcc_c1_eth1maclp_en ,
-  output          rcc_c1_adc12lp_en   ,
-  output          rcc_c1_dma2lp_en    ,
-  output          rcc_c1_dma1lp_en    ,
-  output          rcc_c1_sram3lp_en   ,
-  output          rcc_c1_sram2lp_en   ,
-  output          rcc_c1_sram1lp_en   ,
-  output          rcc_c1_sdmmc2lp_en  ,
-  output          rcc_c1_rnglp_en     ,
-  output          rcc_c1_hashlp_en    ,
-  output          rcc_c1_cryptlp_en   ,
-  output          rcc_c1_dcmilp_en    ,
-  output          rcc_c1_sram4lp_en   ,
-  output          rcc_c1_bkpramlp_en  ,
-  output          rcc_c1_adc3lp_en    ,
-  output          rcc_c1_bdmalp_en    ,
-  output          rcc_c1_crclp_en     ,
-  output          rcc_c1_gpioklp_en   ,
-  output          rcc_c1_gpiojlp_en   ,
-  output          rcc_c1_gpioilp_en   ,
-  output          rcc_c1_gpiohlp_en   ,
-  output          rcc_c1_gpioglp_en   ,
-  output          rcc_c1_gpioflp_en   ,
-  output          rcc_c1_gpioelp_en   ,
-  output          rcc_c1_gpiodlp_en   ,
-  output          rcc_c1_gpioclp_en   ,
-  output          rcc_c1_gpioblp_en   ,
-  output          rcc_c1_gpioalp_en   ,
-  output          rcc_c1_wwdg1lp_en   ,
-  output          rcc_c1_ltdclp_en    ,
-  output          rcc_c1_uart8lp_en   ,
-  output          rcc_c1_uart7lp_en   ,
-  output          rcc_c1_dac12lp_en   ,
-  output          rcc_c1_hdmiceclp_en ,
-  output          rcc_c1_i2c3lp_en    ,
-  output          rcc_c1_i2c2lp_en    ,
-  output          rcc_c1_i2c1lp_en    ,
-  output          rcc_c1_uart5lp_en   ,
-  output          rcc_c1_uart4lp_en   ,
-  output          rcc_c1_usart3lp_en  ,
-  output          rcc_c1_usart2lp_en  ,
-  output          rcc_c1_spdifrxlp_en ,
-  output          rcc_c1_spi3lp_en    ,
-  output          rcc_c1_spi2lp_en    ,
-  output          rcc_c1_wwdg2lp_en   ,
-  output          rcc_c1_lptim1lp_en  ,
-  output          rcc_c1_tim14lp_en   ,
-  output          rcc_c1_tim13lp_en   ,
-  output          rcc_c1_tim12lp_en   ,
-  output          rcc_c1_tim7lp_en    ,
-  output          rcc_c1_tim6lp_en    ,
-  output          rcc_c1_tim5lp_en    ,
-  output          rcc_c1_tim4lp_en    ,
-  output          rcc_c1_tim3lp_en    ,
-  output          rcc_c1_tim2lp_en    ,
-  output          rcc_c1_fdcanlp_en   ,
-  output          rcc_c1_mdioslp_en   ,
-  output          rcc_c1_opamplp_en   ,
-  output          rcc_c1_swplp_en     ,
-  output          rcc_c1_crslp_en     ,
-  output          rcc_c1_hrtimlp_en   ,
-  output          rcc_c1_dfsdm1lp_en  ,
-  output          rcc_c1_sai3lp_en    ,
-  output          rcc_c1_sai2lp_en    ,
-  output          rcc_c1_sai1lp_en    ,
-  output          rcc_c1_spi5lp_en    ,
-  output          rcc_c1_tim17lp_en   ,
-  output          rcc_c1_tim16lp_en   ,
-  output          rcc_c1_tim15lp_en   ,
-  output          rcc_c1_spi4lp_en    ,
-  output          rcc_c1_spi1lp_en    ,
-  output          rcc_c1_usart6lp_en  ,
-  output          rcc_c1_usart1lp_en  ,
-  output          rcc_c1_tim8lp_en    ,
-  output          rcc_c1_tim1lp_en    ,
-  output          rcc_c1_sai4lp_en    ,
-  output          rcc_c1_rtcapblp_en  ,
-  output          rcc_c1_vreflp_en    ,
-  output          rcc_c1_comp12lp_en  ,
-  output          rcc_c1_lptim5lp_en  ,
-  output          rcc_c1_lptim4lp_en  ,
-  output          rcc_c1_lptim3lp_en  ,
-  output          rcc_c1_lptim2lp_en  ,
-  output          rcc_c1_i2c4lp_en    ,
-  output          rcc_c1_spi6lp_en    ,
-  output          rcc_c1_lpuart1lp_en ,
-  output          rcc_c1_syscfglp_en  ,
+  output          rcc_c1_axisram_lpen ,
+  output          rcc_c1_itcm_lpen    ,
+  output          rcc_c1_dtcm2_lpen   ,
+  output          rcc_c1_dtcm1_lpen   ,
+  output          rcc_c1_sdmmc1_lpen  ,
+  output          rcc_c1_qspi_lpen    ,
+  output          rcc_c1_fmc_lpen     ,
+  output          rcc_c1_flitf_lpen   ,
+  output          rcc_c1_jpgdec_lpen  ,
+  output          rcc_c1_dma2d_lpen   ,
+  output          rcc_c1_mdma_lpen    ,
+  output          rcc_c1_usb2ulpi_lpen,
+  output          rcc_c1_usb2otg_lpen ,
+  output          rcc_c1_usb1ulpi_lpen,
+  output          rcc_c1_usb1otg_lpen ,
+  output          rcc_c1_eth1rx_lpen  ,
+  output          rcc_c1_eth1tx_lpen  ,
+  output          rcc_c1_eth1mac_lpen ,
+  output          rcc_c1_adc12_lpen   ,
+  output          rcc_c1_dma2_lpen    ,
+  output          rcc_c1_dma1_lpen    ,
+  output          rcc_c1_sram3_lpen   ,
+  output          rcc_c1_sram2_lpen   ,
+  output          rcc_c1_sram1_lpen   ,
+  output          rcc_c1_sdmmc2_lpen  ,
+  output          rcc_c1_rng_lpen     ,
+  output          rcc_c1_hash_lpen    ,
+  output          rcc_c1_crypt_lpen   ,
+  output          rcc_c1_dcmi_lpen    ,
+  output          rcc_c1_sram4_lpen   ,
+  output          rcc_c1_bkpram_lpen  ,
+  output          rcc_c1_adc3_lpen    ,
+  output          rcc_c1_bdma_lpen    ,
+  output          rcc_c1_crc_lpen     ,
+  output          rcc_c1_gpiok_lpen   ,
+  output          rcc_c1_gpioj_lpen   ,
+  output          rcc_c1_gpioi_lpen   ,
+  output          rcc_c1_gpioh_lpen   ,
+  output          rcc_c1_gpiog_lpen   ,
+  output          rcc_c1_gpiof_lpen   ,
+  output          rcc_c1_gpioe_lpen   ,
+  output          rcc_c1_gpiod_lpen   ,
+  output          rcc_c1_gpioc_lpen   ,
+  output          rcc_c1_gpiob_lpen   ,
+  output          rcc_c1_gpioa_lpen   ,
+  output          rcc_c1_wwdg1_lpen   ,
+  output          rcc_c1_ltdc_lpen    ,
+  output          rcc_c1_uart8_lpen   ,
+  output          rcc_c1_uart7_lpen   ,
+  output          rcc_c1_dac12_lpen   ,
+  output          rcc_c1_hdmicec_lpen ,
+  output          rcc_c1_i2c3_lpen    ,
+  output          rcc_c1_i2c2_lpen    ,
+  output          rcc_c1_i2c1_lpen    ,
+  output          rcc_c1_uart5_lpen   ,
+  output          rcc_c1_uart4_lpen   ,
+  output          rcc_c1_usart3_lpen  ,
+  output          rcc_c1_usart2_lpen  ,
+  output          rcc_c1_spdifrx_lpen ,
+  output          rcc_c1_spi3_lpen    ,
+  output          rcc_c1_spi2_lpen    ,
+  output          rcc_c1_wwdg2_lpen   ,
+  output          rcc_c1_lptim1_lpen  ,
+  output          rcc_c1_tim14_lpen   ,
+  output          rcc_c1_tim13_lpen   ,
+  output          rcc_c1_tim12_lpen   ,
+  output          rcc_c1_tim7_lpen    ,
+  output          rcc_c1_tim6_lpen    ,
+  output          rcc_c1_tim5_lpen    ,
+  output          rcc_c1_tim4_lpen    ,
+  output          rcc_c1_tim3_lpen    ,
+  output          rcc_c1_tim2_lpen    ,
+  output          rcc_c1_fdcan_lpen   ,
+  output          rcc_c1_mdios_lpen   ,
+  output          rcc_c1_opamp_lpen   ,
+  output          rcc_c1_swp_lpen     ,
+  output          rcc_c1_crs_lpen     ,
+  output          rcc_c1_hrtim_lpen   ,
+  output          rcc_c1_dfsdm1_lpen  ,
+  output          rcc_c1_sai3_lpen    ,
+  output          rcc_c1_sai2_lpen    ,
+  output          rcc_c1_sai1_lpen    ,
+  output          rcc_c1_spi5_lpen    ,
+  output          rcc_c1_tim17_lpen   ,
+  output          rcc_c1_tim16_lpen   ,
+  output          rcc_c1_tim15_lpen   ,
+  output          rcc_c1_spi4_lpen    ,
+  output          rcc_c1_spi1_lpen    ,
+  output          rcc_c1_usart6_lpen  ,
+  output          rcc_c1_usart1_lpen  ,
+  output          rcc_c1_tim8_lpen    ,
+  output          rcc_c1_tim1_lpen    ,
+  output          rcc_c1_sai4_lpen    ,
+  output          rcc_c1_rtcapb_lpen  ,
+  output          rcc_c1_vref_lpen    ,
+  output          rcc_c1_comp12_lpen  ,
+  output          rcc_c1_lptim5_lpen  ,
+  output          rcc_c1_lptim4_lpen  ,
+  output          rcc_c1_lptim3_lpen  ,
+  output          rcc_c1_lptim2_lpen  ,
+  output          rcc_c1_i2c4_lpen    ,
+  output          rcc_c1_spi6_lpen    ,
+  output          rcc_c1_lpuart1_lpen ,
+  output          rcc_c1_syscfg_lpen  ,
   output          rcc_c2_axisram_en   ,
   output          rcc_c2_itcm_en      ,
   output          rcc_c2_dtcm2_en     ,
@@ -673,6 +662,23 @@ module rcc_reg#(
   input           rcc_lsecss_fail     ,
 
 
+  // rcc_bdcr 
+  input cur_rcc_bdcr_bdrst,
+  output nxt_rcc_bdcr_bdrst,
+  input cur_rcc_bdcr_rtcen,
+  output nxt_rcc_bdcr_rtcen,
+  input [1:0]cur_rcc_bdcr_rtcsel,
+  output [1:0]nxt_rcc_bdcr_rtcsel,
+  input cur_rcc_bdcr_lsecssd,
+  input cur_rcc_bdcr_lsecsson,
+  output nxt_rcc_bdcr_lsecsson,
+  input [1:0]cur_rcc_bdcr_lsedrv,
+  output [1:0]nxt_rcc_bdcr_lsedrv,
+  input cur_rcc_bdcr_lsebyp,
+  output nxt_rcc_bdcr_lsebyp,
+  input cur_rcc_bdcr_lserdy,
+  input cur_rcc_bdcr_lseon,
+  output nxt_rcc_bdcr_lseon,
   // rcc_c1_rsr 
   input cur_rcc_c1_rsr_lpwr2rstf,
   input cur_rcc_c1_rsr_lpwr1rstf,
@@ -711,7 +717,10 @@ module rcc_reg#(
   
   output rcc_c1_rsr_rmvf_wren,
   output rcc_c2_rsr_rmvf_wren,
-  output rcc_csr_lsion_wren
+  output rcc_csr_lsion_wren,
+  output rcc_bdcr_byte2_wren,
+  output rcc_bdcr_byte1_wren,
+  output rcc_bdcr_byte0_wren
 );
 // ================================================================================
 // LOCAL PARAMETERS
@@ -1315,33 +1324,6 @@ wire        rcc_cicr_lsirdyc_set  ;
 // rcc_bdcr
 wire [31:0] rcc_bdcr_read        ;
 wire        rcc_bdcr_sel         ;
-wire        cur_rcc_bdcr_bdrst   ;
-wire        nxt_rcc_bdcr_bdrst   ;
-wire        rcc_bdcr_bdrst_en    ;
-wire        cur_rcc_bdcr_rtcen   ;
-wire        nxt_rcc_bdcr_rtcen   ;
-wire        rcc_bdcr_rtcen_en    ;
-wire [1:0]  cur_rcc_bdcr_rtcsel  ;
-wire [1:0]  nxt_rcc_bdcr_rtcsel  ;
-wire        rcc_bdcr_rtcsel_en   ;
-wire        cur_rcc_bdcr_lsecssd ;
-wire        nxt_rcc_bdcr_lsecssd ;
-wire        rcc_bdcr_lsecssd_en  ;
-wire        rcc_bdcr_lsecssd_clr ;
-wire        rcc_bdcr_lsecssd_set ;
-wire        cur_rcc_bdcr_lsecsson;
-wire        nxt_rcc_bdcr_lsecsson;
-wire        rcc_bdcr_lsecsson_en ;
-wire [1:0]  cur_rcc_bdcr_lsedrv  ;
-wire [1:0]  nxt_rcc_bdcr_lsedrv  ;
-wire        rcc_bdcr_lsedrv_en   ;
-wire        cur_rcc_bdcr_lsebyp  ;
-wire        nxt_rcc_bdcr_lsebyp  ;
-wire        rcc_bdcr_lsebyp_en   ;
-wire        cur_rcc_bdcr_lserdy  ;
-wire        cur_rcc_bdcr_lseon   ;
-wire        nxt_rcc_bdcr_lseon   ;
-wire        rcc_bdcr_lseon_en    ;
 // rcc_ahb3rstr
 wire [31:0] rcc_ahb3rstr_read         ;
 wire        rcc_ahb3rstr_sel          ;
@@ -3056,9 +3038,6 @@ wire hseon_clr_n;
 wire hsi48on_clr_n;
 wire [1:0]  eff_hsidiv;
 wire rcc_eff_hsidiv_en;
-wire rcc_bdcr_byte2_wren;
-wire rcc_bdcr_byte1_wren;
-wire rcc_bdcr_byte0_wren;
 
 // rcc_csr
 wire [31:0] rcc_csr_read      ;
@@ -3577,7 +3556,7 @@ BB_dfflr #(
 assign rcc_eff_hsidiv_en = ~(cur_rcc_pllclkselr_pllsrc == 2'b00 & (pll1on | pll2on | pll3on));
 
 BB_dfflr #(
-  .DW     (1  ),
+  .DW     (2  ),
   .RST_VAL('h0)
 ) U_rcc_cr_eff_hsidiv (
   .clk  (clk               ),
@@ -3935,32 +3914,28 @@ assign cur_rcc_cfgr_sws = cur_rcc_cfgr_sw;
 // --------------------------------------------------------------------------------
 // 2:0                 sw                  RW                  0b0                 
 // --------------------------------------------------------------------------------
-wire [2:0]sw_clr_n;
-wire [2:0]sw_set_n;
+wire sw_clr_n;
+wire sw_set_n;
 
-assign sw_clr_n = ({{2{~(rcc_hsecss_fail|rcc_exit_sys_stop)}},~(rcc_hsecss_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck==0))}) & {3{rst_n}};
-assign sw_set_n = {2'b1,~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1)};
+assign sw_clr_n = ~(rcc_hsecss_fail|(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck==0)) & rst_n;//there is a difference with H7
+assign sw_set_n = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1);
 
 assign rcc_cfgr_sw_en  = (|wr_req & rcc_cfgr_sel);
 assign nxt_rcc_cfgr_sw = wdata[2:0]              ;
 assign sw              = cur_rcc_cfgr_sw         ;
 
-
-generate 
-  genvar i;
-  for(i=0;i<=2;i=i+1) begin: blk_rcc_cfgr_sw_field
-BB_dfflr #(
-    .DW     (1  ),
-    .RST_VAL('h0)
+BB_dfflrs #(
+    .DW     (3  ),
+    .RST_VAL(3'h000),
+    .SET_VAL(3'b001)
 ) U_rcc_cfgr_sw (
-    .clk  (clk            ),
-    .rst_n(rst_n          ),
+    .clk  (clk         ),
+    .rst_n(sw_clr_n    ),
+    .set_n(sw_set_n    ),
     .en   (rcc_cfgr_sw_en ),
-    .din  (nxt_rcc_cfgr_sw[i]),
-    .dout (cur_rcc_cfgr_sw[i])
+    .din  (nxt_rcc_cfgr_sw),
+    .dout (cur_rcc_cfgr_sw)
 );
-  end
-endgenerate
 
 
 // --------------------------------------------------------------------------------
@@ -5981,7 +5956,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 1:1                 lserdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cifr_lserdyf_set = lse_rdy                                    ;
+assign rcc_cifr_lserdyf_set = cur_rcc_bdcr_lserdy                        ;
 assign rcc_cifr_lserdyf_clr = cur_rcc_cicr_hsirdyc                       ;
 assign rcc_cifr_lserdyf_en  = rcc_cifr_lserdyf_set | rcc_cifr_lserdyf_clr;
 assign nxt_rcc_cifr_lserdyf = rcc_cifr_lserdyf_set                       ;
@@ -5999,7 +5974,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 0:0                 lsirdyf             RO                  0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_cifr_lsirdyf_set = lsi_rdy                                    ;
+assign rcc_cifr_lsirdyf_set = cur_rcc_csr_lsirdy                         ;
 assign rcc_cifr_lsirdyf_clr = cur_rcc_cicr_lserdyc                       ;
 assign rcc_cifr_lsirdyf_en  = rcc_cifr_lsirdyf_set | rcc_cifr_lsirdyf_clr;
 assign nxt_rcc_cifr_lsirdyf = rcc_cifr_lsirdyf_set                       ;
@@ -6293,6 +6268,15 @@ assign rcc_bdcr_read = {{15{1'b0}}
                      , cur_rcc_bdcr_lsebyp
                      , cur_rcc_bdcr_lserdy
                      , cur_rcc_bdcr_lseon};
+
+assign nxt_rcc_bdcr_bdrst = wdata[16:16]                ;
+assign nxt_rcc_bdcr_rtcen = wdata[15:15]                ;
+assign nxt_rcc_bdcr_rtcsel = wdata[9:8]                 ;
+assign nxt_rcc_bdcr_lsecsson = wdata[5:5]               ;
+assign nxt_rcc_bdcr_lsedrv = wdata[4:3]                 ;
+assign nxt_rcc_bdcr_lsebyp = wdata[2:2]                 ;
+assign nxt_rcc_bdcr_lseon = wdata[0:0]                  ;
+
 
 // --------------------------------------------------------------------------------
 // 16:16               bdrst               RW                  0b0                 
@@ -10833,7 +10817,7 @@ assign rcc_c1_ahb3lpenr_read = {cur_rcc_c1_ahb3lpenr_axisramlpen
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_axisramlpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_axisramlpen = wdata[31:31]                    ;
-assign rcc_c1_axisramlp_en              = cur_rcc_c1_ahb3lpenr_axisramlpen;
+assign rcc_c1_axisram_lpen              = cur_rcc_c1_ahb3lpenr_axisramlpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10850,7 +10834,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_itcmlpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_itcmlpen = wdata[30:30]                    ;
-assign rcc_c1_itcmlp_en              = cur_rcc_c1_ahb3lpenr_itcmlpen   ;
+assign rcc_c1_itcm_lpen              = cur_rcc_c1_ahb3lpenr_itcmlpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10867,7 +10851,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_dtcm2lpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_dtcm2lpen = wdata[29:29]                    ;
-assign rcc_c1_dtcm2lp_en              = cur_rcc_c1_ahb3lpenr_dtcm2lpen  ;
+assign rcc_c1_dtcm2_lpen              = cur_rcc_c1_ahb3lpenr_dtcm2lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10884,7 +10868,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_dtcm1lpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_dtcm1lpen = wdata[28:28]                    ;
-assign rcc_c1_dtcm1lp_en              = cur_rcc_c1_ahb3lpenr_dtcm1lpen  ;
+assign rcc_c1_dtcm1_lpen              = cur_rcc_c1_ahb3lpenr_dtcm1lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10901,7 +10885,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_sdmmc1lpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_sdmmc1lpen = wdata[16:16]                    ;
-assign rcc_c1_sdmmc1lp_en              = cur_rcc_c1_ahb3lpenr_sdmmc1lpen ;
+assign rcc_c1_sdmmc1_lpen              = cur_rcc_c1_ahb3lpenr_sdmmc1lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10918,7 +10902,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_qspilpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_qspilpen = wdata[14:14]                    ;
-assign rcc_c1_qspilp_en              = cur_rcc_c1_ahb3lpenr_qspilpen   ;
+assign rcc_c1_qspi_lpen              = cur_rcc_c1_ahb3lpenr_qspilpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10935,7 +10919,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_fmclpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_fmclpen = wdata[12:12]                    ;
-assign rcc_c1_fmclp_en              = cur_rcc_c1_ahb3lpenr_fmclpen    ;
+assign rcc_c1_fmc_lpen              = cur_rcc_c1_ahb3lpenr_fmclpen    ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10952,7 +10936,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_flitflpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_flitflpen = wdata[8:8]                      ;
-assign rcc_c1_flitflp_en              = cur_rcc_c1_ahb3lpenr_flitflpen  ;
+assign rcc_c1_flitf_lpen              = cur_rcc_c1_ahb3lpenr_flitflpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10969,7 +10953,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_jpgdeclpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_jpgdeclpen = wdata[5:5]                      ;
-assign rcc_c1_jpgdeclp_en              = cur_rcc_c1_ahb3lpenr_jpgdeclpen ;
+assign rcc_c1_jpgdec_lpen              = cur_rcc_c1_ahb3lpenr_jpgdeclpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -10986,7 +10970,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_dma2dlpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_dma2dlpen = wdata[4:4]                      ;
-assign rcc_c1_dma2dlp_en              = cur_rcc_c1_ahb3lpenr_dma2dlpen  ;
+assign rcc_c1_dma2d_lpen              = cur_rcc_c1_ahb3lpenr_dma2dlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11003,7 +10987,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb3lpenr_mdmalpen_en  = (|wr_req & rcc_c1_ahb3lpenr_sel);
 assign nxt_rcc_c1_ahb3lpenr_mdmalpen = wdata[0:0]                      ;
-assign rcc_c1_mdmalp_en              = cur_rcc_c1_ahb3lpenr_mdmalpen   ;
+assign rcc_c1_mdma_lpen              = cur_rcc_c1_ahb3lpenr_mdmalpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11063,7 +11047,7 @@ assign rcc_c1_ahb1lpenr_read = {{3{1'b0}}
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_usb2ulpilpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel) ;
 assign nxt_rcc_c1_ahb1lpenr_usb2ulpilpen = wdata[28:28]                     ;
-assign rcc_c1_usb2ulpilp_en              = cur_rcc_c1_ahb1lpenr_usb2ulpilpen;
+assign rcc_c1_usb2ulpi_lpen              = cur_rcc_c1_ahb1lpenr_usb2ulpilpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11080,7 +11064,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_usb2otglpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_usb2otglpen = wdata[27:27]                    ;
-assign rcc_c1_usb2otglp_en              = cur_rcc_c1_ahb1lpenr_usb2otglpen;
+assign rcc_c1_usb2otg_lpen              = cur_rcc_c1_ahb1lpenr_usb2otglpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11097,7 +11081,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_usb1ulpilpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel) ;
 assign nxt_rcc_c1_ahb1lpenr_usb1ulpilpen = wdata[26:26]                     ;
-assign rcc_c1_usb1ulpilp_en              = cur_rcc_c1_ahb1lpenr_usb1ulpilpen;
+assign rcc_c1_usb1ulpi_lpen              = cur_rcc_c1_ahb1lpenr_usb1ulpilpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11114,7 +11098,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_usb1otglpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_usb1otglpen = wdata[25:25]                    ;
-assign rcc_c1_usb1otglp_en              = cur_rcc_c1_ahb1lpenr_usb1otglpen;
+assign rcc_c1_usb1otg_lpen              = cur_rcc_c1_ahb1lpenr_usb1otglpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11131,7 +11115,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_eth1rxlpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_eth1rxlpen = wdata[17:17]                    ;
-assign rcc_c1_eth1rxlp_en              = cur_rcc_c1_ahb1lpenr_eth1rxlpen ;
+assign rcc_c1_eth1rx_lpen              = cur_rcc_c1_ahb1lpenr_eth1rxlpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11148,7 +11132,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_eth1txlpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_eth1txlpen = wdata[16:16]                    ;
-assign rcc_c1_eth1txlp_en              = cur_rcc_c1_ahb1lpenr_eth1txlpen ;
+assign rcc_c1_eth1tx_lpen              = cur_rcc_c1_ahb1lpenr_eth1txlpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11165,7 +11149,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_eth1maclpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_eth1maclpen = wdata[15:15]                    ;
-assign rcc_c1_eth1maclp_en              = cur_rcc_c1_ahb1lpenr_eth1maclpen;
+assign rcc_c1_eth1mac_lpen              = cur_rcc_c1_ahb1lpenr_eth1maclpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11182,7 +11166,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_adc12lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_adc12lpen = wdata[5:5]                      ;
-assign rcc_c1_adc12lp_en              = cur_rcc_c1_ahb1lpenr_adc12lpen  ;
+assign rcc_c1_adc12_lpen              = cur_rcc_c1_ahb1lpenr_adc12lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11199,7 +11183,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_dma2lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_dma2lpen = wdata[1:1]                      ;
-assign rcc_c1_dma2lp_en              = cur_rcc_c1_ahb1lpenr_dma2lpen   ;
+assign rcc_c1_dma2_lpen              = cur_rcc_c1_ahb1lpenr_dma2lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11216,7 +11200,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb1lpenr_dma1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
 assign nxt_rcc_c1_ahb1lpenr_dma1lpen = wdata[0:0]                      ;
-assign rcc_c1_dma1lp_en              = cur_rcc_c1_ahb1lpenr_dma1lpen   ;
+assign rcc_c1_dma1_lpen              = cur_rcc_c1_ahb1lpenr_dma1lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11269,7 +11253,7 @@ assign rcc_c1_ahb2lpenr_read = {cur_rcc_c1_ahb2lpenr_sram3lpen
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_sram3lpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_sram3lpen = wdata[31:31]                    ;
-assign rcc_c1_sram3lp_en              = cur_rcc_c1_ahb2lpenr_sram3lpen  ;
+assign rcc_c1_sram3_lpen              = cur_rcc_c1_ahb2lpenr_sram3lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11286,7 +11270,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_sram2lpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_sram2lpen = wdata[30:30]                    ;
-assign rcc_c1_sram2lp_en              = cur_rcc_c1_ahb2lpenr_sram2lpen  ;
+assign rcc_c1_sram2_lpen              = cur_rcc_c1_ahb2lpenr_sram2lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11303,7 +11287,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_sram1lpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_sram1lpen = wdata[29:29]                    ;
-assign rcc_c1_sram1lp_en              = cur_rcc_c1_ahb2lpenr_sram1lpen  ;
+assign rcc_c1_sram1_lpen              = cur_rcc_c1_ahb2lpenr_sram1lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11320,7 +11304,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_sdmmc2lpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_sdmmc2lpen = wdata[9:9]                      ;
-assign rcc_c1_sdmmc2lp_en              = cur_rcc_c1_ahb2lpenr_sdmmc2lpen ;
+assign rcc_c1_sdmmc2_lpen              = cur_rcc_c1_ahb2lpenr_sdmmc2lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11337,7 +11321,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_rnglpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_rnglpen = wdata[6:6]                      ;
-assign rcc_c1_rnglp_en              = cur_rcc_c1_ahb2lpenr_rnglpen    ;
+assign rcc_c1_rng_lpen              = cur_rcc_c1_ahb2lpenr_rnglpen    ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11354,7 +11338,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_hashlpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_hashlpen = wdata[5:5]                      ;
-assign rcc_c1_hashlp_en              = cur_rcc_c1_ahb2lpenr_hashlpen   ;
+assign rcc_c1_hash_lpen              = cur_rcc_c1_ahb2lpenr_hashlpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11371,7 +11355,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_cryptlpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_cryptlpen = wdata[4:4]                      ;
-assign rcc_c1_cryptlp_en              = cur_rcc_c1_ahb2lpenr_cryptlpen  ;
+assign rcc_c1_crypt_lpen              = cur_rcc_c1_ahb2lpenr_cryptlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11388,7 +11372,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb2lpenr_dcmilpen_en  = (|wr_req & rcc_c1_ahb2lpenr_sel);
 assign nxt_rcc_c1_ahb2lpenr_dcmilpen = wdata[0:0]                      ;
-assign rcc_c1_dcmilp_en              = cur_rcc_c1_ahb2lpenr_dcmilpen   ;
+assign rcc_c1_dcmi_lpen              = cur_rcc_c1_ahb2lpenr_dcmilpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11467,7 +11451,7 @@ assign rcc_c1_ahb4lpenr_read = {{2{1'b0}}
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_sram4lpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_sram4lpen = wdata[29:29]                    ;
-assign rcc_c1_sram4lp_en              = cur_rcc_c1_ahb4lpenr_sram4lpen  ;
+assign rcc_c1_sram4_lpen              = cur_rcc_c1_ahb4lpenr_sram4lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11484,7 +11468,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_bkpramlpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_bkpramlpen = wdata[28:28]                    ;
-assign rcc_c1_bkpramlp_en              = cur_rcc_c1_ahb4lpenr_bkpramlpen ;
+assign rcc_c1_bkpram_lpen              = cur_rcc_c1_ahb4lpenr_bkpramlpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11501,7 +11485,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_adc3lpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_adc3lpen = wdata[24:24]                    ;
-assign rcc_c1_adc3lp_en              = cur_rcc_c1_ahb4lpenr_adc3lpen   ;
+assign rcc_c1_adc3_lpen              = cur_rcc_c1_ahb4lpenr_adc3lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11518,7 +11502,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_bdmalpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_bdmalpen = wdata[21:21]                    ;
-assign rcc_c1_bdmalp_en              = cur_rcc_c1_ahb4lpenr_bdmalpen   ;
+assign rcc_c1_bdma_lpen              = cur_rcc_c1_ahb4lpenr_bdmalpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11535,7 +11519,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_crclpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_crclpen = wdata[19:19]                    ;
-assign rcc_c1_crclp_en              = cur_rcc_c1_ahb4lpenr_crclpen    ;
+assign rcc_c1_crc_lpen              = cur_rcc_c1_ahb4lpenr_crclpen    ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11552,7 +11536,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioklpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioklpen = wdata[10:10]                    ;
-assign rcc_c1_gpioklp_en              = cur_rcc_c1_ahb4lpenr_gpioklpen  ;
+assign rcc_c1_gpiok_lpen              = cur_rcc_c1_ahb4lpenr_gpioklpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11569,7 +11553,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpiojlpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpiojlpen = wdata[9:9]                      ;
-assign rcc_c1_gpiojlp_en              = cur_rcc_c1_ahb4lpenr_gpiojlpen  ;
+assign rcc_c1_gpioj_lpen              = cur_rcc_c1_ahb4lpenr_gpiojlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11586,7 +11570,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioilpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioilpen = wdata[8:8]                      ;
-assign rcc_c1_gpioilp_en              = cur_rcc_c1_ahb4lpenr_gpioilpen  ;
+assign rcc_c1_gpioi_lpen              = cur_rcc_c1_ahb4lpenr_gpioilpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11603,7 +11587,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpiohlpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpiohlpen = wdata[7:7]                      ;
-assign rcc_c1_gpiohlp_en              = cur_rcc_c1_ahb4lpenr_gpiohlpen  ;
+assign rcc_c1_gpioh_lpen              = cur_rcc_c1_ahb4lpenr_gpiohlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11620,7 +11604,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioglpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioglpen = wdata[6:6]                      ;
-assign rcc_c1_gpioglp_en              = cur_rcc_c1_ahb4lpenr_gpioglpen  ;
+assign rcc_c1_gpiog_lpen              = cur_rcc_c1_ahb4lpenr_gpioglpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11637,7 +11621,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioflpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioflpen = wdata[5:5]                      ;
-assign rcc_c1_gpioflp_en              = cur_rcc_c1_ahb4lpenr_gpioflpen  ;
+assign rcc_c1_gpiof_lpen              = cur_rcc_c1_ahb4lpenr_gpioflpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11654,7 +11638,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioelpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioelpen = wdata[4:4]                      ;
-assign rcc_c1_gpioelp_en              = cur_rcc_c1_ahb4lpenr_gpioelpen  ;
+assign rcc_c1_gpioe_lpen              = cur_rcc_c1_ahb4lpenr_gpioelpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11671,7 +11655,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpiodlpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpiodlpen = wdata[3:3]                      ;
-assign rcc_c1_gpiodlp_en              = cur_rcc_c1_ahb4lpenr_gpiodlpen  ;
+assign rcc_c1_gpiod_lpen              = cur_rcc_c1_ahb4lpenr_gpiodlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11688,7 +11672,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioclpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioclpen = wdata[2:2]                      ;
-assign rcc_c1_gpioclp_en              = cur_rcc_c1_ahb4lpenr_gpioclpen  ;
+assign rcc_c1_gpioc_lpen              = cur_rcc_c1_ahb4lpenr_gpioclpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11705,7 +11689,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioblpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioblpen = wdata[1:1]                      ;
-assign rcc_c1_gpioblp_en              = cur_rcc_c1_ahb4lpenr_gpioblpen  ;
+assign rcc_c1_gpiob_lpen              = cur_rcc_c1_ahb4lpenr_gpioblpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11722,7 +11706,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_ahb4lpenr_gpioalpen_en  = (|wr_req & rcc_c1_ahb4lpenr_sel);
 assign nxt_rcc_c1_ahb4lpenr_gpioalpen = wdata[0:0]                      ;
-assign rcc_c1_gpioalp_en              = cur_rcc_c1_ahb4lpenr_gpioalpen  ;
+assign rcc_c1_gpioa_lpen              = cur_rcc_c1_ahb4lpenr_gpioalpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -11757,7 +11741,7 @@ assign rcc_c1_apb3lpenr_read = {{25{1'b0}}
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb3lpenr_wwdg1lpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
 assign nxt_rcc_c1_apb3lpenr_wwdg1lpen = wdata[6:6]                      ;
-assign rcc_c1_wwdg1lp_en              = cur_rcc_c1_apb3lpenr_wwdg1lpen  ;
+assign rcc_c1_wwdg1_lpen              = cur_rcc_c1_apb3lpenr_wwdg1lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11774,7 +11758,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb3lpenr_ltdclpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
 assign nxt_rcc_c1_apb3lpenr_ltdclpen = wdata[3:3]                      ;
-assign rcc_c1_ltdclp_en              = cur_rcc_c1_apb3lpenr_ltdclpen   ;
+assign rcc_c1_ltdc_lpen              = cur_rcc_c1_apb3lpenr_ltdclpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11879,7 +11863,7 @@ assign rcc_c1_apb1llpenr_read = {cur_rcc_c1_apb1llpenr_uart8lpen
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_uart8lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_uart8lpen = wdata[31:31]                     ;
-assign rcc_c1_uart8lp_en               = cur_rcc_c1_apb1llpenr_uart8lpen  ;
+assign rcc_c1_uart8_lpen               = cur_rcc_c1_apb1llpenr_uart8lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11896,7 +11880,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_uart7lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_uart7lpen = wdata[30:30]                     ;
-assign rcc_c1_uart7lp_en               = cur_rcc_c1_apb1llpenr_uart7lpen  ;
+assign rcc_c1_uart7_lpen               = cur_rcc_c1_apb1llpenr_uart7lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11913,7 +11897,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_dac12lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_dac12lpen = wdata[29:29]                     ;
-assign rcc_c1_dac12lp_en               = cur_rcc_c1_apb1llpenr_dac12lpen  ;
+assign rcc_c1_dac12_lpen               = cur_rcc_c1_apb1llpenr_dac12lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11930,7 +11914,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_hdmiceclpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_hdmiceclpen = wdata[27:27]                     ;
-assign rcc_c1_hdmiceclp_en               = cur_rcc_c1_apb1llpenr_hdmiceclpen;
+assign rcc_c1_hdmicec_lpen               = cur_rcc_c1_apb1llpenr_hdmiceclpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11947,7 +11931,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_i2c3lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_i2c3lpen = wdata[23:23]                     ;
-assign rcc_c1_i2c3lp_en               = cur_rcc_c1_apb1llpenr_i2c3lpen   ;
+assign rcc_c1_i2c3_lpen               = cur_rcc_c1_apb1llpenr_i2c3lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11964,7 +11948,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_i2c2lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_i2c2lpen = wdata[22:22]                     ;
-assign rcc_c1_i2c2lp_en               = cur_rcc_c1_apb1llpenr_i2c2lpen   ;
+assign rcc_c1_i2c2_lpen               = cur_rcc_c1_apb1llpenr_i2c2lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11981,7 +11965,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_i2c1lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_i2c1lpen = wdata[21:21]                     ;
-assign rcc_c1_i2c1lp_en               = cur_rcc_c1_apb1llpenr_i2c1lpen   ;
+assign rcc_c1_i2c1_lpen               = cur_rcc_c1_apb1llpenr_i2c1lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -11998,7 +11982,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_uart5lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_uart5lpen = wdata[20:20]                     ;
-assign rcc_c1_uart5lp_en               = cur_rcc_c1_apb1llpenr_uart5lpen  ;
+assign rcc_c1_uart5_lpen               = cur_rcc_c1_apb1llpenr_uart5lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12015,7 +11999,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_uart4lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_uart4lpen = wdata[19:19]                     ;
-assign rcc_c1_uart4lp_en               = cur_rcc_c1_apb1llpenr_uart4lpen  ;
+assign rcc_c1_uart4_lpen               = cur_rcc_c1_apb1llpenr_uart4lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12032,7 +12016,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_usart3lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_usart3lpen = wdata[18:18]                     ;
-assign rcc_c1_usart3lp_en               = cur_rcc_c1_apb1llpenr_usart3lpen ;
+assign rcc_c1_usart3_lpen               = cur_rcc_c1_apb1llpenr_usart3lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12049,7 +12033,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_usart2lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_usart2lpen = wdata[17:17]                     ;
-assign rcc_c1_usart2lp_en               = cur_rcc_c1_apb1llpenr_usart2lpen ;
+assign rcc_c1_usart2_lpen               = cur_rcc_c1_apb1llpenr_usart2lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12066,7 +12050,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_spdifrxlpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_spdifrxlpen = wdata[16:16]                     ;
-assign rcc_c1_spdifrxlp_en               = cur_rcc_c1_apb1llpenr_spdifrxlpen;
+assign rcc_c1_spdifrx_lpen               = cur_rcc_c1_apb1llpenr_spdifrxlpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12083,7 +12067,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_spi3lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_spi3lpen = wdata[15:15]                     ;
-assign rcc_c1_spi3lp_en               = cur_rcc_c1_apb1llpenr_spi3lpen   ;
+assign rcc_c1_spi3_lpen               = cur_rcc_c1_apb1llpenr_spi3lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12100,7 +12084,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_spi2lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_spi2lpen = wdata[14:14]                     ;
-assign rcc_c1_spi2lp_en               = cur_rcc_c1_apb1llpenr_spi2lpen   ;
+assign rcc_c1_spi2_lpen               = cur_rcc_c1_apb1llpenr_spi2lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12117,7 +12101,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_wwdg2lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_wwdg2lpen = wdata[11:11]                     ;
-assign rcc_c1_wwdg2lp_en               = cur_rcc_c1_apb1llpenr_wwdg2lpen  ;
+assign rcc_c1_wwdg2_lpen               = cur_rcc_c1_apb1llpenr_wwdg2lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12134,7 +12118,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_lptim1lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_lptim1lpen = wdata[9:9]                       ;
-assign rcc_c1_lptim1lp_en               = cur_rcc_c1_apb1llpenr_lptim1lpen ;
+assign rcc_c1_lptim1_lpen               = cur_rcc_c1_apb1llpenr_lptim1lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12151,7 +12135,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim14lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim14lpen = wdata[8:8]                       ;
-assign rcc_c1_tim14lp_en               = cur_rcc_c1_apb1llpenr_tim14lpen  ;
+assign rcc_c1_tim14_lpen               = cur_rcc_c1_apb1llpenr_tim14lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12168,7 +12152,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim13lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim13lpen = wdata[7:7]                       ;
-assign rcc_c1_tim13lp_en               = cur_rcc_c1_apb1llpenr_tim13lpen  ;
+assign rcc_c1_tim13_lpen               = cur_rcc_c1_apb1llpenr_tim13lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12185,7 +12169,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim12lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim12lpen = wdata[6:6]                       ;
-assign rcc_c1_tim12lp_en               = cur_rcc_c1_apb1llpenr_tim12lpen  ;
+assign rcc_c1_tim12_lpen               = cur_rcc_c1_apb1llpenr_tim12lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12202,7 +12186,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim7lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim7lpen = wdata[5:5]                       ;
-assign rcc_c1_tim7lp_en               = cur_rcc_c1_apb1llpenr_tim7lpen   ;
+assign rcc_c1_tim7_lpen               = cur_rcc_c1_apb1llpenr_tim7lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12219,7 +12203,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim6lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim6lpen = wdata[4:4]                       ;
-assign rcc_c1_tim6lp_en               = cur_rcc_c1_apb1llpenr_tim6lpen   ;
+assign rcc_c1_tim6_lpen               = cur_rcc_c1_apb1llpenr_tim6lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12236,7 +12220,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim5lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim5lpen = wdata[3:3]                       ;
-assign rcc_c1_tim5lp_en               = cur_rcc_c1_apb1llpenr_tim5lpen   ;
+assign rcc_c1_tim5_lpen               = cur_rcc_c1_apb1llpenr_tim5lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12253,7 +12237,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim4lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim4lpen = wdata[2:2]                       ;
-assign rcc_c1_tim4lp_en               = cur_rcc_c1_apb1llpenr_tim4lpen   ;
+assign rcc_c1_tim4_lpen               = cur_rcc_c1_apb1llpenr_tim4lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12270,7 +12254,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim3lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim3lpen = wdata[1:1]                       ;
-assign rcc_c1_tim3lp_en               = cur_rcc_c1_apb1llpenr_tim3lpen   ;
+assign rcc_c1_tim3_lpen               = cur_rcc_c1_apb1llpenr_tim3lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12287,7 +12271,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_tim2lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_tim2lpen = wdata[0:0]                       ;
-assign rcc_c1_tim2lp_en               = cur_rcc_c1_apb1llpenr_tim2lpen   ;
+assign rcc_c1_tim2_lpen               = cur_rcc_c1_apb1llpenr_tim2lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12332,7 +12316,7 @@ assign rcc_c1_apb1hlpenr_read = {{23{1'b0}}
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1hlpenr_fdcanlpen_en  = (|wr_req & rcc_c1_apb1hlpenr_sel);
 assign nxt_rcc_c1_apb1hlpenr_fdcanlpen = wdata[8:8]                       ;
-assign rcc_c1_fdcanlp_en               = cur_rcc_c1_apb1hlpenr_fdcanlpen  ;
+assign rcc_c1_fdcan_lpen               = cur_rcc_c1_apb1hlpenr_fdcanlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12349,7 +12333,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1hlpenr_mdioslpen_en  = (|wr_req & rcc_c1_apb1hlpenr_sel);
 assign nxt_rcc_c1_apb1hlpenr_mdioslpen = wdata[5:5]                       ;
-assign rcc_c1_mdioslp_en               = cur_rcc_c1_apb1hlpenr_mdioslpen  ;
+assign rcc_c1_mdios_lpen               = cur_rcc_c1_apb1hlpenr_mdioslpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12366,7 +12350,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1hlpenr_opamplpen_en  = (|wr_req & rcc_c1_apb1hlpenr_sel);
 assign nxt_rcc_c1_apb1hlpenr_opamplpen = wdata[4:4]                       ;
-assign rcc_c1_opamplp_en               = cur_rcc_c1_apb1hlpenr_opamplpen  ;
+assign rcc_c1_opamp_lpen               = cur_rcc_c1_apb1hlpenr_opamplpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12383,7 +12367,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1hlpenr_swplpen_en  = (|wr_req & rcc_c1_apb1hlpenr_sel);
 assign nxt_rcc_c1_apb1hlpenr_swplpen = wdata[2:2]                       ;
-assign rcc_c1_swplp_en               = cur_rcc_c1_apb1hlpenr_swplpen    ;
+assign rcc_c1_swp_lpen               = cur_rcc_c1_apb1hlpenr_swplpen    ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12400,7 +12384,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1hlpenr_crslpen_en  = (|wr_req & rcc_c1_apb1hlpenr_sel);
 assign nxt_rcc_c1_apb1hlpenr_crslpen = wdata[1:1]                       ;
-assign rcc_c1_crslp_en               = cur_rcc_c1_apb1hlpenr_crslpen    ;
+assign rcc_c1_crs_lpen               = cur_rcc_c1_apb1hlpenr_crslpen    ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12478,7 +12462,7 @@ assign rcc_c1_apb2lpenr_read = {{2{1'b0}}
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_hrtimlpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_hrtimlpen = wdata[29:29]                    ;
-assign rcc_c1_hrtimlp_en              = cur_rcc_c1_apb2lpenr_hrtimlpen  ;
+assign rcc_c1_hrtim_lpen              = cur_rcc_c1_apb2lpenr_hrtimlpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12495,7 +12479,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_dfsdm1lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_dfsdm1lpen = wdata[28:28]                    ;
-assign rcc_c1_dfsdm1lp_en              = cur_rcc_c1_apb2lpenr_dfsdm1lpen ;
+assign rcc_c1_dfsdm1_lpen              = cur_rcc_c1_apb2lpenr_dfsdm1lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12512,7 +12496,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_sai3lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_sai3lpen = wdata[24:24]                    ;
-assign rcc_c1_sai3lp_en              = cur_rcc_c1_apb2lpenr_sai3lpen   ;
+assign rcc_c1_sai3_lpen              = cur_rcc_c1_apb2lpenr_sai3lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12529,7 +12513,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_sai2lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_sai2lpen = wdata[23:23]                    ;
-assign rcc_c1_sai2lp_en              = cur_rcc_c1_apb2lpenr_sai2lpen   ;
+assign rcc_c1_sai2_lpen              = cur_rcc_c1_apb2lpenr_sai2lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12546,7 +12530,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_sai1lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_sai1lpen = wdata[22:22]                    ;
-assign rcc_c1_sai1lp_en              = cur_rcc_c1_apb2lpenr_sai1lpen   ;
+assign rcc_c1_sai1_lpen              = cur_rcc_c1_apb2lpenr_sai1lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12563,7 +12547,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_spi5lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_spi5lpen = wdata[20:20]                    ;
-assign rcc_c1_spi5lp_en              = cur_rcc_c1_apb2lpenr_spi5lpen   ;
+assign rcc_c1_spi5_lpen              = cur_rcc_c1_apb2lpenr_spi5lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12580,7 +12564,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_tim17lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_tim17lpen = wdata[18:18]                    ;
-assign rcc_c1_tim17lp_en              = cur_rcc_c1_apb2lpenr_tim17lpen  ;
+assign rcc_c1_tim17_lpen              = cur_rcc_c1_apb2lpenr_tim17lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12597,7 +12581,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_tim16lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_tim16lpen = wdata[17:17]                    ;
-assign rcc_c1_tim16lp_en              = cur_rcc_c1_apb2lpenr_tim16lpen  ;
+assign rcc_c1_tim16_lpen              = cur_rcc_c1_apb2lpenr_tim16lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12614,7 +12598,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_tim15lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_tim15lpen = wdata[16:16]                    ;
-assign rcc_c1_tim15lp_en              = cur_rcc_c1_apb2lpenr_tim15lpen  ;
+assign rcc_c1_tim15_lpen              = cur_rcc_c1_apb2lpenr_tim15lpen  ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12631,7 +12615,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_spi4lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_spi4lpen = wdata[13:13]                    ;
-assign rcc_c1_spi4lp_en              = cur_rcc_c1_apb2lpenr_spi4lpen   ;
+assign rcc_c1_spi4_lpen              = cur_rcc_c1_apb2lpenr_spi4lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12648,7 +12632,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_spi1lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_spi1lpen = wdata[12:12]                    ;
-assign rcc_c1_spi1lp_en              = cur_rcc_c1_apb2lpenr_spi1lpen   ;
+assign rcc_c1_spi1_lpen              = cur_rcc_c1_apb2lpenr_spi1lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12665,7 +12649,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_usart6lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_usart6lpen = wdata[5:5]                      ;
-assign rcc_c1_usart6lp_en              = cur_rcc_c1_apb2lpenr_usart6lpen ;
+assign rcc_c1_usart6_lpen              = cur_rcc_c1_apb2lpenr_usart6lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12682,7 +12666,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_usart1lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_usart1lpen = wdata[4:4]                      ;
-assign rcc_c1_usart1lp_en              = cur_rcc_c1_apb2lpenr_usart1lpen ;
+assign rcc_c1_usart1_lpen              = cur_rcc_c1_apb2lpenr_usart1lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12699,7 +12683,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_tim8lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_tim8lpen = wdata[1:1]                      ;
-assign rcc_c1_tim8lp_en              = cur_rcc_c1_apb2lpenr_tim8lpen   ;
+assign rcc_c1_tim8_lpen              = cur_rcc_c1_apb2lpenr_tim8lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12716,7 +12700,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb2lpenr_tim1lpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
 assign nxt_rcc_c1_apb2lpenr_tim1lpen = wdata[0:0]                      ;
-assign rcc_c1_tim1lp_en              = cur_rcc_c1_apb2lpenr_tim1lpen   ;
+assign rcc_c1_tim1_lpen              = cur_rcc_c1_apb2lpenr_tim1lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12786,7 +12770,7 @@ assign rcc_c1_apb4lpenr_read = {{10{1'b0}}
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_sai4lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_sai4lpen = wdata[21:21]                    ;
-assign rcc_c1_sai4lp_en              = cur_rcc_c1_apb4lpenr_sai4lpen   ;
+assign rcc_c1_sai4_lpen              = cur_rcc_c1_apb4lpenr_sai4lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12803,7 +12787,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_rtcapblpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_rtcapblpen = wdata[16:16]                    ;
-assign rcc_c1_rtcapblp_en              = cur_rcc_c1_apb4lpenr_rtcapblpen ;
+assign rcc_c1_rtcapb_lpen              = cur_rcc_c1_apb4lpenr_rtcapblpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12820,7 +12804,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_vreflpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_vreflpen = wdata[15:15]                    ;
-assign rcc_c1_vreflp_en              = cur_rcc_c1_apb4lpenr_vreflpen   ;
+assign rcc_c1_vref_lpen              = cur_rcc_c1_apb4lpenr_vreflpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12837,7 +12821,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_comp12lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_comp12lpen = wdata[14:14]                    ;
-assign rcc_c1_comp12lp_en              = cur_rcc_c1_apb4lpenr_comp12lpen ;
+assign rcc_c1_comp12_lpen              = cur_rcc_c1_apb4lpenr_comp12lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12854,7 +12838,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_lptim5lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_lptim5lpen = wdata[12:12]                    ;
-assign rcc_c1_lptim5lp_en              = cur_rcc_c1_apb4lpenr_lptim5lpen ;
+assign rcc_c1_lptim5_lpen              = cur_rcc_c1_apb4lpenr_lptim5lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12871,7 +12855,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_lptim4lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_lptim4lpen = wdata[11:11]                    ;
-assign rcc_c1_lptim4lp_en              = cur_rcc_c1_apb4lpenr_lptim4lpen ;
+assign rcc_c1_lptim4_lpen              = cur_rcc_c1_apb4lpenr_lptim4lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12888,7 +12872,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_lptim3lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_lptim3lpen = wdata[10:10]                    ;
-assign rcc_c1_lptim3lp_en              = cur_rcc_c1_apb4lpenr_lptim3lpen ;
+assign rcc_c1_lptim3_lpen              = cur_rcc_c1_apb4lpenr_lptim3lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12905,7 +12889,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_lptim2lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_lptim2lpen = wdata[9:9]                      ;
-assign rcc_c1_lptim2lp_en              = cur_rcc_c1_apb4lpenr_lptim2lpen ;
+assign rcc_c1_lptim2_lpen              = cur_rcc_c1_apb4lpenr_lptim2lpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12922,7 +12906,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_i2c4lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_i2c4lpen = wdata[7:7]                      ;
-assign rcc_c1_i2c4lp_en              = cur_rcc_c1_apb4lpenr_i2c4lpen   ;
+assign rcc_c1_i2c4_lpen              = cur_rcc_c1_apb4lpenr_i2c4lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12939,7 +12923,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_spi6lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_spi6lpen = wdata[5:5]                      ;
-assign rcc_c1_spi6lp_en              = cur_rcc_c1_apb4lpenr_spi6lpen   ;
+assign rcc_c1_spi6_lpen              = cur_rcc_c1_apb4lpenr_spi6lpen   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12956,7 +12940,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_lpuart1lpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_lpuart1lpen = wdata[3:3]                      ;
-assign rcc_c1_lpuart1lp_en              = cur_rcc_c1_apb4lpenr_lpuart1lpen;
+assign rcc_c1_lpuart1_lpen              = cur_rcc_c1_apb4lpenr_lpuart1lpen;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -12973,7 +12957,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb4lpenr_syscfglpen_en  = (|wr_req & rcc_c1_apb4lpenr_sel);
 assign nxt_rcc_c1_apb4lpenr_syscfglpen = wdata[1:1]                      ;
-assign rcc_c1_syscfglp_en              = cur_rcc_c1_apb4lpenr_syscfglpen ;
+assign rcc_c1_syscfg_lpen              = cur_rcc_c1_apb4lpenr_syscfglpen ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
@@ -17444,8 +17428,6 @@ assign rcc_c2_rsr_rmvf_wren  = (wr_req[2] & rcc_c2_rsr_sel);
 assign rcc_csr_read = {{30{1'b0}}
                     , cur_rcc_csr_lsirdy
                     , cur_rcc_csr_lsion};
-
-
-
+assign rcc_csr_lsion_wren = (wr_req[0] & rcc_csr_sel);
 
 endmodule
