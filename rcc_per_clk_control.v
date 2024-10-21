@@ -695,7 +695,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpiok_en,
     input rcc_c1_gpiok_lpen,
     input rcc_c2_gpiok_lpen,
-    input rcc_gpiok_amen,
     output rcc_gpiok_hclk,
 // gpioj control signals
     input rcc_gpioj_arcg_clk_en,
@@ -703,7 +702,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpioj_en,
     input rcc_c1_gpioj_lpen,
     input rcc_c2_gpioj_lpen,
-    input rcc_gpioj_amen,
     output rcc_gpioj_hclk,
 // gpioi control signals
     input rcc_gpioi_arcg_clk_en,
@@ -711,7 +709,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpioi_en,
     input rcc_c1_gpioi_lpen,
     input rcc_c2_gpioi_lpen,
-    input rcc_gpioi_amen,
     output rcc_gpioi_hclk,
 // gpioh control signals
     input rcc_gpioh_arcg_clk_en,
@@ -719,7 +716,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpioh_en,
     input rcc_c1_gpioh_lpen,
     input rcc_c2_gpioh_lpen,
-    input rcc_gpioh_amen,
     output rcc_gpioh_hclk,
 // gpiog control signals
     input rcc_gpiog_arcg_clk_en,
@@ -727,7 +723,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpiog_en,
     input rcc_c1_gpiog_lpen,
     input rcc_c2_gpiog_lpen,
-    input rcc_gpiog_amen,
     output rcc_gpiog_hclk,
 // gpiof control signals
     input rcc_gpiof_arcg_clk_en,
@@ -735,7 +730,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpiof_en,
     input rcc_c1_gpiof_lpen,
     input rcc_c2_gpiof_lpen,
-    input rcc_gpiof_amen,
     output rcc_gpiof_hclk,
 // gpioe control signals
     input rcc_gpioe_arcg_clk_en,
@@ -743,7 +737,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpioe_en,
     input rcc_c1_gpioe_lpen,
     input rcc_c2_gpioe_lpen,
-    input rcc_gpioe_amen,
     output rcc_gpioe_hclk,
 // gpiod control signals
     input rcc_gpiod_arcg_clk_en,
@@ -751,7 +744,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpiod_en,
     input rcc_c1_gpiod_lpen,
     input rcc_c2_gpiod_lpen,
-    input rcc_gpiod_amen,
     output rcc_gpiod_hclk,
 // gpioc control signals
     input rcc_gpioc_arcg_clk_en,
@@ -759,7 +751,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpioc_en,
     input rcc_c1_gpioc_lpen,
     input rcc_c2_gpioc_lpen,
-    input rcc_gpioc_amen,
     output rcc_gpioc_hclk,
 // gpiob control signals
     input rcc_gpiob_arcg_clk_en,
@@ -767,7 +758,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpiob_en,
     input rcc_c1_gpiob_lpen,
     input rcc_c2_gpiob_lpen,
-    input rcc_gpiob_amen,
     output rcc_gpiob_hclk,
 // gpioa control signals
     input rcc_gpioa_arcg_clk_en,
@@ -775,7 +765,6 @@ module rcc_per_clk_control (
     input rcc_c2_gpioa_en,
     input rcc_c1_gpioa_lpen,
     input rcc_c2_gpioa_lpen,
-    input rcc_gpioa_amen,
     output rcc_gpioa_hclk,
 // rcc control signals
     input rcc_rcc_arcg_clk_en,
@@ -888,7 +877,6 @@ module rcc_per_clk_control (
     input rcc_c2_syscfg_en,
     input rcc_c1_syscfg_lpen,
     input rcc_c2_syscfg_lpen,
-    input rcc_syscfg_amen,
     output rcc_syscfg_pclk,
 // iwdg2 control signals
     input rcc_iwdg2_arcg_clk_en,
@@ -912,7 +900,7 @@ module rcc_per_clk_control (
     input wire [1:0] spdifsel,
     input wire [2:0] lptim1sel,
     input wire [1:0] fdcansel,
-    input wire [0:0] swpsel,
+    input wire [0:0] swpmisel,
     input wire [2:0] sai1sel,
     input wire [0:0] dfsdm1sel,
     input wire [2:0] sai23sel,
@@ -1240,8 +1228,8 @@ module rcc_per_clk_control (
     wire rcc_lptim1sel_clk;
     // fdcansel ker clock source select
     wire rcc_fdcansel_clk;
-    // swpsel ker clock source select
-    wire rcc_swpsel_clk;
+    // swpmisel ker clock source select
+    wire rcc_swpmisel_clk;
     // sai1sel ker clock source select
     wire rcc_sai1sel_clk;
     // dfsdm1sel ker clock source select
@@ -1392,15 +1380,15 @@ module rcc_per_clk_control (
     // ltdc ker clock enable logic
     assign rcc_ltdc_ker_clk_en = rcc_ltdc_bus_clk_en & rcc_ltdc_arcg_clk_en;
     // ltdc bus clock gate
-    rcc_clk_gate_cell_sync rcc_ltdc_aclk_gate (
-        .clk_in(rcc_axibridge_d1_clk),
-        .clk_en(rcc_ltdc_bus_clk_en),
-        .clk_out(rcc_ltdc_aclk)
-    );
     rcc_clk_gate_cell_sync rcc_ltdc_pclk_gate (
         .clk_in(rcc_apb3bridge_d1_clk),
         .clk_en(rcc_ltdc_bus_clk_en),
         .clk_out(rcc_ltdc_pclk)
+    );
+    rcc_clk_gate_cell_sync rcc_ltdc_aclk_gate (
+        .clk_in(rcc_axibridge_d1_clk),
+        .clk_en(rcc_ltdc_bus_clk_en),
+        .clk_out(rcc_ltdc_aclk)
     );
     // ltdc ker clock gate
     rcc_clk_gate_cell_sync rcc_ltdc_ker_clk_gate (
@@ -2332,7 +2320,7 @@ module rcc_per_clk_control (
     );
     // swpmi ker clock gate
     rcc_clk_gate_cell_sync rcc_swpmi_ker_clk_gate (
-        .clk_in(rcc_swpsel_clk),
+        .clk_in(rcc_swpmisel_clk),
         .clk_en(rcc_swpmi_ker_clk_en),
         .clk_out(rcc_swpmi_ker_clk)
     );
@@ -2751,7 +2739,7 @@ module rcc_per_clk_control (
 
 
   // gpiok bus clock ker clock enable
-    assign rcc_gpiok_bus_clk_en = ((rcc_c1_gpiok_en & (~c1_sleep | rcc_c1_gpiok_lpen) & ~c1_deepsleep) | (rcc_c2_gpiok_en & (~c2_sleep | rcc_c2_gpiok_lpen) & ~c2_deepsleep) | (rcc_gpiok_amen & ~d3_deepsleep)) & rcc_gpiok_arcg_clk_en;
+    assign rcc_gpiok_bus_clk_en = ((rcc_c1_gpiok_en & (~c1_sleep | rcc_c1_gpiok_lpen) & ~c1_deepsleep) | (rcc_c2_gpiok_en & (~c2_sleep | rcc_c2_gpiok_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpiok_arcg_clk_en;
     // gpiok bus clock gate
     rcc_clk_gate_cell_sync rcc_gpiok_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2763,7 +2751,7 @@ module rcc_per_clk_control (
 
 
   // gpioj bus clock ker clock enable
-    assign rcc_gpioj_bus_clk_en = ((rcc_c1_gpioj_en & (~c1_sleep | rcc_c1_gpioj_lpen) & ~c1_deepsleep) | (rcc_c2_gpioj_en & (~c2_sleep | rcc_c2_gpioj_lpen) & ~c2_deepsleep) | (rcc_gpioj_amen & ~d3_deepsleep)) & rcc_gpioj_arcg_clk_en;
+    assign rcc_gpioj_bus_clk_en = ((rcc_c1_gpioj_en & (~c1_sleep | rcc_c1_gpioj_lpen) & ~c1_deepsleep) | (rcc_c2_gpioj_en & (~c2_sleep | rcc_c2_gpioj_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpioj_arcg_clk_en;
     // gpioj bus clock gate
     rcc_clk_gate_cell_sync rcc_gpioj_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2775,7 +2763,7 @@ module rcc_per_clk_control (
 
 
   // gpioi bus clock ker clock enable
-    assign rcc_gpioi_bus_clk_en = ((rcc_c1_gpioi_en & (~c1_sleep | rcc_c1_gpioi_lpen) & ~c1_deepsleep) | (rcc_c2_gpioi_en & (~c2_sleep | rcc_c2_gpioi_lpen) & ~c2_deepsleep) | (rcc_gpioi_amen & ~d3_deepsleep)) & rcc_gpioi_arcg_clk_en;
+    assign rcc_gpioi_bus_clk_en = ((rcc_c1_gpioi_en & (~c1_sleep | rcc_c1_gpioi_lpen) & ~c1_deepsleep) | (rcc_c2_gpioi_en & (~c2_sleep | rcc_c2_gpioi_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpioi_arcg_clk_en;
     // gpioi bus clock gate
     rcc_clk_gate_cell_sync rcc_gpioi_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2787,7 +2775,7 @@ module rcc_per_clk_control (
 
 
   // gpioh bus clock ker clock enable
-    assign rcc_gpioh_bus_clk_en = ((rcc_c1_gpioh_en & (~c1_sleep | rcc_c1_gpioh_lpen) & ~c1_deepsleep) | (rcc_c2_gpioh_en & (~c2_sleep | rcc_c2_gpioh_lpen) & ~c2_deepsleep) | (rcc_gpioh_amen & ~d3_deepsleep)) & rcc_gpioh_arcg_clk_en;
+    assign rcc_gpioh_bus_clk_en = ((rcc_c1_gpioh_en & (~c1_sleep | rcc_c1_gpioh_lpen) & ~c1_deepsleep) | (rcc_c2_gpioh_en & (~c2_sleep | rcc_c2_gpioh_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpioh_arcg_clk_en;
     // gpioh bus clock gate
     rcc_clk_gate_cell_sync rcc_gpioh_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2799,7 +2787,7 @@ module rcc_per_clk_control (
 
 
   // gpiog bus clock ker clock enable
-    assign rcc_gpiog_bus_clk_en = ((rcc_c1_gpiog_en & (~c1_sleep | rcc_c1_gpiog_lpen) & ~c1_deepsleep) | (rcc_c2_gpiog_en & (~c2_sleep | rcc_c2_gpiog_lpen) & ~c2_deepsleep) | (rcc_gpiog_amen & ~d3_deepsleep)) & rcc_gpiog_arcg_clk_en;
+    assign rcc_gpiog_bus_clk_en = ((rcc_c1_gpiog_en & (~c1_sleep | rcc_c1_gpiog_lpen) & ~c1_deepsleep) | (rcc_c2_gpiog_en & (~c2_sleep | rcc_c2_gpiog_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpiog_arcg_clk_en;
     // gpiog bus clock gate
     rcc_clk_gate_cell_sync rcc_gpiog_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2811,7 +2799,7 @@ module rcc_per_clk_control (
 
 
   // gpiof bus clock ker clock enable
-    assign rcc_gpiof_bus_clk_en = ((rcc_c1_gpiof_en & (~c1_sleep | rcc_c1_gpiof_lpen) & ~c1_deepsleep) | (rcc_c2_gpiof_en & (~c2_sleep | rcc_c2_gpiof_lpen) & ~c2_deepsleep) | (rcc_gpiof_amen & ~d3_deepsleep)) & rcc_gpiof_arcg_clk_en;
+    assign rcc_gpiof_bus_clk_en = ((rcc_c1_gpiof_en & (~c1_sleep | rcc_c1_gpiof_lpen) & ~c1_deepsleep) | (rcc_c2_gpiof_en & (~c2_sleep | rcc_c2_gpiof_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpiof_arcg_clk_en;
     // gpiof bus clock gate
     rcc_clk_gate_cell_sync rcc_gpiof_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2823,7 +2811,7 @@ module rcc_per_clk_control (
 
 
   // gpioe bus clock ker clock enable
-    assign rcc_gpioe_bus_clk_en = ((rcc_c1_gpioe_en & (~c1_sleep | rcc_c1_gpioe_lpen) & ~c1_deepsleep) | (rcc_c2_gpioe_en & (~c2_sleep | rcc_c2_gpioe_lpen) & ~c2_deepsleep) | (rcc_gpioe_amen & ~d3_deepsleep)) & rcc_gpioe_arcg_clk_en;
+    assign rcc_gpioe_bus_clk_en = ((rcc_c1_gpioe_en & (~c1_sleep | rcc_c1_gpioe_lpen) & ~c1_deepsleep) | (rcc_c2_gpioe_en & (~c2_sleep | rcc_c2_gpioe_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpioe_arcg_clk_en;
     // gpioe bus clock gate
     rcc_clk_gate_cell_sync rcc_gpioe_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2835,7 +2823,7 @@ module rcc_per_clk_control (
 
 
   // gpiod bus clock ker clock enable
-    assign rcc_gpiod_bus_clk_en = ((rcc_c1_gpiod_en & (~c1_sleep | rcc_c1_gpiod_lpen) & ~c1_deepsleep) | (rcc_c2_gpiod_en & (~c2_sleep | rcc_c2_gpiod_lpen) & ~c2_deepsleep) | (rcc_gpiod_amen & ~d3_deepsleep)) & rcc_gpiod_arcg_clk_en;
+    assign rcc_gpiod_bus_clk_en = ((rcc_c1_gpiod_en & (~c1_sleep | rcc_c1_gpiod_lpen) & ~c1_deepsleep) | (rcc_c2_gpiod_en & (~c2_sleep | rcc_c2_gpiod_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpiod_arcg_clk_en;
     // gpiod bus clock gate
     rcc_clk_gate_cell_sync rcc_gpiod_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2847,7 +2835,7 @@ module rcc_per_clk_control (
 
 
   // gpioc bus clock ker clock enable
-    assign rcc_gpioc_bus_clk_en = ((rcc_c1_gpioc_en & (~c1_sleep | rcc_c1_gpioc_lpen) & ~c1_deepsleep) | (rcc_c2_gpioc_en & (~c2_sleep | rcc_c2_gpioc_lpen) & ~c2_deepsleep) | (rcc_gpioc_amen & ~d3_deepsleep)) & rcc_gpioc_arcg_clk_en;
+    assign rcc_gpioc_bus_clk_en = ((rcc_c1_gpioc_en & (~c1_sleep | rcc_c1_gpioc_lpen) & ~c1_deepsleep) | (rcc_c2_gpioc_en & (~c2_sleep | rcc_c2_gpioc_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpioc_arcg_clk_en;
     // gpioc bus clock gate
     rcc_clk_gate_cell_sync rcc_gpioc_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2859,7 +2847,7 @@ module rcc_per_clk_control (
 
 
   // gpiob bus clock ker clock enable
-    assign rcc_gpiob_bus_clk_en = ((rcc_c1_gpiob_en & (~c1_sleep | rcc_c1_gpiob_lpen) & ~c1_deepsleep) | (rcc_c2_gpiob_en & (~c2_sleep | rcc_c2_gpiob_lpen) & ~c2_deepsleep) | (rcc_gpiob_amen & ~d3_deepsleep)) & rcc_gpiob_arcg_clk_en;
+    assign rcc_gpiob_bus_clk_en = ((rcc_c1_gpiob_en & (~c1_sleep | rcc_c1_gpiob_lpen) & ~c1_deepsleep) | (rcc_c2_gpiob_en & (~c2_sleep | rcc_c2_gpiob_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpiob_arcg_clk_en;
     // gpiob bus clock gate
     rcc_clk_gate_cell_sync rcc_gpiob_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -2871,7 +2859,7 @@ module rcc_per_clk_control (
 
 
   // gpioa bus clock ker clock enable
-    assign rcc_gpioa_bus_clk_en = ((rcc_c1_gpioa_en & (~c1_sleep | rcc_c1_gpioa_lpen) & ~c1_deepsleep) | (rcc_c2_gpioa_en & (~c2_sleep | rcc_c2_gpioa_lpen) & ~c2_deepsleep) | (rcc_gpioa_amen & ~d3_deepsleep)) & rcc_gpioa_arcg_clk_en;
+    assign rcc_gpioa_bus_clk_en = ((rcc_c1_gpioa_en & (~c1_sleep | rcc_c1_gpioa_lpen) & ~c1_deepsleep) | (rcc_c2_gpioa_en & (~c2_sleep | rcc_c2_gpioa_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_gpioa_arcg_clk_en;
     // gpioa bus clock gate
     rcc_clk_gate_cell_sync rcc_gpioa_hclk_gate (
         .clk_in(rcc_ahb4bridge_d3_clk),
@@ -3109,7 +3097,7 @@ module rcc_per_clk_control (
 
 
   // syscfg bus clock ker clock enable
-    assign rcc_syscfg_bus_clk_en = ((rcc_c1_syscfg_en & (~c1_sleep | rcc_c1_syscfg_lpen) & ~c1_deepsleep) | (rcc_c2_syscfg_en & (~c2_sleep | rcc_c2_syscfg_lpen) & ~c2_deepsleep) | (rcc_syscfg_amen & ~d3_deepsleep)) & rcc_syscfg_arcg_clk_en;
+    assign rcc_syscfg_bus_clk_en = ((rcc_c1_syscfg_en & (~c1_sleep | rcc_c1_syscfg_lpen) & ~c1_deepsleep) | (rcc_c2_syscfg_en & (~c2_sleep | rcc_c2_syscfg_lpen) & ~c2_deepsleep) | ~d3_deepsleep) & rcc_syscfg_arcg_clk_en;
     // syscfg bus clock gate
     rcc_clk_gate_cell_sync rcc_syscfg_pclk_gate (
         .clk_in(rcc_apb4bridge_d3_clk),
@@ -3276,14 +3264,14 @@ module rcc_per_clk_control (
     .sel(fdcansel),
     .clk_out(rcc_fdcansel_clk)
     );
-    // swpsel ker clock select logic
+    // swpmisel ker clock select logic
     glitch_free_clk_switch #(
         .CLK_NUM(2)
-    ) rcc_swpsel_clk_switch(
+    ) rcc_swpmisel_clk_switch(
     .clk_in({hsi_ker_clk,rcc_apb1bridge_d2_clk}),
     .rst_n(sys_rst_n),
-    .sel(swpsel),
-    .clk_out(rcc_swpsel_clk)
+    .sel(swpmisel),
+    .clk_out(rcc_swpmisel_clk)
     );
     // sai1sel ker clock select logic
     glitch_free_clk_switch #(

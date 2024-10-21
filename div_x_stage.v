@@ -7,7 +7,7 @@ module div_x_stage
 (
     input wire clk_in,
     input wire rst_n,
-    input wire [$clog2(STAGE_NUM-IS_STAGE_REMOVE):0] div_sel,
+    input wire [$clog2(STAGE_NUM-IS_STAGE_REMOVE+1)-1:0] div_sel,
     output wire clk_out
 );
     wire [STAGE_NUM:0] clk_temp;

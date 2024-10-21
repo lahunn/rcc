@@ -50,8 +50,6 @@ module rcc_reg#(
   output          timpre              ,
   output          hrtimsel            ,
   output [5:0]    rtcpre              ,
-  output          stopkerwuck         ,
-  output          stopwuck            ,
   output [2:0]    sw                  ,
   output [3:0]    d1cpre              ,
   output [2:0]    d1ppre              ,
@@ -98,7 +96,6 @@ module rcc_reg#(
   output [12:0]   fracn3              ,
   output [1:0]    clkpersel           ,
   output          sdmmcsel            ,
-  output          dsisel              ,
   output [1:0]    qspisel             ,
   output [1:0]    fmcsel              ,
   output          swpmisel            ,
@@ -108,7 +105,7 @@ module rcc_reg#(
   output [2:0]    spi45sel            ,
   output [2:0]    spi123sel           ,
   output [2:0]    sai23sel            ,
-  output [1:0]    sai1sel             ,
+  output [2:0]    sai1sel             ,
   output [2:0]    lptim1sel           ,
   output [1:0]    cecsel              ,
   output [1:0]    usbsel              ,
@@ -254,7 +251,6 @@ module rcc_reg#(
   output          rcc_c1_sdmmc1_en    ,
   output          rcc_c1_qspi_en      ,
   output          rcc_c1_fmc_en       ,
-  output          rcc_c1_flitf_en     ,
   output          rcc_c1_jpgdec_en    ,
   output          rcc_c1_dma2d_en     ,
   output          rcc_c1_mdma_en      ,
@@ -1089,9 +1085,6 @@ wire        rcc_d1ccipr_clkpersel_en ;
 wire        cur_rcc_d1ccipr_sdmmcsel ;
 wire        nxt_rcc_d1ccipr_sdmmcsel ;
 wire        rcc_d1ccipr_sdmmcsel_en  ;
-wire        cur_rcc_d1ccipr_dsisel   ;
-wire        nxt_rcc_d1ccipr_dsisel   ;
-wire        rcc_d1ccipr_dsisel_en    ;
 wire [1:0]  cur_rcc_d1ccipr_qspisel  ;
 wire [1:0]  nxt_rcc_d1ccipr_qspisel  ;
 wire        rcc_d1ccipr_qspisel_en   ;
@@ -1122,8 +1115,8 @@ wire        rcc_d2ccip1r_spi123sel_en ;
 wire [2:0]  cur_rcc_d2ccip1r_sai23sel ;
 wire [2:0]  nxt_rcc_d2ccip1r_sai23sel ;
 wire        rcc_d2ccip1r_sai23sel_en  ;
-wire [1:0]  cur_rcc_d2ccip1r_sai1sel  ;
-wire [1:0]  nxt_rcc_d2ccip1r_sai1sel  ;
+wire [2:0]  cur_rcc_d2ccip1r_sai1sel  ;
+wire [2:0]  nxt_rcc_d2ccip1r_sai1sel  ;
 wire        rcc_d2ccip1r_sai1sel_en   ;
 // rcc_d2ccip2r
 wire [31:0] rcc_d2ccip2r_read              ;
@@ -1691,9 +1684,6 @@ wire        rcc_c1_ahb3enr_qspien_en   ;
 wire        cur_rcc_c1_ahb3enr_fmcen   ;
 wire        nxt_rcc_c1_ahb3enr_fmcen   ;
 wire        rcc_c1_ahb3enr_fmcen_en    ;
-wire        cur_rcc_c1_ahb3enr_flitfen ;
-wire        nxt_rcc_c1_ahb3enr_flitfen ;
-wire        rcc_c1_ahb3enr_flitfen_en  ;
 wire        cur_rcc_c1_ahb3enr_jpgdecen;
 wire        nxt_rcc_c1_ahb3enr_jpgdecen;
 wire        rcc_c1_ahb3enr_jpgdecen_en ;
@@ -2675,7 +2665,6 @@ wire        rcc_c2_apb4enr_lpuart1en_en ;
 wire        cur_rcc_c2_apb4enr_syscfgen ;
 wire        nxt_rcc_c2_apb4enr_syscfgen ;
 wire        rcc_c2_apb4enr_syscfgen_en  ;
-wire        rcc_csr_sel;
 // rcc_c2_ahb3lpenr
 wire [31:0] rcc_c2_ahb3lpenr_read           ;
 wire        rcc_c2_ahb3lpenr_sel            ;
@@ -3021,15 +3010,21 @@ wire hseon_clr_n;
 wire hsi48on_clr_n;
 wire [1:0]  eff_hsidiv;
 wire rcc_eff_hsidiv_en;
-
+wire csion_clr_n;
+wire csion_set_n;
+wire hsion_set_n;
+wire sw_clr_n;
+wire sw_set_n;
 // rcc_csr
 wire [31:0] rcc_csr_read      ;
+wire        rcc_csr_sel;
 // rcc_c1_rsr
 wire [31:0] rcc_c1_rsr_read         ;
 wire        rcc_c1_rsr_sel          ;
 // rcc_c2_rsr
 wire [31:0] rcc_c2_rsr_read         ;
 wire        rcc_c2_rsr_sel          ;
+
 
 
 // ================================================================================
@@ -3412,7 +3407,6 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 17:17               hserdy              RO                  0b0                 
 // --------------------------------------------------------------------------------
-
 assign hseon_clr_n = rst_n & ~(rcc_hsecss_fail | rcc_sys_stop);
 assign cur_rcc_cr_hserdy = hse_rdy;
 
@@ -3451,9 +3445,7 @@ assign cur_rcc_cr_hsi48rdy = hsi48_rdy;
 // --------------------------------------------------------------------------------
 // 12:12               hsi48on             RW                  0b0                 
 // --------------------------------------------------------------------------------
-
 assign hsi48on_clr_n =  rst_n & ~rcc_sys_stop;
-
 assign rcc_cr_hsi48on_en  = (|wr_req & rcc_cr_sel);
 assign nxt_rcc_cr_hsi48on = wdata[12:12]          ;
 assign hsi48on            = cur_rcc_cr_hsi48on    ;
@@ -3590,8 +3582,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 0:0                 hsion               RW                  0b1                 
 // --------------------------------------------------------------------------------
-wire hsion_set_n = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==0 | cur_rcc_cfgr_stopkerwuck ==0)) | rcc_hsecss_fail);
-
+assign hsion_set_n = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==0 | cur_rcc_cfgr_stopkerwuck ==0)) | rcc_hsecss_fail);
 assign rcc_cr_hsion_en  = ~((cur_rcc_cfgr_sws == 3'b000)|(cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b00));
 assign nxt_rcc_cr_hsion = wdata[0:0]                                                                              ;
 assign hsion            = cur_rcc_cr_hsion                                                                        ;
@@ -3858,7 +3849,6 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_cfgr_stopkerwuck_en  = (|wr_req & rcc_cfgr_sel);
 assign nxt_rcc_cfgr_stopkerwuck = wdata[7:7]              ;
-assign stopkerwuck              = cur_rcc_cfgr_stopkerwuck;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -3875,7 +3865,6 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign rcc_cfgr_stopwuck_en  = (|wr_req & rcc_cfgr_sel);
 assign nxt_rcc_cfgr_stopwuck = wdata[6:6]              ;
-assign stopwuck              = cur_rcc_cfgr_stopwuck   ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -3895,9 +3884,6 @@ assign cur_rcc_cfgr_sws = cur_rcc_cfgr_sw;
 // --------------------------------------------------------------------------------
 // 2:0                 sw                  RW                  0b0                 
 // --------------------------------------------------------------------------------
-wire sw_clr_n;
-wire sw_set_n;
-
 assign sw_clr_n = ~(rcc_hsecss_fail|(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck==0)) & rst_n;//there is a difference with H7
 assign sw_set_n = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1);
 
@@ -4910,8 +4896,6 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 16:16               sdmmcsel            RW                  0b0                 
 // --------------------------------------------------------------------------------
-// 8:8                 dsisel              RW                  0b0                 
-// --------------------------------------------------------------------------------
 // 5:4                 qspisel             RW                  0b0                 
 // --------------------------------------------------------------------------------
 // 1:0                 fmcsel              RW                  0b0                 
@@ -4924,9 +4908,7 @@ assign rcc_d1ccipr_read = {{2{1'b0}}
                         , cur_rcc_d1ccipr_clkpersel
                         , {11{1'b0}}
                         , cur_rcc_d1ccipr_sdmmcsel
-                        , {7{1'b0}}
-                        , cur_rcc_d1ccipr_dsisel
-                        , {2{1'b0}}
+                        , {10{1'b0}}
                         , cur_rcc_d1ccipr_qspisel
                         , {2{1'b0}}
                         , cur_rcc_d1ccipr_fmcsel};
@@ -4963,23 +4945,6 @@ BB_dfflr #(
   .en   (rcc_d1ccipr_sdmmcsel_en ),
   .din  (nxt_rcc_d1ccipr_sdmmcsel),
   .dout (cur_rcc_d1ccipr_sdmmcsel)
-);
-
-// --------------------------------------------------------------------------------
-// 8:8                 dsisel              RW                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_d1ccipr_dsisel_en  = (|wr_req & rcc_d1ccipr_sel);
-assign nxt_rcc_d1ccipr_dsisel = wdata[8:8]                 ;
-assign dsisel                 = cur_rcc_d1ccipr_dsisel     ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_d1ccipr_dsisel (
-  .clk  (clk                   ),
-  .rst_n(rst_n                 ),
-  .en   (rcc_d1ccipr_dsisel_en ),
-  .din  (nxt_rcc_d1ccipr_dsisel),
-  .dout (cur_rcc_d1ccipr_dsisel)
 );
 
 // --------------------------------------------------------------------------------
@@ -5034,7 +4999,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 8:6                 sai23sel            RW                  0b0                 
 // --------------------------------------------------------------------------------
-// 1:0                 sai1sel             RW                  0b0                 
+// 2:0                 sai1sel             RW                  0b0                 
 // --------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------
@@ -5053,7 +5018,7 @@ assign rcc_d2ccip1r_read = {cur_rcc_d2ccip1r_swpmisel
                          , cur_rcc_d2ccip1r_spi123sel
                          , {3{1'b0}}
                          , cur_rcc_d2ccip1r_sai23sel
-                         , {4{1'b0}}
+                         , {3{1'b0}}
                          , cur_rcc_d2ccip1r_sai1sel};
 
 // --------------------------------------------------------------------------------
@@ -5176,13 +5141,13 @@ BB_dfflr #(
 );
 
 // --------------------------------------------------------------------------------
-// 1:0                 sai1sel             RW                  0b0                 
+// 2:0                 sai1sel             RW                  0b0                 
 // --------------------------------------------------------------------------------
 assign rcc_d2ccip1r_sai1sel_en  = (|wr_req & rcc_d2ccip1r_sel);
-assign nxt_rcc_d2ccip1r_sai1sel = wdata[1:0]                  ;
+assign nxt_rcc_d2ccip1r_sai1sel = wdata[2:0]                  ;
 assign sai1sel                  = cur_rcc_d2ccip1r_sai1sel    ;
 BB_dfflr #(
-  .DW     (2  ),
+  .DW     (3  ),
   .RST_VAL('h0)
 ) U_rcc_d2ccip1r_sai1sel (
   .clk  (clk                     ),
@@ -6273,148 +6238,10 @@ assign nxt_rcc_bdcr_lseon = wdata[0:0]                  ;
 // --------------------------------------------------------------------------------
 // 16:16               bdrst               RW                  0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_bdcr_rtcsel_en  = (wr_req[1] & rcc_bdcr_sel);
-assign nxt_rcc_bdcr_rtcsel = wdata[9:8]                ;
-assign rtcsel              = cur_rcc_bdcr_rtcsel       ;
-BB_dfflr #(
-  .DW     (2  ),
-  .RST_VAL('h0)
-) U_rcc_bdcr_rtcsel (
-  .clk  (clk                ),
-  .rst_n(rst_n              ),
-  .en   (rcc_bdcr_rtcsel_en ),
-  .din  (nxt_rcc_bdcr_rtcsel),
-  .dout (cur_rcc_bdcr_rtcsel)
-);
+assign rcc_bdcr_byte2_wren  = (wr_req[2] & rcc_bdcr_sel);
+assign rcc_bdcr_byte1_wren  = (wr_req[1] & rcc_bdcr_sel);
+assign rcc_bdcr_byte0_wren  = (wr_req[0] & rcc_bdcr_sel);
 
-// --------------------------------------------------------------------------------
-// 6:6                 lsecssd             RO                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_bdcr_lsecssd_set = rcc_lsecss_fail                            ;
-assign rcc_bdcr_lsecssd_clr = 1'b0                                       ;
-assign rcc_bdcr_lsecssd_en  = rcc_bdcr_lsecssd_set | rcc_bdcr_lsecssd_clr;
-assign nxt_rcc_bdcr_lsecssd = rcc_bdcr_lsecssd_set                       ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_bdcr_lsecssd (
-  .clk  (clk                 ),
-  .rst_n(rst_n               ),
-  .en   (rcc_bdcr_lsecssd_en ),
-  .din  (nxt_rcc_bdcr_lsecssd),
-  .dout (cur_rcc_bdcr_lsecssd)
-);
-
-// --------------------------------------------------------------------------------
-// 5:5                 lsecsson            W1S                 0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_bdcr_lsecsson_en  = (wr_req[0] & rcc_bdcr_sel);
-assign nxt_rcc_bdcr_lsecsson = wdata[5:5]                ;
-assign lsecsson              = cur_rcc_bdcr_lsecsson     ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_bdcr_lsecsson (
-  .clk  (clk                  ),
-  .rst_n(rst_n                ),
-  .en   (rcc_bdcr_lsecsson_en ),
-  .din  (nxt_rcc_bdcr_lsecsson),
-  .dout (cur_rcc_bdcr_lsecsson)
-);
-
-// --------------------------------------------------------------------------------
-// 4:3                 lsedrv              RW                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_bdcr_lsedrv_en  = (wr_req[0] & rcc_bdcr_sel);
-assign nxt_rcc_bdcr_lsedrv = wdata[4:3]                ;
-assign lsedrv              = cur_rcc_bdcr_lsedrv       ;
-BB_dfflr #(
-  .DW     (2  ),
-  .RST_VAL('h0)
-) U_rcc_bdcr_lsedrv (
-  .clk  (clk                ),
-  .rst_n(rst_n              ),
-  .en   (rcc_bdcr_lsedrv_en ),
-  .din  (nxt_rcc_bdcr_lsedrv),
-  .dout (cur_rcc_bdcr_lsedrv)
-);
-
-// --------------------------------------------------------------------------------
-// 2:2                 lsebyp              RW                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_bdcr_lsebyp_en  = (wr_req[0] & rcc_bdcr_sel);
-assign nxt_rcc_bdcr_lsebyp = wdata[2:2]                ;
-assign lsebyp              = cur_rcc_bdcr_lsebyp       ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_bdcr_lsebyp (
-  .clk  (clk                ),
-  .rst_n(rst_n              ),
-  .en   (rcc_bdcr_lsebyp_en ),
-  .din  (nxt_rcc_bdcr_lsebyp),
-  .dout (cur_rcc_bdcr_lsebyp)
-);
-
-// --------------------------------------------------------------------------------
-// 1:1                 lserdy              RO                  0b0                 
-// --------------------------------------------------------------------------------
-assign cur_rcc_bdcr_lserdy = lse_rdy;
-
-// --------------------------------------------------------------------------------
-// 0:0                 lseon               RW                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_bdcr_lseon_en  = (wr_req[0] & rcc_bdcr_sel);
-assign nxt_rcc_bdcr_lseon = wdata[0:0]                ;
-assign lseon              = cur_rcc_bdcr_lseon        ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_bdcr_lseon (
-  .clk  (clk               ),
-  .rst_n(rst_n             ),
-  .en   (rcc_bdcr_lseon_en ),
-  .din  (nxt_rcc_bdcr_lseon),
-  .dout (cur_rcc_bdcr_lseon)
-);
-
-
-// --------------------------------------------------------------------------------
-// rcc_csr                                 0x74                                    
-// --------------------------------------------------------------------------------
-// 1:1                 lsirdy              RO                  0b0                 
-// --------------------------------------------------------------------------------
-// 0:0                 lsion               RW                  0b0                 
-// --------------------------------------------------------------------------------
-
-// --------------------------------------------------------------------------------
-// rcc_csr read data
-// --------------------------------------------------------------------------------
-assign rcc_csr_read = {{30{1'b0}}
-                    , cur_rcc_csr_lsirdy
-                    , cur_rcc_csr_lsion};
-
-// --------------------------------------------------------------------------------
-// 1:1                 lsirdy              RO                  0b0                 
-// --------------------------------------------------------------------------------
-assign cur_rcc_csr_lsirdy = lsi_rdy;
-
-// --------------------------------------------------------------------------------
-// 0:0                 lsion               RW                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_csr_lsion_en  = (wr_req[0] & rcc_csr_sel);
-assign nxt_rcc_csr_lsion = wdata[0:0]               ;
-assign lsion             = cur_rcc_csr_lsion        ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_csr_lsion (
-  .clk  (clk              ),
-  .rst_n(rst_n            ),
-  .en   (rcc_csr_lsion_en ),
-  .din  (nxt_rcc_csr_lsion),
-  .dout (cur_rcc_csr_lsion)
-);
 
 
 // --------------------------------------------------------------------------------
@@ -8699,8 +8526,6 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 12:12               fmcen               RW                  0b0                 
 // --------------------------------------------------------------------------------
-// 8:8                 flitfen             RW                  0b0                 
-// --------------------------------------------------------------------------------
 // 5:5                 jpgdecen            RW                  0b0                 
 // --------------------------------------------------------------------------------
 // 4:4                 dma2den             RW                  0b0                 
@@ -8717,9 +8542,7 @@ assign rcc_c1_ahb3enr_read = {{15{1'b0}}
                            , cur_rcc_c1_ahb3enr_qspien
                            , {1{1'b0}}
                            , cur_rcc_c1_ahb3enr_fmcen
-                           , {3{1'b0}}
-                           , cur_rcc_c1_ahb3enr_flitfen
-                           , {2{1'b0}}
+                           , {6{1'b0}}
                            , cur_rcc_c1_ahb3enr_jpgdecen
                            , cur_rcc_c1_ahb3enr_dma2den
                            , {3{1'b0}}
@@ -8774,23 +8597,6 @@ BB_dfflr #(
   .en   (rcc_c1_ahb3enr_fmcen_en ),
   .din  (nxt_rcc_c1_ahb3enr_fmcen),
   .dout (cur_rcc_c1_ahb3enr_fmcen)
-);
-
-// --------------------------------------------------------------------------------
-// 8:8                 flitfen             RW                  0b0                 
-// --------------------------------------------------------------------------------
-assign rcc_c1_ahb3enr_flitfen_en  = (|wr_req & rcc_c1_ahb3enr_sel);
-assign nxt_rcc_c1_ahb3enr_flitfen = wdata[8:8]                    ;
-assign rcc_c1_flitf_en            = cur_rcc_c1_ahb3enr_flitfen    ;
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) U_rcc_c1_ahb3enr_flitfen (
-  .clk  (clk                       ),
-  .rst_n(rst_n                     ),
-  .en   (rcc_c1_ahb3enr_flitfen_en ),
-  .din  (nxt_rcc_c1_ahb3enr_flitfen),
-  .dout (cur_rcc_c1_ahb3enr_flitfen)
 );
 
 // --------------------------------------------------------------------------------
@@ -17192,12 +16998,12 @@ assign rcc_c2_rtc_lpen              = cur_rcc_c2_apb4lpenr_rtclpen    ;
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h1)
-) U_rcc_c2_apb4lpenr_rtcapblpen (
-  .clk  (clk                            ),
-  .rst_n(rst_n                          ),
-  .en   (rcc_c2_apb4lpenr_rtcapblpen_en ),
-  .din  (nxt_rcc_c2_apb4lpenr_rtcapblpen),
-  .dout (cur_rcc_c2_apb4lpenr_rtcapblpen)
+) U_rcc_c2_apb4lpenr_rtclpen (
+  .clk  (clk                         ),
+  .rst_n(rst_n                       ),
+  .en   (rcc_c2_apb4lpenr_rtclpen_en ),
+  .din  (nxt_rcc_c2_apb4lpenr_rtclpen),
+  .dout (cur_rcc_c2_apb4lpenr_rtclpen)
 );
 
 // --------------------------------------------------------------------------------

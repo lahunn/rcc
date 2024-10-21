@@ -19,7 +19,7 @@ module rcc_ahb_lite_bus(
     output rst_n,
     output req,
     output [3:0] we,
-    output [28:0] addr,
+    output [31:0] addr,
     output [31:0] wdata,
     input [31:0] rdata,
     input [1:0] rsp
@@ -37,7 +37,7 @@ assign  clk = 1'b0;
 assign  rst_n = 1'b0;
 assign  req = 1'b0;
 assign  we =4'b0;
-assign  addr = 29'b0;
+assign  addr = 32'b0;
 assign  wdata = 32'b0;
 
 

@@ -59,11 +59,11 @@ module rcc_sys_clk_gen (
     input rcc_d2_stop,
     input rcc_sys_stop,
 //system clock
-    output sys_clk
+    output sys_clk,
+    output sys_clk_pre //sys_clk but not gated
 );
 
 // sys_clk_generate
-    wire sys_clk_pre;
     wire sys_clk_en;
 
     wire rcc_d1_bus_clk;

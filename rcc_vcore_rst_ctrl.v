@@ -23,21 +23,33 @@ module rcc_vcore_rst_ctrl
     input wire pwr_d2_ok,
     input wire flash_obl_reload,
     input wire obl_done,
+    input wire flash_power_ok,
+    input wire hsi_rdy,
+    input wire csi_rdy,
+
+//wwdg rst control
+    input wire ww2rsc,
+    input wire ww1rsc,
 
     // reset signals
     output wire pwr_por_rst_n,
-    output wire sys_rst_n,
+    output reg sys_rst_n,
     output reg d1_rst_n,
     output reg d2_rst_n,
     output wire stby_rst_n,
 
     // nrst output 
     output nrst_out,
+    output cpu1rst_n,
+    output cpu2rst_n,
+    output d1_bus_rst_n,
+    output d2_bus_rst_n,
+    output d3_bus_rst_n,
 
     // clock input 
     input wire sys_d1cpre_clk,  // same as c1_clk but not gated
     input wire sys_hpre_clk,  // same as c2_clk but not gated
-
+    input wire sys_clk_pre,
 //peripheral reset signals
     output rcc_flash_rst_n,
     input qspirst,
@@ -246,13 +258,14 @@ module rcc_vcore_rst_ctrl
 );
     
 wire obl_rst;
-wire sys_rst;
 
 reg [$clog2(D1_RST_DURATION)-1:0] d1_rst_n_counter;
 reg [$clog2(D2_RST_DURATION)-1:0] d2_rst_n_counter;
 
 wire rcc_vcore_rst;
 wire hw_init_done;
+wire sys_rst_n_assert;
+wire sys_rst_n_release;
 
 //generate rst_n for pwr_por_rst
 assign pwr_por_rst_n = ~pwr_por_rst;
@@ -262,12 +275,7 @@ assign pwr_por_rst_n = ~pwr_por_rst;
 //nrst_out
 ///////////////////////////////
 
-assign nrst_out = obl_rst | pwr_por_rst_n | pwr_bor_rst | lpwr1_rst | lpwr2_rst | wwdg1_out_rst | wwdg2_out_rst | iwdg1_out_rst | iwdg2_out_rst | cpu2_sftrst | cpu1_sftrst;
-
-///////////////////////////////
-//System reset generate
-///////////////////////////////
-
+assign nrst_out = obl_rst | pwr_por_rst_n | pwr_bor_rst | lpwr1_rst | lpwr2_rst | (wwdg1_out_rst & ww1rsc) | (wwdg2_out_rst & ww2rsc) | iwdg1_out_rst | iwdg2_out_rst | cpu2_sftrst | cpu1_sftrst;
 
 ///////////////////////////////
 //d1 d2 system standby reset generate
@@ -281,7 +289,8 @@ always @(posedge sys_d1cpre_clk or negedge pwr_d1_ok) begin
             d1_rst_n <= 1'b0;
             d1_rst_n_counter <= d1_rst_n_counter + 1;
         end else begin
-            d1_rst_n <= 1'b1;
+            if(flash_power_ok)
+                d1_rst_n <= 1'b1;
             d1_rst_n_counter <= D1_RST_DURATION;
         end
     end
@@ -300,19 +309,28 @@ always @(posedge sys_hpre_clk or negedge pwr_d2_ok) begin
             d2_rst_n_counter <= D2_RST_DURATION;
         end
     end
-    
 end
 
 ///////////////////////////////
 //system reset generate
 ///////////////////////////////
-assign sys_rst_n = ~sys_rst;
-assign sys_rst = nrst_in | rcc_vcore_rst | ~hw_init_done;
+
+always @(posedge sys_clk_pre or negedge sys_rst_n_assert)begin
+    if(~sys_rst_n_assert)begin
+        sys_rst_n = 1'b0;
+    end
+    else begin
+        if(sys_rst_n_release)
+            sys_rst_n = 1'b1;
+    end
+end
+assign sys_rst_n_assert = ~nrst_in & hw_init_done;
+assign sys_rst_n_release = (hsi_rdy | csi_rdy) & flash_power_ok;
 
 ///////////////////////////////
 //hw init done generate 
 ///////////////////////////////
-assign hw_init_done = ~pwr_por_rst | pwr_vcore_ok | ~flash_obl_reload | obl_done; 
+assign hw_init_done = ~pwr_por_rst & pwr_vcore_ok & ~flash_obl_reload & obl_done; 
 
 ///////////////////////////////
 //obl reset generate
@@ -322,13 +340,21 @@ assign obl_rst = ~obl_done | flash_obl_reload;
 ///////////////////////////////
 //rcc vcore reset generate
 ///////////////////////////////
-assign rcc_vcore_rst = ~obl_done | flash_obl_reload;
+assign rcc_vcore_rst = pwr_por_rst | ~pwr_vcore_ok | ~obl_done;
 
 ///////////////////////////////
 //standby reset generate
 ///////////////////////////////
 assign stby_rst_n = ~rcc_vcore_rst;
 
+//////////////////////////////////
+//cpu and bus reset generate
+/////////////////////////////////
+assign cpu1rst_n = sys_rst_n & d1_rst_n & ~wwdg1_out_rst;
+assign cpu2rst_n = sys_rst_n & d2_rst_n & ~wwdg2_out_rst;
+assign d1_bus_rst_n = sys_rst_n & d1_rst_n;
+assign d2_bus_rst_n = sys_rst_n & d2_rst_n;
+assign d3_bus_rst_n = sys_rst_n;
 
 rcc_per_rst_control  u_rcc_rcc_per_rst_control (
     .qspirst                 ( qspirst              ),
