@@ -1,5 +1,5 @@
 module BB_dfflr #(
-  parameter DW = 2,
+  parameter DW = 1,
   parameter RST_VAL = 0 
 )(
   input wire clk,

@@ -2,7 +2,9 @@ module rcc_vcore_top #(
     parameter CLK_ON_AFTER_PER_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_SYS_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_D1_RST_RELEASE = 8,
-    parameter CLK_ON_AFTER_D2_RST_RELEASE = 8
+    parameter CLK_ON_AFTER_D2_RST_RELEASE = 8,
+    parameter CLK_ON_AFTER_CPU1_RST_RELEASE = 8,
+    parameter CLK_ON_AFTER_CPU2_RST_RELEASE = 8
 )(
 // signals connected to 复位源 
     input  nrst_in,
@@ -47,11 +49,11 @@ module rcc_vcore_top #(
     output  rcc_fclk_c1,
     output  rcc_c1_systick_clk,
 //reset to cpu and bus 
-    output cpu1rst_n,
-    output cpu2rst_n,
-    output d1_bus_rst_n,
-    output d2_bus_rst_n,
-    output d3_bus_rst_n,
+    output cpu1_arcg_rst_n,
+    output cpu2_arcg_rst_n,
+    output d1_bus_arcg_rst_n,
+    output d2_bus_arcg_rst_n,
+    output d3_bus_arcg_rst_n,
 // timer clocks
     output wire rcc_timx_ker_clk,
     output wire rcc_timy_ker_clk,
@@ -596,6 +598,8 @@ module rcc_vcore_top #(
     wire sys_rst_n;
     wire d1_rst_n;
     wire d2_rst_n;
+    wire cpu1_rst_n;
+    wire cpu2_rst_n;
     wire rcc_d1_stop;
     wire rcc_d2_stop;
     wire rcc_sys_stop;
@@ -1311,6 +1315,8 @@ module rcc_vcore_top #(
 // rcc_sys_async_reset_clk_gate Outputs
     wire  d1_clk_arcg_en;
     wire  d2_clk_arcg_en;
+    wire  cpu1_clk_arcg_en;
+    wire  cpu2_clk_arcg_en;
     wire  sys_clk_arcg_en;
     wire  rcc_flash_arcg_clk_en;
     wire  rcc_qspi_arcg_clk_en;
@@ -1427,111 +1433,75 @@ module rcc_vcore_top #(
     wire  rcc_iwdg1_arcg_clk_en;
     wire  rcc_exti_arcg_clk_en;
 
-
-
+//indicate exit stop mode 
+wire rcc_exit_sys_stop = pwr_d3_wkup;
 
 //register siganls need to be renamed
+
     
 ///////////////////////////////////////
 // dx_req signal generate /////////////
 ///////////////////////////////////////
-wire rcc_pwr_d1_req_set_n;
-wire rcc_pwr_d2_req_set_n;
-wire rcc_pwr_d3_req_set_n;
+    wire rcc_pwr_d1_req_set_n;
+    wire rcc_pwr_d2_req_set_n;
+    wire rcc_pwr_d3_req_set_n;
 
-assign rcc_d1_busy = axibridge_d1_busy | ahbbridge_d1_busy | apbbridge_d1_busy  | flash_busy;
-assign rcc_d2_busy = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
-assign rcc_d3_busy = rcc_d1_busy | rcc_d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
+        
+    assign rcc_d1_busy = axibridge_d1_busy | ahbbridge_d1_busy | apbbridge_d1_busy  | flash_busy;
+    assign rcc_d2_busy = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
+    assign rcc_d3_busy = rcc_d1_busy | rcc_d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
 
 
-assign rcc_d1_stop = (~c1_deepsleep | (c2_per_alloc_d1 & ~c2_deepsleep) | rcc_d1_busy);
-assign rcc_d2_stop = (~c2_deepsleep | (c1_per_alloc_d2 & ~c1_deepsleep) | rcc_d2_busy);
-assign rcc_sys_stop = (c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~rcc_d3_busy ;
+    assign rcc_d1_stop = (~c1_deepsleep | (c2_per_alloc_d1 & ~c2_deepsleep) | rcc_d1_busy);
+    assign rcc_d2_stop = (~c2_deepsleep | (c1_per_alloc_d2 & ~c1_deepsleep) | rcc_d2_busy);
+    assign rcc_sys_stop = (c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~rcc_d3_busy ;
 
-assign rcc_pwr_d1_req_set_n = ~rcc_d1_stop;
-assign rcc_pwr_d2_req_set_n = ~rcc_d2_stop;
-assign rcc_pwr_d3_req_set_n = ~rcc_sys_stop;//& hse_off & hsi48_off & pll_off   do we need to add these signals?
+    assign rcc_pwr_d1_req_set_n = ~rcc_d1_stop;
+    assign rcc_pwr_d2_req_set_n = ~rcc_d2_stop;
+    assign rcc_pwr_d3_req_set_n = ~rcc_sys_stop;//& hse_off & hsi48_off & pll_off   do we need to add these signals
 
-// always @(posedge sys_clk or negedge sys_arcg_rst_n or rcc_pwr_d1_req_set_n)begin
-//     if(~sys_arcg_rst_n) begin
-//         rcc_pwr_d1_req <= 1'b0;
-//     end
-//     else if(~rcc_pwr_d1_req_set_n)begin
-//         rcc_pwr_d1_req <= 1'b1;
-//     end
-//     else begin
-//         if(pwr_d1_wkup)
-//             rcc_pwr_d1_req<=1'b0;
-//     end
-// end
 
-// always @(posedge sys_clk or negedge sys_arcg_rst_n or rcc_pwr_d2_req_set_n) begin
-//     if(~sys_arcg_rst_n) begin
-//         rcc_pwr_d2_req <= 1'b0;
-//     end
-//     else if(~rcc_pwr_d2_req_set_n) begin
-//         rcc_pwr_d2_req <= 1'b1;
-//     end
-//     else begin
-//         if(pwr_d2_wkup)
-//             rcc_pwr_d2_req <= 1'b0;
-//     end
-// end
+    BB_dfflrs #(
+        .DW      ( 1 ),
+        .RST_VAL ( 0 ),
+        .SET_VAL ( 1 ))
+    u_BB_rcc_pwr_d1_req_dfflrs (
+        .clk                     ( sys_clk     ),
+        .rst_n                   ( sys_arcg_rst_n   ),
+        .set_n                   ( rcc_pwr_d1_req_set_n   ),
+        .en                      ( pwr_d1_wkup      ),
+        .din                     ( 1'b0     ),
 
-// always @(posedge sys_clk or negedge sys_arcg_rst_n or rcc_pwr_d3_req_set_n) begin
-//     if(~sys_arcg_rst_n) begin
-//         rcc_pwr_d3_req <= 1'b0;
-//     end
-//     else if(~rcc_pwr_d3_req_set_n) begin
-//         rcc_pwr_d3_req <= 1'b1;
-//     end
-//     else begin
-//         if(pwr_d3_wkup)
-//             rcc_pwr_d3_req <= 1'b0;
-//     end
-// end
+        .dout                    ( rcc_pwr_d1_req    )
+    ); // it could be chnaged with no reset
 
-BB_dfflrs #(
-    .DW      ( 1 ),
-    .RST_VAL ( 0 ),
-    .SET_VAL ( 1 ))
- u_BB_rcc_pwr_d1_req_dfflrs (
-    .clk                     ( sys_clk     ),
-    .rst_n                   ( sys_arcg_rst_n   ),
-    .set_n                   ( rcc_pwr_d1_req_set_n   ),
-    .en                      ( pwr_d1_wkup      ),
-    .din                     ( 1'b0     ),
+    BB_dfflrs #(
+        .DW      ( 1 ),
+        .RST_VAL ( 0 ),
+        .SET_VAL ( 1 ))
+    u_BB_rcc_pwr_d2_req_dfflrs (
+        .clk                     ( sys_clk     ),
+        .rst_n                   ( sys_arcg_rst_n   ),
+        .set_n                   ( rcc_pwr_d2_req_set_n   ),
+        .en                      ( pwr_d2_wkup      ),
+        .din                     ( 1'b0     ),
 
-    .dout                    ( rcc_pwr_d1_req    )
-);
+        .dout                    ( rcc_pwr_d2_req    )
+    );
 
-BB_dfflrs #(
-    .DW      ( 1 ),
-    .RST_VAL ( 0 ),
-    .SET_VAL ( 1 ))
- u_BB_rcc_pwr_d2_req_dfflrs (
-    .clk                     ( sys_clk     ),
-    .rst_n                   ( sys_arcg_rst_n   ),
-    .set_n                   ( rcc_pwr_d2_req_set_n   ),
-    .en                      ( pwr_d2_wkup      ),
-    .din                     ( 1'b0     ),
+    BB_dfflrs #(
+        .DW      ( 1 ),
+        .RST_VAL ( 0 ),
+        .SET_VAL ( 1 ))
+    u_BB_rcc_pwr_d3_req_dfflrs (
+        .clk                     ( sys_clk     ),
+        .rst_n                   ( sys_arcg_rst_n   ),
+        .set_n                   ( rcc_pwr_d3_req_set_n   ),
+        .en                      ( pwr_d3_wkup      ),
+        .din                     ( 1'b0     ),
 
-    .dout                    ( rcc_pwr_d2_req    )
-);
-
-BB_dfflrs #(
-    .DW      ( 1 ),
-    .RST_VAL ( 0 ),
-    .SET_VAL ( 1 ))
- u_BB_rcc_pwr_d3_req_dfflrs (
-    .clk                     ( sys_clk     ),
-    .rst_n                   ( sys_arcg_rst_n   ),
-    .set_n                   ( rcc_pwr_d3_req_set_n   ),
-    .en                      ( pwr_d3_wkup      ),
-    .din                     ( 1'b0     ),
-
-    .dout                    ( rcc_pwr_d3_req    )
-);
+        .dout                    ( rcc_pwr_d3_req    )
+    );
 
 // interrrupt logic
     assign rcc_hsefail_it = rcc_hsecssf;
@@ -1547,8 +1517,6 @@ BB_dfflrs #(
                     (rcc_lsirdyf & lsirdyie);
 
 
-//rcc_exit_sys_stop generate
-    wire rcc_exit_sys_stop;
 
 
 ///////////////////////////////////////
@@ -1567,7 +1535,6 @@ BB_dfflrs #(
     wire [31:0] rdata;
     wire [1:0] rsp;
     wire req;
-    wire rcc_c1_flitf_en;
     wire rcc_c1_flitf_lpen;
     wire rcc_c2_flitf_en;
     wire rcc_c2_flitf_lpen;
@@ -1579,8 +1546,6 @@ BB_dfflrs #(
     assign rcc_c2_flash_lpen = rcc_c2_flitf_lpen;
 
 rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
-    .sys_clk                    ( sys_clk                     ),
-    .sys_clk_pre                ( sys_clk_pre                 ),
     .pad_rcc_eth_mii_tx_clk     ( pad_rcc_eth_mii_tx_clk      ),
     .pad_rcc_eth_mii_rx_clk     ( pad_rcc_eth_mii_rx_clk      ),
     .USB_PHY1                   ( USB_PHY1                    ),
@@ -1599,7 +1564,7 @@ rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .hsi48_clk                  ( hsi48_clk                   ),
     .csi_clk_pre                ( csi_clk_pre                 ),
     .hsi_origin_clk             ( hsi_origin_clk              ),
-    .sys_rst_n                  ( sys_arcg_rst_n              ),
+    .sys_rst_n                  ( sys_rst_n                   ),
     .pll_src_sel                ( pll_src_sel                 ),
     .pll1_q_clk                 ( pll1_q_clk                  ),
     .pll1_p_clk                 ( pll1_p_clk                  ),
@@ -2075,6 +2040,8 @@ rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .lpuart1sel                 ( lpuart1sel                  ),
     .d1_clk_arcg_en             ( d1_clk_arcg_en              ),
     .d2_clk_arcg_en             ( d2_clk_arcg_en              ),
+    .cpu1_clk_arcg_en           ( cpu1_clk_arcg_en            ),
+    .cpu2_clk_arcg_en           ( cpu2_clk_arcg_en            ),
     .sys_clk_arcg_en            ( sys_clk_arcg_en             ),
     .rcc_flash_arcg_clk_en      ( rcc_flash_arcg_clk_en       ),
     .rcc_qspi_arcg_clk_en       ( rcc_qspi_arcg_clk_en        ),
@@ -2207,11 +2174,13 @@ rcc_vcore_clk_ctrl  u_rcc_vcore_clk_ctrl (
     .d3ppre                     ( d3ppre                      ),
     .timpre                     ( timpre                      ),
     .hrtimsel                   ( hrtimsel                    ),
-    .clkpersel                   ( clkpersel                    ),
+    .clkpersel                  ( clkpersel                   ),
     .divm1                      ( divm1                       ),
     .divm2                      ( divm2                       ),
     .divm3                      ( divm3                       ),
 
+    .sys_clk                    ( sys_clk                     ),
+    .sys_clk_pre                ( sys_clk_pre                 ),
     .mco1                       ( mco1                        ),
     .mco2                       ( mco2                        ),
     .c2_per_alloc_d1            ( c2_per_alloc_d1             ),
@@ -2546,11 +2515,8 @@ rcc_vcore_rst_ctrl  u_rcc_vcore_rst_ctrl (
     .d2_rst_n                ( d2_rst_n             ),
     .stby_rst_n              ( stby_rst_n           ),
     .nrst_out                ( nrst_out             ),
-    .cpu1rst_n               ( cpu1rst_n            ),
-    .cpu2rst_n               ( cpu2rst_n            ),
-    .d1_bus_rst_n            ( d1_bus_rst_n         ),
-    .d2_bus_rst_n            ( d2_bus_rst_n         ),
-    .d3_bus_rst_n            ( d3_bus_rst_n         ),
+    .cpu1_rst_n               ( cpu1_rst_n            ),
+    .cpu2_rst_n               ( cpu2_rst_n            ),
     .rcc_flash_rst_n         ( rcc_flash_rst_n      ),
     .rcc_qspi_rst_n          ( rcc_qspi_rst_n       ),
     .rcc_axisram_rst_n       ( rcc_axisram_rst_n    ),
@@ -2671,8 +2637,10 @@ rcc_sys_async_reset_clk_gate #(
     .CLK_ON_AFTER_PER_RST_RELEASE ( CLK_ON_AFTER_PER_RST_RELEASE ),
     .CLK_ON_AFTER_SYS_RST_RELEASE ( CLK_ON_AFTER_SYS_RST_RELEASE ),
     .CLK_ON_AFTER_D1_RST_RELEASE  ( CLK_ON_AFTER_D1_RST_RELEASE ),
-    .CLK_ON_AFTER_D2_RST_RELEASE  ( CLK_ON_AFTER_D2_RST_RELEASE ))
-    u_rcc_sys_async_reset_clk_gate (
+    .CLK_ON_AFTER_D2_RST_RELEASE  ( CLK_ON_AFTER_D2_RST_RELEASE ),
+    .CLK_ON_AFTER_CPU1_RST_RELEASE  ( CLK_ON_AFTER_CPU1_RST_RELEASE ),
+    .CLK_ON_AFTER_CPU2_RST_RELEASE  ( CLK_ON_AFTER_CPU2_RST_RELEASE ))
+ u_rcc_sys_async_reset_clk_gate (
     .rcc_arcg_on               ( rcc_arcg_on                ),
     .sys_clk                   ( sys_clk                    ),
     .sys_d1cpre_clk            ( sys_d1cpre_clk             ),
@@ -2908,6 +2876,8 @@ rcc_sys_async_reset_clk_gate #(
     .sys_rst_n                 ( sys_rst_n                  ),
     .d1_rst_n                  ( d1_rst_n                   ),
     .d2_rst_n                  ( d2_rst_n                   ),
+    .cpu1_rst_n                ( cpu1_rst_n                 ),
+    .cpu2_rst_n                ( cpu2_rst_n                 ),
 
     .d1_clk_arcg_en            ( d1_clk_arcg_en             ),
     .d2_clk_arcg_en            ( d2_clk_arcg_en             ),
@@ -2915,6 +2885,10 @@ rcc_sys_async_reset_clk_gate #(
     .sys_arcg_rst_n            ( sys_arcg_rst_n             ),
     .d1_arcg_rst_n             ( d1_arcg_rst_n              ),
     .d2_arcg_rst_n             ( d2_arcg_rst_n              ),
+    .cpu1_clk_arcg_en          ( cpu1_clk_arcg_en           ),
+    .cpu2_clk_arcg_en          ( cpu2_clk_arcg_en           ),
+    .cpu1_arcg_rst_n           ( cpu1_arcg_rst_n            ),
+    .cpu2_arcg_rst_n           ( cpu2_arcg_rst_n            ),
     .rcc_flash_arcg_rst_n      ( rcc_flash_arcg_rst_n       ),
     .rcc_qspi_arcg_rst_n       ( rcc_qspi_arcg_rst_n        ),
     .rcc_axisram_arcg_rst_n    ( rcc_axisram_arcg_rst_n     ),
@@ -3142,7 +3116,10 @@ rcc_sys_async_reset_clk_gate #(
     .rcc_syscfg_arcg_clk_en    ( rcc_syscfg_arcg_clk_en     ),
     .rcc_iwdg2_arcg_clk_en     ( rcc_iwdg2_arcg_clk_en      ),
     .rcc_iwdg1_arcg_clk_en     ( rcc_iwdg1_arcg_clk_en      ),
-    .rcc_exti_arcg_clk_en      ( rcc_exti_arcg_clk_en       )
+    .rcc_exti_arcg_clk_en      ( rcc_exti_arcg_clk_en       ),
+    .d1_bus_arcg_rst_n         ( d1_bus_arcg_rst_n          ),
+    .d2_bus_arcg_rst_n         ( d2_bus_arcg_rst_n          ),
+    .d3_bus_arcg_rst_n         ( d3_bus_arcg_rst_n          )
 );
 
 rcc_ahb_lite_bus  u_rcc_ahb_lite_bus (
@@ -3171,7 +3148,6 @@ rcc_ahb_lite_bus  u_rcc_ahb_lite_bus (
     .addr                    ( addr             ),
     .wdata                   ( wdata            )
 );
-
 
 rcc_reg #(
     .AW ( 32   ),
@@ -3467,7 +3443,6 @@ rcc_reg #(
     .rcc_c1_sdmmc1_en          ( rcc_c1_sdmmc1_en           ),
     .rcc_c1_qspi_en            ( rcc_c1_qspi_en             ),
     .rcc_c1_fmc_en             ( rcc_c1_fmc_en              ),
-    .rcc_c1_flitf_en           ( rcc_c1_flitf_en            ),
     .rcc_c1_jpgdec_en          ( rcc_c1_jpgdec_en           ),
     .rcc_c1_dma2d_en           ( rcc_c1_dma2d_en            ),
     .rcc_c1_mdma_en            ( rcc_c1_mdma_en             ),

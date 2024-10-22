@@ -40,11 +40,8 @@ module rcc_vcore_rst_ctrl
 
     // nrst output 
     output nrst_out,
-    output cpu1rst_n,
-    output cpu2rst_n,
-    output d1_bus_rst_n,
-    output d2_bus_rst_n,
-    output d3_bus_rst_n,
+    output cpu1_rst_n,
+    output cpu2_rst_n,
 
     // clock input 
     input wire sys_d1cpre_clk,  // same as c1_clk but not gated
@@ -317,11 +314,11 @@ end
 
 always @(posedge sys_clk_pre or negedge sys_rst_n_assert)begin
     if(~sys_rst_n_assert)begin
-        sys_rst_n = 1'b0;
+        sys_rst_n <= 1'b0;
     end
     else begin
         if(sys_rst_n_release)
-            sys_rst_n = 1'b1;
+            sys_rst_n <= 1'b1;
     end
 end
 assign sys_rst_n_assert = ~nrst_in & hw_init_done;
@@ -350,11 +347,8 @@ assign stby_rst_n = ~rcc_vcore_rst;
 //////////////////////////////////
 //cpu and bus reset generate
 /////////////////////////////////
-assign cpu1rst_n = sys_rst_n & d1_rst_n & ~wwdg1_out_rst;
-assign cpu2rst_n = sys_rst_n & d2_rst_n & ~wwdg2_out_rst;
-assign d1_bus_rst_n = sys_rst_n & d1_rst_n;
-assign d2_bus_rst_n = sys_rst_n & d2_rst_n;
-assign d3_bus_rst_n = sys_rst_n;
+assign cpu1_rst_n = sys_rst_n & d1_rst_n & ~wwdg1_out_rst;
+assign cpu2_rst_n = sys_rst_n & d2_rst_n & ~wwdg2_out_rst;
 
 rcc_per_rst_control  u_rcc_rcc_per_rst_control (
     .qspirst                 ( qspirst              ),

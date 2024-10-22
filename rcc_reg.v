@@ -663,6 +663,7 @@ module rcc_reg#(
 
 
   // rcc_bdcr 
+  input backup_protect,
   input cur_rcc_bdcr_bdrst,
   output nxt_rcc_bdcr_bdrst,
   input cur_rcc_bdcr_rtcen,
@@ -3899,9 +3900,9 @@ BB_dfflrs #(
     .clk  (clk         ),
     .rst_n(sw_clr_n    ),
     .set_n(sw_set_n    ),
-  .en   (rcc_cfgr_sw_en ),
-  .din  (nxt_rcc_cfgr_sw),
-  .dout (cur_rcc_cfgr_sw)
+    .en   (rcc_cfgr_sw_en ),
+    .din  (nxt_rcc_cfgr_sw),
+    .dout (cur_rcc_cfgr_sw)
 );
 
 
@@ -6238,9 +6239,9 @@ assign nxt_rcc_bdcr_lseon = wdata[0:0]                  ;
 // --------------------------------------------------------------------------------
 // 16:16               bdrst               RW                  0b0                 
 // --------------------------------------------------------------------------------
-assign rcc_bdcr_byte2_wren  = (wr_req[2] & rcc_bdcr_sel);
-assign rcc_bdcr_byte1_wren  = (wr_req[1] & rcc_bdcr_sel);
-assign rcc_bdcr_byte0_wren  = (wr_req[0] & rcc_bdcr_sel);
+assign rcc_bdcr_byte2_wren  = (wr_req[2] & rcc_bdcr_sel & backup_protect); // RCC_BDCR can be write only when backup_protect == 1
+assign rcc_bdcr_byte1_wren  = (wr_req[1] & rcc_bdcr_sel & backup_protect);
+assign rcc_bdcr_byte0_wren  = (wr_req[0] & rcc_bdcr_sel & backup_protect);
 
 
 
