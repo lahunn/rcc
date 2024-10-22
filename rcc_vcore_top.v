@@ -320,8 +320,8 @@ module rcc_vcore_top #(
     output  [12:0]  fracn3,
 // indicate busy state 
     input  axibridge_d1_busy,
-    input  ahbbridge_d1_busy,
-    input  apbbridge_d1_busy,
+    input  ahb3bridge_d1_busy,
+    input  apb3bridge_d1_busy,
     input  ahb1bridge_d2_busy,
     input  ahb2bridge_d2_busy,
     input  apb1bridge_d2_busy,
@@ -1434,10 +1434,7 @@ module rcc_vcore_top #(
     wire  rcc_exti_arcg_clk_en;
 
 //indicate exit stop mode 
-wire rcc_exit_sys_stop = pwr_d3_wkup;
-
-//register siganls need to be renamed
-
+  wire rcc_exit_sys_stop = pwr_d3_wkup;
     
 ///////////////////////////////////////
 // dx_req signal generate /////////////
@@ -1447,7 +1444,7 @@ wire rcc_exit_sys_stop = pwr_d3_wkup;
     wire rcc_pwr_d3_req_set_n;
 
         
-    assign rcc_d1_busy = axibridge_d1_busy | ahbbridge_d1_busy | apbbridge_d1_busy  | flash_busy;
+    assign rcc_d1_busy = axibridge_d1_busy | ahb3bridge_d1_busy | apb3bridge_d1_busy  | flash_busy;
     assign rcc_d2_busy = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
     assign rcc_d3_busy = rcc_d1_busy | rcc_d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
 

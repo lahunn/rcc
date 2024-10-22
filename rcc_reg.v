@@ -3487,16 +3487,12 @@ assign cur_rcc_cr_csirdy = csi_rdy;
 // 7:7                 csion               RW                  0b0                 
 // --------------------------------------------------------------------------------
 
-
-wire csion_clr_n;
-wire csion_set_n;
-
 assign csion_clr_n =  rst_n;
 assign csion_set_n = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==1 | cur_rcc_cfgr_stopkerwuck == 1);
 
 assign rcc_cr_csion_en  = ~((cur_rcc_cfgr_sws == 3'b001)|(cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b01));
 assign nxt_rcc_cr_csion = wdata[7:7]                                                                              ;
-assign csion            = cur_rcc_cr_csion                                                                        ;
+assign csion            = cur_rcc_cr_csion & csikeron                                                             ;
 BB_dfflrs #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -3586,7 +3582,7 @@ BB_dfflr #(
 assign hsion_set_n = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==0 | cur_rcc_cfgr_stopkerwuck ==0)) | rcc_hsecss_fail);
 assign rcc_cr_hsion_en  = ~((cur_rcc_cfgr_sws == 3'b000)|(cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b00));
 assign nxt_rcc_cr_hsion = wdata[0:0]                                                                              ;
-assign hsion            = cur_rcc_cr_hsion                                                                        ;
+assign hsion            = cur_rcc_cr_hsion & hsikeron                                                             ;
 BB_dfflrs #(
   .DW     (1  ),
   .RST_VAL('h1)
