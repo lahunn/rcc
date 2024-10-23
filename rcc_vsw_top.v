@@ -1,12 +1,8 @@
 module rcc_vsw_top(
     // lse signals
-    input wire lse_css_fail,
-    output wire lse_css_on,
-    output wire lse_drv,
-    output wire lse_byp,
-    input wire [1:0] lse_rdy,
-    output wire lse_on,
+    input wire lsecss_fail,
     input wire lse_clk,
+    input wire lserdy,//hign to low level, default 0
     // lsi signals
     input wire lsi_clk,//high to high level, default 0
     // rtc CLK SEL
@@ -23,8 +19,6 @@ module rcc_vsw_top(
     input wire   rcc_bdcr_byte1_wren,//low to high level, default 0
     input wire   rcc_bdcr_byte0_wren,//low to high level, default 0
 
-    input wire   rcc_lsecss_fail,
-    input wire   lserdy,
     input wire   nxt_rcc_bdcr_bdrst,//low to high level, default 0
     input wire   nxt_rcc_bdcr_rtcen,//low to high level, default 0
     input wire   [1:0]  nxt_rcc_bdcr_rtcsel,//low to high level, default 0
@@ -33,28 +27,22 @@ module rcc_vsw_top(
     input wire   nxt_rcc_bdcr_lsebyp,//low to high level, default 0
     input wire   nxt_rcc_bdcr_lseon,//low to high level, default 0
 
-// rcc_vsw_reg Outputs
-    output wire  lsecsson,
-    output wire  [1:0]  lsedrv,
-    output wire  lsebyp,
-    output wire  lseon,
-    output wire  cur_rcc_bdcr_bdrst,//hign to low level, default 0
-    output wire  cur_rcc_bdcr_rtcen,//hign to low level, default 0
-    output wire  [1:0]  cur_rcc_bdcr_rtcsel,//hign to low level, default 0
-    output wire  cur_rcc_bdcr_lsecssd,//hign to low level, default 0
-    output wire  cur_rcc_bdcr_lsecsson,//hign to low level, default 0
-    output wire  [1:0]  cur_rcc_bdcr_lsedrv,//hign to low level, default 0
-    output wire  cur_rcc_bdcr_lsebyp,//hign to low level, default 0
+// rcc_vsw_reg 
+    output wire  bdrst,//hign to low level, default 0
+    output wire  rtcen,//hign to low level, default 0
+    output wire  [1:0]  rtcsel,//hign to low level, default 0
+    output wire  lsecssd,//hign to low level, default 0
+    output wire  lsecsson,//hign to low level, default 0
+    output wire  [1:0] lsedrv,//hign to low level, default 0
+    output wire  lsebyp,//hign to low level, default 0
     output wire  cur_rcc_bdcr_lserdy,//hign to low level, default 0
-    output wire  cur_rcc_bdcr_lseon//hign to low level, default 0
+    output wire  lseon//hign to low level, default 0
 );
     wire lse_clk_gated;
+    wire rcc_vsw_rst_n;
 
     wire rcc_rtcsel_clk;
-    wire bdrst;
     wire bdrst_n;
-    wire rtcen;
-    wire [1:0] rtcsel;
 
 
 
@@ -64,7 +52,7 @@ module rcc_vsw_top(
 // rcc vsw registers
     rcc_vsw_reg  u_rcc_vsw_reg (
         .rst_n                   ( rcc_vsw_rst_n           ),
-        .rcc_lsecss_fail         ( rcc_lsecss_fail         ),
+        .lsecss_fail             ( lsecss_fail             ),
         .lserdy                  ( lserdy                  ),
         .rcc_bdcr_byte2_wren     ( rcc_bdcr_byte2_wren     ),
         .rcc_bdcr_byte1_wren     ( rcc_bdcr_byte1_wren     ),
@@ -76,25 +64,17 @@ module rcc_vsw_top(
         .nxt_rcc_bdcr_lsedrv     ( nxt_rcc_bdcr_lsedrv     ),
         .nxt_rcc_bdcr_lsebyp     ( nxt_rcc_bdcr_lsebyp     ),
         .nxt_rcc_bdcr_lseon      ( nxt_rcc_bdcr_lseon      ),
+        .cur_rcc_bdcr_lserdy     ( cur_rcc_bdcr_lserdy     ),
 
         .bdrst                   ( bdrst                   ),
         .rtcen                   ( rtcen                   ),
         .rtcsel                  ( rtcsel                  ),
+        .lsecssd                 ( lsecssd                 ),
         .lsecsson                ( lsecsson                ),
         .lsedrv                  ( lsedrv                  ),
         .lsebyp                  ( lsebyp                  ),
-        .lseon                   ( lseon                   ),
-        .cur_rcc_bdcr_bdrst      ( cur_rcc_bdcr_bdrst      ),
-        .cur_rcc_bdcr_rtcen      ( cur_rcc_bdcr_rtcen      ),
-        .cur_rcc_bdcr_rtcsel     ( cur_rcc_bdcr_rtcsel     ),
-        .cur_rcc_bdcr_lsecssd    ( cur_rcc_bdcr_lsecssd    ),
-        .cur_rcc_bdcr_lsecsson   ( cur_rcc_bdcr_lsecsson   ),
-        .cur_rcc_bdcr_lsedrv     ( cur_rcc_bdcr_lsedrv     ),
-        .cur_rcc_bdcr_lsebyp     ( cur_rcc_bdcr_lsebyp     ),
-        .cur_rcc_bdcr_lserdy     ( cur_rcc_bdcr_lserdy     ),
-        .cur_rcc_bdcr_lseon      ( cur_rcc_bdcr_lseon      )
+        .lseon                   ( lseon                   )
     );
-
     // rtc ker clock gate
     rcc_clk_gate_cell_sync rcc_rtc_ker_clk_gate (
         .clk_in(rcc_rtcsel_clk),
@@ -105,16 +85,17 @@ module rcc_vsw_top(
     // rtc ker clock select logic
     glitch_free_clk_switch #(
         .CLK_NUM(4)
-    ) rcc_usart16sel_clk_switch(
-    .clk_in({hse_rtc_clk,lsi_clk,lse_clk_gated,0}),
+    ) rcc_rtc_clk_switch(
+    .clk_in({hse_rtc_clk,lsi_clk,lse_clk_gated,1'b0}),
     .sel(rtcsel),
+    .rst_n(rcc_vsw_rst_n),
     .clk_out(rcc_rtcsel_clk)
     );
 
     // lse clock gate
     rcc_clk_gate_cell_sync rcc_lse_clk_gate (
         .clk_in(lse_clk),
-        .clk_en(lse_css_fail),
+        .clk_en(~lsecss_fail),
         .clk_out(lse_clk_gated)
     );
 

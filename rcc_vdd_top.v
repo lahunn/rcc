@@ -18,8 +18,6 @@ module rcc_vdd_top(
     input wire  pwr_bor_rst,//low to high level, default 0
     input wire  d2_rst,//low to high level, default 0
     input wire  d1_rst,//low to high level, default 0
-    input wire  cpu2_rst,//low to high level, default 0
-    input wire  cpu1_rst,//low to high level, default 0
     input wire  lsi_rdy,
     
     // rcc_vdd_reg Outputs
@@ -77,8 +75,6 @@ rcc_vdd_reg  u_rcc_vdd_reg (
     .pwr_bor_rst               ( pwr_bor_rst                ),
     .d2_rst                    ( d2_rst                     ),
     .d1_rst                    ( d1_rst                     ),
-    .cpu2_rst                  ( cpu2_rst                   ),
-    .cpu1_rst                  ( cpu1_rst                   ),
     .lsi_rdy                   ( lsi_rdy                    ),
 
     .cur_rcc_c1_rsr_lpwr2rstf  ( cur_rcc_c1_rsr_lpwr2rstf   ),

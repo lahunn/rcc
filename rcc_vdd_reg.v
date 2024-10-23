@@ -19,8 +19,6 @@ module rcc_vdd_reg(
     input wire pwr_bor_rst,
     input wire d2_rst,
     input wire d1_rst,
-    input wire cpu2_rst,
-    input wire cpu1_rst,
     input wire lsi_rdy,
 
     // rcc_c1_rsr 
@@ -118,10 +116,10 @@ wire rcc_c2_rsr_d1rstf_set;
 wire rcc_c2_rsr_d1rstf_clr;
 wire rcc_c2_rsr_oblrstf_set;
 wire rcc_c2_rsr_oblrstf_clr;
+wire nxt_rcc_c1_rsr_rmvf;
+wire nxt_rcc_c2_rsr_rmvf;
 // rcc_csr
-wire        rcc_csr_sel       ;
 wire        nxt_rcc_csr_lsion ;
-wire        rcc_csr_lsion_en  ;
 
 
 // --------------------------------------------------------------------------------
@@ -136,9 +134,6 @@ always @(*)begin
     else if(rcc_c1_rsr_lpwr2rstf_set)begin
         cur_rcc_c1_rsr_lpwr2rstf = 1'b1;
     end
-    else begin
-        cur_rcc_c1_rsr_lpwr2rstf = cur_rcc_c1_rsr_lpwr2rstf;
-    end
 end
 
 
@@ -149,16 +144,13 @@ end
 // 30:30               lpwr1rstf              RO                  1'b0                 
 // --------------------------------------------------------------------------------
 assign rcc_c1_rsr_lpwr1rstf_set = lpwr1_rst                                        ;
-assign rcc_c1_rsr_lpwr1rstf_clr = cur_rcc_c1_rsr_rmvf|~rst_n                                        ;
+assign rcc_c1_rsr_lpwr1rstf_clr = cur_rcc_c1_rsr_rmvf|~rst_n                       ;
 always @(*)begin
     if(rcc_c1_rsr_lpwr1rstf_clr)begin
         cur_rcc_c1_rsr_lpwr1rstf = 1'b0;
     end
     else if(rcc_c1_rsr_lpwr1rstf_set)begin
         cur_rcc_c1_rsr_lpwr1rstf = 1'b1;
-    end
-    else begin
-        cur_rcc_c1_rsr_lpwr1rstf = cur_rcc_c1_rsr_lpwr1rstf;
     end
 end
 
@@ -211,7 +203,7 @@ end
 // --------------------------------------------------------------------------------
 // 27:27               iwdg2rstf              RO                  1'b0                 
 // --------------------------------------------------------------------------------
-assign rcc_c1_rsr_iwdg2rstf_set = iwdg1_out_rst                                        ;
+assign rcc_c1_rsr_iwdg2rstf_set = iwdg2_out_rst                                        ;
 assign rcc_c1_rsr_iwdg2rstf_clr = cur_rcc_c1_rsr_rmvf|~rst_n                                        ;
 always @(*)begin
     if(rcc_c1_rsr_iwdg2rstf_clr)begin

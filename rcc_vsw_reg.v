@@ -1,37 +1,31 @@
 module rcc_vsw_reg(
     input wire rst_n,
 
-    output reg bdrst,
-    output reg rtcen,
-    output reg [1:0] rtcsel,
-    input wire rcc_lsecss_fail,
-    output reg lsecsson,
-    output reg [1:0] lsedrv,
-    output reg lsebyp,
-    input wire lserdy,
-    output reg lseon,
+    output bdrst,
+    output rtcen,
+    output [1:0] rtcsel,
+    input lsecss_fail,
+    output lsecssd,
+    output lsecsson,
+    output [1:0] lsedrv,
+    output lsebyp,
+    input lserdy,
+    output lseon,
 
     input wire rcc_bdcr_byte2_wren,
     input wire rcc_bdcr_byte1_wren,
     input wire rcc_bdcr_byte0_wren,
 
-    // rcc_bdcr 
-    output wire cur_rcc_bdcr_bdrst,
+    // rcc_bdcr
     input wire nxt_rcc_bdcr_bdrst,
-    output wire cur_rcc_bdcr_rtcen,
     input wire nxt_rcc_bdcr_rtcen,
-    output wire [1:0]cur_rcc_bdcr_rtcsel,
     input wire [1:0]nxt_rcc_bdcr_rtcsel,
-    output reg cur_rcc_bdcr_lsecssd,
-    output wire cur_rcc_bdcr_lsecsson,
     input wire nxt_rcc_bdcr_lsecsson,
-    output wire [1:0]cur_rcc_bdcr_lsedrv,
     input wire [1:0]nxt_rcc_bdcr_lsedrv,
-    output wire cur_rcc_bdcr_lsebyp,
     input wire nxt_rcc_bdcr_lsebyp,
-    output wire cur_rcc_bdcr_lserdy,
-    output wire cur_rcc_bdcr_lseon,
-    input wire nxt_rcc_bdcr_lseon
+    input wire nxt_rcc_bdcr_lseon,
+    output wire cur_rcc_bdcr_lserdy
+
 );
 
 
@@ -40,10 +34,21 @@ wire lsecsson_wren_n;
 wire rcc_bdcr_lsecssd_set;
 wire rcc_bdcr_lsecssd_clr;
 
+wire cur_rcc_bdcr_bdrst;
+wire cur_rcc_bdcr_rtcen;
+wire [1:0] cur_rcc_bdcr_rtcsel;
+reg  cur_rcc_bdcr_lsecssd;
+wire cur_rcc_bdcr_lsecsson;
+wire [1:0] cur_rcc_bdcr_lsedrv;
+wire cur_rcc_bdcr_lsebyp;
+wire cur_rcc_bdcr_lseon;
+
 
 // --------------------------------------------------------------------------------
 // 16:16               bdrst              RW                  1'b0                 
 // --------------------------------------------------------------------------------
+assign bdrst = cur_rcc_bdcr_bdrst;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -62,6 +67,8 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 15:15               rtcen              RW                  1'b0                 
 // --------------------------------------------------------------------------------
+assign rtcen = cur_rcc_bdcr_rtcen;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -80,12 +87,14 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 9:8               rtcsel              RWOnce                  2'b0                 
 // --------------------------------------------------------------------------------
+assign rtcsel = cur_rcc_bdcr_rtcsel;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
 ) U_rcc_bdcr_rtcsel_wren (
   .clk  (rcc_bdcr_byte1_wren),
-  .rst_n(rst_n & (~rcc_lsecss_fail)),
+  .rst_n(rst_n & (~lsecss_fail)),
   .en   (1'b1 ),
   .din  ((nxt_rcc_bdcr_rtcsel != 2'b00) | (cur_rcc_bdcr_rtcsel != 2'b00)),
   .dout (rtcsel_wren_n)
@@ -109,8 +118,9 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 6:6               lsecssd              RO                  1'b0                 
 // --------------------------------------------------------------------------------
-assign rcc_bdcr_lsecssd_set = rcc_lsecss_fail ;
+assign rcc_bdcr_lsecssd_set = lsecss_fail ;
 assign rcc_bdcr_lsecssd_clr = ~rst_n ;
+assign lsecssd = cur_rcc_bdcr_lsecssd;
 always @(*)begin
     if(rcc_bdcr_lsecssd_clr)begin
         cur_rcc_bdcr_lsecssd = 1'b0;
@@ -118,21 +128,20 @@ always @(*)begin
     else if(rcc_bdcr_lsecssd_set)begin
         cur_rcc_bdcr_lsecssd = 1'b1;
     end
-    else begin
-        cur_rcc_bdcr_lsecssd = cur_rcc_bdcr_lsecssd;
-    end
 end
 
 
 // --------------------------------------------------------------------------------
 // 5:5               lsecsson              W1S                  1'b0                 
 // --------------------------------------------------------------------------------
+assign lsecsson = cur_rcc_bdcr_lsecsson;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
 ) U_rcc_bdcr_lsecsson_wren (
   .clk  (rcc_bdcr_byte0_wren),
-  .rst_n(rst_n & (~rcc_lsecss_fail)),
+  .rst_n(rst_n & (~lsecss_fail)),
   .en   (1'b1 ),
   .din  ((nxt_rcc_bdcr_lsecsson != 1'b0) | (cur_rcc_bdcr_lsecsson != 1'b0)),//when lsecsson is set to 1, it can not be cleared until lsecss_fail
   .dout (lsecsson_wren_n)
@@ -156,6 +165,8 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 4:3               lsedrv              RW                  2'b0                 
 // --------------------------------------------------------------------------------
+assign lsedrv = cur_rcc_bdcr_lsedrv;
+
 BB_dfflr #(
   .DW     (2  ),
   .RST_VAL('h0)
@@ -174,6 +185,8 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 2:2               lsebyp              RW                  1'b0                 
 // --------------------------------------------------------------------------------
+assign lsebyp = cur_rcc_bdcr_lsebyp;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -194,11 +207,11 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign cur_rcc_bdcr_lserdy = lserdy;
 
-
-
 // --------------------------------------------------------------------------------
 // 0:0               lseon              RW                  1'b0                 
 // --------------------------------------------------------------------------------
+assign lseon = cur_rcc_bdcr_lseon;
+
 BB_dfflr #(
   .DW     (1  ),
   .RST_VAL('h0)
