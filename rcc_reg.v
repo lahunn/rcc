@@ -1,8 +1,8 @@
-module rcc_reg#(
+module rcc_reg #(
 // ================================================================================
 // CONFIGURABLE PARAMETERS
 // ================================================================================
-  parameter AW = 32  ,
+  parameter AW = 29  ,
   parameter DW = 32  ,
   parameter WW = DW/8
 ) (
@@ -726,81 +726,81 @@ module rcc_reg#(
 // ================================================================================
 // LOCAL PARAMETERS
 // ================================================================================
-// RCC
-localparam RCC               = 'h40000000        ;
-localparam RCC_CR            = (RCC + 'h0) >> 2  ;
-localparam RCC_ICSCR         = (RCC + 'h4) >> 2  ;
-localparam RCC_CRRCR         = (RCC + 'h8) >> 2  ;
-localparam RCC_CFGR          = (RCC + 'h10) >> 2 ;
-localparam RCC_D1CFGR        = (RCC + 'h18) >> 2 ;
-localparam RCC_D2CFGR        = (RCC + 'h1C) >> 2 ;
-localparam RCC_D3CFGR        = (RCC + 'h20) >> 2 ;
-localparam RCC_PLLCLKSELR    = (RCC + 'h28) >> 2 ;
-localparam RCC_PLLCFGR       = (RCC + 'h2C) >> 2 ;
-localparam RCC_PLL1DIVR      = (RCC + 'h30) >> 2 ;
-localparam RCC_PLL1FRACR     = (RCC + 'h34) >> 2 ;
-localparam RCC_PLL2DIVR      = (RCC + 'h38) >> 2 ;
-localparam RCC_PLL2FRACR     = (RCC + 'h3C) >> 2 ;
-localparam RCC_PLL3DIVR      = (RCC + 'h40) >> 2 ;
-localparam RCC_PLL3FRACR     = (RCC + 'h44) >> 2 ;
-localparam RCC_D1CCIPR       = (RCC + 'h4C) >> 2 ;
-localparam RCC_D2CCIP1R      = (RCC + 'h50) >> 2 ;
-localparam RCC_D2CCIP2R      = (RCC + 'h54) >> 2 ;
-localparam RCC_D3CCIPR       = (RCC + 'h58) >> 2 ;
-localparam RCC_CIER          = (RCC + 'h60) >> 2 ;
-localparam RCC_CIFR          = (RCC + 'h64) >> 2 ;
-localparam RCC_CICR          = (RCC + 'h68) >> 2 ;
-localparam RCC_BDCR          = (RCC + 'h70) >> 2 ;
-localparam RCC_CSR           = (RCC + 'h74) >> 2 ;
-localparam RCC_AHB3RSTR      = (RCC + 'h7C) >> 2 ;
-localparam RCC_AHB1RSTR      = (RCC + 'h80) >> 2 ;
-localparam RCC_AHB2RSTR      = (RCC + 'h84) >> 2 ;
-localparam RCC_AHB4RSTR      = (RCC + 'h88) >> 2 ;
-localparam RCC_APB3RSTR      = (RCC + 'h8C) >> 2 ;
-localparam RCC_APB1LRSTR     = (RCC + 'h90) >> 2 ;
-localparam RCC_APB1HRSTR     = (RCC + 'h94) >> 2 ;
-localparam RCC_APB2RSTR      = (RCC + 'h98) >> 2 ;
-localparam RCC_APB4RSTR      = (RCC + 'h9C) >> 2 ;
-localparam RCC_GCR           = (RCC + 'hA0) >> 2 ;
-localparam RCC_D3AMR         = (RCC + 'hA8) >> 2 ;
-localparam RCC_C1_RSR        = (RCC + 'h130) >> 2;
-localparam RCC_C1_AHB3ENR    = (RCC + 'h134) >> 2;
-localparam RCC_C1_AHB1ENR    = (RCC + 'h138) >> 2;
-localparam RCC_C1_AHB2ENR    = (RCC + 'h13C) >> 2;
-localparam RCC_C1_AHB4ENR    = (RCC + 'h140) >> 2;
-localparam RCC_C1_APB3ENR    = (RCC + 'h144) >> 2;
-localparam RCC_C1_APB1LENR   = (RCC + 'h148) >> 2;
-localparam RCC_C1_APB1HENR   = (RCC + 'h14C) >> 2;
-localparam RCC_C1_APB2ENR    = (RCC + 'h150) >> 2;
-localparam RCC_C1_APB4ENR    = (RCC + 'h154) >> 2;
-localparam RCC_C1_AHB3LPENR  = (RCC + 'h15C) >> 2;
-localparam RCC_C1_AHB1LPENR  = (RCC + 'h160) >> 2;
-localparam RCC_C1_AHB2LPENR  = (RCC + 'h164) >> 2;
-localparam RCC_C1_AHB4LPENR  = (RCC + 'h168) >> 2;
-localparam RCC_C1_APB3LPENR  = (RCC + 'h16C) >> 2;
-localparam RCC_C1_APB1LLPENR = (RCC + 'h170) >> 2;
-localparam RCC_C1_APB1HLPENR = (RCC + 'h174) >> 2;
-localparam RCC_C1_APB2LPENR  = (RCC + 'h178) >> 2;
-localparam RCC_C1_APB4LPENR  = (RCC + 'h17C) >> 2;
-localparam RCC_C2_RSR        = (RCC + 'h190) >> 2;
-localparam RCC_C2_AHB3ENR    = (RCC + 'h194) >> 2;
-localparam RCC_C2_AHB1ENR    = (RCC + 'h198) >> 2;
-localparam RCC_C2_AHB2ENR    = (RCC + 'h19C) >> 2;
-localparam RCC_C2_AHB4ENR    = (RCC + 'h1A0) >> 2;
-localparam RCC_C2_APB3ENR    = (RCC + 'h1A4) >> 2;
-localparam RCC_C2_APB1LENR   = (RCC + 'h1A8) >> 2;
-localparam RCC_C2_APB1HENR   = (RCC + 'h1AC) >> 2;
-localparam RCC_C2_APB2ENR    = (RCC + 'h1B0) >> 2;
-localparam RCC_C2_APB4ENR    = (RCC + 'h1B4) >> 2;
-localparam RCC_C2_AHB3LPENR  = (RCC + 'h1BC) >> 2;
-localparam RCC_C2_AHB1LPENR  = (RCC + 'h1C0) >> 2;
-localparam RCC_C2_AHB2LPENR  = (RCC + 'h1C4) >> 2;
-localparam RCC_C2_AHB4LPENR  = (RCC + 'h1C8) >> 2;
-localparam RCC_C2_APB3LPENR  = (RCC + 'h1CC) >> 2;
-localparam RCC_C2_APB1LLPENR = (RCC + 'h1D0) >> 2;
-localparam RCC_C2_APB1HLPENR = (RCC + 'h1D4) >> 2;
-localparam RCC_C2_APB2LPENR  = (RCC + 'h1D8) >> 2;
-localparam RCC_C2_APB4LPENR  = (RCC + 'h1DC) >> 2;
+// rcc_reg
+localparam RCC_REG           = 'h40000000            ;
+localparam RCC_CR            = (RCC_REG + 'h0) >> 2  ;
+localparam RCC_ICSCR         = (RCC_REG + 'h4) >> 2  ;
+localparam RCC_CRRCR         = (RCC_REG + 'h8) >> 2  ;
+localparam RCC_CFGR          = (RCC_REG + 'h10) >> 2 ;
+localparam RCC_D1CFGR        = (RCC_REG + 'h18) >> 2 ;
+localparam RCC_D2CFGR        = (RCC_REG + 'h1C) >> 2 ;
+localparam RCC_D3CFGR        = (RCC_REG + 'h20) >> 2 ;
+localparam RCC_PLLCLKSELR    = (RCC_REG + 'h28) >> 2 ;
+localparam RCC_PLLCFGR       = (RCC_REG + 'h2C) >> 2 ;
+localparam RCC_PLL1DIVR      = (RCC_REG + 'h30) >> 2 ;
+localparam RCC_PLL1FRACR     = (RCC_REG + 'h34) >> 2 ;
+localparam RCC_PLL2DIVR      = (RCC_REG + 'h38) >> 2 ;
+localparam RCC_PLL2FRACR     = (RCC_REG + 'h3C) >> 2 ;
+localparam RCC_PLL3DIVR      = (RCC_REG + 'h40) >> 2 ;
+localparam RCC_PLL3FRACR     = (RCC_REG + 'h44) >> 2 ;
+localparam RCC_D1CCIPR       = (RCC_REG + 'h4C) >> 2 ;
+localparam RCC_D2CCIP1R      = (RCC_REG + 'h50) >> 2 ;
+localparam RCC_D2CCIP2R      = (RCC_REG + 'h54) >> 2 ;
+localparam RCC_D3CCIPR       = (RCC_REG + 'h58) >> 2 ;
+localparam RCC_CIER          = (RCC_REG + 'h60) >> 2 ;
+localparam RCC_CIFR          = (RCC_REG + 'h64) >> 2 ;
+localparam RCC_CICR          = (RCC_REG + 'h68) >> 2 ;
+localparam RCC_BDCR          = (RCC_REG + 'h70) >> 2 ;
+localparam RCC_CSR           = (RCC_REG + 'h74) >> 2 ;
+localparam RCC_AHB3RSTR      = (RCC_REG + 'h7C) >> 2 ;
+localparam RCC_AHB1RSTR      = (RCC_REG + 'h80) >> 2 ;
+localparam RCC_AHB2RSTR      = (RCC_REG + 'h84) >> 2 ;
+localparam RCC_AHB4RSTR      = (RCC_REG + 'h88) >> 2 ;
+localparam RCC_APB3RSTR      = (RCC_REG + 'h8C) >> 2 ;
+localparam RCC_APB1LRSTR     = (RCC_REG + 'h90) >> 2 ;
+localparam RCC_APB1HRSTR     = (RCC_REG + 'h94) >> 2 ;
+localparam RCC_APB2RSTR      = (RCC_REG + 'h98) >> 2 ;
+localparam RCC_APB4RSTR      = (RCC_REG + 'h9C) >> 2 ;
+localparam RCC_GCR           = (RCC_REG + 'hA0) >> 2 ;
+localparam RCC_D3AMR         = (RCC_REG + 'hA8) >> 2 ;
+localparam RCC_C1_RSR        = (RCC_REG + 'h130) >> 2;
+localparam RCC_C1_AHB3ENR    = (RCC_REG + 'h134) >> 2;
+localparam RCC_C1_AHB1ENR    = (RCC_REG + 'h138) >> 2;
+localparam RCC_C1_AHB2ENR    = (RCC_REG + 'h13C) >> 2;
+localparam RCC_C1_AHB4ENR    = (RCC_REG + 'h140) >> 2;
+localparam RCC_C1_APB3ENR    = (RCC_REG + 'h144) >> 2;
+localparam RCC_C1_APB1LENR   = (RCC_REG + 'h148) >> 2;
+localparam RCC_C1_APB1HENR   = (RCC_REG + 'h14C) >> 2;
+localparam RCC_C1_APB2ENR    = (RCC_REG + 'h150) >> 2;
+localparam RCC_C1_APB4ENR    = (RCC_REG + 'h154) >> 2;
+localparam RCC_C1_AHB3LPENR  = (RCC_REG + 'h15C) >> 2;
+localparam RCC_C1_AHB1LPENR  = (RCC_REG + 'h160) >> 2;
+localparam RCC_C1_AHB2LPENR  = (RCC_REG + 'h164) >> 2;
+localparam RCC_C1_AHB4LPENR  = (RCC_REG + 'h168) >> 2;
+localparam RCC_C1_APB3LPENR  = (RCC_REG + 'h16C) >> 2;
+localparam RCC_C1_APB1LLPENR = (RCC_REG + 'h170) >> 2;
+localparam RCC_C1_APB1HLPENR = (RCC_REG + 'h174) >> 2;
+localparam RCC_C1_APB2LPENR  = (RCC_REG + 'h178) >> 2;
+localparam RCC_C1_APB4LPENR  = (RCC_REG + 'h17C) >> 2;
+localparam RCC_C2_RSR        = (RCC_REG + 'h190) >> 2;
+localparam RCC_C2_AHB3ENR    = (RCC_REG + 'h194) >> 2;
+localparam RCC_C2_AHB1ENR    = (RCC_REG + 'h198) >> 2;
+localparam RCC_C2_AHB2ENR    = (RCC_REG + 'h19C) >> 2;
+localparam RCC_C2_AHB4ENR    = (RCC_REG + 'h1A0) >> 2;
+localparam RCC_C2_APB3ENR    = (RCC_REG + 'h1A4) >> 2;
+localparam RCC_C2_APB1LENR   = (RCC_REG + 'h1A8) >> 2;
+localparam RCC_C2_APB1HENR   = (RCC_REG + 'h1AC) >> 2;
+localparam RCC_C2_APB2ENR    = (RCC_REG + 'h1B0) >> 2;
+localparam RCC_C2_APB4ENR    = (RCC_REG + 'h1B4) >> 2;
+localparam RCC_C2_AHB3LPENR  = (RCC_REG + 'h1BC) >> 2;
+localparam RCC_C2_AHB1LPENR  = (RCC_REG + 'h1C0) >> 2;
+localparam RCC_C2_AHB2LPENR  = (RCC_REG + 'h1C4) >> 2;
+localparam RCC_C2_AHB4LPENR  = (RCC_REG + 'h1C8) >> 2;
+localparam RCC_C2_APB3LPENR  = (RCC_REG + 'h1CC) >> 2;
+localparam RCC_C2_APB1LLPENR = (RCC_REG + 'h1D0) >> 2;
+localparam RCC_C2_APB1HLPENR = (RCC_REG + 'h1D4) >> 2;
+localparam RCC_C2_APB2LPENR  = (RCC_REG + 'h1D8) >> 2;
+localparam RCC_C2_APB4LPENR  = (RCC_REG + 'h1DC) >> 2;
 // other paramters
 
 // ================================================================================
@@ -812,7 +812,7 @@ wire [WW-1:0] wr_req     ;
 wire          rsv_reg_sel;
 wire          rsv_acs_err;
 wire [DW-1:0] rdata_tmp  ;
-// RCC
+// rcc_reg
 // rcc_cr
 wire [31:0] rcc_cr_read        ;
 wire        rcc_cr_sel         ;
@@ -3042,7 +3042,7 @@ assign wr_req = {WW{req}} & we;
 // ================================================================================
 // ADDRESS DECODER
 // ================================================================================
-// RCC
+// rcc_reg
 assign rcc_cr_sel            = (addr == RCC_CR)           ;
 assign rcc_icscr_sel         = (addr == RCC_ICSCR)        ;
 assign rcc_crrcr_sel         = (addr == RCC_CRRCR)        ;
@@ -11679,7 +11679,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 14:14               spi2lpen            RW                  0b1                 
 // --------------------------------------------------------------------------------
-// 11:11               wwdg2lpen           RW                  0b1                 
+// 11:11               wwdg2lpen           RW                  0b0                 
 // --------------------------------------------------------------------------------
 // 9:9                 lptim1lpen          RW                  0b1                 
 // --------------------------------------------------------------------------------
@@ -11974,14 +11974,14 @@ BB_dfflr #(
 );
 
 // --------------------------------------------------------------------------------
-// 11:11               wwdg2lpen           RW                  0b1                 
+// 11:11               wwdg2lpen           RW                  0b0                 
 // --------------------------------------------------------------------------------
 assign rcc_c1_apb1llpenr_wwdg2lpen_en  = (|wr_req & rcc_c1_apb1llpenr_sel);
 assign nxt_rcc_c1_apb1llpenr_wwdg2lpen = wdata[11:11]                     ;
 assign rcc_c1_wwdg2_lpen               = cur_rcc_c1_apb1llpenr_wwdg2lpen  ;
 BB_dfflr #(
   .DW     (1  ),
-  .RST_VAL('h1)
+  .RST_VAL('h0)
 ) U_rcc_c1_apb1llpenr_wwdg2lpen (
   .clk  (clk                            ),
   .rst_n(rst_n                          ),
@@ -15950,7 +15950,7 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // rcc_c2_apb3lpenr                        0x1cc                                   
 // --------------------------------------------------------------------------------
-// 6:6                 wwdg1lpen           RW                  0b1                 
+// 6:6                 wwdg1lpen           RW                  0b0                 
 // --------------------------------------------------------------------------------
 // 3:3                 ltdclpen            RW                  0b1                 
 // --------------------------------------------------------------------------------
@@ -15965,14 +15965,14 @@ assign rcc_c2_apb3lpenr_read = {{25{1'b0}}
                              , {3{1'b0}}};
 
 // --------------------------------------------------------------------------------
-// 6:6                 wwdg1lpen           RW                  0b1                 
+// 6:6                 wwdg1lpen           RW                  0b0                 
 // --------------------------------------------------------------------------------
 assign rcc_c2_apb3lpenr_wwdg1lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
 assign nxt_rcc_c2_apb3lpenr_wwdg1lpen = wdata[6:6]                      ;
 assign rcc_c2_wwdg1_lpen              = cur_rcc_c2_apb3lpenr_wwdg1lpen  ;
 BB_dfflr #(
   .DW     (1  ),
-  .RST_VAL('h1)
+  .RST_VAL('h0)
 ) U_rcc_c2_apb3lpenr_wwdg1lpen (
   .clk  (clk                           ),
   .rst_n(rst_n                         ),
