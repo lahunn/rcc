@@ -55,13 +55,20 @@ module rcc_sys_clk_gen (
     input cpu1_clk_arcg_en,
     input cpu2_clk_arcg_en,
     input sys_clk_arcg_en,
-    //peripheral allocate signal
-    input ahb1_per_allocate,
-    input ahb2_per_allocate,
-    input ahb3_per_allocate,
-    input apb1_per_allocate,
-    input apb2_per_allocate,
-    input apb3_per_allocate,
+    //peripheral alloc signal
+    input c1_per_alloc_ahb1,
+    input c1_per_alloc_ahb2,
+    input c1_per_alloc_ahb3,
+    input c1_per_alloc_apb1,
+    input c1_per_alloc_apb2,
+    input c1_per_alloc_apb3,
+
+    input c2_per_alloc_ahb1,
+    input c2_per_alloc_ahb2,
+    input c2_per_alloc_ahb3,
+    input c2_per_alloc_apb1,
+    input c2_per_alloc_apb2,
+    input c2_per_alloc_apb3,
     // indicate busy state 
     input  axibridge_d1_busy,
     input  ahb3bridge_d1_busy,
@@ -113,6 +120,8 @@ module rcc_sys_clk_gen (
   assign sys_clk_en               = ~rcc_sys_stop & sys_clk_arcg_en;
   assign rcc_c1_clk_en            = ~c1_deepsleep & ~c1_sleep & cpu1_clk_arcg_en;
   assign rcc_c2_clk_en            = ~c2_deepsleep & ~c2_sleep & cpu2_clk_arcg_en;
+  assign c2_sleep_mode            = c2_sleep & ~c2_deepsleep;
+  assign c1_sleep_mode            = c1_sleep & ~c1_deepsleep;
 
   assign rcc_d1_bus_clk_en        = rcc_d1_stop & d1_clk_arcg_en;
   assign rcc_d2_bus_clk_en        = rcc_d2_stop & d2_clk_arcg_en;
@@ -120,13 +129,13 @@ module rcc_sys_clk_gen (
 
   assign rcc_axibridge_d1_clk_en  = ~c1_sleep | axibridge_d1_busy;
 
-  assign rcc_ahb1bridge_d2_clk_en = ~c2_sleep | ((c2_sleep & ~c2_sleep) & ahb1_per_allocate | apb1_per_allocate | apb2_per_allocate) | ahb1bridge_d2_busy;
-  assign rcc_ahb2bridge_d2_clk_en = ~c2_sleep | ((c2_sleep & ~c2_sleep) & ahb2_per_allocate | apb1_per_allocate | apb2_per_allocate) | ahb2bridge_d2_busy;
-  assign rcc_ahb3bridge_d1_clk_en = ~c1_sleep | ((c1_sleep & ~c1_sleep) & ahb3_per_allocate | apb3_per_allocate) | ahb3bridge_d1_busy | flash_busy;
+  assign rcc_ahb1bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_ahb1) | (c1_sleep_mode & c1_per_alloc_ahb1) | rcc_apb1bridge_d2_clk_en | rcc_apb2bridge_d2_clk_en | ahb1bridge_d2_busy; // apb1 apb2 are connected to ahb1
+  assign rcc_ahb2bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_ahb2) | (c1_sleep_mode & c1_per_alloc_ahb2) | ahb2bridge_d2_busy;
+  assign rcc_ahb3bridge_d1_clk_en = ~c1_sleep | (c1_sleep_mode & c1_per_alloc_ahb3) | (c2_sleep_mode & c2_per_alloc_ahb3) | rcc_apb3bridge_d1_clk_en | ahb3bridge_d1_busy;
   assign rcc_ahb4bridge_d3_clk_en = ~rcc_sys_stop;
-  assign rcc_apb1bridge_d2_clk_en = ~c2_sleep | ((c2_sleep & ~c2_sleep) & apb1_per_allocate) | apb1bridge_d2_busy;
-  assign rcc_apb2bridge_d2_clk_en = ~c2_sleep | ((c2_sleep & ~c2_sleep) & apb2_per_allocate) | apb2bridge_d2_busy;
-  assign rcc_apb3bridge_d1_clk_en = ~c1_sleep | ((c1_sleep & ~c1_sleep) & apb3_per_allocate) | apb3bridge_d1_busy;
+  assign rcc_apb1bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_apb1) | (c1_sleep_mode & c1_per_alloc_apb1) | apb1bridge_d2_busy;
+  assign rcc_apb2bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_apb2) | (c1_sleep_mode & c1_per_alloc_apb2) | apb2bridge_d2_busy;
+  assign rcc_apb3bridge_d1_clk_en = ~c1_sleep | (c1_sleep_mode & c1_per_alloc_apb3) | (c2_sleep_mode & c2_per_alloc_apb3) | apb3bridge_d1_busy;
   assign rcc_apb4bridge_d3_clk_en = ~rcc_sys_stop;
 
 
