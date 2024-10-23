@@ -134,7 +134,7 @@ BB_dfflr #(
   .clk  (rcc_bdcr_byte0_wren),
   .rst_n(rst_n & (~rcc_lsecss_fail)),
   .en   (1'b1 ),
-  .din  ((nxt_rcc_bdcr_lsecsson != 1'b0) | (cur_rcc_bdcr_lsecsson != 1'b0)),
+  .din  ((nxt_rcc_bdcr_lsecsson != 1'b0) | (cur_rcc_bdcr_lsecsson != 1'b0)),//when lsecsson is set to 1, it can not be cleared until lsecss_fail
   .dout (lsecsson_wren_n)
 );
 

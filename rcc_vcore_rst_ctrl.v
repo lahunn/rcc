@@ -17,19 +17,17 @@ module rcc_vcore_rst_ctrl
     input  cpu2_sftrst,
     input  cpu1_sftrst,
 
-
-    input wire pwr_vcore_ok,
-    input wire pwr_d1_ok,
-    input wire pwr_d2_ok,
-    input wire flash_obl_reload,
-    input wire obl_done,
-    input wire flash_power_ok,
-    input wire hsi_rdy,
-    input wire csi_rdy,
+    input  pwr_vcore_ok,
+    input  pwr_d1_ok,
+    input  pwr_d2_ok,
+    input  flash_obl_reload,
+    input  obl_done,
+    input  flash_power_ok,
+    input  hsi_rdy,
 
 //wwdg rst control
-    input wire ww2rsc,
-    input wire ww1rsc,
+    input  ww2rsc,
+    input  ww1rsc,
 
     // reset signals
     output wire pwr_por_rst_n,
@@ -267,7 +265,6 @@ wire sys_rst_n_release;
 //generate rst_n for pwr_por_rst
 assign pwr_por_rst_n = ~pwr_por_rst;
 
-
 ///////////////////////////////
 //nrst_out
 ///////////////////////////////
@@ -322,7 +319,7 @@ always @(posedge sys_clk_pre or negedge sys_rst_n_assert)begin
     end
 end
 assign sys_rst_n_assert = ~nrst_in & hw_init_done;
-assign sys_rst_n_release = (hsi_rdy | csi_rdy) & flash_power_ok;
+assign sys_rst_n_release = hsi_rdy & flash_power_ok;
 
 ///////////////////////////////
 //hw init done generate 

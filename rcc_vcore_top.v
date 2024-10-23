@@ -48,7 +48,7 @@ module rcc_vcore_top #(
     output  rcc_c1_clk,
     output  rcc_fclk_c1,
     output  rcc_c1_systick_clk,
-//reset to cpu and bus 
+// reset to cpu and bus 
     output cpu1_arcg_rst_n,
     output cpu2_arcg_rst_n,
     output d1_bus_arcg_rst_n,
@@ -60,7 +60,7 @@ module rcc_vcore_top #(
     output wire rcc_hrtimer_prescalar_clk,
     output wire sys_d1cpre_clk,
     output wire sys_hpre_clk,
-//rtc clocks
+// rtc clocks
     output wire hse_rtc_clk,
 // signals connected to PAD 
     output mco1,
@@ -68,12 +68,12 @@ module rcc_vcore_top #(
     input pad_rcc_eth_mii_tx_clk,
     input pad_rcc_eth_mii_rx_clk,
     input USB_PHY1,
-//interrupt signals
+// interrupt signals
     output rcc_hsefail_it,
     output rcc_lsefail_it,
     output rcc_it,
 
-//some other signals 
+// some other signals 
     input flash_obl_reload,
     input obl_done,
     input rcc_arcg_on,
@@ -81,8 +81,6 @@ module rcc_vcore_top #(
     input  pll2_rdy,
     input  pll1_rdy,
     input  hse_rdy,
-    input  d2_clk_rdy,
-    input  d1_clk_rdy,
     input  hsi48_rdy,
     input  csi_rdy,
     input  hsi_rdy,
@@ -100,7 +98,7 @@ module rcc_vcore_top #(
     output wire d2_arcg_rst_n,
     output wire stby_rst_n,
 
-//per rst signals
+// per rst signals
     output  rcc_flash_arcg_rst_n,
     output  rcc_qspi_arcg_rst_n,
     output  rcc_axisram_arcg_rst_n,
@@ -233,7 +231,7 @@ module rcc_vcore_top #(
     input wire ahb_hmaster,
     
 // per_ker_clk_control Inputs
-//ker clock req
+// ker clock req
     input uart8_ker_clk_req,
     input uart7_ker_clk_req,
     input i2c3_ker_clk_req,
@@ -247,7 +245,7 @@ module rcc_vcore_top #(
     input usart1_ker_clk_req,
     input i2c4_ker_clk_req,
     input lpuart1_ker_clk_req,
-//bus clock signals
+// bus clock signals
     output wire rcc_axibridge_d1_clk,
     output wire rcc_ahb3bridge_d1_clk,
     output wire rcc_apb3bridge_d1_clk,
@@ -257,7 +255,7 @@ module rcc_vcore_top #(
     output wire rcc_apb2bridge_d2_clk,
     output wire rcc_ahb4bridge_d3_clk,
     output wire rcc_apb4bridge_d3_clk,
-//pll , oscilator and pad clocks
+// pll , oscilator and pad clocks
     output pll1_src_clk,
     output pll2_src_clk,
     output pll3_src_clk,
@@ -270,7 +268,7 @@ module rcc_vcore_top #(
     input wire pll3_q_clk,
     input wire pll3_r_clk,
     input wire I2S_clk_IN,
-//pll osc control signals
+// pll osc control signals
     output  pll3on,
     output  pll2on,
     output  pll1on,
@@ -283,8 +281,8 @@ module rcc_vcore_top #(
     output  [1:0]  hsidiv,
     output  hsikeron,
     output  hsion,
-    output  [4:0]  csitrim,
-    output  [5:0]  hsitrim,
+    output [7:0]    rcc_csi_triming ,
+    output [11:0]   rcc_hsi_triming   ,
     output  divr3en,
     output  divq3en,
     output  divp3en,
@@ -591,9 +589,6 @@ module rcc_vcore_top #(
     output wire  rcc_iwdg1_pclk,
     output wire  rcc_exti_pclk
 //end per_ker_clk_control region
-
-
-
 );
     wire sys_rst_n;
     wire d1_rst_n;
@@ -1449,14 +1444,13 @@ module rcc_vcore_top #(
     assign rcc_d3_busy = rcc_d1_busy | rcc_d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
 
 
-    assign rcc_d1_stop = (~c1_deepsleep | (c2_per_alloc_d1 & ~c2_deepsleep) | rcc_d1_busy);
-    assign rcc_d2_stop = (~c2_deepsleep | (c1_per_alloc_d2 & ~c1_deepsleep) | rcc_d2_busy);
-    assign rcc_sys_stop = (c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~rcc_d3_busy ;
+    assign rcc_pwr_d1_req_set_n = ~(c1_deepsleep & (~c2_per_alloc_d1 | c2_deepsleep) & ~rcc_d1_busy); // 'c1 stop' and 'c2 stop or no peripherals in d1 allocate to c2' and 'd1 not busy' 
+    assign rcc_pwr_d2_req_set_n = ~(c2_deepsleep & (~c1_per_alloc_d2 | c1_deepsleep) & ~rcc_d2_busy); // 'c2 stop' and 'c1 stop or no peripherals in d2 allocate to c1' and 'd2 not busy'
+    assign rcc_pwr_d3_req_set_n = ~((c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~rcc_d3_busy); // 'c1 stop' and 'c2 stop' and 'd3 stop' and 'd3 not busy'
 
-    assign rcc_pwr_d1_req_set_n = ~rcc_d1_stop;
-    assign rcc_pwr_d2_req_set_n = ~rcc_d2_stop;
-    assign rcc_pwr_d3_req_set_n = ~rcc_sys_stop;//& hse_off & hsi48_off & pll_off   do we need to add these signals
-
+    assign rcc_d1_stop = rcc_pwr_d1_req;
+    assign rcc_d2_stop = rcc_pwr_d2_req;
+    assign rcc_sys_stop = rcc_pwr_d3_req;
 
     BB_dfflrs #(
         .DW      ( 1 ),
@@ -1514,14 +1508,11 @@ module rcc_vcore_top #(
                     (rcc_lsirdyf & lsirdyie);
 
 
-
-
 ///////////////////////////////////////
 //signals rename //////////////////////
 ///////////////////////////////////////
     wire ww1rsc;
     wire ww2rsc;
-    wire [1:0] pllsrc;
     wire [1:0] pll_src_sel;
     wire [1:0] sys_clk_sw;
     wire clk;

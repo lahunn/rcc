@@ -27,8 +27,6 @@ module rcc_reg#(
   output          hsebyp              ,
   input           hse_rdy             ,
   output          hseon               ,
-  input           d2_clk_rdy          ,
-  input           d1_clk_rdy          ,
   input           hsi48_rdy           ,
   output          hsi48on             ,
   output          csikeron            ,
@@ -38,9 +36,9 @@ module rcc_reg#(
   input           hsi_rdy             ,
   output          hsikeron            ,
   output          hsion               ,
-  output [4:0]    csitrim             ,
+  output [7:0]    rcc_csi_triming     ,
   input  [7:0]    flash_csi_opt       ,
-  output [5:0]    hsitrim             ,
+  output [11:0]   rcc_hsi_triming     ,
   input  [11:0]   flash_hsi_opt       ,
   input  [9:0]    crs_hsi48_trim      ,
   output [2:0]    mco2sel             ,
@@ -50,7 +48,7 @@ module rcc_reg#(
   output          timpre              ,
   output          hrtimsel            ,
   output [5:0]    rtcpre              ,
-  output [2:0]    sw                  ,
+  output [1:0]    sw                  ,
   output [3:0]    d1cpre              ,
   output [2:0]    d1ppre              ,
   output [3:0]    hpre                ,
@@ -657,6 +655,8 @@ module rcc_reg#(
   output          rcc_c2_lpuart1_lpen ,
   output          rcc_c2_syscfg_lpen  ,
   input           rcc_sys_stop        ,
+  input           rcc_d1_stop         ,
+  input           rcc_d2_stop         ,
   input           rcc_hsecss_fail     ,
   input           rcc_exit_sys_stop   ,
   input           rcc_lsecss_fail     ,
@@ -3006,6 +3006,8 @@ wire        cur_rcc_c2_apb4lpenr_syscfglpen ;
 wire        nxt_rcc_c2_apb4lpenr_syscfglpen ;
 wire        rcc_c2_apb4lpenr_syscfglpen_en  ;
 
+
+//register async set or reset
 wire pllxon_clr_n;
 wire hseon_clr_n;
 wire hsi48on_clr_n;
@@ -3025,8 +3027,11 @@ wire        rcc_c1_rsr_sel          ;
 // rcc_c2_rsr
 wire [31:0] rcc_c2_rsr_read         ;
 wire        rcc_c2_rsr_sel          ;
-
-
+//clk ready signals
+wire d1_clk_rdy;
+wire d2_clk_rdy;
+wire sys_clk_rdy;
+wire [3:0] sys_rdy_candidate;
 
 // ================================================================================
 // R/W INDICATOR
@@ -3433,6 +3438,23 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 assign cur_rcc_cr_d2ckrdy = d2_clk_rdy;
 
+//clock ready logic generate
+
+assign sys_rdy_candidate = {pll1_rdy,hse_rdy,csi_rdy,hsi_rdy};
+assign d1_clk_rdy = sys_clk_rdy & (~rcc_d1_stop);
+assign d2_clk_rdy = sys_clk_rdy & (~rcc_d2_stop);
+
+mux_N_to_1 #(
+    .N ( 4 ),
+    .m ( 2 ))
+ u_mux_sys_clk_rdy (
+    .inp                     ( sys_rdy_candidate ),
+    .select                  ( sw   ),
+    .out                     ( sys_clk_rdy      )
+);
+
+
+
 // --------------------------------------------------------------------------------
 // 14:14               d1ckrdy             RO                  0b0                 
 // --------------------------------------------------------------------------------
@@ -3487,12 +3509,12 @@ assign cur_rcc_cr_csirdy = csi_rdy;
 // 7:7                 csion               RW                  0b0                 
 // --------------------------------------------------------------------------------
 
-assign csion_clr_n =  rst_n;
+assign csion_clr_n = rst_n;
 assign csion_set_n = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==1 | cur_rcc_cfgr_stopkerwuck == 1);
 
 assign rcc_cr_csion_en  = ~((cur_rcc_cfgr_sws == 3'b001)|(cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b01));
 assign nxt_rcc_cr_csion = wdata[7:7]                                                                              ;
-assign csion            = cur_rcc_cr_csion & csikeron                                                             ;
+assign csion            = rcc_sys_stop ? csikeron : cur_rcc_cr_csion                                              ;
 BB_dfflrs #(
   .DW     (1  ),
   .RST_VAL('h0)
@@ -3579,13 +3601,13 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 0:0                 hsion               RW                  0b1                 
 // --------------------------------------------------------------------------------
-assign hsion_set_n = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==0 | cur_rcc_cfgr_stopkerwuck ==0)) | rcc_hsecss_fail);
+assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck ==0 | cur_rcc_cfgr_stopkerwuck ==0)) | rcc_hsecss_fail);
 assign rcc_cr_hsion_en  = ~((cur_rcc_cfgr_sws == 3'b000)|(cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b00));
 assign nxt_rcc_cr_hsion = wdata[0:0]                                                                              ;
-assign hsion            = cur_rcc_cr_hsion & hsikeron                                                             ;
+assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion                                              ;
 BB_dfflrs #(
   .DW     (1  ),
-  .RST_VAL('h1)
+  .RST_VAL('h1) 
 ) U_rcc_cr_hsion (
   .clk  (clk             ),
   .rst_n(rst_n           ),
@@ -3637,7 +3659,8 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 25:18               csical              RO                  flash_csi_opt       
 // --------------------------------------------------------------------------------
-assign cur_rcc_icscr_csical = flash_csi_opt;
+assign cur_rcc_icscr_csical = flash_csi_opt + csitrim;
+assign rcc_csi_triming      = cur_rcc_icscr_csical;
 
 // --------------------------------------------------------------------------------
 // 17:12               hsitrim             RW                  0b100000            
@@ -3659,7 +3682,8 @@ BB_dfflr #(
 // --------------------------------------------------------------------------------
 // 11:0                hsical              RO                  flash_hsi_opt       
 // --------------------------------------------------------------------------------
-assign cur_rcc_icscr_hsical = flash_hsi_opt;
+assign cur_rcc_icscr_hsical = flash_hsi_opt + hsitrim;
+assign rcc_hsi_triming      = cur_rcc_icscr_hsical;
 
 
 // --------------------------------------------------------------------------------
@@ -3886,7 +3910,7 @@ assign sw_set_n = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck ==1);
 
 assign rcc_cfgr_sw_en  = (|wr_req & rcc_cfgr_sel);
 assign nxt_rcc_cfgr_sw = wdata[2:0]              ;
-assign sw              = cur_rcc_cfgr_sw         ;
+assign sw              = cur_rcc_cfgr_sw[1:0]    ;//the MSB is not used
 
 BB_dfflrs #(
   .DW     (3  ),

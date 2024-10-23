@@ -876,7 +876,10 @@ module rcc_vcore_clk_ctrl (
     input  [1:0] clkpersel,
     input  [5:0] divm1,
     input  [5:0] divm2,
-    input  [5:0] divm3
+    input  [5:0] divm3,
+
+    input        csi_rdy,
+    input        hsi_rdy
 );
 
 
@@ -914,12 +917,10 @@ module rcc_vcore_clk_ctrl (
   // HSI CSI clock control /////////
   //////////////////////////////////
 
-  assign hsi_clk_en     = ~rcc_sys_stop;
-  assign hsi_ker_clk_en = ~rcc_sys_stop | hsi_ker_clk_req;
-  assign csi_clk_en     = ~rcc_sys_stop;
-  assign csi_ker_clk_en = csi_clk_en | csi_ker_clk_req;
-
-
+  assign hsi_clk_en     = hsi_rdy & (~rcc_sys_stop);
+  assign hsi_ker_clk_en = hsi_rdy & (~rcc_sys_stop | hsi_ker_clk_req);
+  assign csi_clk_en     = csi_rdy & (~rcc_sys_stop);
+  assign csi_ker_clk_en = csi_rdy & (~rcc_sys_stop | csi_ker_clk_req);
   assign hse_clk_en     = ~hse_css_fail;
 
   //////////////////////////////////
