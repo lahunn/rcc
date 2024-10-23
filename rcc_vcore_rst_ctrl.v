@@ -247,12 +247,10 @@ module rcc_vcore_rst_ctrl
     output rcc_syscfg_rst_n,
     output rcc_iwdg2_rst_n,
     output rcc_iwdg1_rst_n,
-    output rcc_exti_rst_n
-
+    output rcc_exti_rst_n,
+    output obl_rst
 
 );
-    
-wire obl_rst;
 
 reg [$clog2(D1_RST_DURATION)-1:0] d1_rst_n_counter;
 reg [$clog2(D2_RST_DURATION)-1:0] d2_rst_n_counter;
