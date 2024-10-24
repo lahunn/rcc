@@ -59,60 +59,9 @@ module rcc_vdd_top (
 /*AUTOWIRE*/
 /*AUTOREG*/
   rcc_vdd_reg u_rcc_vdd_reg (
-      .wdata               (wdata),
-      .rst_n               (~pwr_por_rst),
-      .rcc_c1_rsr_rmvf_wren(rcc_c1_rsr_rmvf_wren),
-      .rcc_c2_rsr_rmvf_wren(rcc_c2_rsr_rmvf_wren),
-      .rcc_csr_lsion_wren  (rcc_csr_lsion_wren),
-      .nrst_in             (nrst_in),
-      .obl_rst             (obl_rst),
-      .lpwr2_rst           (lpwr2_rst),
-      .lpwr1_rst           (lpwr1_rst),
-      .wwdg1_out_rst       (wwdg1_out_rst),
-      .wwdg2_out_rst       (wwdg2_out_rst),
-      .iwdg1_out_rst       (iwdg1_out_rst),
-      .iwdg2_out_rst       (iwdg2_out_rst),
-      .cpu2_sftrst         (cpu2_sftrst),
-      .cpu1_sftrst         (cpu1_sftrst),
-      .pwr_por_rst         (pwr_por_rst),
-      .pwr_bor_rst         (pwr_bor_rst),
-      .d2_rst              (d2_rst),
-      .d1_rst              (d1_rst),
-      .lsi_rdy             (lsi_rdy),
-
-      .cur_rcc_c1_rsr_lpwr2rstf(cur_rcc_c1_rsr_lpwr2rstf),
-      .cur_rcc_c1_rsr_lpwr1rstf(cur_rcc_c1_rsr_lpwr1rstf),
-      .cur_rcc_c1_rsr_wwdg2rstf(cur_rcc_c1_rsr_wwdg2rstf),
-      .cur_rcc_c1_rsr_wwdg1rstf(cur_rcc_c1_rsr_wwdg1rstf),
-      .cur_rcc_c1_rsr_iwdg2rstf(cur_rcc_c1_rsr_iwdg2rstf),
-      .cur_rcc_c1_rsr_iwdg1rstf(cur_rcc_c1_rsr_iwdg1rstf),
-      .cur_rcc_c1_rsr_sft2rstf (cur_rcc_c1_rsr_sft2rstf),
-      .cur_rcc_c1_rsr_sft1rstf (cur_rcc_c1_rsr_sft1rstf),
-      .cur_rcc_c1_rsr_porrstf  (cur_rcc_c1_rsr_porrstf),
-      .cur_rcc_c1_rsr_pinrstf  (cur_rcc_c1_rsr_pinrstf),
-      .cur_rcc_c1_rsr_borrstf  (cur_rcc_c1_rsr_borrstf),
-      .cur_rcc_c1_rsr_d2rstf   (cur_rcc_c1_rsr_d2rstf),
-      .cur_rcc_c1_rsr_d1rstf   (cur_rcc_c1_rsr_d1rstf),
-      .cur_rcc_c1_rsr_oblrstf  (cur_rcc_c1_rsr_oblrstf),
-      .cur_rcc_c1_rsr_rmvf     (cur_rcc_c1_rsr_rmvf),
-      .cur_rcc_c2_rsr_lpwr2rstf(cur_rcc_c2_rsr_lpwr2rstf),
-      .cur_rcc_c2_rsr_lpwr1rstf(cur_rcc_c2_rsr_lpwr1rstf),
-      .cur_rcc_c2_rsr_wwdg2rstf(cur_rcc_c2_rsr_wwdg2rstf),
-      .cur_rcc_c2_rsr_wwdg1rstf(cur_rcc_c2_rsr_wwdg1rstf),
-      .cur_rcc_c2_rsr_iwdg2rstf(cur_rcc_c2_rsr_iwdg2rstf),
-      .cur_rcc_c2_rsr_iwdg1rstf(cur_rcc_c2_rsr_iwdg1rstf),
-      .cur_rcc_c2_rsr_sft2rstf (cur_rcc_c2_rsr_sft2rstf),
-      .cur_rcc_c2_rsr_sft1rstf (cur_rcc_c2_rsr_sft1rstf),
-      .cur_rcc_c2_rsr_porrstf  (cur_rcc_c2_rsr_porrstf),
-      .cur_rcc_c2_rsr_pinrstf  (cur_rcc_c2_rsr_pinrstf),
-      .cur_rcc_c2_rsr_borrstf  (cur_rcc_c2_rsr_borrstf),
-      .cur_rcc_c2_rsr_d2rstf   (cur_rcc_c2_rsr_d2rstf),
-      .cur_rcc_c2_rsr_d1rstf   (cur_rcc_c2_rsr_d1rstf),
-      .cur_rcc_c2_rsr_oblrstf  (cur_rcc_c2_rsr_oblrstf),
-      .cur_rcc_c2_rsr_rmvf     (cur_rcc_c2_rsr_rmvf),
-      .cur_rcc_csr_lsirdy      (cur_rcc_csr_lsirdy),
-      .cur_rcc_csr_lsion       (cur_rcc_csr_lsion)
-  );
+    .rst_n               (~pwr_por_rst),
+    /*AUTOINST*/
+		);
 
 
   // level shift
