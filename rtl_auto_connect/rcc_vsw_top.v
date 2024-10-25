@@ -3,24 +3,26 @@ module rcc_vsw_top (
     /*AUTOOUTPUT*/
 );
 
- /*AUTOWIRE*/
- /*AUTOREG*/
- // Beginning of automatic regs (for this module's undeclared outputs)
- reg			rcc_rtc_ker_clk;
- // End of automatics
+  /*AUTOWIRE*/
+  /*AUTO DECLARE*/
+
+  // Beginning of automatic regs (for this module's undeclared outputs)
+  reg rcc_rtc_ker_clk;
+  // End of automatics
   assign bdrst_n       = ~bdrst;
   assign rcc_vsw_rst_n = bdrst_n & ~pwr_vsw_rst;
 
   // rcc vsw registers
   rcc_vsw_reg u_rcc_vsw_reg (
-    .rst_n		(bdrst_n),
-    /*AUTOINST*/
-    );
+      .rst_n(bdrst_n),
+      /*AUTOINST*/
+  );
   // rtc ker clock gate
-  rcc_clk_gate_cell_sync rcc_rtc_ker_clk_gate (
-      .clk_in (rcc_rtcsel_clk),
-      .clk_en (rtcen),
-      .clk_out(rcc_rtc_ker_clk)
+  BB_clk_gating rcc_rtc_ker_clk_gate (
+      .raw_clk(rcc_rtcsel_clk),
+      .active (rtcen),
+      .bypass (test_mode),
+      .gen_clk(rcc_rtc_ker_clk)
   );
 
   // rtc ker clock select logic
@@ -34,10 +36,11 @@ module rcc_vsw_top (
   );
 
   // lse clock gate
-  rcc_clk_gate_cell_sync rcc_lse_clk_gate (
-      .clk_in (lse_clk),
-      .clk_en (~lsecss_fail),
-      .clk_out(lse_clk_gated)
+  BB_clk_gating rcc_lse_clk_gate (
+      .raw_clk(lse_clk),
+      .active (~lsecss_fail),
+      .bypass (test_mode),
+      .gen_clk(lse_clk_gated)
   );
 
 

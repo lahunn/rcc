@@ -62,7 +62,7 @@ module rcc_vdd_reg (
 );
   /* verilator lint_off LATCH */
   /*AUTOWIRE*/
-  /*AUTOREG*/
+  /*AUTO DECLARE*/
 
 
   // --------------------------------------------------------------------------------

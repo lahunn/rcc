@@ -37,8 +37,8 @@ module rcc_vsw_reg (
     output           cur_rcc_bdcr_lseon
 );
 
- /*AUTOWIRE*/
-
+  /*AUTOWIRE*/
+  /*AUTO DECLARE*/
 
   // --------------------------------------------------------------------------------
   // 16:16               bdrst              RW                  1'b0                 

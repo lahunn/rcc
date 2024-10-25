@@ -56,8 +56,9 @@ module rcc_vdd_top (
     output cur_rcc_csr_lsirdy,        //hign to low level, default 0
     output cur_rcc_csr_lsion          //hign to low level, default 0
 );
-/*AUTOWIRE*/
-/*AUTOREG*/
+  /*AUTOWIRE*/
+  /*AUTO DECLARE*/
+
   rcc_vdd_reg u_rcc_vdd_reg (
     .rst_n               (~pwr_por_rst),
     /*AUTOINST*/

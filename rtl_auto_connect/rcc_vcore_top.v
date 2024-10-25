@@ -16,12 +16,12 @@ module rcc_vcore_top #(
     /*AUTOOUTPUT*/
 );
   /*AUTOWIRE*/
-  /*AUTOREG*/
+  /*AUTO DECLARE*/
 
   ///////////////////////////////////////
   // dx_req signal generate /////////////
   ///////////////////////////////////////
-  
+
   assign rcc_exit_sys_stop    = pwr_d3_wkup;
 
   assign d1_rst               = ~d1_rst_n;

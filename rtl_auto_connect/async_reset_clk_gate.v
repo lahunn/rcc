@@ -2,59 +2,59 @@ module async_reset_clk_gate #(
     parameter DELAY = 8
 )
 (
-    input rst_n_in,
+    input src_rst_n,
     input clk_in,
     input arcg_on,
     output clk_en,
-    output reg rst_n_clk_g
+    output sync_rst_n
 );
 
-wire rst_n_f;//
-wire rst_n_ff;//
-reg clk_en_f;
-reg [$clog2(DELAY):0] counter;
+localparam CNT_WD = $clog2(DELAY)+1;
 
-assign clk_en = arcg_on ? clk_en_f : 1'b1;
+wire counter_wren;
+wire [CNT_WD-1:0] nxt_counter;
+wire [CNT_WD-1:0] cur_counter;
+
+wire cur_clk_en;
+wire nxt_clk_en;
+
+
+assign clk_en = arcg_on ? cur_clk_en : 1'b1;
+
+BB_reset_sync #(
+    .STAGE_NUM ( 2 ))
+ u_BB_reset_sync (
+    .src_rst_n               ( src_rst_n   ),
+    .clk                     ( clk_in       ),
+    .gen_rst_n               ( sync_rst_n   )
+);
+
+assign counter_wren = (cur_counter < DELAY);
+assign nxt_counter = cur_counter + {{(CNT_WD-1){1'b0}},1'b1};
 
 BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) reset_sync_1 (
-  .clk  (clk_in                   ),
-  .rst_n(rst_n_in                 ),
-  .en   (1'b1 ),
-  .din  (1'b1 ),
-  .dout (rst_n_f)
+    .DW      ( CNT_WD-1 ),
+    .RST_VAL ( 0 ))
+ u_BB_counter_dfflr (
+    .clk                     ( clk_in     ),
+    .rst_n                   ( sync_rst_n  ),
+    .en                      ( counter_wren ),
+    .din                     ( nxt_counter),
+    .dout                    ( cur_counter    )
 );
 
-BB_dfflr #(
-  .DW     (1  ),
-  .RST_VAL('h0)
-) reset_sync_2 (
-  .clk  (clk_in                   ),
-  .rst_n(rst_n_f                  ),
-  .en   (1'b1 ),
-  .din  (1'b1 ),
-  .dout (rst_n_ff)
+
+assign nxt_clk_en = counter_wren;
+
+BB_dffr #(
+    .DW      ( CNT_WD-1 ),
+    .RST_VAL ( 0 ))
+ u_BB_clk_en_dfflr (
+    .clk                     ( clk_in     ),
+    .rst_n                   ( sync_rst_n  ),
+    .din                     ( nxt_clk_en),
+    .dout                    ( cur_clk_en)
 );
-
-always @(posedge clk_in or negedge rst_n_ff)begin
-    if(~rst_n_ff)begin
-        rst_n_clk_g <= 1'b0;
-        clk_en_f <= 1'b0;
-        counter <= 'b0;
-    end else begin
-        rst_n_clk_g <= 1'b1;
-        if(counter < DELAY)begin
-            counter <= counter + 1'b1;
-            clk_en_f <= 1'b0;
-        end else begin
-            counter <= counter;
-            clk_en_f <= 1'b1;
-        end
-    end
-end
-
 
 
     

@@ -47,12 +47,12 @@ module rcc_vcore_rst_ctrl #(
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
-
-  /*AUTOWIRE*/
-  /*AUTOREG*/
-
   reg  [$clog2(D1_RST_DURATION)-1:0] d1_rst_n_counter;
   reg  [$clog2(D2_RST_DURATION)-1:0] d2_rst_n_counter;
+  /*AUTOWIRE*/
+  /*AUTO DECLARE*/
+
+
 
   //generate rst_n for pwr_por_rst
   assign pwr_por_rst_n = ~pwr_por_rst;

@@ -27,7 +27,6 @@ module div_x_stage
                 .rst_n                   ( rst_n   ),
                 .en                      ( 1'b1     ),
                 .din                     ( ~clk_temp[i+1]    ),
-
                 .dout                    ( clk_temp[i+1]    )
             );
         end

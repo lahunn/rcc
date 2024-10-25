@@ -17,11 +17,12 @@ module rcc_top #(
 );
 
   /*AUTOWIRE*/
-  /*AUTOREG*/
+  /*AUTO DECLARE*/
+
   //INSTANTCE
 
   rcc_vsw_top u_rcc_vsw_top (  /*AUTOINST*/
-
+      .wdata(rcc_vsw_wdata),
   );
 
   rcc_vdd_top u_rcc_vdd_top (  /*AUTOINST*/
