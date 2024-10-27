@@ -2,66 +2,129 @@ module rcc_vdd_reg (
 
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
-    input wire rcc_vdd_wdata,
-    input wire rst_n,
-    input wire rcc_c1_rsr_rmvf_wren,
-    input wire rcc_c2_rsr_rmvf_wren,
-    input wire rcc_csr_lsion_wren,
+    input rcc_vdd_wdata,
+    input rst_n,
+    input rcc_c1_rsr_rmvf_wren,
+    input rcc_c2_rsr_rmvf_wren,
+    input rcc_csr_lsion_wren,
 
-    input wire nrst_in,
-    input wire obl_rst,
-    input wire lpwr2_rst,
-    input wire lpwr1_rst,
-    input wire wwdg1_out_rst,
-    input wire wwdg2_out_rst,
-    input wire iwdg1_out_rst,
-    input wire iwdg2_out_rst,
-    input wire cpu2_sftrst,
-    input wire cpu1_sftrst,
-    input wire pwr_por_rst,
-    input wire pwr_bor_rst,
-    input wire d2_rst,
-    input wire d1_rst,
-    input wire lsi_rdy,
+    input nrst_in,
+    input obl_rst,
+    input lpwr2_rst,
+    input lpwr1_rst,
+    input wwdg1_out_rst,
+    input wwdg2_out_rst,
+    input iwdg1_out_rst,
+    input iwdg2_out_rst,
+    input cpu2_sftrst,
+    input cpu1_sftrst,
+    input pwr_por_rst,
+    input pwr_bor_rst,
+    input d2_rst,
+    input d1_rst,
+    input lsi_rdy,
 
     // rcc_c1_rsr 
-    output reg  cur_rcc_c1_rsr_lpwr2rstf,
-    output reg  cur_rcc_c1_rsr_lpwr1rstf,
-    output reg  cur_rcc_c1_rsr_wwdg2rstf,
-    output reg  cur_rcc_c1_rsr_wwdg1rstf,
-    output reg  cur_rcc_c1_rsr_iwdg2rstf,
-    output reg  cur_rcc_c1_rsr_iwdg1rstf,
-    output reg  cur_rcc_c1_rsr_sft2rstf,
-    output reg  cur_rcc_c1_rsr_sft1rstf,
-    output reg  cur_rcc_c1_rsr_porrstf,
-    output reg  cur_rcc_c1_rsr_pinrstf,
-    output reg  cur_rcc_c1_rsr_borrstf,
-    output reg  cur_rcc_c1_rsr_d2rstf,
-    output reg  cur_rcc_c1_rsr_d1rstf,
-    output reg  cur_rcc_c1_rsr_oblrstf,
-    output wire cur_rcc_c1_rsr_rmvf,
+    output reg cur_rcc_c1_rsr_lpwr2rstf,
+    output reg cur_rcc_c1_rsr_lpwr1rstf,
+    output reg cur_rcc_c1_rsr_wwdg2rstf,
+    output reg cur_rcc_c1_rsr_wwdg1rstf,
+    output reg cur_rcc_c1_rsr_iwdg2rstf,
+    output reg cur_rcc_c1_rsr_iwdg1rstf,
+    output reg cur_rcc_c1_rsr_sft2rstf,
+    output reg cur_rcc_c1_rsr_sft1rstf,
+    output reg cur_rcc_c1_rsr_porrstf,
+    output reg cur_rcc_c1_rsr_pinrstf,
+    output reg cur_rcc_c1_rsr_borrstf,
+    output reg cur_rcc_c1_rsr_d2rstf,
+    output reg cur_rcc_c1_rsr_d1rstf,
+    output reg cur_rcc_c1_rsr_oblrstf,
+    output     cur_rcc_c1_rsr_rmvf,
     // rcc_c2_rsr 
-    output reg  cur_rcc_c2_rsr_lpwr2rstf,
-    output reg  cur_rcc_c2_rsr_lpwr1rstf,
-    output reg  cur_rcc_c2_rsr_wwdg2rstf,
-    output reg  cur_rcc_c2_rsr_wwdg1rstf,
-    output reg  cur_rcc_c2_rsr_iwdg2rstf,
-    output reg  cur_rcc_c2_rsr_iwdg1rstf,
-    output reg  cur_rcc_c2_rsr_sft2rstf,
-    output reg  cur_rcc_c2_rsr_sft1rstf,
-    output reg  cur_rcc_c2_rsr_porrstf,
-    output reg  cur_rcc_c2_rsr_pinrstf,
-    output reg  cur_rcc_c2_rsr_borrstf,
-    output reg  cur_rcc_c2_rsr_d2rstf,
-    output reg  cur_rcc_c2_rsr_d1rstf,
-    output reg  cur_rcc_c2_rsr_oblrstf,
-    output wire cur_rcc_c2_rsr_rmvf,
+    output reg cur_rcc_c2_rsr_lpwr2rstf,
+    output reg cur_rcc_c2_rsr_lpwr1rstf,
+    output reg cur_rcc_c2_rsr_wwdg2rstf,
+    output reg cur_rcc_c2_rsr_wwdg1rstf,
+    output reg cur_rcc_c2_rsr_iwdg2rstf,
+    output reg cur_rcc_c2_rsr_iwdg1rstf,
+    output reg cur_rcc_c2_rsr_sft2rstf,
+    output reg cur_rcc_c2_rsr_sft1rstf,
+    output reg cur_rcc_c2_rsr_porrstf,
+    output reg cur_rcc_c2_rsr_pinrstf,
+    output reg cur_rcc_c2_rsr_borrstf,
+    output reg cur_rcc_c2_rsr_d2rstf,
+    output reg cur_rcc_c2_rsr_d1rstf,
+    output reg cur_rcc_c2_rsr_oblrstf,
+    output     cur_rcc_c2_rsr_rmvf,
     // rcc_csr
-    output wire cur_rcc_csr_lsirdy,
-    output reg  cur_rcc_csr_lsion
+    output     cur_rcc_csr_lsirdy,
+    output reg cur_rcc_csr_lsion
 );
   /* verilator lint_off LATCH */
   /*AUTOWIRE*/
+  //Start of automatic wire
+  //Define assign wires here
+  wire rcc_c1_rsr_lpwr2rstf_set;
+  wire rcc_c1_rsr_lpwr2rstf_clr;
+  wire rcc_c1_rsr_lpwr1rstf_set;
+  wire rcc_c1_rsr_lpwr1rstf_clr;
+  wire rcc_c1_rsr_wwdg2rstf_set;
+  wire rcc_c1_rsr_wwdg2rstf_clr;
+  wire rcc_c1_rsr_wwdg1rstf_set;
+  wire rcc_c1_rsr_wwdg1rstf_clr;
+  wire rcc_c1_rsr_iwdg2rstf_set;
+  wire rcc_c1_rsr_iwdg2rstf_clr;
+  wire rcc_c1_rsr_iwdg1rstf_set;
+  wire rcc_c1_rsr_iwdg1rstf_clr;
+  wire rcc_c1_rsr_sft2rstf_set;
+  wire rcc_c1_rsr_sft2rstf_clr;
+  wire rcc_c1_rsr_sft1rstf_set;
+  wire rcc_c1_rsr_sft1rstf_clr;
+  wire rcc_c1_rsr_porrstf_set;
+  wire rcc_c1_rsr_porrstf_clr;
+  wire rcc_c1_rsr_pinrstf_set;
+  wire rcc_c1_rsr_pinrstf_clr;
+  wire rcc_c1_rsr_borrstf_set;
+  wire rcc_c1_rsr_borrstf_clr;
+  wire rcc_c1_rsr_d2rstf_set;
+  wire rcc_c1_rsr_d2rstf_clr;
+  wire rcc_c1_rsr_d1rstf_set;
+  wire rcc_c1_rsr_d1rstf_clr;
+  wire rcc_c1_rsr_oblrstf_set;
+  wire rcc_c1_rsr_oblrstf_clr;
+  wire rcc_c2_rsr_lpwr2rstf_set;
+  wire rcc_c2_rsr_lpwr2rstf_clr;
+  wire rcc_c2_rsr_lpwr1rstf_set;
+  wire rcc_c2_rsr_lpwr1rstf_clr;
+  wire rcc_c2_rsr_wwdg2rstf_set;
+  wire rcc_c2_rsr_wwdg2rstf_clr;
+  wire rcc_c2_rsr_wwdg1rstf_set;
+  wire rcc_c2_rsr_wwdg1rstf_clr;
+  wire rcc_c2_rsr_iwdg2rstf_set;
+  wire rcc_c2_rsr_iwdg2rstf_clr;
+  wire rcc_c2_rsr_iwdg1rstf_set;
+  wire rcc_c2_rsr_iwdg1rstf_clr;
+  wire rcc_c2_rsr_sft2rstf_set;
+  wire rcc_c2_rsr_sft2rstf_clr;
+  wire rcc_c2_rsr_sft1rstf_set;
+  wire rcc_c2_rsr_sft1rstf_clr;
+  wire rcc_c2_rsr_porrstf_set;
+  wire rcc_c2_rsr_porrstf_clr;
+  wire rcc_c2_rsr_pinrstf_set;
+  wire rcc_c2_rsr_pinrstf_clr;
+  wire rcc_c2_rsr_borrstf_set;
+  wire rcc_c2_rsr_borrstf_clr;
+  wire rcc_c2_rsr_d2rstf_set;
+  wire rcc_c2_rsr_d2rstf_clr;
+  wire rcc_c2_rsr_d1rstf_set;
+  wire rcc_c2_rsr_d1rstf_clr;
+  wire rcc_c2_rsr_oblrstf_set;
+  wire rcc_c2_rsr_oblrstf_clr;
+  //Define instance wires here
+  wire nxt_rcc_c1_rsr_rmvf;
+  wire nxt_rcc_c2_rsr_rmvf;
+  wire nxt_rcc_csr_lsion;
+  //End of automatic wire
   /*AUTO DECLARE*/
 
 

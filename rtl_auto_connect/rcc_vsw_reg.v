@@ -1,17 +1,18 @@
 module rcc_vsw_reg (
-    /*AUTOINPUT*/
-    /*AUTOOUTPUT*/
-    input rst_n,
-
+    input        rst_n,
+    //--------------------------------------------------------------------------------
+    //register signals
+    //--------------------------------------------------------------------------------
     output       bdrst,
     output       rtcen,
     output [1:0] rtcsel,
+
     input        lsecss_fail,
+    input        lserdy,
     output       lsecssd,
     output       lsecsson,
     output [1:0] lsedrv,
     output       lsebyp,
-    input        lserdy,
     output       lseon,
 
     input rcc_bdcr_byte2_wren,
@@ -36,8 +37,13 @@ module rcc_vsw_reg (
     output           cur_rcc_bdcr_lsebyp,
     output           cur_rcc_bdcr_lseon
 );
-
+  /* verilator lint_off LATCH */
   /*AUTOWIRE*/
+  wire rcc_bdcr_lsecssd_set;
+  wire rcc_bdcr_lsecssd_clr;
+  wire rtcsel_wren_n;
+  wire lsecsson_wren_n;
+  //End of automatic wire
   /*AUTO DECLARE*/
 
   // --------------------------------------------------------------------------------
@@ -45,13 +51,12 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign bdrst = cur_rcc_bdcr_bdrst;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_bdrst (
       .clk  (rcc_bdcr_byte2_wren),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_bdrst),
       .dout (cur_rcc_bdcr_bdrst)
   );
@@ -65,13 +70,12 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign rtcen = cur_rcc_bdcr_rtcen;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_rtcen (
       .clk  (rcc_bdcr_byte1_wren),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_rtcen),
       .dout (cur_rcc_bdcr_rtcen)
   );
@@ -85,24 +89,22 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign rtcsel = cur_rcc_bdcr_rtcsel;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_rtcsel_wren (
       .clk  (rcc_bdcr_byte1_wren),
       .rst_n(rst_n & (~lsecss_fail)),
-      .en   (1'b1),
       .din  ((nxt_rcc_bdcr_rtcsel != 2'b00) | (cur_rcc_bdcr_rtcsel != 2'b00)),
       .dout (rtcsel_wren_n)
   );
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (2),
       .RST_VAL('h0)
   ) U_rcc_bdcr_rtcsel (
       .clk  (rcc_bdcr_byte1_wren & ~rtcsel_wren_n),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_rtcsel),
       .dout (cur_rcc_bdcr_rtcsel)
   );
@@ -131,24 +133,22 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign lsecsson = cur_rcc_bdcr_lsecsson;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lsecsson_wren (
       .clk  (rcc_bdcr_byte0_wren),
       .rst_n(rst_n & (~lsecss_fail)),
-      .en   (1'b1),
       .din  ((nxt_rcc_bdcr_lsecsson != 1'b0) | (cur_rcc_bdcr_lsecsson != 1'b0)),  //when lsecsson is set to 1, it can not be cleared until lsecss_fail
       .dout (lsecsson_wren_n)
   );
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lsecsson (
       .clk  (rcc_bdcr_byte0_wren & lsecsson_wren_n),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_lsecsson),
       .dout (cur_rcc_bdcr_lsecsson)
   );
@@ -162,13 +162,12 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign lsedrv = cur_rcc_bdcr_lsedrv;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (2),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lsedrv (
       .clk  (rcc_bdcr_byte0_wren),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_lsedrv),
       .dout (cur_rcc_bdcr_lsedrv)
   );
@@ -182,13 +181,12 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign lsebyp = cur_rcc_bdcr_lsebyp;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lsebyp (
       .clk  (rcc_bdcr_byte0_wren),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_lsebyp),
       .dout (cur_rcc_bdcr_lsebyp)
   );
@@ -207,13 +205,12 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   assign lseon               = cur_rcc_bdcr_lseon;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lseon (
       .clk  (rcc_bdcr_byte0_wren),
       .rst_n(rst_n),
-      .en   (1'b1),
       .din  (nxt_rcc_bdcr_lseon),
       .dout (cur_rcc_bdcr_lseon)
   );

@@ -3,7 +3,7 @@ module async_reset_clk_gate #(
 )
 (
     input src_rst_n,
-    input clk_in,
+    input i_clk,
     input arcg_on,
     output clk_en,
     output sync_rst_n
@@ -25,7 +25,7 @@ BB_reset_sync #(
     .STAGE_NUM ( 2 ))
  u_BB_reset_sync (
     .src_rst_n               ( src_rst_n   ),
-    .clk                     ( clk_in       ),
+    .clk                     ( i_clk       ),
     .gen_rst_n               ( sync_rst_n   )
 );
 
@@ -33,10 +33,10 @@ assign counter_wren = (cur_counter < DELAY);
 assign nxt_counter = cur_counter + {{(CNT_WD-1){1'b0}},1'b1};
 
 BB_dfflr #(
-    .DW      ( CNT_WD-1 ),
+    .DW      ( CNT_WD ),
     .RST_VAL ( 0 ))
  u_BB_counter_dfflr (
-    .clk                     ( clk_in     ),
+    .clk                     ( i_clk     ),
     .rst_n                   ( sync_rst_n  ),
     .en                      ( counter_wren ),
     .din                     ( nxt_counter),
@@ -47,11 +47,11 @@ BB_dfflr #(
 assign nxt_clk_en = counter_wren;
 
 BB_dffr #(
-    .DW      ( CNT_WD-1 ),
+    .DW      ( 1 ),
     .RST_VAL ( 0 ))
  u_BB_clk_en_dfflr (
-    .clk                     ( clk_in     ),
-    .rst_n                   ( sync_rst_n  ),
+    .clk                     ( i_clk     ),
+    .rst_n                   ( sync_rst_n),
     .din                     ( nxt_clk_en),
     .dout                    ( cur_clk_en)
 );

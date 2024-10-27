@@ -6,7 +6,7 @@ module rcc_sys_async_reset_clk_gate #(
     parameter CLK_ON_AFTER_CPU1_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_CPU2_RST_RELEASE = 8
 ) (
-    input  rcc_arcg_on,
+    input  arcg_on,
     input  sys_clk,
     input  sys_d1cpre_clk,
     input  sys_hpre_clk,
@@ -499,9 +499,9 @@ module rcc_sys_async_reset_clk_gate #(
   async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
   ) flash_async_reset_clk_gate (
-      .rst_n_in   (rcc_flash_rst_n),
+      .src_rst_n  (rcc_flash_rst_n),
       .clk_in     (rcc_flash_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_flash_arcg_clk_en),
       .rst_n_clk_g(rcc_flash_arcg_rst_n)
   );
@@ -510,9 +510,9 @@ module rcc_sys_async_reset_clk_gate #(
   async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
   ) qspi_async_reset_clk_gate (
-      .rst_n_in   (rcc_qspi_rst_n),
+      .src_rst_n  (rcc_qspi_rst_n),
       .clk_in     (rcc_qspi_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_qspi_arcg_clk_en),
       .rst_n_clk_g(rcc_qspi_arcg_rst_n)
   );
@@ -523,7 +523,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) axisram_async_reset_clk_gate (
       .rst_n_in   (rcc_axisram_rst_n),
       .clk_in     (rcc_axisram_aclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_axisram_arcg_clk_en),
       .rst_n_clk_g(rcc_axisram_arcg_rst_n)
   );
@@ -534,7 +534,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) fmc_async_reset_clk_gate (
       .rst_n_in   (rcc_fmc_rst_n),
       .clk_in     (rcc_fmc_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_fmc_arcg_clk_en),
       .rst_n_clk_g(rcc_fmc_arcg_rst_n)
   );
@@ -545,7 +545,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dma2d_async_reset_clk_gate (
       .rst_n_in   (rcc_dma2d_rst_n),
       .clk_in     (rcc_dma2d_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dma2d_arcg_clk_en),
       .rst_n_clk_g(rcc_dma2d_arcg_rst_n)
   );
@@ -556,7 +556,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) mdma_async_reset_clk_gate (
       .rst_n_in   (rcc_mdma_rst_n),
       .clk_in     (rcc_mdma_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_mdma_arcg_clk_en),
       .rst_n_clk_g(rcc_mdma_arcg_rst_n)
   );
@@ -567,7 +567,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) ltdc_async_reset_clk_gate (
       .rst_n_in   (rcc_ltdc_rst_n),
       .clk_in     (rcc_ltdc_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_ltdc_arcg_clk_en),
       .rst_n_clk_g(rcc_ltdc_arcg_rst_n)
   );
@@ -578,7 +578,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) ramecc1_async_reset_clk_gate (
       .rst_n_in   (rcc_ramecc1_rst_n),
       .clk_in     (rcc_ramecc1_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_ramecc1_arcg_clk_en),
       .rst_n_clk_g(rcc_ramecc1_arcg_rst_n)
   );
@@ -589,7 +589,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpv_async_reset_clk_gate (
       .rst_n_in   (rcc_gpv_rst_n),
       .clk_in     (rcc_gpv_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpv_arcg_clk_en),
       .rst_n_clk_g(rcc_gpv_arcg_rst_n)
   );
@@ -600,7 +600,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) itcm_async_reset_clk_gate (
       .rst_n_in   (rcc_itcm_rst_n),
       .clk_in     (rcc_itcm_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_itcm_arcg_clk_en),
       .rst_n_clk_g(rcc_itcm_arcg_rst_n)
   );
@@ -611,7 +611,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dtcm2_async_reset_clk_gate (
       .rst_n_in   (rcc_dtcm2_rst_n),
       .clk_in     (rcc_dtcm2_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dtcm2_arcg_clk_en),
       .rst_n_clk_g(rcc_dtcm2_arcg_rst_n)
   );
@@ -622,7 +622,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dtcm1_async_reset_clk_gate (
       .rst_n_in   (rcc_dtcm1_rst_n),
       .clk_in     (rcc_dtcm1_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dtcm1_arcg_clk_en),
       .rst_n_clk_g(rcc_dtcm1_arcg_rst_n)
   );
@@ -633,7 +633,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) jpgdec_async_reset_clk_gate (
       .rst_n_in   (rcc_jpgdec_rst_n),
       .clk_in     (rcc_jpgdec_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_jpgdec_arcg_clk_en),
       .rst_n_clk_g(rcc_jpgdec_arcg_rst_n)
   );
@@ -644,7 +644,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sdmmc1_async_reset_clk_gate (
       .rst_n_in   (rcc_sdmmc1_rst_n),
       .clk_in     (rcc_sdmmc1_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sdmmc1_arcg_clk_en),
       .rst_n_clk_g(rcc_sdmmc1_arcg_rst_n)
   );
@@ -655,7 +655,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) wwdg1_async_reset_clk_gate (
       .rst_n_in   (rcc_wwdg1_rst_n),
       .clk_in     (rcc_wwdg1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_wwdg1_arcg_clk_en),
       .rst_n_clk_g(rcc_wwdg1_arcg_rst_n)
   );
@@ -666,7 +666,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usb2ulpi_async_reset_clk_gate (
       .rst_n_in   (rcc_usb2ulpi_rst_n),
       .clk_in     (rcc_usb2ulpi_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usb2ulpi_arcg_clk_en),
       .rst_n_clk_g(rcc_usb2ulpi_arcg_rst_n)
   );
@@ -677,7 +677,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usb2otg_async_reset_clk_gate (
       .rst_n_in   (rcc_usb2otg_rst_n),
       .clk_in     (rcc_usb2otg_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usb2otg_arcg_clk_en),
       .rst_n_clk_g(rcc_usb2otg_arcg_rst_n)
   );
@@ -688,7 +688,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usb1ulpi_async_reset_clk_gate (
       .rst_n_in   (rcc_usb1ulpi_rst_n),
       .clk_in     (rcc_usb1ulpi_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usb1ulpi_arcg_clk_en),
       .rst_n_clk_g(rcc_usb1ulpi_arcg_rst_n)
   );
@@ -699,7 +699,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usb1otg_async_reset_clk_gate (
       .rst_n_in   (rcc_usb1otg_rst_n),
       .clk_in     (rcc_usb1otg_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usb1otg_arcg_clk_en),
       .rst_n_clk_g(rcc_usb1otg_arcg_rst_n)
   );
@@ -710,7 +710,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) eth1rx_async_reset_clk_gate (
       .rst_n_in   (rcc_eth1rx_rst_n),
       .clk_in     (rcc_eth1rx_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_eth1rx_arcg_clk_en),
       .rst_n_clk_g(rcc_eth1rx_arcg_rst_n)
   );
@@ -721,7 +721,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) eth1tx_async_reset_clk_gate (
       .rst_n_in   (rcc_eth1tx_rst_n),
       .clk_in     (rcc_eth1tx_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_eth1tx_arcg_clk_en),
       .rst_n_clk_g(rcc_eth1tx_arcg_rst_n)
   );
@@ -732,7 +732,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) eth1mac_async_reset_clk_gate (
       .rst_n_in   (rcc_eth1mac_rst_n),
       .clk_in     (rcc_eth1mac_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_eth1mac_arcg_clk_en),
       .rst_n_clk_g(rcc_eth1mac_arcg_rst_n)
   );
@@ -743,7 +743,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) adc12_async_reset_clk_gate (
       .rst_n_in   (rcc_adc12_rst_n),
       .clk_in     (rcc_adc12_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_adc12_arcg_clk_en),
       .rst_n_clk_g(rcc_adc12_arcg_rst_n)
   );
@@ -754,7 +754,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dma2_async_reset_clk_gate (
       .rst_n_in   (rcc_dma2_rst_n),
       .clk_in     (rcc_dma2_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dma2_arcg_clk_en),
       .rst_n_clk_g(rcc_dma2_arcg_rst_n)
   );
@@ -765,7 +765,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dma1_async_reset_clk_gate (
       .rst_n_in   (rcc_dma1_rst_n),
       .clk_in     (rcc_dma1_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dma1_arcg_clk_en),
       .rst_n_clk_g(rcc_dma1_arcg_rst_n)
   );
@@ -776,7 +776,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sram3_async_reset_clk_gate (
       .rst_n_in   (rcc_sram3_rst_n),
       .clk_in     (rcc_sram3_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sram3_arcg_clk_en),
       .rst_n_clk_g(rcc_sram3_arcg_rst_n)
   );
@@ -787,7 +787,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sram2_async_reset_clk_gate (
       .rst_n_in   (rcc_sram2_rst_n),
       .clk_in     (rcc_sram2_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sram2_arcg_clk_en),
       .rst_n_clk_g(rcc_sram2_arcg_rst_n)
   );
@@ -798,7 +798,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sram1_async_reset_clk_gate (
       .rst_n_in   (rcc_sram1_rst_n),
       .clk_in     (rcc_sram1_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sram1_arcg_clk_en),
       .rst_n_clk_g(rcc_sram1_arcg_rst_n)
   );
@@ -809,7 +809,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sdmmc2_async_reset_clk_gate (
       .rst_n_in   (rcc_sdmmc2_rst_n),
       .clk_in     (rcc_sdmmc2_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sdmmc2_arcg_clk_en),
       .rst_n_clk_g(rcc_sdmmc2_arcg_rst_n)
   );
@@ -820,7 +820,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) rng_async_reset_clk_gate (
       .rst_n_in   (rcc_rng_rst_n),
       .clk_in     (rcc_rng_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_rng_arcg_clk_en),
       .rst_n_clk_g(rcc_rng_arcg_rst_n)
   );
@@ -831,7 +831,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) hash_async_reset_clk_gate (
       .rst_n_in   (rcc_hash_rst_n),
       .clk_in     (rcc_hash_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_hash_arcg_clk_en),
       .rst_n_clk_g(rcc_hash_arcg_rst_n)
   );
@@ -842,7 +842,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) crypt_async_reset_clk_gate (
       .rst_n_in   (rcc_crypt_rst_n),
       .clk_in     (rcc_crypt_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_crypt_arcg_clk_en),
       .rst_n_clk_g(rcc_crypt_arcg_rst_n)
   );
@@ -853,7 +853,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dcmi_async_reset_clk_gate (
       .rst_n_in   (rcc_dcmi_rst_n),
       .clk_in     (rcc_dcmi_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dcmi_arcg_clk_en),
       .rst_n_clk_g(rcc_dcmi_arcg_rst_n)
   );
@@ -864,7 +864,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) ramecc2_async_reset_clk_gate (
       .rst_n_in   (rcc_ramecc2_rst_n),
       .clk_in     (rcc_ramecc2_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_ramecc2_arcg_clk_en),
       .rst_n_clk_g(rcc_ramecc2_arcg_rst_n)
   );
@@ -875,7 +875,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) uart8_async_reset_clk_gate (
       .rst_n_in   (rcc_uart8_rst_n),
       .clk_in     (rcc_uart8_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_uart8_arcg_clk_en),
       .rst_n_clk_g(rcc_uart8_arcg_rst_n)
   );
@@ -886,7 +886,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) uart7_async_reset_clk_gate (
       .rst_n_in   (rcc_uart7_rst_n),
       .clk_in     (rcc_uart7_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_uart7_arcg_clk_en),
       .rst_n_clk_g(rcc_uart7_arcg_rst_n)
   );
@@ -897,7 +897,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dac12_async_reset_clk_gate (
       .rst_n_in   (rcc_dac12_rst_n),
       .clk_in     (rcc_dac12_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dac12_arcg_clk_en),
       .rst_n_clk_g(rcc_dac12_arcg_rst_n)
   );
@@ -908,7 +908,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) hdmicec_async_reset_clk_gate (
       .rst_n_in   (rcc_hdmicec_rst_n),
       .clk_in     (rcc_hdmicec_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_hdmicec_arcg_clk_en),
       .rst_n_clk_g(rcc_hdmicec_arcg_rst_n)
   );
@@ -919,7 +919,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) i2c3_async_reset_clk_gate (
       .rst_n_in   (rcc_i2c3_rst_n),
       .clk_in     (rcc_i2c3_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_i2c3_arcg_clk_en),
       .rst_n_clk_g(rcc_i2c3_arcg_rst_n)
   );
@@ -930,7 +930,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) i2c2_async_reset_clk_gate (
       .rst_n_in   (rcc_i2c2_rst_n),
       .clk_in     (rcc_i2c2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_i2c2_arcg_clk_en),
       .rst_n_clk_g(rcc_i2c2_arcg_rst_n)
   );
@@ -941,7 +941,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) i2c1_async_reset_clk_gate (
       .rst_n_in   (rcc_i2c1_rst_n),
       .clk_in     (rcc_i2c1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_i2c1_arcg_clk_en),
       .rst_n_clk_g(rcc_i2c1_arcg_rst_n)
   );
@@ -952,7 +952,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) uart5_async_reset_clk_gate (
       .rst_n_in   (rcc_uart5_rst_n),
       .clk_in     (rcc_uart5_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_uart5_arcg_clk_en),
       .rst_n_clk_g(rcc_uart5_arcg_rst_n)
   );
@@ -963,7 +963,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) uart4_async_reset_clk_gate (
       .rst_n_in   (rcc_uart4_rst_n),
       .clk_in     (rcc_uart4_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_uart4_arcg_clk_en),
       .rst_n_clk_g(rcc_uart4_arcg_rst_n)
   );
@@ -974,7 +974,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usart3_async_reset_clk_gate (
       .rst_n_in   (rcc_usart3_rst_n),
       .clk_in     (rcc_usart3_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usart3_arcg_clk_en),
       .rst_n_clk_g(rcc_usart3_arcg_rst_n)
   );
@@ -985,7 +985,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usart2_async_reset_clk_gate (
       .rst_n_in   (rcc_usart2_rst_n),
       .clk_in     (rcc_usart2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usart2_arcg_clk_en),
       .rst_n_clk_g(rcc_usart2_arcg_rst_n)
   );
@@ -996,7 +996,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spdifrx_async_reset_clk_gate (
       .rst_n_in   (rcc_spdifrx_rst_n),
       .clk_in     (rcc_spdifrx_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spdifrx_arcg_clk_en),
       .rst_n_clk_g(rcc_spdifrx_arcg_rst_n)
   );
@@ -1007,7 +1007,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spi3_async_reset_clk_gate (
       .rst_n_in   (rcc_spi3_rst_n),
       .clk_in     (rcc_spi3_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spi3_arcg_clk_en),
       .rst_n_clk_g(rcc_spi3_arcg_rst_n)
   );
@@ -1018,7 +1018,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spi2_async_reset_clk_gate (
       .rst_n_in   (rcc_spi2_rst_n),
       .clk_in     (rcc_spi2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spi2_arcg_clk_en),
       .rst_n_clk_g(rcc_spi2_arcg_rst_n)
   );
@@ -1029,7 +1029,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) wwdg2_async_reset_clk_gate (
       .rst_n_in   (rcc_wwdg2_rst_n),
       .clk_in     (rcc_wwdg2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_wwdg2_arcg_clk_en),
       .rst_n_clk_g(rcc_wwdg2_arcg_rst_n)
   );
@@ -1040,7 +1040,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) lptim1_async_reset_clk_gate (
       .rst_n_in   (rcc_lptim1_rst_n),
       .clk_in     (rcc_lptim1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_lptim1_arcg_clk_en),
       .rst_n_clk_g(rcc_lptim1_arcg_rst_n)
   );
@@ -1051,7 +1051,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim14_async_reset_clk_gate (
       .rst_n_in   (rcc_tim14_rst_n),
       .clk_in     (rcc_tim14_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim14_arcg_clk_en),
       .rst_n_clk_g(rcc_tim14_arcg_rst_n)
   );
@@ -1062,7 +1062,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim13_async_reset_clk_gate (
       .rst_n_in   (rcc_tim13_rst_n),
       .clk_in     (rcc_tim13_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim13_arcg_clk_en),
       .rst_n_clk_g(rcc_tim13_arcg_rst_n)
   );
@@ -1073,7 +1073,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim12_async_reset_clk_gate (
       .rst_n_in   (rcc_tim12_rst_n),
       .clk_in     (rcc_tim12_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim12_arcg_clk_en),
       .rst_n_clk_g(rcc_tim12_arcg_rst_n)
   );
@@ -1084,7 +1084,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim7_async_reset_clk_gate (
       .rst_n_in   (rcc_tim7_rst_n),
       .clk_in     (rcc_tim7_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim7_arcg_clk_en),
       .rst_n_clk_g(rcc_tim7_arcg_rst_n)
   );
@@ -1095,7 +1095,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim6_async_reset_clk_gate (
       .rst_n_in   (rcc_tim6_rst_n),
       .clk_in     (rcc_tim6_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim6_arcg_clk_en),
       .rst_n_clk_g(rcc_tim6_arcg_rst_n)
   );
@@ -1106,7 +1106,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim5_async_reset_clk_gate (
       .rst_n_in   (rcc_tim5_rst_n),
       .clk_in     (rcc_tim5_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim5_arcg_clk_en),
       .rst_n_clk_g(rcc_tim5_arcg_rst_n)
   );
@@ -1117,7 +1117,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim4_async_reset_clk_gate (
       .rst_n_in   (rcc_tim4_rst_n),
       .clk_in     (rcc_tim4_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim4_arcg_clk_en),
       .rst_n_clk_g(rcc_tim4_arcg_rst_n)
   );
@@ -1128,7 +1128,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim3_async_reset_clk_gate (
       .rst_n_in   (rcc_tim3_rst_n),
       .clk_in     (rcc_tim3_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim3_arcg_clk_en),
       .rst_n_clk_g(rcc_tim3_arcg_rst_n)
   );
@@ -1139,7 +1139,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim2_async_reset_clk_gate (
       .rst_n_in   (rcc_tim2_rst_n),
       .clk_in     (rcc_tim2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim2_arcg_clk_en),
       .rst_n_clk_g(rcc_tim2_arcg_rst_n)
   );
@@ -1150,7 +1150,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) fdcan_async_reset_clk_gate (
       .rst_n_in   (rcc_fdcan_rst_n),
       .clk_in     (rcc_fdcan_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_fdcan_arcg_clk_en),
       .rst_n_clk_g(rcc_fdcan_arcg_rst_n)
   );
@@ -1161,7 +1161,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) mdios_async_reset_clk_gate (
       .rst_n_in   (rcc_mdios_rst_n),
       .clk_in     (rcc_mdios_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_mdios_arcg_clk_en),
       .rst_n_clk_g(rcc_mdios_arcg_rst_n)
   );
@@ -1172,7 +1172,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) opamp_async_reset_clk_gate (
       .rst_n_in   (rcc_opamp_rst_n),
       .clk_in     (rcc_opamp_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_opamp_arcg_clk_en),
       .rst_n_clk_g(rcc_opamp_arcg_rst_n)
   );
@@ -1183,7 +1183,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) swpmi_async_reset_clk_gate (
       .rst_n_in   (rcc_swpmi_rst_n),
       .clk_in     (rcc_swpmi_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_swpmi_arcg_clk_en),
       .rst_n_clk_g(rcc_swpmi_arcg_rst_n)
   );
@@ -1194,7 +1194,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) crs_async_reset_clk_gate (
       .rst_n_in   (rcc_crs_rst_n),
       .clk_in     (rcc_crs_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_crs_arcg_clk_en),
       .rst_n_clk_g(rcc_crs_arcg_rst_n)
   );
@@ -1205,7 +1205,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) hrtim_async_reset_clk_gate (
       .rst_n_in   (rcc_hrtim_rst_n),
       .clk_in     (rcc_hrtim_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_hrtim_arcg_clk_en),
       .rst_n_clk_g(rcc_hrtim_arcg_rst_n)
   );
@@ -1216,7 +1216,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) dfsdm1_async_reset_clk_gate (
       .rst_n_in   (rcc_dfsdm1_rst_n),
       .clk_in     (rcc_dfsdm1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_dfsdm1_arcg_clk_en),
       .rst_n_clk_g(rcc_dfsdm1_arcg_rst_n)
   );
@@ -1227,7 +1227,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sai3_async_reset_clk_gate (
       .rst_n_in   (rcc_sai3_rst_n),
       .clk_in     (rcc_sai3_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sai3_arcg_clk_en),
       .rst_n_clk_g(rcc_sai3_arcg_rst_n)
   );
@@ -1238,7 +1238,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sai2_async_reset_clk_gate (
       .rst_n_in   (rcc_sai2_rst_n),
       .clk_in     (rcc_sai2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sai2_arcg_clk_en),
       .rst_n_clk_g(rcc_sai2_arcg_rst_n)
   );
@@ -1249,7 +1249,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sai1_async_reset_clk_gate (
       .rst_n_in   (rcc_sai1_rst_n),
       .clk_in     (rcc_sai1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sai1_arcg_clk_en),
       .rst_n_clk_g(rcc_sai1_arcg_rst_n)
   );
@@ -1260,7 +1260,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spi5_async_reset_clk_gate (
       .rst_n_in   (rcc_spi5_rst_n),
       .clk_in     (rcc_spi5_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spi5_arcg_clk_en),
       .rst_n_clk_g(rcc_spi5_arcg_rst_n)
   );
@@ -1271,7 +1271,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim17_async_reset_clk_gate (
       .rst_n_in   (rcc_tim17_rst_n),
       .clk_in     (rcc_tim17_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim17_arcg_clk_en),
       .rst_n_clk_g(rcc_tim17_arcg_rst_n)
   );
@@ -1282,7 +1282,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim16_async_reset_clk_gate (
       .rst_n_in   (rcc_tim16_rst_n),
       .clk_in     (rcc_tim16_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim16_arcg_clk_en),
       .rst_n_clk_g(rcc_tim16_arcg_rst_n)
   );
@@ -1293,7 +1293,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim15_async_reset_clk_gate (
       .rst_n_in   (rcc_tim15_rst_n),
       .clk_in     (rcc_tim15_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim15_arcg_clk_en),
       .rst_n_clk_g(rcc_tim15_arcg_rst_n)
   );
@@ -1304,7 +1304,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spi4_async_reset_clk_gate (
       .rst_n_in   (rcc_spi4_rst_n),
       .clk_in     (rcc_spi4_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spi4_arcg_clk_en),
       .rst_n_clk_g(rcc_spi4_arcg_rst_n)
   );
@@ -1315,7 +1315,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spi1_async_reset_clk_gate (
       .rst_n_in   (rcc_spi1_rst_n),
       .clk_in     (rcc_spi1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spi1_arcg_clk_en),
       .rst_n_clk_g(rcc_spi1_arcg_rst_n)
   );
@@ -1326,7 +1326,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usart6_async_reset_clk_gate (
       .rst_n_in   (rcc_usart6_rst_n),
       .clk_in     (rcc_usart6_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usart6_arcg_clk_en),
       .rst_n_clk_g(rcc_usart6_arcg_rst_n)
   );
@@ -1337,7 +1337,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) usart1_async_reset_clk_gate (
       .rst_n_in   (rcc_usart1_rst_n),
       .clk_in     (rcc_usart1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_usart1_arcg_clk_en),
       .rst_n_clk_g(rcc_usart1_arcg_rst_n)
   );
@@ -1348,7 +1348,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim8_async_reset_clk_gate (
       .rst_n_in   (rcc_tim8_rst_n),
       .clk_in     (rcc_tim8_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim8_arcg_clk_en),
       .rst_n_clk_g(rcc_tim8_arcg_rst_n)
   );
@@ -1359,7 +1359,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) tim1_async_reset_clk_gate (
       .rst_n_in   (rcc_tim1_rst_n),
       .clk_in     (rcc_tim1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_tim1_arcg_clk_en),
       .rst_n_clk_g(rcc_tim1_arcg_rst_n)
   );
@@ -1370,7 +1370,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sram4_async_reset_clk_gate (
       .rst_n_in   (rcc_sram4_rst_n),
       .clk_in     (rcc_sram4_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sram4_arcg_clk_en),
       .rst_n_clk_g(rcc_sram4_arcg_rst_n)
   );
@@ -1381,7 +1381,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) bkpram_async_reset_clk_gate (
       .rst_n_in   (rcc_bkpram_rst_n),
       .clk_in     (rcc_bkpram_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_bkpram_arcg_clk_en),
       .rst_n_clk_g(rcc_bkpram_arcg_rst_n)
   );
@@ -1392,7 +1392,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) ramecc3_async_reset_clk_gate (
       .rst_n_in   (rcc_ramecc3_rst_n),
       .clk_in     (rcc_ramecc3_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_ramecc3_arcg_clk_en),
       .rst_n_clk_g(rcc_ramecc3_arcg_rst_n)
   );
@@ -1403,7 +1403,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) hsem_async_reset_clk_gate (
       .rst_n_in   (rcc_hsem_rst_n),
       .clk_in     (rcc_hsem_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_hsem_arcg_clk_en),
       .rst_n_clk_g(rcc_hsem_arcg_rst_n)
   );
@@ -1414,7 +1414,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) adc3_async_reset_clk_gate (
       .rst_n_in   (rcc_adc3_rst_n),
       .clk_in     (rcc_adc3_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_adc3_arcg_clk_en),
       .rst_n_clk_g(rcc_adc3_arcg_rst_n)
   );
@@ -1425,7 +1425,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) bdma_async_reset_clk_gate (
       .rst_n_in   (rcc_bdma_rst_n),
       .clk_in     (rcc_bdma_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_bdma_arcg_clk_en),
       .rst_n_clk_g(rcc_bdma_arcg_rst_n)
   );
@@ -1436,7 +1436,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) crc_async_reset_clk_gate (
       .rst_n_in   (rcc_crc_rst_n),
       .clk_in     (rcc_crc_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_crc_arcg_clk_en),
       .rst_n_clk_g(rcc_crc_arcg_rst_n)
   );
@@ -1447,7 +1447,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpiok_async_reset_clk_gate (
       .rst_n_in   (rcc_gpiok_rst_n),
       .clk_in     (rcc_gpiok_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpiok_arcg_clk_en),
       .rst_n_clk_g(rcc_gpiok_arcg_rst_n)
   );
@@ -1458,7 +1458,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpioj_async_reset_clk_gate (
       .rst_n_in   (rcc_gpioj_rst_n),
       .clk_in     (rcc_gpioj_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpioj_arcg_clk_en),
       .rst_n_clk_g(rcc_gpioj_arcg_rst_n)
   );
@@ -1469,7 +1469,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpioi_async_reset_clk_gate (
       .rst_n_in   (rcc_gpioi_rst_n),
       .clk_in     (rcc_gpioi_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpioi_arcg_clk_en),
       .rst_n_clk_g(rcc_gpioi_arcg_rst_n)
   );
@@ -1480,7 +1480,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpioh_async_reset_clk_gate (
       .rst_n_in   (rcc_gpioh_rst_n),
       .clk_in     (rcc_gpioh_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpioh_arcg_clk_en),
       .rst_n_clk_g(rcc_gpioh_arcg_rst_n)
   );
@@ -1491,7 +1491,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpiog_async_reset_clk_gate (
       .rst_n_in   (rcc_gpiog_rst_n),
       .clk_in     (rcc_gpiog_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpiog_arcg_clk_en),
       .rst_n_clk_g(rcc_gpiog_arcg_rst_n)
   );
@@ -1502,7 +1502,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpiof_async_reset_clk_gate (
       .rst_n_in   (rcc_gpiof_rst_n),
       .clk_in     (rcc_gpiof_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpiof_arcg_clk_en),
       .rst_n_clk_g(rcc_gpiof_arcg_rst_n)
   );
@@ -1513,7 +1513,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpioe_async_reset_clk_gate (
       .rst_n_in   (rcc_gpioe_rst_n),
       .clk_in     (rcc_gpioe_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpioe_arcg_clk_en),
       .rst_n_clk_g(rcc_gpioe_arcg_rst_n)
   );
@@ -1524,7 +1524,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpiod_async_reset_clk_gate (
       .rst_n_in   (rcc_gpiod_rst_n),
       .clk_in     (rcc_gpiod_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpiod_arcg_clk_en),
       .rst_n_clk_g(rcc_gpiod_arcg_rst_n)
   );
@@ -1535,7 +1535,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpioc_async_reset_clk_gate (
       .rst_n_in   (rcc_gpioc_rst_n),
       .clk_in     (rcc_gpioc_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpioc_arcg_clk_en),
       .rst_n_clk_g(rcc_gpioc_arcg_rst_n)
   );
@@ -1546,7 +1546,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpiob_async_reset_clk_gate (
       .rst_n_in   (rcc_gpiob_rst_n),
       .clk_in     (rcc_gpiob_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpiob_arcg_clk_en),
       .rst_n_clk_g(rcc_gpiob_arcg_rst_n)
   );
@@ -1557,7 +1557,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) gpioa_async_reset_clk_gate (
       .rst_n_in   (rcc_gpioa_rst_n),
       .clk_in     (rcc_gpioa_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_gpioa_arcg_clk_en),
       .rst_n_clk_g(rcc_gpioa_arcg_rst_n)
   );
@@ -1568,7 +1568,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) rcc_async_reset_clk_gate (
       .rst_n_in   (rcc_rcc_rst_n),
       .clk_in     (rcc_rcc_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_rcc_arcg_clk_en),
       .rst_n_clk_g(rcc_rcc_arcg_rst_n)
   );
@@ -1579,7 +1579,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) pwr_async_reset_clk_gate (
       .rst_n_in   (rcc_pwr_rst_n),
       .clk_in     (rcc_pwr_hclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_pwr_arcg_clk_en),
       .rst_n_clk_g(rcc_pwr_arcg_rst_n)
   );
@@ -1590,7 +1590,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sai4_async_reset_clk_gate (
       .rst_n_in   (rcc_sai4_rst_n),
       .clk_in     (rcc_sai4_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_sai4_arcg_clk_en),
       .rst_n_clk_g(rcc_sai4_arcg_rst_n)
   );
@@ -1601,7 +1601,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) rtc_async_reset_clk_gate (
       .rst_n_in   (rcc_rtc_rst_n),
       .clk_in     (rcc_rtc_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_rtc_arcg_clk_en),
       .rst_n_clk_g(rcc_rtc_arcg_rst_n)
   );
@@ -1612,7 +1612,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) vref_async_reset_clk_gate (
       .rst_n_in   (rcc_vref_rst_n),
       .clk_in     (rcc_vref_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_vref_arcg_clk_en),
       .rst_n_clk_g(rcc_vref_arcg_rst_n)
   );
@@ -1623,7 +1623,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) comp12_async_reset_clk_gate (
       .rst_n_in   (rcc_comp12_rst_n),
       .clk_in     (rcc_comp12_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_comp12_arcg_clk_en),
       .rst_n_clk_g(rcc_comp12_arcg_rst_n)
   );
@@ -1634,7 +1634,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) lptim5_async_reset_clk_gate (
       .rst_n_in   (rcc_lptim5_rst_n),
       .clk_in     (rcc_lptim5_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_lptim5_arcg_clk_en),
       .rst_n_clk_g(rcc_lptim5_arcg_rst_n)
   );
@@ -1645,7 +1645,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) lptim4_async_reset_clk_gate (
       .rst_n_in   (rcc_lptim4_rst_n),
       .clk_in     (rcc_lptim4_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_lptim4_arcg_clk_en),
       .rst_n_clk_g(rcc_lptim4_arcg_rst_n)
   );
@@ -1656,7 +1656,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) lptim3_async_reset_clk_gate (
       .rst_n_in   (rcc_lptim3_rst_n),
       .clk_in     (rcc_lptim3_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_lptim3_arcg_clk_en),
       .rst_n_clk_g(rcc_lptim3_arcg_rst_n)
   );
@@ -1667,7 +1667,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) lptim2_async_reset_clk_gate (
       .rst_n_in   (rcc_lptim2_rst_n),
       .clk_in     (rcc_lptim2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_lptim2_arcg_clk_en),
       .rst_n_clk_g(rcc_lptim2_arcg_rst_n)
   );
@@ -1678,7 +1678,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) i2c4_async_reset_clk_gate (
       .rst_n_in   (rcc_i2c4_rst_n),
       .clk_in     (rcc_i2c4_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_i2c4_arcg_clk_en),
       .rst_n_clk_g(rcc_i2c4_arcg_rst_n)
   );
@@ -1689,7 +1689,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) spi6_async_reset_clk_gate (
       .rst_n_in   (rcc_spi6_rst_n),
       .clk_in     (rcc_spi6_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_spi6_arcg_clk_en),
       .rst_n_clk_g(rcc_spi6_arcg_rst_n)
   );
@@ -1700,7 +1700,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) lpuart1_async_reset_clk_gate (
       .rst_n_in   (rcc_lpuart1_rst_n),
       .clk_in     (rcc_lpuart1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_lpuart1_arcg_clk_en),
       .rst_n_clk_g(rcc_lpuart1_arcg_rst_n)
   );
@@ -1711,7 +1711,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) syscfg_async_reset_clk_gate (
       .rst_n_in   (rcc_syscfg_rst_n),
       .clk_in     (rcc_syscfg_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_syscfg_arcg_clk_en),
       .rst_n_clk_g(rcc_syscfg_arcg_rst_n)
   );
@@ -1722,7 +1722,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) iwdg2_async_reset_clk_gate (
       .rst_n_in   (rcc_iwdg2_rst_n),
       .clk_in     (rcc_iwdg2_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_iwdg2_arcg_clk_en),
       .rst_n_clk_g(rcc_iwdg2_arcg_rst_n)
   );
@@ -1733,7 +1733,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) iwdg1_async_reset_clk_gate (
       .rst_n_in   (rcc_iwdg1_rst_n),
       .clk_in     (rcc_iwdg1_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_iwdg1_arcg_clk_en),
       .rst_n_clk_g(rcc_iwdg1_arcg_rst_n)
   );
@@ -1744,7 +1744,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) exti_async_reset_clk_gate (
       .rst_n_in   (rcc_exti_rst_n),
       .clk_in     (rcc_exti_pclk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (rcc_exti_arcg_clk_en),
       .rst_n_clk_g(rcc_exti_arcg_rst_n)
   );
@@ -1755,7 +1755,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) sys_clk_async_reset_clk_gate (
       .rst_n_in   (sys_rst_n),
       .clk_in     (sys_clk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (sys_clk_arcg_en),
       .rst_n_clk_g(sys_arcg_rst_n)
   );
@@ -1766,7 +1766,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) d1_clk_async_reset_clk_gate (
       .rst_n_in   (d1_rst_n),
       .clk_in     (sys_d1cpre_clk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (d1_clk_arcg_en),
       .rst_n_clk_g(d1_arcg_rst_n)
   );
@@ -1777,7 +1777,7 @@ module rcc_sys_async_reset_clk_gate #(
   ) d2_clk_async_reset_clk_gate (
       .rst_n_in   (d2_rst_n),
       .clk_in     (sys_hpre_clk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (d2_clk_arcg_en),
       .rst_n_clk_g(d2_arcg_rst_n)
   );
@@ -1786,9 +1786,9 @@ module rcc_sys_async_reset_clk_gate #(
   async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU1_RST_RELEASE)
   ) cpu1_clk_async_reset_clk_gate (
-      .rst_n_in   (cpu1_rst_n),
+      .src_rst_n  (cpu1_rst_n),
       .clk_in     (sys_d1cpre_clk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (cpu1_clk_arcg_en),
       .rst_n_clk_g(cpu1_arcg_rst_n)
   );
@@ -1796,9 +1796,9 @@ module rcc_sys_async_reset_clk_gate #(
   async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU2_RST_RELEASE)
   ) cpu2_clk_async_reset_clk_gate (
-      .rst_n_in   (cpu2_rst_n),
+      .src_rst_n  (cpu2_rst_n),
       .clk_in     (sys_d1cpre_clk),
-      .arcg_on    (rcc_arcg_on),
+      .arcg_on    (arcg_on),
       .clk_en     (cpu2_clk_arcg_en),
       .rst_n_clk_g(cpu2_arcg_rst_n)
   );

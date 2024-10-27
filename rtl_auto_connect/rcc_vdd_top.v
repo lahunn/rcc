@@ -2,7 +2,7 @@ module rcc_vdd_top (
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
     // rcc_vdd_reg Inputs
-    input wdata,                 //low to high level, default 0
+    input rcc_vdd_wdata,                 //low to high level, default 0
     input rcc_c1_rsr_rmvf_wren,  //low to high level, default 0
     input rcc_c2_rsr_rmvf_wren,  //low to high level, default 0
     input rcc_csr_lsion_wren,    //low to high level, default 0

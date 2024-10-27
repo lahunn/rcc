@@ -1,4 +1,4 @@
-module BB_dfflr #(
+module BB_dffr #(
   parameter DW = 1,
   parameter RST_VAL = 0 
 )(

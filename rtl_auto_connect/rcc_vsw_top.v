@@ -1,20 +1,32 @@
 module rcc_vsw_top (
-    /*AUTOINPUT*/
-    /*AUTOOUTPUT*/
+  input pwr_vsw_rst,
+  input sync_vsw_rst_n,// vsw reset signal sync with sys clk
+  //hse rtc clk
+  input hse_rtc_clk,//hse clock from vcore domain
+  input lsi_clk,//lsi clock from vdd domain
+  input lse_clk,//lsi clock from vsw domain
+  //test mode
+  input test_mode,
+  /*AUTOINPUT*/
+  /*AUTOOUTPUT*/
+  //rtc kernel clk
+  output rcc_rtc_ker_clk,
+  //vsw reset signal not sync with sys clk
+  output pre_vsw_rst_n
 );
 
   /*AUTOWIRE*/
-  /*AUTO DECLARE*/
+  wire rcc_rtcsel_clk;
+  wire rcc_vsw_rst_n;
+  wire lse_clk_gated;
 
-  // Beginning of automatic regs (for this module's undeclared outputs)
-  reg rcc_rtc_ker_clk;
   // End of automatics
-  assign bdrst_n       = ~bdrst;
-  assign rcc_vsw_rst_n = bdrst_n & ~pwr_vsw_rst;
+  assign pre_vsw_rst_n = (~bdrst) & (~pwr_vsw_rst);
+  assign rcc_vsw_rst_n = sync_vsw_rst_n;
 
   // rcc vsw registers
   rcc_vsw_reg u_rcc_vsw_reg (
-      .rst_n(bdrst_n),
+      .rst_n(rcc_vsw_rst_n),
       /*AUTOINST*/
   );
   // rtc ker clock gate

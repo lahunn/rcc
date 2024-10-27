@@ -1,4 +1,6 @@
+/* verilator lint_off UNUSEDPARAM */
 /* verilator lint_off UNUSEDSIGNAL */
+/* verilator lint_off UNDRIVEN */
 module rcc_ahb_lite_bus(
     input wire ahb_hclk,
     input wire ahb_hresetn,
