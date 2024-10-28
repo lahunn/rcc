@@ -20,22 +20,22 @@ module rcc_vsw_reg (
     input rcc_bdcr_byte0_wren,
 
     // rcc_bdcr
-    input            nxt_rcc_bdcr_bdrst,
-    input            nxt_rcc_bdcr_rtcen,
-    input      [1:0] nxt_rcc_bdcr_rtcsel,
-    input            nxt_rcc_bdcr_lsecsson,
-    input      [1:0] nxt_rcc_bdcr_lsedrv,
-    input            nxt_rcc_bdcr_lsebyp,
-    input            nxt_rcc_bdcr_lseon,
-    output           cur_rcc_bdcr_lserdy,
-    output           cur_rcc_bdcr_bdrst,
-    output           cur_rcc_bdcr_rtcen,
-    output     [1:0] cur_rcc_bdcr_rtcsel,
-    output reg       cur_rcc_bdcr_lsecssd,
-    output           cur_rcc_bdcr_lsecsson,
-    output     [1:0] cur_rcc_bdcr_lsedrv,
-    output           cur_rcc_bdcr_lsebyp,
-    output           cur_rcc_bdcr_lseon
+    input        nxt_rcc_bdcr_bdrst,
+    input        nxt_rcc_bdcr_rtcen,
+    input  [1:0] nxt_rcc_bdcr_rtcsel,
+    input        nxt_rcc_bdcr_lsecsson,
+    input  [1:0] nxt_rcc_bdcr_lsedrv,
+    input        nxt_rcc_bdcr_lsebyp,
+    input        nxt_rcc_bdcr_lseon,
+    output       cur_rcc_bdcr_lserdy,
+    output       cur_rcc_bdcr_bdrst,
+    output       cur_rcc_bdcr_rtcen,
+    output [1:0] cur_rcc_bdcr_rtcsel,
+    output       cur_rcc_bdcr_lsecssd,
+    output       cur_rcc_bdcr_lsecsson,
+    output [1:0] cur_rcc_bdcr_lsedrv,
+    output       cur_rcc_bdcr_lsebyp,
+    output       cur_rcc_bdcr_lseon
 );
   /* verilator lint_off LATCH */
   /*AUTOWIRE*/
@@ -119,13 +119,12 @@ module rcc_vsw_reg (
   assign rcc_bdcr_lsecssd_set = lsecss_fail;
   assign rcc_bdcr_lsecssd_clr = ~rst_n;
   assign lsecssd              = cur_rcc_bdcr_lsecssd;
-  always @(*) begin
-    if (rcc_bdcr_lsecssd_clr) begin
-      cur_rcc_bdcr_lsecssd = 1'b0;
-    end else if (rcc_bdcr_lsecssd_set) begin
-      cur_rcc_bdcr_lsecssd = 1'b1;
-    end
-  end
+
+  BB_latch u_BB_rcc_bdcr_lsecssd_latch (
+      .D (~rcc_bdcr_lsecssd_clr),
+      .GN(rcc_bdcr_lsecssd_set | rcc_bdcr_lsecssd_clr),
+      .Q (cur_rcc_bdcr_lsecssd)
+  );
 
 
   // --------------------------------------------------------------------------------

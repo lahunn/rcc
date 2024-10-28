@@ -3461,7 +3461,7 @@ module rcc_reg #(
   assign d1_clk_rdy         = sys_clk_rdy & (~rcc_d1_stop);
   assign d2_clk_rdy         = sys_clk_rdy & (~rcc_d2_stop);
 
-  mux_N_to_1 #(
+  mux_n_to_1 #(
       .N(4),
       .m(2)
   ) u_mux_sys_clk_rdy (
@@ -3915,7 +3915,7 @@ module rcc_reg #(
 
   BB_dfflrs #(
       .DW     (3),
-      .RST_VAL(3'h000),
+      .RST_VAL(3'b000),
       .SET_VAL(3'b001)
   ) U_rcc_cfgr_sw (
       .clk  (clk),

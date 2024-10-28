@@ -25,40 +25,40 @@ module rcc_vdd_reg (
     input lsi_rdy,
 
     // rcc_c1_rsr 
-    output reg cur_rcc_c1_rsr_lpwr2rstf,
-    output reg cur_rcc_c1_rsr_lpwr1rstf,
-    output reg cur_rcc_c1_rsr_wwdg2rstf,
-    output reg cur_rcc_c1_rsr_wwdg1rstf,
-    output reg cur_rcc_c1_rsr_iwdg2rstf,
-    output reg cur_rcc_c1_rsr_iwdg1rstf,
-    output reg cur_rcc_c1_rsr_sft2rstf,
-    output reg cur_rcc_c1_rsr_sft1rstf,
-    output reg cur_rcc_c1_rsr_porrstf,
-    output reg cur_rcc_c1_rsr_pinrstf,
-    output reg cur_rcc_c1_rsr_borrstf,
-    output reg cur_rcc_c1_rsr_d2rstf,
-    output reg cur_rcc_c1_rsr_d1rstf,
-    output reg cur_rcc_c1_rsr_oblrstf,
-    output     cur_rcc_c1_rsr_rmvf,
+    output cur_rcc_c1_rsr_lpwr2rstf,
+    output cur_rcc_c1_rsr_lpwr1rstf,
+    output cur_rcc_c1_rsr_wwdg2rstf,
+    output cur_rcc_c1_rsr_wwdg1rstf,
+    output cur_rcc_c1_rsr_iwdg2rstf,
+    output cur_rcc_c1_rsr_iwdg1rstf,
+    output cur_rcc_c1_rsr_sft2rstf,
+    output cur_rcc_c1_rsr_sft1rstf,
+    output cur_rcc_c1_rsr_porrstf,
+    output cur_rcc_c1_rsr_pinrstf,
+    output cur_rcc_c1_rsr_borrstf,
+    output cur_rcc_c1_rsr_d2rstf,
+    output cur_rcc_c1_rsr_d1rstf,
+    output cur_rcc_c1_rsr_oblrstf,
+    output cur_rcc_c1_rsr_rmvf,
     // rcc_c2_rsr 
-    output reg cur_rcc_c2_rsr_lpwr2rstf,
-    output reg cur_rcc_c2_rsr_lpwr1rstf,
-    output reg cur_rcc_c2_rsr_wwdg2rstf,
-    output reg cur_rcc_c2_rsr_wwdg1rstf,
-    output reg cur_rcc_c2_rsr_iwdg2rstf,
-    output reg cur_rcc_c2_rsr_iwdg1rstf,
-    output reg cur_rcc_c2_rsr_sft2rstf,
-    output reg cur_rcc_c2_rsr_sft1rstf,
-    output reg cur_rcc_c2_rsr_porrstf,
-    output reg cur_rcc_c2_rsr_pinrstf,
-    output reg cur_rcc_c2_rsr_borrstf,
-    output reg cur_rcc_c2_rsr_d2rstf,
-    output reg cur_rcc_c2_rsr_d1rstf,
-    output reg cur_rcc_c2_rsr_oblrstf,
-    output     cur_rcc_c2_rsr_rmvf,
+    output cur_rcc_c2_rsr_lpwr2rstf,
+    output cur_rcc_c2_rsr_lpwr1rstf,
+    output cur_rcc_c2_rsr_wwdg2rstf,
+    output cur_rcc_c2_rsr_wwdg1rstf,
+    output cur_rcc_c2_rsr_iwdg2rstf,
+    output cur_rcc_c2_rsr_iwdg1rstf,
+    output cur_rcc_c2_rsr_sft2rstf,
+    output cur_rcc_c2_rsr_sft1rstf,
+    output cur_rcc_c2_rsr_porrstf,
+    output cur_rcc_c2_rsr_pinrstf,
+    output cur_rcc_c2_rsr_borrstf,
+    output cur_rcc_c2_rsr_d2rstf,
+    output cur_rcc_c2_rsr_d1rstf,
+    output cur_rcc_c2_rsr_oblrstf,
+    output cur_rcc_c2_rsr_rmvf,
     // rcc_csr
-    output     cur_rcc_csr_lsirdy,
-    output reg cur_rcc_csr_lsion
+    output cur_rcc_csr_lsirdy,
+    output cur_rcc_csr_lsion
 );
   /* verilator lint_off LATCH */
   /*AUTOWIRE*/
@@ -133,13 +133,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_lpwr2rstf_set = lpwr2_rst;
   assign rcc_c1_rsr_lpwr2rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_lpwr2rstf_clr) begin
-      cur_rcc_c1_rsr_lpwr2rstf = 1'b0;
-    end else if (rcc_c1_rsr_lpwr2rstf_set) begin
-      cur_rcc_c1_rsr_lpwr2rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_lpwr2rstf_latch (
+      .D (~rcc_c1_rsr_lpwr2rstf_clr),
+      .GN(rcc_c1_rsr_lpwr2rstf_set | rcc_c1_rsr_lpwr2rstf_clr),
+      .Q (cur_rcc_c1_rsr_lpwr2rstf)
+  );
 
 
 
@@ -150,13 +148,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_lpwr1rstf_set = lpwr1_rst;
   assign rcc_c1_rsr_lpwr1rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_lpwr1rstf_clr) begin
-      cur_rcc_c1_rsr_lpwr1rstf = 1'b0;
-    end else if (rcc_c1_rsr_lpwr1rstf_set) begin
-      cur_rcc_c1_rsr_lpwr1rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_lpwr1rstf_latch (
+      .D (~rcc_c1_rsr_lpwr1rstf_clr),
+      .GN(rcc_c1_rsr_lpwr1rstf_set | rcc_c1_rsr_lpwr1rstf_clr),
+      .Q (cur_rcc_c1_rsr_lpwr1rstf)
+  );
 
 
 
@@ -167,13 +163,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_wwdg2rstf_set = wwdg2_out_rst;
   assign rcc_c1_rsr_wwdg2rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_wwdg2rstf_clr) begin
-      cur_rcc_c1_rsr_wwdg2rstf = 1'b0;
-    end else if (rcc_c1_rsr_wwdg2rstf_set) begin
-      cur_rcc_c1_rsr_wwdg2rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_wwdg2rstf_latch (
+      .D (~rcc_c1_rsr_wwdg2rstf_clr),
+      .GN(rcc_c1_rsr_wwdg2rstf_set | rcc_c1_rsr_wwdg2rstf_clr),
+      .Q (cur_rcc_c1_rsr_wwdg2rstf)
+  );
 
 
 
@@ -184,13 +178,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_wwdg1rstf_set = wwdg1_out_rst;
   assign rcc_c1_rsr_wwdg1rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_wwdg1rstf_clr) begin
-      cur_rcc_c1_rsr_wwdg1rstf = 1'b0;
-    end else if (rcc_c1_rsr_wwdg1rstf_set) begin
-      cur_rcc_c1_rsr_wwdg1rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_wwdg1rstf_latch (
+      .D (~rcc_c1_rsr_wwdg1rstf_clr),
+      .GN(rcc_c1_rsr_wwdg1rstf_set | rcc_c1_rsr_wwdg1rstf_clr),
+      .Q (cur_rcc_c1_rsr_wwdg1rstf)
+  );
 
 
 
@@ -201,13 +193,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_iwdg2rstf_set = iwdg2_out_rst;
   assign rcc_c1_rsr_iwdg2rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_iwdg2rstf_clr) begin
-      cur_rcc_c1_rsr_iwdg2rstf = 1'b0;
-    end else if (rcc_c1_rsr_iwdg2rstf_set) begin
-      cur_rcc_c1_rsr_iwdg2rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_iwdg2rstf_latch (
+      .D (~rcc_c1_rsr_iwdg2rstf_clr),
+      .GN(rcc_c1_rsr_iwdg2rstf_set | rcc_c1_rsr_iwdg2rstf_clr),
+      .Q (cur_rcc_c1_rsr_iwdg2rstf)
+  );
 
 
 
@@ -218,14 +208,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_iwdg1rstf_set = iwdg1_out_rst;
   assign rcc_c1_rsr_iwdg1rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_iwdg1rstf_clr) begin
-      cur_rcc_c1_rsr_iwdg1rstf = 1'b0;
-    end else if (rcc_c1_rsr_iwdg1rstf_set) begin
-      cur_rcc_c1_rsr_iwdg1rstf = 1'b1;
-    end
-  end
-
+  BB_latch u_BB_rcc_c1_rsr_iwdg1rstf_latch (
+      .D (~rcc_c1_rsr_iwdg1rstf_clr),
+      .GN(rcc_c1_rsr_iwdg1rstf_set | rcc_c1_rsr_iwdg1rstf_clr),
+      .Q (cur_rcc_c1_rsr_iwdg1rstf)
+  );
 
 
 
@@ -235,13 +222,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_sft2rstf_set = cpu2_sftrst;
   assign rcc_c1_rsr_sft2rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_sft2rstf_clr) begin
-      cur_rcc_c1_rsr_sft2rstf = 1'b0;
-    end else if (rcc_c1_rsr_sft2rstf_set) begin
-      cur_rcc_c1_rsr_sft2rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_sft2rstf_latch (
+      .D (~rcc_c1_rsr_sft2rstf_clr),
+      .GN(rcc_c1_rsr_sft2rstf_set | rcc_c1_rsr_sft2rstf_clr),
+      .Q (cur_rcc_c1_rsr_sft2rstf)
+  );
 
 
 
@@ -252,13 +237,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_sft1rstf_set = cpu1_sftrst;
   assign rcc_c1_rsr_sft1rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_sft1rstf_clr) begin
-      cur_rcc_c1_rsr_sft1rstf = 1'b0;
-    end else if (rcc_c1_rsr_sft1rstf_set) begin
-      cur_rcc_c1_rsr_sft1rstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_sft1rstf_latch (
+      .D (~rcc_c1_rsr_sft1rstf_clr),
+      .GN(rcc_c1_rsr_sft1rstf_set | rcc_c1_rsr_sft1rstf_clr),
+      .Q (cur_rcc_c1_rsr_sft1rstf)
+  );
 
 
 
@@ -269,13 +252,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_porrstf_set = pwr_por_rst;
   assign rcc_c1_rsr_porrstf_clr = cur_rcc_c1_rsr_rmvf;
-  always @(*) begin
-    if (rcc_c1_rsr_porrstf_set) begin
-      cur_rcc_c1_rsr_porrstf = 1'b1;
-    end else if (rcc_c1_rsr_porrstf_clr) begin
-      cur_rcc_c1_rsr_porrstf = 1'b0;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_porrstf_latch (
+      .D (rcc_c1_rsr_porrstf_set),
+      .GN(rcc_c1_rsr_porrstf_clr | rcc_c1_rsr_porrstf_set),
+      .Q (cur_rcc_c1_rsr_porrstf)
+  );
 
 
 
@@ -286,13 +267,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_pinrstf_set = nrst_in;
   assign rcc_c1_rsr_pinrstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_pinrstf_clr) begin
-      cur_rcc_c1_rsr_pinrstf = 1'b0;
-    end else if (rcc_c1_rsr_pinrstf_set) begin
-      cur_rcc_c1_rsr_pinrstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_pinrstf_latch (
+      .D (~rcc_c1_rsr_pinrstf_clr),
+      .GN(rcc_c1_rsr_pinrstf_clr | rcc_c1_rsr_pinrstf_set),
+      .Q (cur_rcc_c1_rsr_pinrstf)
+  );
 
 
 
@@ -303,13 +282,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_borrstf_set = pwr_bor_rst;
   assign rcc_c1_rsr_borrstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_borrstf_clr) begin
-      cur_rcc_c1_rsr_borrstf = 1'b0;
-    end else if (rcc_c1_rsr_borrstf_set) begin
-      cur_rcc_c1_rsr_borrstf = 1'b1;
-    end
-  end
+  BB_latch u_BB_rcc_c1_rsr_borrstf_latch (
+      .D (~rcc_c1_rsr_borrstf_clr),
+      .GN(rcc_c1_rsr_borrstf_clr | rcc_c1_rsr_borrstf_set),
+      .Q (cur_rcc_c1_rsr_borrstf)
+  );
 
 
 
@@ -320,15 +297,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_d2rstf_set = d2_rst;
   assign rcc_c1_rsr_d2rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_d2rstf_clr) begin
-      cur_rcc_c1_rsr_d2rstf = 1'b0;
-    end else if (rcc_c1_rsr_d2rstf_set) begin
-      cur_rcc_c1_rsr_d2rstf = 1'b1;
-    end
-  end
-
-
+  BB_latch u_BB_rcc_c1_rsr_d2rstf_latch (
+      .D (~rcc_c1_rsr_d2rstf_clr),
+      .GN(rcc_c1_rsr_d2rstf_clr | rcc_c1_rsr_d2rstf_set),
+      .Q (cur_rcc_c1_rsr_d2rstf)
+  );
 
 
 
@@ -337,14 +310,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_d1rstf_set = d1_rst;
   assign rcc_c1_rsr_d1rstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_d1rstf_clr) begin
-      cur_rcc_c1_rsr_d1rstf = 1'b0;
-    end else if (rcc_c1_rsr_d1rstf_set) begin
-      cur_rcc_c1_rsr_d1rstf = 1'b1;
-    end
-
-  end
+  BB_latch u_BB_rcc_c1_rsr_d1rstf_latch (
+      .D (~rcc_c1_rsr_d1rstf_clr),
+      .GN(rcc_c1_rsr_d1rstf_clr | rcc_c1_rsr_d1rstf_set),
+      .Q (cur_rcc_c1_rsr_d1rstf)
+  );
 
 
 
@@ -355,14 +325,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c1_rsr_oblrstf_set = obl_rst;
   assign rcc_c1_rsr_oblrstf_clr = cur_rcc_c1_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c1_rsr_oblrstf_clr) begin
-      cur_rcc_c1_rsr_oblrstf = 1'b0;
-    end else if (rcc_c1_rsr_oblrstf_set) begin
-      cur_rcc_c1_rsr_oblrstf = 1'b1;
-    end
-
-  end
+  BB_latch u_BB_rcc_c1_rsr_oblrstf_latch (
+      .D (~rcc_c1_rsr_oblrstf_clr),
+      .GN(rcc_c1_rsr_oblrstf_clr | rcc_c1_rsr_oblrstf_set),
+      .Q (cur_rcc_c1_rsr_oblrstf)
+  );
 
 
   // --------------------------------------------------------------------------------
@@ -387,14 +354,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_lpwr2rstf_set = lpwr2_rst;
   assign rcc_c2_rsr_lpwr2rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_lpwr2rstf_clr) begin
-      cur_rcc_c2_rsr_lpwr2rstf = 1'b0;
-    end else if (rcc_c2_rsr_lpwr2rstf_set) begin
-      cur_rcc_c2_rsr_lpwr2rstf = 1'b1;
-    end
-
-  end
+  BB_latch u_BB_rcc_c2_rsr_lpwr2rstf_latch (
+      .D (~rcc_c2_rsr_lpwr2rstf_clr),
+      .GN(rcc_c2_rsr_lpwr2rstf_set | rcc_c2_rsr_lpwr2rstf_clr),
+      .Q (cur_rcc_c2_rsr_lpwr2rstf)
+  );
 
 
 
@@ -405,14 +369,11 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_lpwr1rstf_set = lpwr1_rst;
   assign rcc_c2_rsr_lpwr1rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_lpwr1rstf_clr) begin
-      cur_rcc_c2_rsr_lpwr1rstf = 1'b0;
-    end else if (rcc_c2_rsr_lpwr1rstf_set) begin
-      cur_rcc_c2_rsr_lpwr1rstf = 1'b1;
-    end
-
-  end
+  BB_latch u_BB_rcc_c2_rsr_lpwr1rstf_latch (
+      .D (~rcc_c2_rsr_lpwr1rstf_clr),
+      .GN(rcc_c2_rsr_lpwr1rstf_set | rcc_c2_rsr_lpwr1rstf_clr),
+      .Q (cur_rcc_c2_rsr_lpwr1rstf)
+  );
 
 
 
@@ -423,15 +384,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_wwdg2rstf_set = wwdg2_out_rst;
   assign rcc_c2_rsr_wwdg2rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_wwdg2rstf_clr) begin
-      cur_rcc_c2_rsr_wwdg2rstf = 1'b0;
-    end else if (rcc_c2_rsr_wwdg2rstf_set) begin
-      cur_rcc_c2_rsr_wwdg2rstf = 1'b1;
-    end
 
-  end
-
+  BB_latch u_BB_rcc_c2_rsr_wwdg2rstf_latch (
+      .D (~rcc_c2_rsr_wwdg2rstf_clr),
+      .GN(rcc_c2_rsr_wwdg2rstf_set | rcc_c2_rsr_wwdg2rstf_clr),
+      .Q (cur_rcc_c2_rsr_wwdg2rstf)
+  );
 
 
 
@@ -441,14 +399,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_wwdg1rstf_set = wwdg1_out_rst;
   assign rcc_c2_rsr_wwdg1rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_wwdg1rstf_clr) begin
-      cur_rcc_c2_rsr_wwdg1rstf = 1'b0;
-    end else if (rcc_c2_rsr_wwdg1rstf_set) begin
-      cur_rcc_c2_rsr_wwdg1rstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_wwdg1rstf_latch (
+      .D (~rcc_c2_rsr_wwdg1rstf_clr),
+      .GN(rcc_c2_rsr_wwdg1rstf_set | rcc_c2_rsr_wwdg1rstf_clr),
+      .Q (cur_rcc_c2_rsr_wwdg1rstf)
+  );
 
 
 
@@ -459,14 +415,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_iwdg2rstf_set = iwdg1_out_rst;
   assign rcc_c2_rsr_iwdg2rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_iwdg2rstf_clr) begin
-      cur_rcc_c2_rsr_iwdg2rstf = 1'b0;
-    end else if (rcc_c2_rsr_iwdg2rstf_set) begin
-      cur_rcc_c2_rsr_iwdg2rstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_iwdg2rstf_latch (
+      .D (~rcc_c2_rsr_iwdg2rstf_clr),
+      .GN(rcc_c2_rsr_iwdg2rstf_set | rcc_c2_rsr_iwdg2rstf_clr),
+      .Q (cur_rcc_c2_rsr_iwdg2rstf)
+  );
 
 
 
@@ -477,14 +431,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_iwdg1rstf_set = iwdg1_out_rst;
   assign rcc_c2_rsr_iwdg1rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_iwdg1rstf_clr) begin
-      cur_rcc_c2_rsr_iwdg1rstf = 1'b0;
-    end else if (rcc_c2_rsr_iwdg1rstf_set) begin
-      cur_rcc_c2_rsr_iwdg1rstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_iwdg1rstf_latch (
+      .D (~rcc_c2_rsr_iwdg1rstf_clr),
+      .GN(rcc_c2_rsr_iwdg1rstf_set | rcc_c2_rsr_iwdg1rstf_clr),
+      .Q (cur_rcc_c2_rsr_iwdg1rstf)
+  );
 
 
 
@@ -495,15 +447,13 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_sft2rstf_set = cpu2_sftrst;
   assign rcc_c2_rsr_sft2rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_sft2rstf_clr) begin
-      cur_rcc_c2_rsr_sft2rstf = 1'b0;
-    end else if (rcc_c2_rsr_sft2rstf_set) begin
-      cur_rcc_c2_rsr_sft2rstf = 1'b1;
-    end
-  end
 
 
+  BB_latch u_BB_rcc_c2_rsr_sft2rstf_latch (
+      .D (~rcc_c2_rsr_sft2rstf_clr),
+      .GN(rcc_c2_rsr_sft2rstf_set | rcc_c2_rsr_sft2rstf_clr),
+      .Q (cur_rcc_c2_rsr_sft2rstf)
+  );
 
 
 
@@ -512,14 +462,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_sft1rstf_set = cpu1_sftrst;
   assign rcc_c2_rsr_sft1rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_sft1rstf_clr) begin
-      cur_rcc_c2_rsr_sft1rstf = 1'b0;
-    end else if (rcc_c2_rsr_sft1rstf_set) begin
-      cur_rcc_c2_rsr_sft1rstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_sft1rstf_latch (
+      .D (~rcc_c2_rsr_sft1rstf_clr),
+      .GN(rcc_c2_rsr_sft1rstf_set | rcc_c2_rsr_sft1rstf_clr),
+      .Q (cur_rcc_c2_rsr_sft1rstf)
+  );
 
 
 
@@ -530,14 +478,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_porrstf_set = pwr_por_rst;
   assign rcc_c2_rsr_porrstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_porrstf_clr) begin
-      cur_rcc_c2_rsr_porrstf = 1'b0;
-    end else if (rcc_c2_rsr_porrstf_set) begin
-      cur_rcc_c2_rsr_porrstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_porrstf_latch (
+      .D (rcc_c2_rsr_porrstf_set),
+      .GN(rcc_c2_rsr_porrstf_clr | rcc_c2_rsr_porrstf_set),
+      .Q (cur_rcc_c2_rsr_porrstf)
+  );
 
 
 
@@ -548,14 +494,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_pinrstf_set = nrst_in;
   assign rcc_c2_rsr_pinrstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_pinrstf_clr) begin
-      cur_rcc_c2_rsr_pinrstf = 1'b0;
-    end else if (rcc_c2_rsr_pinrstf_set) begin
-      cur_rcc_c2_rsr_pinrstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_pinrstf_latch (
+      .D (~rcc_c2_rsr_pinrstf_clr),
+      .GN(rcc_c2_rsr_pinrstf_clr | rcc_c2_rsr_pinrstf_set),
+      .Q (cur_rcc_c2_rsr_pinrstf)
+  );
 
 
 
@@ -566,14 +510,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_borrstf_set = pwr_bor_rst;
   assign rcc_c2_rsr_borrstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_borrstf_clr) begin
-      cur_rcc_c2_rsr_borrstf = 1'b0;
-    end else if (rcc_c2_rsr_borrstf_set) begin
-      cur_rcc_c2_rsr_borrstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_borrstf_latch (
+      .D (~rcc_c2_rsr_borrstf_clr),
+      .GN(rcc_c2_rsr_borrstf_clr | rcc_c2_rsr_borrstf_set),
+      .Q (cur_rcc_c2_rsr_borrstf)
+  );
 
 
 
@@ -584,15 +526,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_d2rstf_set = d2_rst;
   assign rcc_c2_rsr_d2rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_d2rstf_clr) begin
-      cur_rcc_c2_rsr_d2rstf = 1'b0;
-    end else if (rcc_c2_rsr_d2rstf_set) begin
-      cur_rcc_c2_rsr_d2rstf = 1'b1;
-    end
 
-  end
-
+  BB_latch u_BB_rcc_c2_rsr_d2rstf_latch (
+      .D (~rcc_c2_rsr_d2rstf_clr),
+      .GN(rcc_c2_rsr_d2rstf_set | rcc_c2_rsr_d2rstf_clr),
+      .Q (cur_rcc_c2_rsr_d2rstf)
+  );
 
 
 
@@ -602,14 +541,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_d1rstf_set = d1_rst;
   assign rcc_c2_rsr_d1rstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_d1rstf_clr) begin
-      cur_rcc_c2_rsr_d1rstf = 1'b0;
-    end else if (rcc_c2_rsr_d1rstf_set) begin
-      cur_rcc_c2_rsr_d1rstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_d1rstf_latch (
+      .D (~rcc_c2_rsr_d1rstf_clr),
+      .GN(rcc_c2_rsr_d1rstf_set | rcc_c2_rsr_d1rstf_clr),
+      .Q (cur_rcc_c2_rsr_d1rstf)
+  );
 
 
 
@@ -620,14 +557,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign rcc_c2_rsr_oblrstf_set = obl_rst;
   assign rcc_c2_rsr_oblrstf_clr = cur_rcc_c2_rsr_rmvf | ~rst_n;
-  always @(*) begin
-    if (rcc_c2_rsr_oblrstf_clr) begin
-      cur_rcc_c2_rsr_oblrstf = 1'b0;
-    end else if (rcc_c2_rsr_oblrstf_set) begin
-      cur_rcc_c2_rsr_oblrstf = 1'b1;
-    end
 
-  end
+  BB_latch u_BB_rcc_c2_rsr_oblrstf_latch (
+      .D (~rcc_c2_rsr_oblrstf_clr),
+      .GN(rcc_c2_rsr_oblrstf_set | rcc_c2_rsr_oblrstf_clr),
+      .Q (cur_rcc_c2_rsr_oblrstf)
+  );
 
   // --------------------------------------------------------------------------------
   // 16:16               rmvf                RW                  0b0                 

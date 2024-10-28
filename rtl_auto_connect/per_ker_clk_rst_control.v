@@ -164,10 +164,10 @@ module per_ker_clk_rst_control #(
     genvar j;
     for (j = 0; j < KER_CLK_NUM; j = j + 1) begin : ker_clk_gate
     BB_clk_gating ker_clk_gates_inst (
-        .raw_clk(ker_src_clks[i]),
+        .raw_clk(ker_src_clks[j]),
         .active (ker_clk_en),
         .bypass (testmode),
-        .gen_clk(per_ker_clks[i])
+        .gen_clk(per_ker_clks[j])
     );
     end
   endgenerate

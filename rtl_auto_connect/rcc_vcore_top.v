@@ -19,20 +19,38 @@ module rcc_vcore_top #(
 );
   /*AUTOWIRE*/
   /*AUTO DECLARE*/
+  BB_ahb2reg #(  /*AUTOINSTPARAM*/
+  ) u_BB_rcc_ahb2reg (  
+    .mwrite(),
+    .sready(1'b1),
+    .sresp(rsp[0]),
+    .sdata(rdata),
+    /*AUTOINST*/
+  );
 
   rcc_sys_clk_rst_ctrl #(  /*AUTOINSTPARAM*/
   ) u_rcc_sys_clk_rst_ctrl (  /*AUTOINST*/
   );
 
   rcc_per_clk_rst_control #(  /*AUTOINSTPARAM*/
-  ) u_rcc_per_clk_rst_control (  /*AUTOINST*/
+  ) u_rcc_per_clk_rst_control (
+    /*AUTOINST*/
   );
 
-  rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (  /*AUTOINST*/
+  rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (  
+  .rst_n		(sys_sync_rst_n),  
+  /*AUTOINST*/
   );
 
   rcc_reg #(  /*AUTOINSTPARAM*/
-  ) u_rcc_reg (  /*AUTOINST*/
+  ) u_rcc_reg (
+  .clk(hclk),
+  .rst_n(hresetn),
+  .req(mreq),
+  .we(mstrb),
+  .addr(maddr),
+  .wdata(mdata),
+  /*AUTOINST*/
   );
 
 endmodule
