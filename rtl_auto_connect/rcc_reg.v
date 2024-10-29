@@ -2,7 +2,7 @@ module rcc_reg #(
     // ================================================================================
     // CONFIGURABLE PARAMETERS
     // ================================================================================
-    parameter AW = 29,
+    parameter AW = 32,
     parameter DW = 32,
     parameter WW = DW / 8
 ) (
@@ -711,7 +711,7 @@ module rcc_reg #(
   // LOCAL PARAMETERS
   // ================================================================================
   // rcc_reg
-  localparam RCC_REG = 'h40000000;
+  localparam RCC_REG = 'h00000000;
   localparam RCC_CR = (RCC_REG + 'h0) >> 2;
   localparam RCC_ICSCR = (RCC_REG + 'h4) >> 2;
   localparam RCC_CRRCR = (RCC_REG + 'h8) >> 2;

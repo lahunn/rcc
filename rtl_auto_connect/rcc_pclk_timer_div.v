@@ -4,84 +4,49 @@ module rcc_pclk_timer_div (
     input  [2:0] div_sel,
     input        timpre,
     output       tim_ker_clk,
+    output       div_en,
     output       pclk
 );
-  wire [4:0] clk_temp;
-  wire       pclk_pre;
-  wire       tim_ker_clk_pre_1;
-  wire       tim_ker_clk_pre_0;
-  assign clk_temp[0] = i_clk;
 
+  reg [2:0] tim_div_ratio;
 
-  // 4 stage of div_2
-  genvar i;
-  generate
-    for (i = 0; i < 4; i = i + 1) begin : div_2_gen
-      BB_dfflr #(
-          .DW     (1),
-          .RST_VAL(0)
-      ) u_BB_dfflr (
-          .clk  (clk_temp[i]),
-          .rst_n(rst_n),
-          .en   (1'b1),
-          .din  (~clk_temp[i+1]),
-          .dout (clk_temp[i+1])
-      );
-    end
-  endgenerate
-
-
-
-  mux_n_to_1 #(
-      .N(4),
-      .m(2)
-  ) u_pclk_pre_mux_n_to_1 (
-      .inp   (clk_temp[4:1]),
-      .select(div_sel[1:0]),
-      .out   (pclk_pre)
-  );  // select clock from 2 to 2^4
-
-
-
-  mux_n_to_1 #(
-      .N(2),
-      .m(1)
-  ) u_pclk_mux_n_to_1 (
-      .inp   ({pclk_pre, i_clk}),
-      .select(div_sel[2]),
-      .out   (pclk)
+  rcc_16_div u_rcc_pclk_divider (
+      .i_clk  (i_clk),
+      .rst_n  (rst_n),
+      .div_sel(div_sel),
+      .div_en (div_en),
+      .o_clk  (pclk)
   );
 
+  always @(*) begin
+    case ({timpre, div_sel})
+      4'b0000: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b0001: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b0010: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b0011: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b0100: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b0101: tim_div_ratio = 3'b010;  //DIV_RATIO = 2
+      4'b0110: tim_div_ratio = 3'b100;  //DIV_RATIO = 4
+      4'b0111: tim_div_ratio = 3'b000;  //DIV_RATIO = 8
+      4'b1000: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b1001: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b1010: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b1011: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b1100: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b1101: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
+      4'b1110: tim_div_ratio = 3'b010;  //DIV_RATIO = 2
+      4'b1111: tim_div_ratio = 3'b100;  //DIV_RATIO = 4
+    endcase
+  end
 
-
-  mux_n_to_1 #(
-      .N(2),
-      .m(1)
-  ) u_tim_ker_clk_pre_1_mux_n_to_1 (  //select from 2 div clock ,4 div clock 
-      .inp   (clk_temp[2:1]),
-      .select(div_sel[0]),
-      .out   (tim_ker_clk_pre_1)
-  );
-
-
-
-  mux_n_to_1 #(
-      .N(2),
-      .m(1)
-  ) u_tim_ker_clk_pre_0_mux_n_to_1 (  //select from 2 div clock ,4 div clock 
-      .inp   ({tim_ker_clk_pre_1, i_clk}),
-      .select(div_sel[1] & div_sel[2]),
-      .out   (tim_ker_clk_pre_0)
-  );
-
-
-  mux_n_to_1 #(
-      .N(2),
-      .m(1)
-  ) u_tim_ker_clk_mux_n_to_1 (  //select from 2 div clock ,4 div clock 
-      .inp   ({tim_ker_clk_pre_0, pclk}),
-      .select(timpre),
-      .out   (tim_ker_clk)
+  BB_clk_div_d #(
+      .RATIO_WID(3)
+  ) u_tim_clk_div_d (
+      .rst_n (rst_n),
+      .i_clk (i_clk),
+      .ratio (tim_div_ratio),
+      .o_clk (tim_ker_clk),
+      .div_en()
   );
 
 endmodule

@@ -1,0 +1,69 @@
+
+include spy_lint_rtc.sgdc
+
+
+//clock -name "ts_vbat" -period 3906250     -edge {0 1953125} //256Hz
+//cdc_false_path -from "rtc_top.U_kernel.U_timestamp.ts_vbat_cap"
+//cdc_false_path -from "rtc_top.U_kernel.U_timestamp.ts_vbat"
+
+
+//==============================================================================
+// sys clock mux 
+//============================================================================== 
+set_case_analysis -name "rtc_top.U_kernel.U_addr_decode.isr_initf" -value "0"   //Normal mode
+
+//==============================================================================
+// Shadow Register Ena
+//============================================================================== 
+set_case_analysis -name "rtc_top.U_addr_encode.U_shad_dedicate_ff1.en" -value "1"
+set_case_analysis -name "rtc_top.U_addr_encode.U_shad_dedicate_ff2.en" -value "1"
+
+//==============================================================================
+// WPR PWR
+//============================================================================== 
+quasi_static -name "rtc_top.pwr_cr0_dbp" 
+
+//==============================================================================
+// Reg CR
+//============================================================================== 
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_tsexovf"   //CR_COE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_itse"      //CR_COE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_coe"       //CR_COE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_osel"      //CR_OSEL
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_pol"       //CR_POL
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_cosel"     //CR_COSEL
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_tsie"      //CR_TSIE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_wutie"     //CR_WUTIE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_alrbie"    //CR_ALRBIE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_alraie"    //CR_ALRAIE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_tse"       //CR_TSE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_wute"      //CR_WUTE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_alrbe"     //CR_ALRBE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_alrae"     //CR_ALRAE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_fmt"       //CR_FMT
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_bypshad"   //CR_Bypshad
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_refckon"   //CR_Refckon
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_tsedge"    //CR_TSEDGE
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.cr_wucksel"   //Wkup Timer Sel
+
+//==============================================================================
+// Reg PRER
+//============================================================================== 
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.prediv_a"
+quasi_static -name "rtc_top.U_kernel.U_addr_decode.prediv_s"
+
+//==============================================================================
+// Reg TAMPCR
+//     MUX_CLK-Sel TampFreq -> Max Freq
+//============================================================================== 
+set_case_analysis -name "rtc_top.U_kernel.U_tamper.tampcr[10:8]" -value "111" //tampcr_tampfreq
+quasi_static -name "rtc_top.U_kernel.U_tamper.tampcr[24:11]"
+quasi_static -name "rtc_top.U_kernel.U_tamper.tampcr[7:0]"
+
+//==============================================================================
+// Reg OR
+//============================================================================== 
+quasi_static -name "rtc_top.U_kernel.U_rtc_out.reg_or[1]"
+quasi_static -name "rtc_top.U_kernel.U_rtc_out.reg_or[0]"
+
+

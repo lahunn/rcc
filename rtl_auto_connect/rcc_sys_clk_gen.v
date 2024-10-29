@@ -1,3 +1,4 @@
+/* verilator lint_off PINCONNECTEMPTY */
 module rcc_sys_clk_gen (
     input sys_rst_n,
     input testmode,
@@ -115,6 +116,12 @@ module rcc_sys_clk_gen (
     output rcc_obl_clk,
     output sys_clk,
     output pre_sys_clk,                //sys_clk but not gated
+    //div en 
+    output c1_to_axi_div_en,
+    output d1_h2b_div_en,
+    output d2_h2b1_div_en,
+    output d2_h2b2_div_en,
+    output d3_h2b_div_en,
 
     output mco1,
     output mco2,
@@ -228,14 +235,13 @@ module rcc_sys_clk_gen (
 
 
   BB_clk_div_d #(
-      .RATIO_WID(15)
+      .RATIO_WID(4)
   ) mco1_clk_divider (
-      .rst_n(sys_rst_n),
-      .i_clk(mco1_pre_clk),
-      .ratio(mco1pre),
-
+      .rst_n (sys_rst_n),
+      .i_clk (mco1_pre_clk),
+      .ratio (mco1pre),
       .o_clk (mco1),
-      .div_en(1'b1)
+      .div_en()
   );
 
   assign mco2_clk_src = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
@@ -250,14 +256,13 @@ module rcc_sys_clk_gen (
   );
 
   BB_clk_div_d #(
-      .RATIO_WID(15)
+      .RATIO_WID(4)
   ) mco2_clk_divider (
-      .rst_n(sys_rst_n),
-      .i_clk(mco2_pre_clk),
-      .ratio(mco2pre),
-
+      .rst_n (sys_rst_n),
+      .i_clk (mco2_pre_clk),
+      .ratio (mco2pre),
       .o_clk (mco2),
-      .div_en(1'b1)
+      .div_en()
   );
 
 
@@ -267,22 +272,20 @@ module rcc_sys_clk_gen (
 
 
   BB_clk_div_d #(
-      .RATIO_WID(63)
+      .RATIO_WID(6)
   ) hse_rtc_clk_div (
       .rst_n (sys_rst_n),
       .i_clk (hse_origin_clk),
       .ratio (rtcpre),
       .o_clk (hse_rtc_clk),
-      .div_en(1'b1)
+      .div_en()
   );
 
   //====================================================================
   // hsi_div
   //====================================================================
 
-  power_of_2_clk_div #(
-      .STAGE_NUM(3)
-  ) hsi_clk_div (
+  rcc_8_div hsi_clk_div (
       .i_clk  (hsi_origin_clk),
       .rst_n  (sys_rst_n),
       .div_sel(hsidiv),
@@ -344,11 +347,11 @@ module rcc_sys_clk_gen (
   glitch_free_clk_switch #(
       .CLK_NUM(3)
   ) per_clk_switch (
-      .i_clk(per_clk_src),
+      .i_clk   (per_clk_src),
       .clk_fail({hsecss_fail, 2'b0}),
-      .rst_n(sys_rst_n),
-      .sel  (clkpersel),
-      .o_clk(per_clk)
+      .rst_n   (sys_rst_n),
+      .sel     (clkpersel),
+      .o_clk   (per_clk)
   );
 
 
@@ -362,41 +365,41 @@ module rcc_sys_clk_gen (
   glitch_free_clk_switch #(
       .CLK_NUM(3)
   ) pll_src_clk_switch (
-      .i_clk(pll_clk_src),
+      .i_clk   (pll_clk_src),
       .clk_fail({hsecss_fail, 2'b0}),
-      .rst_n(sys_rst_n),
-      .sel  (pllsrc),
-      .o_clk(pll_src_clk)
+      .rst_n   (sys_rst_n),
+      .sel     (pllsrc),
+      .o_clk   (pll_src_clk)
   );
 
   BB_clk_div_d #(
-      .RATIO_WID(63)
+      .RATIO_WID(6)
   ) pll1_src_clk_div (
       .i_clk (pll_src_clk),
       .rst_n (sys_rst_n),
       .ratio (divm1),
       .o_clk (pll1_src_clk),
-      .div_en(1'b1)
+      .div_en()
   );
 
   BB_clk_div_d #(
-      .RATIO_WID(63)
+      .RATIO_WID(6)
   ) pll2_src_clk_div (
       .i_clk (pll_src_clk),
       .rst_n (sys_rst_n),
       .ratio (divm2),
       .o_clk (pll2_src_clk),
-      .div_en(1'b1)
+      .div_en()
   );
 
   BB_clk_div_d #(
-      .RATIO_WID(63)
+      .RATIO_WID(6)
   ) pll3_src_clk_div (
       .i_clk (pll_src_clk),
       .rst_n (sys_rst_n),
       .ratio (divm3),
       .o_clk (pll3_src_clk),
-      .div_en(1'b1)
+      .div_en()
   );
 
 
@@ -409,11 +412,11 @@ module rcc_sys_clk_gen (
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) sys_clk_switch (
-      .i_clk(sys_clk_src),
+      .i_clk   (sys_clk_src),
       .clk_fail({1'b0, hsecss_fail, 2'b0}),
-      .rst_n(sys_rst_n),
-      .sel  (sw),
-      .o_clk(pre_sys_clk)
+      .rst_n   (sys_rst_n),
+      .sel     (sw),
+      .o_clk   (pre_sys_clk)
   );
   BB_clk_gating sys_clk_gate (
       .raw_clk(pre_sys_clk),
@@ -426,6 +429,7 @@ module rcc_sys_clk_gen (
       .i_clk  (sys_clk),
       .rst_n  (sys_rst_n),
       .div_sel(d1cpre),
+      .div_en (),
       .o_clk  (sys_d1cpre_clk)
   );
 
@@ -440,18 +444,20 @@ module rcc_sys_clk_gen (
   );
   assign rcc_fclk_c1 = rcc_c1_clk;
 
-  div_2_to_xth #(
-      .SQUARE(3)
+  BB_clk_div_s #(
+      .DIV_RATIO(8)
   ) c1_systick_clk_div (
-      .i_clk(rcc_c1_clk),
-      .rst_n(sys_rst_n),
-      .o_clk(rcc_c1_systick_clk)
+      .i_clk (rcc_c1_clk),
+      .rst_n (sys_rst_n),
+      .o_clk (rcc_c1_systick_clk),
+      .div_en()
   );
 
   rcc_512_div sys_hpre_clk_divider (
       .i_clk  (sys_d1cpre_clk),
       .rst_n  (sys_rst_n),
       .div_sel(hpre),
+      .div_en (c1_to_axi_div_en),
       .o_clk  (sys_hpre_clk)
   );
 
@@ -480,6 +486,7 @@ module rcc_sys_clk_gen (
       .i_clk  (rcc_d1_bus_clk),
       .rst_n  (sys_rst_n),
       .div_sel(d1ppre),
+      .div_en (d1_h2b_div_en),
       .o_clk  (rcc_apb3bridge_d1_pre_clk)
   );
 
@@ -503,12 +510,13 @@ module rcc_sys_clk_gen (
 
   assign rcc_fclk_c2 = rcc_c2_clk;
 
-  div_2_to_xth #(
-      .SQUARE(3)
+  BB_clk_div_s #(
+      .DIV_RATIO(8)
   ) c2_systick_clk_div (
-      .i_clk(rcc_c2_clk),
-      .rst_n(sys_rst_n),
-      .o_clk(rcc_c2_systick_clk)
+      .i_clk (rcc_c2_clk),
+      .rst_n (sys_rst_n),
+      .o_clk (rcc_c2_systick_clk),
+      .div_en()
   );
 
   BB_clk_gating rcc_d2_bus_clk_gate (
@@ -536,6 +544,7 @@ module rcc_sys_clk_gen (
       .i_clk      (rcc_d2_bus_clk),
       .rst_n      (sys_rst_n),
       .div_sel    (d2ppre1),
+      .div_en     (d2_h2b1_div_en),
       .timpre     (timpre),
       .tim_ker_clk(rcc_timx_ker_clk),
       .pclk       (rcc_apb1bridge_d2_pre_clk)
@@ -552,6 +561,7 @@ module rcc_sys_clk_gen (
       .i_clk      (rcc_d2_bus_clk),
       .rst_n      (sys_rst_n),
       .div_sel    (d2ppre2),
+      .div_en     (d2_h2b2_div_en),
       .timpre     (timpre),
       .tim_ker_clk(rcc_timy_ker_clk),
       .pclk       (rcc_apb2bridge_d2_pre_clk)
@@ -588,6 +598,7 @@ module rcc_sys_clk_gen (
       .i_clk  (rcc_d3_bus_clk),
       .rst_n  (sys_rst_n),
       .div_sel(d3ppre),
+      .div_en (d3_h2b_div_en),
       .o_clk  (rcc_apb4bridge_d3_pre_clk)
   );
 

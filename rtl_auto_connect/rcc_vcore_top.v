@@ -17,15 +17,25 @@ module rcc_vcore_top #(
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
+  wire [DW-1:0] rdata;
+  wire [   1:0] rsp;
+  wire          mreq;
+  wire [AW-1:0] maddr;
+  wire [WW-1:0] mstrb;
+  wire [DW-1:0] mdata;
   /*AUTOWIRE*/
   /*AUTO DECLARE*/
   BB_ahb2reg #(  /*AUTOINSTPARAM*/
-  ) u_BB_rcc_ahb2reg (  
-    .mwrite(),
-    .sready(1'b1),
-    .sresp(rsp[0]),
-    .sdata(rdata),
-    /*AUTOINST*/
+  ) u_BB_rcc_ahb2reg (
+      .mwrite(),
+      .sready(1'b1),
+      .sresp (rsp[0]),
+      .sdata (rdata),
+      .mreq  (mreq),
+      .mstrb (mstrb),
+      .maddr (maddr),
+      .mdata (mdata),
+      /*AUTOINST*/
   );
 
   rcc_sys_clk_rst_ctrl #(  /*AUTOINSTPARAM*/
@@ -34,23 +44,25 @@ module rcc_vcore_top #(
 
   rcc_per_clk_rst_control #(  /*AUTOINSTPARAM*/
   ) u_rcc_per_clk_rst_control (
-    /*AUTOINST*/
+  /*AUTOINST*/
   );
 
-  rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (  
-  .rst_n		(sys_sync_rst_n),  
-  /*AUTOINST*/
+  rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (
+      .rst_n(sys_sync_rst_n),
+      /*AUTOINST*/
   );
 
   rcc_reg #(  /*AUTOINSTPARAM*/
   ) u_rcc_reg (
-  .clk(hclk),
-  .rst_n(hresetn),
-  .req(mreq),
-  .we(mstrb),
-  .addr(maddr),
-  .wdata(mdata),
-  /*AUTOINST*/
+      .clk  (hclk),
+      .rst_n(hresetn),
+      .req  (mreq),
+      .we   (mstrb),
+      .addr (maddr),
+      .wdata(mdata),
+      .rdata(rdata),
+      .rsp  (rsp),
+      /*AUTOINST*/
   );
 
 endmodule

@@ -454,7 +454,7 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   BB_reset_sync #(
       .STAGE_NUM(2)
-  ) u_BB_reset_sync (
+  ) u_vsw_reset_sync (
       .src_rst_n(pre_vsw_rst_n),
       .clk      (pre_sys_clk),
       .gen_rst_n(sync_vsw_rst_n)

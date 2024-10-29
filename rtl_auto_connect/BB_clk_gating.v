@@ -13,7 +13,7 @@ module BB_clk_gating (
 
   always @(*) begin
     if (!raw_clk) begin
-      cur_en = active;
+      cur_en = nxt_en;
     end
   end
 

@@ -1,0 +1,13 @@
+
+include spy_lint_rtc.sgdc
+
+
+clock -name "pclk"    -testclock
+clock -name "clk_rtc" -testclock
+clock -name "dft_clk" -testclock    //VBAT Low Speed Clock
+
+test_mode -name "rst_n"     -value 1 -scanshift
+test_mode -name "bkp_rst_n" -value 1 -scanshift
+test_mode -name "dft_rst_n" -value 1 -scanshift
+test_mode -name "test_mode" -value 1
+

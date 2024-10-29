@@ -2,42 +2,42 @@
 /* verilator lint_off UNUSEDSIGNAL */
 /* verilator lint_off UNDRIVEN */
 module BB_ahb2reg #(
-  parameter DW = 64,
-  parameter AW = 15,
-  parameter WW = DW/8
-)(
-    input  hclk,
-    input  hresetn,
-    input hready,
-    input hsel,
-    input [1:0] htrans,
-    input hwrite,
-    input [31:0] haddr,
-    input [2:0] hsize,
-    input [DW-1:0] hwdata,
-    input [DW-1:0] hrdata,
-    output hreadyout,
-    output hresp,
+    parameter DW = 32,
+    parameter AW = 32,
+    parameter WW = 4
+) (
+    input           hclk,
+    input           hresetn,
+    input           hready,
+    input           hsel,
+    input  [   1:0] htrans,
+    input           hwrite,
+    input  [  31:0] haddr,
+    input  [   2:0] hsize,
+    input  [DW-1:0] hwdata,
+    input  [DW-1:0] hrdata,
+    output          hreadyout,
+    output          hresp,
 
-    output mreq,
-    output mwrite,
+    output          mreq,
+    output          mwrite,
     output [AW-1:0] maddr,
     output [WW-1:0] mstrb,
     output [DW-1:0] mdata,
-    input [DW-1:0] sdata,
-    input sready,
-    input sresp
+    input  [DW-1:0] sdata,
+    input           sready,
+    input           sresp
 );
-// NULL MODULE
+  // NULL MODULE
 
-// rcc_ahb_lite_bus Outputs
-assign hreadyout = 1'b0;
-assign hresp = 1'b0;
-assign mreq = 1'b0;
-assign mwrite = 1'b0;
-assign maddr = 'b0;
-assign mstrb = 'b0;
-assign mdata = 'b0;
+  // rcc_ahb_lite_bus Outputs
+  assign hreadyout = sready;
+  assign hresp     = sresp;
+  assign mreq      = hready;
+  assign mwrite    = hwrite;
+  assign maddr     = haddr;
+  assign mstrb     = {hsel, htrans};
+  assign mdata     = hwdata;
 
 
 endmodule

@@ -3,7 +3,7 @@ current_design rcc_top
 //==============================================================================
 // CLK-External
 //============================================================================== 
-clock -name "hclk"    -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
+clock -name "hclk" -period 5 -edge {0 2.5} -domain "hclk"  //200 MHz
 clock -name "hsi_origin_clk" -period 15.625 -edge {0 7.3125} -domain "hsi_origin_clk"  // 64 MHz
 clock -name "hsi48_clk" -period 20.83 -edge {0 10.415} -domain "hsi48_clk"  // 48 MHz
 clock -name "hse_origin_clk" -period 20.83 -edge {0 10.415} -domain "hse_origin_clk"  // 48 MHz
@@ -22,7 +22,6 @@ clock -name "pll3_r_clk" -period 1.25 -edge {0 0.625} -domain "pll3_r_clk"  //80
 
 clock -name "pad_rcc_eth_mii_rx_clk" -period 41.66 -edge {0 20.83} -domain "eth_mii_rx_clk" // 200 MHz MAX
 clock -name "pad_rcc_eth_mii_tx_clk" -period 41.66 -edge {0 20.83} -domain "eth_mii_tx_clk" // 200 MHz MAX
-Clock-Net 'rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.c1_systick_clk_div.clk_temp[2:1]
 
 clock -name "I2S_clk_IN" -period 100 -edge {0 50} -domain "i2s_clk"  // 10 MHz
 clock -name "USB_PHY1" -period 20.83 -edge {0 10.415} -domain "usb_clk"  // 48 MHz
@@ -31,15 +30,23 @@ clock -name "USB_PHY1" -period 20.83 -edge {0 10.415} -domain "usb_clk"  // 48 M
 // CLK-Internal
 //============================================================================== 
 //sys clocks
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.hsi_clk" -period 15.625 -edge {0 7.3125} -domain "hsi_origin_clk"  // 64 MHz
+//generated_clock -name <clk-obj-name> -source <source-obj-name> -tag <tag-name> -divide_by <divide-factor> -multiply_by <mult-factor> -master_clock <source-clock-tag-name>
+generated_clock -name "hsi_clk" -source [get_pins rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.hsi_clk] -master_clock hsi_origin_clk 
+// clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.hsi_clk" -period 15.625 -edge {0 7.3125} -domain "hsi_origin_clk"  // 64 MHz
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.hsi_ker_clk" -period 15.625 -edge {0 7.3125} -domain "hsi_origin_clk"  // 64 MHz
+generated_clock -name "csi_clk" -source [get_pins rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.csi_clk] -master_clock csi_origin_clk
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.csi_clk" -period 250 -edge {0 125} -domain "csi_origin_clk"  // 4 MHz
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.csi_ker_clk" -period 250 -edge {0 125} -domain "csi_origin_clk"  // 4 MHz
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.hse_clk" -period 20.83 -edge {0 10.415} -domain "hse_origin_clk"  // 48 MHz
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.pre_sys_clk" -period 1.25 -edge {0 0.625} -domain "pre_sys_clk"  // 800 MHz MAX
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.sys_clk" -period 1.25 -edge {0 0.625} -domain "pre_sys_clk"  // 800 MHz MAX
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.rcc_obl_clk" -period 15.625 -edge {0 7.3125} -domain "hsi_origin_clk" // 64 MHz MAX
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.per_clk" -period 15.625 -edge {0 7.3125} -domain "per_clk" // 64 MHz MAX
+// clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.pre_sys_clk" -period 1.25 -edge {0 0.625} -domain "pre_sys_clk"  // 800 MHz MAX
+generated_clock -name "hsi_pre_sys_clk" -source [get_pins rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.pre_sys_clk] -master_clock hsi_clk -add
+generated_clock -name "csi_pre_sys_clk" -source [get_pins rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.pre_sys_clk] -master_clock csi_clk -add
+generated_clock -name "hse_pre_sys_clk" -source [get_pins rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.pre_sys_clk] -master_clock hse_clk -add
+generated_clock -name "pll1_pre_sys_clk" -source [get_pins rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.pre_sys_clk] -master_clock pll1_p_clk -add
+
+clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.sys_clk" -period 1.25 -edge {0 0.625} -domain "pre_sys_clk"  // 800 MHz MAX
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.sys_d1cpre_clk" -period 2.5 -edge {0 1.25} -domain "pre_sys_clk"  // 400 MHz MAX
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.rcc_c1_clk" -period 2.5 -edge {0 1.25} -domain "pre_sys_clk"  // 400 MHz MAX
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_rcc_sys_clk_gen.sys_hpre_clk" -period 5 -edge {0 2.5} -domain "pre_sys_clk"  // 200 MHz MAX
@@ -54,12 +61,12 @@ clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.csi_ker_clk_122_d
 
 
 //ahb clock
-clock -name "rcc_top.u_rcc_vsw_top.rcc_bdcr_byte0_wren"  -period 5    -edge {0 2.5}    -domain "ahb_hclk"  //200 MHz
-clock -name "rcc_top.u_rcc_vsw_top.rcc_bdcr_byte1_wren"  -period 5    -edge {0 2.5}    -domain "ahb_hclk"  //200 MHz
-clock -name "rcc_top.u_rcc_vsw_top.rcc_bdcr_byte2_wren"  -period 5    -edge {0 2.5}    -domain "ahb_hclk"  //200 MHz
-clock -name "rcc_top.u_rcc_vdd_top.rcc_c1_rsr_rmvf_wren"  -period 5    -edge {0 2.5}    -domain "ahb_hclk"  //200 MHz
-clock -name "rcc_top.u_rcc_vdd_top.rcc_c2_rsr_rmvf_wren"  -period 5    -edge {0 2.5}    -domain "ahb_hclk"  //200 MHz
-clock -name "rcc_top.u_rcc_vdd_top.rcc_csr_lsion_wren"  -period 5    -edge {0 2.5}    -domain "ahb_hclk"  //200 MHz
+clock -name "rcc_top.u_rcc_vcore_top.u_rcc_reg.rcc_bdcr_byte0_wren"  -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
+clock -name "rcc_top.u_rcc_vcore_top.u_rcc_reg.rcc_bdcr_byte1_wren"  -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
+clock -name "rcc_top.u_rcc_vcore_top.u_rcc_reg.rcc_bdcr_byte2_wren"  -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
+clock -name "rcc_top.u_rcc_vdd_top.rcc_c1_rsr_rmvf_wren"  -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
+clock -name "rcc_top.u_rcc_vdd_top.rcc_c2_rsr_rmvf_wren"  -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
+clock -name "rcc_top.u_rcc_vdd_top.rcc_csr_lsion_wren"    -period 5    -edge {0 2.5}    -domain "hclk"  //200 MHz
 
 
 
@@ -70,7 +77,7 @@ clock -name "rcc_top.u_rcc_vdd_top.rcc_csr_lsion_wren"  -period 5    -edge {0 2.
 // RST-External
 //============================================================================== 
 reset -async -name "hresetn" -value 0
-reset -async -name "pwr_por_rst" -value 0
+reset -async -name "pwr_por_rst" -value 1
 //reset -async -name "nrst_in" -value 1
 
 //==============================================================================
@@ -82,6 +89,8 @@ reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_rst_n" -va
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_sync_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_sync_rst_n" -value 0
+reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sync_vsw_rst_n" -value 0
+// reset -async -name "rcc_top.u_rcc_vdd_top.u_rcc_vdd_reg.rst_n" -value 0
 
 //==============================================================================
 // IO

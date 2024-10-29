@@ -1,0 +1,82 @@
+
+
+current_design rtc_top
+
+//==============================================================================
+// CLK-External
+//============================================================================== 
+clock -name "pclk"    -period 31    -edge {0 15}    -domain "pclk"
+clock -name "clk_rtc" -period 30517 -edge {0 15258} -domain "clk_rtc"
+
+//==============================================================================
+// CLK-Internal
+//============================================================================== 
+clock -name "rtc_top.U_kernel.U_tamper.U_tamper1.tampx_clk"  -period 7812500  -edge {0 3906250} //128Hz
+clock -name "rtc_top.U_kernel.U_tamper.U_tamper2.tampx_clk"  -period 7812500  -edge {0 3906250} //128Hz
+clock -name "rtc_top.U_kernel.U_tamper.U_tamper3.tampx_clk"  -period 7812500  -edge {0 3906250} //128Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_16384" -period 61035       -edge {0 30517}     //16384Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_8192"  -period 122070      -edge {0 61035}     //8192Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_4096"  -period 224140      -edge {0 122070}    //4096Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_2048"  -period 488281      -edge {0 224140}    //2048Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_1024"  -period 976562      -edge {0 488281}    //1024Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_512"   -period 1953125     -edge {0 976562}    //512Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_256"   -period 3906250     -edge {0 1953125}   //256Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_128"   -period 7812500     -edge {0 3906250}   //128Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_64"    -period 15625000    -edge {0 7812500}   //64Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_32"    -period 31250000    -edge {0 15625000}  //32Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_16"    -period 62500000    -edge {0 31250000}  //16Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_8"     -period 125000000   -edge {0 62500000}  //8Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_4"     -period 250000000   -edge {0 125000000} //4Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_2"     -period 500000000   -edge {0 250000000} //2Hz
+clock -name "rtc_top.U_kernel.U_tamper.clk_1"     -period 1000000000  -edge {0 500000000} //1Hz
+
+clock -name "rtc_top.U_kernel.U_wakeup_timer.wutr_clk"  -period 61035    -edge {0 30517} //16384Hz
+clock -name "rtc_top.U_kernel.U_wakeup_timer.wutr_clk_div2"   -period 61035    -edge {0 30517}  //16384Hz
+clock -name "rtc_top.U_kernel.U_wakeup_timer.wutr_clk_div4"   -period 122070   -edge {0 61035}  //8192Hz
+clock -name "rtc_top.U_kernel.U_wakeup_timer.wutr_clk_div8"   -period 224140   -edge {0 122070} //4096Hz
+clock -name "rtc_top.U_kernel.U_wakeup_timer.wutr_clk_div16"  -period 488281   -edge {0 224140} //2048Hz
+
+clock -name "rtc_top.U_kernel.clk_apre" -period 3906250     -edge {0 1953125}   -domain "clk_rtc"
+clock -name "rtc_top.U_kernel.clk_spre" -period 1000000000  -edge {0 500000000} -domain "clk_rtc"
+
+
+//==============================================================================
+// RST-External
+//============================================================================== 
+reset -async -name "rst_n"   -value 0
+reset -async -name "bkp_rst_n"   -value 0
+
+
+//==============================================================================
+// IO
+//============================================================================== 
+input  -name "paddr"     -clock pclk        // VCORE           APB
+input  -name "pwrite"    -clock pclk        // VCORE           APB
+input  -name "psel"      -clock pclk        // VCORE           APB
+input  -name "penable"   -clock pclk        // VCORE           APB
+input  -name "pwdata"    -clock pclk        // VCORE           APB
+output -name "prdata"    -clock pclk        // VCORE           APB
+output -name "pready"    -clock pclk        // VCORE           APB
+output -name "pslverr"   -clock pclk        // VCORE           APB
+
+//output -name "io1_ctrl"  -clock pclk       // VBAT
+//output -name "io1_dir"   -clock pclk       // VBAT
+//output -name "io1_out"   -clock        // VBAT
+//input  -name "io1_in"    -clock        // VBAT
+//output -name "io1_od_pp" -clock pclk       // VBAT
+//input  -name "io2_in"    -clock        // VBAT
+//input  -name "io3_in"    -clock        // VBAT
+//output -name "io4_out"   -clock        // VCORE
+//input  -name "io5_in"    -clock        // VCORE
+
+//input  -name "ts_vbat"          // VBAT           Async
+//input  -name "isolation"        // VBAT           Async
+//output -name "intr"             // VCORE
+output -name "alarm_intr"     -clock clk_rtc  // VCORE
+//output -name "wkup_intr_pwr"  -clock clk_rtc  // VBAT
+output -name "wkup_intr"      -clock clk_rtc  // VCORE
+//output -name "tamp_ts_wkup_pwr" // VBAT
+//output -name "tamp_ts_wkup"     // VCORE
+//input  -name "pwr_cr0_dbp"      // VCORE
+
+//output -name "bkp_sram_erase" -clock clk_rtc   // VBAT

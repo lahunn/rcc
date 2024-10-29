@@ -70,9 +70,8 @@ module rcc_eth_ker_clk_ctrl (
   ) eth_mii_rx_clk_divider_2 (
       .rst_n(rst_n),
       .i_clk(pad_rcc_eth_mii_rx_clk),
-
       .o_clk (pad_rcc_eth_mii_rx_clk_div_2),
-      .div_en(1'b1)
+      .div_en()
   );
 
   BB_clk_div_s #(
@@ -80,9 +79,8 @@ module rcc_eth_ker_clk_ctrl (
   ) eth_mii_rx_clk_divider_20 (
       .rst_n(rst_n),
       .i_clk(pad_rcc_eth_mii_rx_clk),
-
       .o_clk (pad_rcc_eth_mii_rx_clk_div_20),
-      .div_en(1'b1)
+      .div_en()
   );
   assign pad_rcc_eth_mii_rx_clk_divided = eth_rcc_fes ? pad_rcc_eth_mii_rx_clk_div_2 : pad_rcc_eth_mii_rx_clk_div_20;
 
