@@ -21,7 +21,7 @@ module rcc_vcore_top #(
   wire [   1:0] rsp;
   wire          mreq;
   wire [AW-1:0] maddr;
-  wire [WW-1:0] mstrb;
+  wire [WW-1:0] mwstrb;
   wire [DW-1:0] mdata;
   /*AUTOWIRE*/
   /*AUTO DECLARE*/
@@ -32,7 +32,7 @@ module rcc_vcore_top #(
       .sresp (rsp[0]),
       .sdata (rdata),
       .mreq  (mreq),
-      .mstrb (mstrb),
+      .mwstrb (mwstrb),
       .maddr (maddr),
       .mdata (mdata),
       /*AUTOINST*/
@@ -57,7 +57,7 @@ module rcc_vcore_top #(
       .clk  (hclk),
       .rst_n(hresetn),
       .req  (mreq),
-      .we   (mstrb),
+      .we   (mwstrb),
       .addr (maddr),
       .wdata(mdata),
       .rdata(rdata),

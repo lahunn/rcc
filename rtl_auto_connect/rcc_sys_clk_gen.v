@@ -234,7 +234,7 @@ module rcc_sys_clk_gen (
 
 
 
-  BB_clk_div_d #(
+  rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco1_clk_divider (
       .rst_n (sys_rst_n),
@@ -255,7 +255,7 @@ module rcc_sys_clk_gen (
       .out(mco2_pre_clk)
   );
 
-  BB_clk_div_d #(
+  rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco2_clk_divider (
       .rst_n (sys_rst_n),
@@ -271,7 +271,7 @@ module rcc_sys_clk_gen (
   //====================================================================
 
 
-  BB_clk_div_d #(
+  rcc_rtc_clk_div_d #(
       .RATIO_WID(6)
   ) hse_rtc_clk_div (
       .rst_n (sys_rst_n),
@@ -372,7 +372,7 @@ module rcc_sys_clk_gen (
       .o_clk   (pll_src_clk)
   );
 
-  BB_clk_div_d #(
+  rcc_clk_div_d #(
       .RATIO_WID(6)
   ) pll1_src_clk_div (
       .i_clk (pll_src_clk),
@@ -382,7 +382,7 @@ module rcc_sys_clk_gen (
       .div_en()
   );
 
-  BB_clk_div_d #(
+  rcc_clk_div_d #(
       .RATIO_WID(6)
   ) pll2_src_clk_div (
       .i_clk (pll_src_clk),
@@ -392,7 +392,7 @@ module rcc_sys_clk_gen (
       .div_en()
   );
 
-  BB_clk_div_d #(
+  rcc_clk_div_d #(
       .RATIO_WID(6)
   ) pll3_src_clk_div (
       .i_clk (pll_src_clk),
