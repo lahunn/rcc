@@ -46,7 +46,7 @@ module per_ker_clk_rst_control #(
 
     output [BUS_CLK_NUM-1:0] per_bus_clks,
     output [KER_CLK_NUM-1:0] per_ker_clks,
-    output                   per_sync_rst_n,
+    output                   per_rst_n,
     output                   csi_ker_clk_req,
     output                   hsi_ker_clk_req
 );
@@ -59,7 +59,6 @@ module per_ker_clk_rst_control #(
   wire c2_bus_clk_lpen;
   wire d3_bus_clk_en;
   wire arcg_clk_en;
-  wire per_rst_n;
 
   // clock control
 
@@ -175,23 +174,22 @@ module per_ker_clk_rst_control #(
   //reset control
   generate
     if (DOMAIN == 1) begin : per_domain_d1_rst
-      assign per_rst_n = sft_rst_n & d1_rst_n & sft_rst_n;
+      assign per_rst_n = sys_rst_n & d1_rst_n & sft_rst_n;
     end else if (DOMAIN == 2) begin : per_domain_d2_rst
-      assign per_rst_n = sft_rst_n & d2_rst_n & sft_rst_n;
+      assign per_rst_n = sys_rst_n & d2_rst_n & sft_rst_n;
     end else begin : per_domain_d3_rst
-      assign per_rst_n = sft_rst_n & sft_rst_n;
+      assign per_rst_n = sys_rst_n & sft_rst_n;
     end
   endgenerate
 
   //async reset clock control
-  async_reset_clk_gate #(
+  per_async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) ltdc_async_reset_clk_gate (
+  ) u_per_async_reset_clk_gate (
       .src_rst_n (per_rst_n),
       .i_clk     (per_bus_clks[0]),
       .arcg_on   (arcg_on),
-      .clk_en    (arcg_clk_en),
-      .sync_rst_n(per_sync_rst_n)
+      .clk_en    (arcg_clk_en)
   );
 
 endmodule

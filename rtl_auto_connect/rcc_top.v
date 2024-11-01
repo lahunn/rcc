@@ -14,6 +14,7 @@ module rcc_top #(
     parameter DW = 32,
     parameter WW = DW / 8
 ) (
+    output sync_vsw_rst_n,
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );

@@ -18,7 +18,106 @@ reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_sync_rst_n
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_sync_rst_n" -value 0
 
+reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_clk_rst_ctrl.pre_vsw_rst_n" -value 0
+reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sync_vsw_rst_n" -value 0
+reset -async -name "rcc_top.pwr_d1_ok"     -value 0
+reset -async -name "rcc_top.pwr_d2_ok"     -value 0
+reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_reg.lsecss_fail_rst_n"     -value 0
 #==============================================================================
 # IO
 #==============================================================================
+input -name ahb1bridge_d2_busy -clock hclk
+input -name ahb2bridge_d2_busy -clock hclk
+input -name ahb3bridge_d1_busy -clock hclk
+input -name ahb4bridge_d3_busy -clock hclk
+input -name apb1bridge_d2_busy -clock hclk
+input -name apb2bridge_d2_busy -clock hclk
+input -name apb3bridge_d1_busy -clock hclk
+input -name apb4bridge_d3_busy -clock hclk
+input -name axibridge_d1_busy  -clock hclk
 
+
+input -name c1_deepsleep -clock hclk
+input -name c1_sleep -clock hclk
+input -name c2_deepsleep -clock hclk
+input -name c2_sleep -clock hclk
+input -name cpu1_sftrst -clock hclk
+input -name cpu2_sftrst -clock hclk
+input -name crs_hsi48_trim[9:0] -clock hclk
+input -name eth_rcc_epis_2 -clock hclk
+input -name eth_rcc_fes -clock hclk
+
+input -name haddr[31:0] -clock hclk
+input -name hready -clock hclk
+input -name hresetn -clock hclk
+input -name hsel -clock hclk
+input -name hsize[2:0] -clock hclk
+input -name htrans[1:0] -clock hclk
+input -name hwdata[31:0] -clock hclk
+input -name hwrite -clock hclk
+input -name backup_protect -clock hclk
+input -name wwdg1_out_rst -clock hclk
+input -name wwdg2_out_rst -clock hclk
+#lse clk
+input -name iwdg1_out_rst -clock lse_clk
+input -name iwdg2_out_rst -clock lse_clk
+# #async signals
+# input -name backup_protect
+# input -name csi_rdy
+# input -name d3_deepsleep
+# input -name flash_busy
+# input -name flash_csi_opt[7:0]
+# input -name flash_hsi_opt[11:0]
+# input -name flash_obl_reload
+# input -name flash_power_ok
+
+# input -name hse_rdy
+# input -name hsecss_fail
+# input -name hsi48_rdy
+# input -name hsi_rdy
+# input -name i2c1_ker_clk_req
+# input -name i2c2_ker_clk_req
+# input -name i2c3_ker_clk_req
+# input -name i2c4_ker_clk_req
+# input -name uart4_ker_clk_req
+# input -name uart5_ker_clk_req
+# input -name uart7_ker_clk_req
+# input -name uart8_ker_clk_req
+# input -name usart1_ker_clk_req
+# input -name usart2_ker_clk_req
+# input -name usart3_ker_clk_req
+# input -name usart6_ker_clk_req
+# input -name lpuart1_ker_clk_req
+# input -name lpwr1_rst
+# input -name lpwr2_rst
+# input -name lsecss_fail
+# input -name lserdy
+# input -name lsi_rdy
+# input -name obl_done
+# input -name obl_rst
+# input -name pad_rcc_eth_mii_rx_clk
+# input -name pad_rcc_eth_mii_tx_clk
+# input -name pll1_p_clk
+# input -name pll1_q_clk
+# input -name pll1_rdy
+# input -name pll2_p_clk
+# input -name pll2_q_clk
+# input -name pll2_r_clk
+# input -name pll2_rdy
+# input -name pll3_p_clk
+# input -name pll3_q_clk
+# input -name pll3_r_clk
+# input -name pll3_rdy
+# input -name pwr_bor_rst
+# input -name pwr_d1_ok
+# input -name pwr_d1_wkup
+# input -name pwr_d2_ok
+# input -name pwr_d2_wkup
+# input -name pwr_d3_wkup
+# input -name pwr_por_rst
+# input -name pwr_vcore_ok
+# input -name pwr_vsw_rst
+# input -name rcc_arcg_on
+# input -name testmode
+# input -name wwdg1_out_rst
+# input -name wwdg2_out_rst

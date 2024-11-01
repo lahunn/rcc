@@ -1,11 +1,10 @@
-module async_reset_clk_gate #(
+module per_async_reset_clk_gate #(
     parameter DELAY = 8
 ) (
     input  src_rst_n,
     input  i_clk,
     input  arcg_on,
-    output clk_en,
-    output sync_rst_n
+    output clk_en
 );
 
   localparam CNT_WD = $clog2(DELAY) + 1;
@@ -18,16 +17,7 @@ module async_reset_clk_gate #(
   wire              nxt_clk_en;
 
 
-  assign clk_en = arcg_on ? cur_clk_en : 1'b1;
-
-  BB_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_BB_reset_sync (
-      .src_rst_n(src_rst_n),
-      .clk      (i_clk),
-      .gen_rst_n(sync_rst_n)
-  );
-
+  assign clk_en       = arcg_on ? cur_clk_en : 1'b1;
   assign counter_wren = (cur_counter < DELAY);
   assign nxt_counter  = cur_counter + {{(CNT_WD - 1) {1'b0}}, 1'b1};
 
@@ -36,7 +26,7 @@ module async_reset_clk_gate #(
       .RST_VAL(0)
   ) u_BB_counter_dfflr (
       .clk  (i_clk),
-      .rst_n(sync_rst_n),
+      .rst_n(src_rst_n),
       .en   (counter_wren),
       .din  (nxt_counter),
       .dout (cur_counter)
@@ -50,7 +40,7 @@ module async_reset_clk_gate #(
       .RST_VAL(0)
   ) u_BB_clk_en_dfflr (
       .clk  (i_clk),
-      .rst_n(sync_rst_n),
+      .rst_n(src_rst_n),
       .din  (nxt_clk_en),
       .dout (cur_clk_en)
   );

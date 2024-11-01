@@ -1,6 +1,9 @@
 /* verilator lint_off PINCONNECTEMPTY */
 module rcc_sys_clk_gen (
     input sys_rst_n,
+    input sys_sync_rst_n,
+    input pwr_por_hsi_sync_rst_n,
+    input pwr_por_hse_sync_rst_n,
     input testmode,
     // input clocks
     input hsi_origin_clk,
@@ -40,6 +43,7 @@ module rcc_sys_clk_gen (
     //osc state
     input hsi_rdy,
     input csi_rdy,
+    input hse_rdy,
     input hsecss_fail,
     //hsi csi request
     input hsi_ker_clk_req,
@@ -57,6 +61,7 @@ module rcc_sys_clk_gen (
     input cpu1_clk_arcg_en,
     input cpu2_clk_arcg_en,
     input sys_clk_arcg_en,
+    input rcc_obl_clk_arcg_en,
     //peripheral alloc signal
     input c1_per_alloc_ahb1,
     input c1_per_alloc_ahb2,
@@ -147,6 +152,7 @@ module rcc_sys_clk_gen (
   wire       rcc_apb3bridge_d1_pre_clk;
   wire       rcc_apb4bridge_d3_pre_clk;
 
+  wire       rcc_obl_clk_en;
   wire       rcc_d1_bus_clk_en;
   wire       rcc_d2_bus_clk_en;
   wire       rcc_d3_bus_clk_en;
@@ -181,46 +187,50 @@ module rcc_sys_clk_gen (
   wire       hse_clk_en;
 
   //====================================================================
-  // clock gate control //====================================================================
+  // clock gate control 
   //====================================================================
-  assign sys_clk_en               = ~rcc_sys_stop & sys_clk_arcg_en;
-  assign rcc_c1_clk_en            = ~c1_deepsleep & ~c1_sleep & cpu1_clk_arcg_en;
-  assign rcc_c2_clk_en            = ~c2_deepsleep & ~c2_sleep & cpu2_clk_arcg_en;
-  assign c2_sleep_mode            = c2_sleep & ~c2_deepsleep;
-  assign c1_sleep_mode            = c1_sleep & ~c1_deepsleep;
+  assign sys_clk_en               = ~rcc_sys_stop && sys_clk_arcg_en;
+  assign rcc_c1_clk_en            = ~c1_deepsleep && ~c1_sleep && cpu1_clk_arcg_en;
+  assign rcc_c2_clk_en            = ~c2_deepsleep && ~c2_sleep && cpu2_clk_arcg_en;
+  assign c2_sleep_mode            = c2_sleep && ~c2_deepsleep;
+  assign c1_sleep_mode            = c1_sleep && ~c1_deepsleep;
 
-  assign rcc_d1_bus_clk_en        = rcc_d1_stop & d1_clk_arcg_en;
-  assign rcc_d2_bus_clk_en        = rcc_d2_stop & d2_clk_arcg_en;
+  assign rcc_d1_bus_clk_en        = rcc_d1_stop && d1_clk_arcg_en;
+  assign rcc_d2_bus_clk_en        = rcc_d2_stop && d2_clk_arcg_en;
   assign rcc_d3_bus_clk_en        = sys_clk_en;
 
-  assign rcc_axibridge_d1_clk_en  = ~c1_sleep | axibridge_d1_busy;
+  assign rcc_axibridge_d1_clk_en  = ~c1_sleep || axibridge_d1_busy;
 
-  assign rcc_ahb1bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_ahb1) | (c1_sleep_mode & c1_per_alloc_ahb1) | rcc_apb1bridge_d2_clk_en | rcc_apb2bridge_d2_clk_en | ahb1bridge_d2_busy;  // apb1 apb2 are connected to ahb1
-  assign rcc_ahb2bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_ahb2) | (c1_sleep_mode & c1_per_alloc_ahb2) | ahb2bridge_d2_busy;
-  assign rcc_ahb3bridge_d1_clk_en = ~c1_sleep | (c1_sleep_mode & c1_per_alloc_ahb3) | (c2_sleep_mode & c2_per_alloc_ahb3) | rcc_apb3bridge_d1_clk_en | ahb3bridge_d1_busy | flash_busy;
+  assign rcc_ahb1bridge_d2_clk_en = ~c2_sleep || (c2_sleep_mode && c2_per_alloc_ahb1) || (c1_sleep_mode && c1_per_alloc_ahb1) || rcc_apb1bridge_d2_clk_en || rcc_apb2bridge_d2_clk_en || ahb1bridge_d2_busy;  // apb1 apb2 are connected to ahb1
+  assign rcc_ahb2bridge_d2_clk_en = ~c2_sleep || (c2_sleep_mode && c2_per_alloc_ahb2) || (c1_sleep_mode && c1_per_alloc_ahb2) || ahb2bridge_d2_busy;
+  assign rcc_ahb3bridge_d1_clk_en = ~c1_sleep || (c1_sleep_mode && c1_per_alloc_ahb3) || (c2_sleep_mode && c2_per_alloc_ahb3) || rcc_apb3bridge_d1_clk_en || ahb3bridge_d1_busy || flash_busy;
   assign rcc_ahb4bridge_d3_clk_en = ~rcc_sys_stop;
-  assign rcc_apb1bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_apb1) | (c1_sleep_mode & c1_per_alloc_apb1) | apb1bridge_d2_busy;
-  assign rcc_apb2bridge_d2_clk_en = ~c2_sleep | (c2_sleep_mode & c2_per_alloc_apb2) | (c1_sleep_mode & c1_per_alloc_apb2) | apb2bridge_d2_busy;
-  assign rcc_apb3bridge_d1_clk_en = ~c1_sleep | (c1_sleep_mode & c1_per_alloc_apb3) | (c2_sleep_mode & c2_per_alloc_apb3) | apb3bridge_d1_busy;
+  assign rcc_apb1bridge_d2_clk_en = ~c2_sleep || (c2_sleep_mode && c2_per_alloc_apb1) || (c1_sleep_mode && c1_per_alloc_apb1) || apb1bridge_d2_busy;
+  assign rcc_apb2bridge_d2_clk_en = ~c2_sleep || (c2_sleep_mode && c2_per_alloc_apb2) || (c1_sleep_mode && c1_per_alloc_apb2) || apb2bridge_d2_busy;
+  assign rcc_apb3bridge_d1_clk_en = ~c1_sleep || (c1_sleep_mode && c1_per_alloc_apb3) || (c2_sleep_mode && c2_per_alloc_apb3) || apb3bridge_d1_busy;
   assign rcc_apb4bridge_d3_clk_en = ~rcc_sys_stop;
 
   //option byte load module clock
-  assign rcc_obl_clk              = sys_clk;
-
+  BB_clk_gating rcc_obl_clk_gate (
+      .raw_clk(pre_sys_clk),
+      .active (rcc_obl_clk_arcg_en),
+      .bypass (testmode),
+      .gen_clk(rcc_obl_clk)
+  );
   //====================================================================
-  // HSI CSI clock control //====================================================================
+  // HSI CSI clock control 
   //====================================================================
 
-  assign hsi_clk_en               = hsi_rdy & (~rcc_sys_stop);
-  assign hsi_ker_clk_en           = hsi_rdy & (~rcc_sys_stop | hsi_ker_clk_req);
-  assign csi_clk_en               = csi_rdy & (~rcc_sys_stop);
-  assign csi_ker_clk_en           = csi_rdy & (~rcc_sys_stop | csi_ker_clk_req);
-  assign hse_clk_en               = ~hsecss_fail;
+  assign hsi_clk_en     = hsi_rdy && (~rcc_sys_stop);
+  assign hsi_ker_clk_en = hsi_rdy && (~rcc_sys_stop || hsi_ker_clk_req);
+  assign csi_clk_en     = csi_rdy && (~rcc_sys_stop);
+  assign csi_ker_clk_en = csi_rdy && (~rcc_sys_stop || csi_ker_clk_req);
+  assign hse_clk_en     = hse_rdy && ~hsecss_fail;
 
   //====================================================================
   // MCO clock out
   //====================================================================
-  assign mco1_clk_src             = {hsi48_clk, pll1_q_clk, hse_clk, lse_clk, hsi_clk};
+  assign mco1_clk_src   = {hsi48_clk, pll1_q_clk, hse_clk, lse_clk, hsi_clk};
 
   mux_n_to_1 #(
       .N(5),
@@ -237,7 +247,7 @@ module rcc_sys_clk_gen (
   rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco1_clk_divider (
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .i_clk (mco1_pre_clk),
       .ratio (mco1pre),
       .o_clk (mco1),
@@ -258,7 +268,7 @@ module rcc_sys_clk_gen (
   rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco2_clk_divider (
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .i_clk (mco2_pre_clk),
       .ratio (mco2pre),
       .o_clk (mco2),
@@ -270,12 +280,11 @@ module rcc_sys_clk_gen (
   // hse_rtc_clk generate
   //====================================================================
 
-
   rcc_rtc_clk_div_d #(
       .RATIO_WID(6)
   ) hse_rtc_clk_div (
-      .rst_n (sys_rst_n),
-      .i_clk (hse_origin_clk),
+      .rst_n (pwr_por_hse_sync_rst_n),
+      .i_clk (hse_clk),
       .ratio (rtcpre),
       .o_clk (hse_rtc_clk),
       .div_en()
@@ -285,12 +294,14 @@ module rcc_sys_clk_gen (
   // hsi_div
   //====================================================================
 
-  rcc_8_div hsi_clk_div (
+  rcc_hsi_div hsi_clk_div (
       .i_clk  (hsi_origin_clk),
-      .rst_n  (sys_rst_n),
+      .rst_n  (pwr_por_hsi_sync_rst_n),
       .div_sel(hsidiv),
       .o_clk  (hsi_pre_clk)
   );
+
+
 
   //====================================================================
   //hsi clk gate
@@ -376,7 +387,7 @@ module rcc_sys_clk_gen (
       .RATIO_WID(6)
   ) pll1_src_clk_div (
       .i_clk (pll_src_clk),
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .ratio (divm1),
       .o_clk (pll1_src_clk),
       .div_en()
@@ -386,7 +397,7 @@ module rcc_sys_clk_gen (
       .RATIO_WID(6)
   ) pll2_src_clk_div (
       .i_clk (pll_src_clk),
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .ratio (divm2),
       .o_clk (pll2_src_clk),
       .div_en()
@@ -396,7 +407,7 @@ module rcc_sys_clk_gen (
       .RATIO_WID(6)
   ) pll3_src_clk_div (
       .i_clk (pll_src_clk),
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .ratio (divm3),
       .o_clk (pll3_src_clk),
       .div_en()
@@ -427,7 +438,7 @@ module rcc_sys_clk_gen (
 
   rcc_512_div u_sys_d1cpre_clk_divider (
       .i_clk  (sys_clk),
-      .rst_n  (sys_rst_n),
+      .rst_n  (sys_sync_rst_n),
       .div_sel(d1cpre),
       .div_en (),
       .o_clk  (sys_d1cpre_clk)
@@ -448,14 +459,14 @@ module rcc_sys_clk_gen (
       .DIV_RATIO(8)
   ) c1_systick_clk_div (
       .i_clk (rcc_c1_clk),
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .o_clk (rcc_c1_systick_clk),
       .div_en()
   );
 
   rcc_512_div sys_hpre_clk_divider (
       .i_clk  (sys_d1cpre_clk),
-      .rst_n  (sys_rst_n),
+      .rst_n  (sys_sync_rst_n),
       .div_sel(hpre),
       .div_en (c1_to_axi_div_en),
       .o_clk  (sys_hpre_clk)
@@ -484,7 +495,7 @@ module rcc_sys_clk_gen (
 
   rcc_16_div rcc_d2_bus_clk_divider (
       .i_clk  (rcc_d1_bus_clk),
-      .rst_n  (sys_rst_n),
+      .rst_n  (sys_sync_rst_n),
       .div_sel(d1ppre),
       .div_en (d1_h2b_div_en),
       .o_clk  (rcc_apb3bridge_d1_pre_clk)
@@ -514,7 +525,7 @@ module rcc_sys_clk_gen (
       .DIV_RATIO(8)
   ) c2_systick_clk_div (
       .i_clk (rcc_c2_clk),
-      .rst_n (sys_rst_n),
+      .rst_n (sys_sync_rst_n),
       .o_clk (rcc_c2_systick_clk),
       .div_en()
   );
@@ -542,7 +553,7 @@ module rcc_sys_clk_gen (
 
   rcc_pclk_timer_div rcc_apb1clk_timer_div (
       .i_clk      (rcc_d2_bus_clk),
-      .rst_n      (sys_rst_n),
+      .rst_n      (sys_sync_rst_n),
       .div_sel    (d2ppre1),
       .div_en     (d2_h2b1_div_en),
       .timpre     (timpre),
@@ -559,7 +570,7 @@ module rcc_sys_clk_gen (
 
   rcc_pclk_timer_div rcc_apb2clk_timer_div (
       .i_clk      (rcc_d2_bus_clk),
-      .rst_n      (sys_rst_n),
+      .rst_n      (sys_sync_rst_n),
       .div_sel    (d2ppre2),
       .div_en     (d2_h2b2_div_en),
       .timpre     (timpre),
@@ -596,7 +607,7 @@ module rcc_sys_clk_gen (
 
   rcc_16_div rcc_d3_bus_clk_divider (
       .i_clk  (rcc_d3_bus_clk),
-      .rst_n  (sys_rst_n),
+      .rst_n  (sys_sync_rst_n),
       .div_sel(d3ppre),
       .div_en (d3_h2b_div_en),
       .o_clk  (rcc_apb4bridge_d3_pre_clk)

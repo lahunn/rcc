@@ -1,16 +1,16 @@
 module rcc_eth_ker_clk_ctrl (
-    input wire pad_rcc_eth_mii_tx_clk,
-    input wire pad_rcc_eth_mii_rx_clk,
-    input wire eth_rcc_fes,
-    input wire eth_rcc_epis_2,
+    input pad_rcc_eth_mii_tx_clk,
+    input pad_rcc_eth_mii_rx_clk,
+    input eth_rcc_fes,
+    input eth_rcc_epis_2,
 
     // reset signal
-    input wire rst_n,
+    input rst_n,
 
     //output
-    output wire rcc_eth_mii_tx_clk,
-    output wire rcc_eth_mii_rx_clk,
-    output wire rcc_eth_rmii_ref_clk,
+    output rcc_eth_mii_tx_clk,
+    output rcc_eth_mii_rx_clk,
+    output rcc_eth_rmii_ref_clk,
 
     // control signals
     input c1_sleep,
@@ -44,6 +44,34 @@ module rcc_eth_ker_clk_ctrl (
   wire rcc_eth1rx_clk_en;
   wire rcc_eth1tx_clk_en;
   wire rcc_eth_rmii_ref_clk_en;
+  wire sync_eth_rcc_fes;
+  wire eth_rx_clk_sync_rst_n;
+
+
+
+  //=========================================================================
+  //  synchrounous signals
+  //=========================================================================
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_eth_rst_sync (
+      .src_rst_n(rst_n),
+      .clk      (pad_rcc_eth_mii_rx_clk),
+      .gen_rst_n(eth_rx_clk_sync_rst_n)
+  );
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1)
+  ) u_fes_sync (
+      .src_signal(eth_rcc_fes),
+      .rst_n     (eth_rx_clk_sync_rst_n),
+      .clk       (pad_rcc_eth_mii_rx_clk),
+      .gen_signal(sync_eth_rcc_fes)
+  );
+  //=========================================================================
+  //  eth clock control
+  //=========================================================================
 
   glitch_free_clk_switch #(
       .CLK_NUM(2)
@@ -68,8 +96,8 @@ module rcc_eth_ker_clk_ctrl (
   BB_clk_div_s #(
       .DIV_RATIO(2)
   ) eth_mii_rx_clk_divider_2 (
-      .rst_n(rst_n),
-      .i_clk(pad_rcc_eth_mii_rx_clk),
+      .rst_n (eth_rx_clk_sync_rst_n),
+      .i_clk (pad_rcc_eth_mii_rx_clk),
       .o_clk (pad_rcc_eth_mii_rx_clk_div_2),
       .div_en()
   );
@@ -77,13 +105,14 @@ module rcc_eth_ker_clk_ctrl (
   BB_clk_div_s #(
       .DIV_RATIO(20)
   ) eth_mii_rx_clk_divider_20 (
-      .rst_n(rst_n),
-      .i_clk(pad_rcc_eth_mii_rx_clk),
+      .rst_n (eth_rx_clk_sync_rst_n),
+      .i_clk (pad_rcc_eth_mii_rx_clk),
       .o_clk (pad_rcc_eth_mii_rx_clk_div_20),
       .div_en()
   );
-  assign pad_rcc_eth_mii_rx_clk_divided = eth_rcc_fes ? pad_rcc_eth_mii_rx_clk_div_2 : pad_rcc_eth_mii_rx_clk_div_20;
 
+  assign pad_rcc_eth_mii_rx_clk_divided = sync_eth_rcc_fes ? pad_rcc_eth_mii_rx_clk_div_2 
+                                                           : pad_rcc_eth_mii_rx_clk_div_20;
 
   // gates
 

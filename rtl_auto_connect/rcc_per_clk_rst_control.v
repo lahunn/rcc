@@ -4,7 +4,7 @@ module rcc_per_clk_rst_control #(
 ) (
     // system reset
     input        sys_sync_rst_n,
-    input        arcg_on,
+    input        rcc_arcg_on,
     input        testmode,
     // peripheral allocate signals
     output       c2_per_alloc_d1,
@@ -1672,14 +1672,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (flash_bus_clks),
-      .per_sync_rst_n (rcc_flash_sync_rst_n)
+      .per_rst_n      (rcc_flash_sync_rst_n)
   );
   // qspi clock and reset control
   assign rcc_qspi_aclk     = qspi_bus_clks[0];
@@ -1717,7 +1717,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -1730,7 +1730,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (qspirst),
       .per_bus_clks   (qspi_bus_clks),
-      .per_sync_rst_n (rcc_qspi_sync_rst_n)
+      .per_rst_n      (rcc_qspi_sync_rst_n)
   );
   // axisram clock and reset control
   assign rcc_axisram_aclk     = axisram_bus_clks[0];
@@ -1756,14 +1756,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (axisram_bus_clks),
-      .per_sync_rst_n (rcc_axisram_sync_rst_n)
+      .per_rst_n      (rcc_axisram_sync_rst_n)
   );
   // fmc clock and reset control
   assign rcc_fmc_aclk     = fmc_bus_clks[0];
@@ -1801,7 +1801,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -1814,7 +1814,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (fmcrst),
       .per_bus_clks   (fmc_bus_clks),
-      .per_sync_rst_n (rcc_fmc_sync_rst_n)
+      .per_rst_n      (rcc_fmc_sync_rst_n)
   );
   // dma2d clock and reset control
   assign rcc_dma2d_aclk     = dma2d_bus_clks[0];
@@ -1841,14 +1841,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (dma2drst),
       .per_bus_clks   (dma2d_bus_clks),
-      .per_sync_rst_n (rcc_dma2d_sync_rst_n)
+      .per_rst_n      (rcc_dma2d_sync_rst_n)
   );
   // mdma clock and reset control
   assign rcc_mdma_aclk     = mdma_bus_clks[0];
@@ -1875,14 +1875,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (mdmarst),
       .per_bus_clks   (mdma_bus_clks),
-      .per_sync_rst_n (rcc_mdma_sync_rst_n)
+      .per_rst_n      (rcc_mdma_sync_rst_n)
   );
   // ltdc clock and reset control
   assign rcc_ltdc_aclk     = ltdc_bus_clks[0];
@@ -1920,7 +1920,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -1933,7 +1933,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (ltdcrst),
       .per_bus_clks   (ltdc_bus_clks),
-      .per_sync_rst_n (rcc_ltdc_sync_rst_n)
+      .per_rst_n      (rcc_ltdc_sync_rst_n)
   );
   // ramecc1 clock and reset control
   assign rcc_ramecc1_hclk     = ramecc1_bus_clks[0];
@@ -1959,14 +1959,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (ramecc1_bus_clks),
-      .per_sync_rst_n (rcc_ramecc1_sync_rst_n)
+      .per_rst_n      (rcc_ramecc1_sync_rst_n)
   );
   // gpv clock and reset control
   assign rcc_gpv_hclk     = gpv_bus_clks[0];
@@ -1992,14 +1992,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (gpv_bus_clks),
-      .per_sync_rst_n (rcc_gpv_sync_rst_n)
+      .per_rst_n      (rcc_gpv_sync_rst_n)
   );
   // itcm clock and reset control
   assign rcc_itcm_hclk     = itcm_bus_clks[0];
@@ -2025,14 +2025,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (itcm_bus_clks),
-      .per_sync_rst_n (rcc_itcm_sync_rst_n)
+      .per_rst_n      (rcc_itcm_sync_rst_n)
   );
   // dtcm2 clock and reset control
   assign rcc_dtcm2_hclk     = dtcm2_bus_clks[0];
@@ -2058,14 +2058,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (dtcm2_bus_clks),
-      .per_sync_rst_n (rcc_dtcm2_sync_rst_n)
+      .per_rst_n      (rcc_dtcm2_sync_rst_n)
   );
   // dtcm1 clock and reset control
   assign rcc_dtcm1_hclk     = dtcm1_bus_clks[0];
@@ -2091,14 +2091,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (dtcm1_bus_clks),
-      .per_sync_rst_n (rcc_dtcm1_sync_rst_n)
+      .per_rst_n      (rcc_dtcm1_sync_rst_n)
   );
   // jpgdec clock and reset control
   assign rcc_jpgdec_hclk     = jpgdec_bus_clks[0];
@@ -2124,14 +2124,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (jpgdecrst),
       .per_bus_clks   (jpgdec_bus_clks),
-      .per_sync_rst_n (rcc_jpgdec_sync_rst_n)
+      .per_rst_n      (rcc_jpgdec_sync_rst_n)
   );
   // sdmmc1 clock and reset control
   assign rcc_sdmmc1_hclk     = sdmmc1_bus_clks[0];
@@ -2168,7 +2168,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2181,7 +2181,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (sdmmc1rst),
       .per_bus_clks   (sdmmc1_bus_clks),
-      .per_sync_rst_n (rcc_sdmmc1_sync_rst_n)
+      .per_rst_n      (rcc_sdmmc1_sync_rst_n)
   );
   // wwdg1 clock and reset control
   assign rcc_wwdg1_pclk     = wwdg1_bus_clks[0];
@@ -2207,14 +2207,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (wwdg1_bus_clks),
-      .per_sync_rst_n (rcc_wwdg1_sync_rst_n)
+      .per_rst_n      (rcc_wwdg1_sync_rst_n)
   );
   // usb2ulpi clock and reset control
   assign rcc_usb2ulpi_hclk     = usb2ulpi_bus_clks[0];
@@ -2240,14 +2240,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (usb2ulpi_bus_clks),
-      .per_sync_rst_n (rcc_usb2ulpi_sync_rst_n)
+      .per_rst_n      (rcc_usb2ulpi_sync_rst_n)
   );
   // usb2otg clock and reset control
   assign rcc_usb2otg_hclk     = usb2otg_bus_clks[0];
@@ -2284,7 +2284,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2297,7 +2297,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (usb2otgrst),
       .per_bus_clks   (usb2otg_bus_clks),
-      .per_sync_rst_n (rcc_usb2otg_sync_rst_n)
+      .per_rst_n      (rcc_usb2otg_sync_rst_n)
   );
   // usb1ulpi clock and reset control
   assign rcc_usb1ulpi_hclk     = usb1ulpi_bus_clks[0];
@@ -2334,7 +2334,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2347,7 +2347,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (usb1ulpi_bus_clks),
-      .per_sync_rst_n (rcc_usb1ulpi_sync_rst_n)
+      .per_rst_n      (rcc_usb1ulpi_sync_rst_n)
   );
   // usb1otg clock and reset control
   assign rcc_usb1otg_hclk     = usb1otg_bus_clks[0];
@@ -2384,7 +2384,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2397,7 +2397,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (usb1otgrst),
       .per_bus_clks   (usb1otg_bus_clks),
-      .per_sync_rst_n (rcc_usb1otg_sync_rst_n)
+      .per_rst_n      (rcc_usb1otg_sync_rst_n)
   );
   // eth1rx clock and reset control
   assign rcc_eth1rx_hclk     = eth1rx_bus_clks[0];
@@ -2423,14 +2423,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (eth1rx_bus_clks),
-      .per_sync_rst_n (rcc_eth1rx_sync_rst_n)
+      .per_rst_n      (rcc_eth1rx_sync_rst_n)
   );
   // eth1tx clock and reset control
   assign rcc_eth1tx_hclk     = eth1tx_bus_clks[0];
@@ -2456,14 +2456,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (eth1tx_bus_clks),
-      .per_sync_rst_n (rcc_eth1tx_sync_rst_n)
+      .per_rst_n      (rcc_eth1tx_sync_rst_n)
   );
   // eth1mac clock and reset control
   assign rcc_eth1mac_hclk     = eth1mac_bus_clks[0];
@@ -2489,14 +2489,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (eth1macrst),
       .per_bus_clks   (eth1mac_bus_clks),
-      .per_sync_rst_n (rcc_eth1mac_sync_rst_n)
+      .per_rst_n      (rcc_eth1mac_sync_rst_n)
   );
   // adc12 clock and reset control
   assign rcc_adc12_hclk     = adc12_bus_clks[0];
@@ -2533,7 +2533,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2546,7 +2546,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (adc12rst),
       .per_bus_clks   (adc12_bus_clks),
-      .per_sync_rst_n (rcc_adc12_sync_rst_n)
+      .per_rst_n      (rcc_adc12_sync_rst_n)
   );
   // dma2 clock and reset control
   assign rcc_dma2_hclk     = dma2_bus_clks[0];
@@ -2572,14 +2572,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (dma2rst),
       .per_bus_clks   (dma2_bus_clks),
-      .per_sync_rst_n (rcc_dma2_sync_rst_n)
+      .per_rst_n      (rcc_dma2_sync_rst_n)
   );
   // dma1 clock and reset control
   assign rcc_dma1_hclk     = dma1_bus_clks[0];
@@ -2605,14 +2605,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (dma1rst),
       .per_bus_clks   (dma1_bus_clks),
-      .per_sync_rst_n (rcc_dma1_sync_rst_n)
+      .per_rst_n      (rcc_dma1_sync_rst_n)
   );
   // sram3 clock and reset control
   assign rcc_sram3_hclk     = sram3_bus_clks[0];
@@ -2638,14 +2638,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (sram3_bus_clks),
-      .per_sync_rst_n (rcc_sram3_sync_rst_n)
+      .per_rst_n      (rcc_sram3_sync_rst_n)
   );
   // sram2 clock and reset control
   assign rcc_sram2_hclk     = sram2_bus_clks[0];
@@ -2671,14 +2671,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (sram2_bus_clks),
-      .per_sync_rst_n (rcc_sram2_sync_rst_n)
+      .per_rst_n      (rcc_sram2_sync_rst_n)
   );
   // sram1 clock and reset control
   assign rcc_sram1_hclk     = sram1_bus_clks[0];
@@ -2704,14 +2704,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (sram1_bus_clks),
-      .per_sync_rst_n (rcc_sram1_sync_rst_n)
+      .per_rst_n      (rcc_sram1_sync_rst_n)
   );
   // sdmmc2 clock and reset control
   assign rcc_sdmmc2_hclk     = sdmmc2_bus_clks[0];
@@ -2748,7 +2748,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2761,7 +2761,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (sdmmc2rst),
       .per_bus_clks   (sdmmc2_bus_clks),
-      .per_sync_rst_n (rcc_sdmmc2_sync_rst_n)
+      .per_rst_n      (rcc_sdmmc2_sync_rst_n)
   );
   // rng clock and reset control
   assign rcc_rng_hclk     = rng_bus_clks[0];
@@ -2798,7 +2798,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2811,7 +2811,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (rngrst),
       .per_bus_clks   (rng_bus_clks),
-      .per_sync_rst_n (rcc_rng_sync_rst_n)
+      .per_rst_n      (rcc_rng_sync_rst_n)
   );
   // hash clock and reset control
   assign rcc_hash_hclk     = hash_bus_clks[0];
@@ -2837,14 +2837,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (hashrst),
       .per_bus_clks   (hash_bus_clks),
-      .per_sync_rst_n (rcc_hash_sync_rst_n)
+      .per_rst_n      (rcc_hash_sync_rst_n)
   );
   // crypt clock and reset control
   assign rcc_crypt_hclk     = crypt_bus_clks[0];
@@ -2870,14 +2870,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (cryptrst),
       .per_bus_clks   (crypt_bus_clks),
-      .per_sync_rst_n (rcc_crypt_sync_rst_n)
+      .per_rst_n      (rcc_crypt_sync_rst_n)
   );
   // dcmi clock and reset control
   assign rcc_dcmi_hclk     = dcmi_bus_clks[0];
@@ -2903,14 +2903,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (dcmirst),
       .per_bus_clks   (dcmi_bus_clks),
-      .per_sync_rst_n (rcc_dcmi_sync_rst_n)
+      .per_rst_n      (rcc_dcmi_sync_rst_n)
   );
   // ramecc2 clock and reset control
   assign rcc_ramecc2_hclk     = ramecc2_bus_clks[0];
@@ -2936,14 +2936,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (ramecc2_bus_clks),
-      .per_sync_rst_n (rcc_ramecc2_sync_rst_n)
+      .per_rst_n      (rcc_ramecc2_sync_rst_n)
   );
   // uart8 clock and reset control
   assign rcc_uart8_pclk     = uart8_bus_clks[0];
@@ -2980,7 +2980,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -2993,7 +2993,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(uart8_hsi_ker_clk_req),
       .sft_rst_n      (uart8rst),
       .per_bus_clks   (uart8_bus_clks),
-      .per_sync_rst_n (rcc_uart8_sync_rst_n)
+      .per_rst_n      (rcc_uart8_sync_rst_n)
   );
   // uart7 clock and reset control
   assign rcc_uart7_pclk     = uart7_bus_clks[0];
@@ -3030,7 +3030,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3043,7 +3043,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(uart7_hsi_ker_clk_req),
       .sft_rst_n      (uart7rst),
       .per_bus_clks   (uart7_bus_clks),
-      .per_sync_rst_n (rcc_uart7_sync_rst_n)
+      .per_rst_n      (rcc_uart7_sync_rst_n)
   );
   // dac12 clock and reset control
   assign rcc_dac12_pclk     = dac12_bus_clks[0];
@@ -3069,14 +3069,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (dac12rst),
       .per_bus_clks   (dac12_bus_clks),
-      .per_sync_rst_n (rcc_dac12_sync_rst_n)
+      .per_rst_n      (rcc_dac12_sync_rst_n)
   );
   // hdmicec clock and reset control
   assign rcc_hdmicec_pclk     = hdmicec_bus_clks[0];
@@ -3113,7 +3113,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3126,7 +3126,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (hdmicecrst),
       .per_bus_clks   (hdmicec_bus_clks),
-      .per_sync_rst_n (rcc_hdmicec_sync_rst_n)
+      .per_rst_n      (rcc_hdmicec_sync_rst_n)
   );
   // i2c3 clock and reset control
   assign rcc_i2c3_pclk     = i2c3_bus_clks[0];
@@ -3163,7 +3163,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3176,7 +3176,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(i2c3_hsi_ker_clk_req),
       .sft_rst_n      (i2c3rst),
       .per_bus_clks   (i2c3_bus_clks),
-      .per_sync_rst_n (rcc_i2c3_sync_rst_n)
+      .per_rst_n      (rcc_i2c3_sync_rst_n)
   );
   // i2c2 clock and reset control
   assign rcc_i2c2_pclk     = i2c2_bus_clks[0];
@@ -3213,7 +3213,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3226,7 +3226,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(i2c2_hsi_ker_clk_req),
       .sft_rst_n      (i2c2rst),
       .per_bus_clks   (i2c2_bus_clks),
-      .per_sync_rst_n (rcc_i2c2_sync_rst_n)
+      .per_rst_n      (rcc_i2c2_sync_rst_n)
   );
   // i2c1 clock and reset control
   assign rcc_i2c1_pclk     = i2c1_bus_clks[0];
@@ -3263,7 +3263,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3276,7 +3276,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(i2c1_hsi_ker_clk_req),
       .sft_rst_n      (i2c1rst),
       .per_bus_clks   (i2c1_bus_clks),
-      .per_sync_rst_n (rcc_i2c1_sync_rst_n)
+      .per_rst_n      (rcc_i2c1_sync_rst_n)
   );
   // uart5 clock and reset control
   assign rcc_uart5_pclk     = uart5_bus_clks[0];
@@ -3313,7 +3313,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3326,7 +3326,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(uart5_hsi_ker_clk_req),
       .sft_rst_n      (uart5rst),
       .per_bus_clks   (uart5_bus_clks),
-      .per_sync_rst_n (rcc_uart5_sync_rst_n)
+      .per_rst_n      (rcc_uart5_sync_rst_n)
   );
   // uart4 clock and reset control
   assign rcc_uart4_pclk     = uart4_bus_clks[0];
@@ -3363,7 +3363,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3376,7 +3376,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(uart4_hsi_ker_clk_req),
       .sft_rst_n      (uart4rst),
       .per_bus_clks   (uart4_bus_clks),
-      .per_sync_rst_n (rcc_uart4_sync_rst_n)
+      .per_rst_n      (rcc_uart4_sync_rst_n)
   );
   // usart3 clock and reset control
   assign rcc_usart3_pclk     = usart3_bus_clks[0];
@@ -3413,7 +3413,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3426,7 +3426,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(usart3_hsi_ker_clk_req),
       .sft_rst_n      (usart3rst),
       .per_bus_clks   (usart3_bus_clks),
-      .per_sync_rst_n (rcc_usart3_sync_rst_n)
+      .per_rst_n      (rcc_usart3_sync_rst_n)
   );
   // usart2 clock and reset control
   assign rcc_usart2_pclk     = usart2_bus_clks[0];
@@ -3463,7 +3463,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3476,7 +3476,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(usart2_hsi_ker_clk_req),
       .sft_rst_n      (usart2rst),
       .per_bus_clks   (usart2_bus_clks),
-      .per_sync_rst_n (rcc_usart2_sync_rst_n)
+      .per_rst_n      (rcc_usart2_sync_rst_n)
   );
   // spdifrx clock and reset control
   assign rcc_spdifrx_pclk     = spdifrx_bus_clks[0];
@@ -3513,7 +3513,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3526,7 +3526,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spdifrxrst),
       .per_bus_clks   (spdifrx_bus_clks),
-      .per_sync_rst_n (rcc_spdifrx_sync_rst_n)
+      .per_rst_n      (rcc_spdifrx_sync_rst_n)
   );
   // spi3 clock and reset control
   assign rcc_spi3_pclk     = spi3_bus_clks[0];
@@ -3563,7 +3563,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3576,7 +3576,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spi3rst),
       .per_bus_clks   (spi3_bus_clks),
-      .per_sync_rst_n (rcc_spi3_sync_rst_n)
+      .per_rst_n      (rcc_spi3_sync_rst_n)
   );
   // spi2 clock and reset control
   assign rcc_spi2_pclk     = spi2_bus_clks[0];
@@ -3613,7 +3613,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3626,7 +3626,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spi2rst),
       .per_bus_clks   (spi2_bus_clks),
-      .per_sync_rst_n (rcc_spi2_sync_rst_n)
+      .per_rst_n      (rcc_spi2_sync_rst_n)
   );
   // wwdg2 clock and reset control
   assign rcc_wwdg2_pclk     = wwdg2_bus_clks[0];
@@ -3652,14 +3652,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (wwdg2_bus_clks),
-      .per_sync_rst_n (rcc_wwdg2_sync_rst_n)
+      .per_rst_n      (rcc_wwdg2_sync_rst_n)
   );
   // lptim1 clock and reset control
   assign rcc_lptim1_pclk     = lptim1_bus_clks[0];
@@ -3696,7 +3696,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3709,7 +3709,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (lptim1rst),
       .per_bus_clks   (lptim1_bus_clks),
-      .per_sync_rst_n (rcc_lptim1_sync_rst_n)
+      .per_rst_n      (rcc_lptim1_sync_rst_n)
   );
   // tim14 clock and reset control
   assign rcc_tim14_pclk     = tim14_bus_clks[0];
@@ -3746,7 +3746,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3759,7 +3759,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim14rst),
       .per_bus_clks   (tim14_bus_clks),
-      .per_sync_rst_n (rcc_tim14_sync_rst_n)
+      .per_rst_n      (rcc_tim14_sync_rst_n)
   );
   // tim13 clock and reset control
   assign rcc_tim13_pclk     = tim13_bus_clks[0];
@@ -3796,7 +3796,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3809,7 +3809,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim13rst),
       .per_bus_clks   (tim13_bus_clks),
-      .per_sync_rst_n (rcc_tim13_sync_rst_n)
+      .per_rst_n      (rcc_tim13_sync_rst_n)
   );
   // tim12 clock and reset control
   assign rcc_tim12_pclk     = tim12_bus_clks[0];
@@ -3846,7 +3846,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3859,7 +3859,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim12rst),
       .per_bus_clks   (tim12_bus_clks),
-      .per_sync_rst_n (rcc_tim12_sync_rst_n)
+      .per_rst_n      (rcc_tim12_sync_rst_n)
   );
   // tim7 clock and reset control
   assign rcc_tim7_pclk     = tim7_bus_clks[0];
@@ -3896,7 +3896,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3909,7 +3909,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim7rst),
       .per_bus_clks   (tim7_bus_clks),
-      .per_sync_rst_n (rcc_tim7_sync_rst_n)
+      .per_rst_n      (rcc_tim7_sync_rst_n)
   );
   // tim6 clock and reset control
   assign rcc_tim6_pclk     = tim6_bus_clks[0];
@@ -3946,7 +3946,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -3959,7 +3959,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim6rst),
       .per_bus_clks   (tim6_bus_clks),
-      .per_sync_rst_n (rcc_tim6_sync_rst_n)
+      .per_rst_n      (rcc_tim6_sync_rst_n)
   );
   // tim5 clock and reset control
   assign rcc_tim5_pclk     = tim5_bus_clks[0];
@@ -3996,7 +3996,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4009,7 +4009,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim5rst),
       .per_bus_clks   (tim5_bus_clks),
-      .per_sync_rst_n (rcc_tim5_sync_rst_n)
+      .per_rst_n      (rcc_tim5_sync_rst_n)
   );
   // tim4 clock and reset control
   assign rcc_tim4_pclk     = tim4_bus_clks[0];
@@ -4046,7 +4046,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4059,7 +4059,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim4rst),
       .per_bus_clks   (tim4_bus_clks),
-      .per_sync_rst_n (rcc_tim4_sync_rst_n)
+      .per_rst_n      (rcc_tim4_sync_rst_n)
   );
   // tim3 clock and reset control
   assign rcc_tim3_pclk     = tim3_bus_clks[0];
@@ -4096,7 +4096,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4109,7 +4109,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim3rst),
       .per_bus_clks   (tim3_bus_clks),
-      .per_sync_rst_n (rcc_tim3_sync_rst_n)
+      .per_rst_n      (rcc_tim3_sync_rst_n)
   );
   // tim2 clock and reset control
   assign rcc_tim2_pclk     = tim2_bus_clks[0];
@@ -4146,7 +4146,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4159,7 +4159,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim2rst),
       .per_bus_clks   (tim2_bus_clks),
-      .per_sync_rst_n (rcc_tim2_sync_rst_n)
+      .per_rst_n      (rcc_tim2_sync_rst_n)
   );
   // fdcan clock and reset control
   assign rcc_fdcan_pclk     = fdcan_bus_clks[0];
@@ -4196,7 +4196,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4209,7 +4209,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (fdcanrst),
       .per_bus_clks   (fdcan_bus_clks),
-      .per_sync_rst_n (rcc_fdcan_sync_rst_n)
+      .per_rst_n      (rcc_fdcan_sync_rst_n)
   );
   // mdios clock and reset control
   assign rcc_mdios_pclk     = mdios_bus_clks[0];
@@ -4235,14 +4235,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (mdiosrst),
       .per_bus_clks   (mdios_bus_clks),
-      .per_sync_rst_n (rcc_mdios_sync_rst_n)
+      .per_rst_n      (rcc_mdios_sync_rst_n)
   );
   // opamp clock and reset control
   assign rcc_opamp_pclk     = opamp_bus_clks[0];
@@ -4268,14 +4268,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (opamprst),
       .per_bus_clks   (opamp_bus_clks),
-      .per_sync_rst_n (rcc_opamp_sync_rst_n)
+      .per_rst_n      (rcc_opamp_sync_rst_n)
   );
   // swpmi clock and reset control
   assign rcc_swpmi_pclk     = swpmi_bus_clks[0];
@@ -4312,7 +4312,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4325,7 +4325,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (swpmirst),
       .per_bus_clks   (swpmi_bus_clks),
-      .per_sync_rst_n (rcc_swpmi_sync_rst_n)
+      .per_rst_n      (rcc_swpmi_sync_rst_n)
   );
   // crs clock and reset control
   assign rcc_crs_pclk     = crs_bus_clks[0];
@@ -4351,14 +4351,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (crsrst),
       .per_bus_clks   (crs_bus_clks),
-      .per_sync_rst_n (rcc_crs_sync_rst_n)
+      .per_rst_n      (rcc_crs_sync_rst_n)
   );
   // hrtim clock and reset control
   assign rcc_hrtim_pclk     = hrtim_bus_clks[0];
@@ -4395,7 +4395,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4408,7 +4408,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (hrtimrst),
       .per_bus_clks   (hrtim_bus_clks),
-      .per_sync_rst_n (rcc_hrtim_sync_rst_n)
+      .per_rst_n      (rcc_hrtim_sync_rst_n)
   );
   // dfsdm1 clock and reset control
   assign rcc_dfsdm1_pclk     = dfsdm1_bus_clks[0];
@@ -4445,7 +4445,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4458,7 +4458,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (dfsdm1rst),
       .per_bus_clks   (dfsdm1_bus_clks),
-      .per_sync_rst_n (rcc_dfsdm1_sync_rst_n)
+      .per_rst_n      (rcc_dfsdm1_sync_rst_n)
   );
   // sai3 clock and reset control
   assign rcc_sai3_pclk     = sai3_bus_clks[0];
@@ -4495,7 +4495,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4508,7 +4508,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (sai3rst),
       .per_bus_clks   (sai3_bus_clks),
-      .per_sync_rst_n (rcc_sai3_sync_rst_n)
+      .per_rst_n      (rcc_sai3_sync_rst_n)
   );
   // sai2 clock and reset control
   assign rcc_sai2_pclk     = sai2_bus_clks[0];
@@ -4545,7 +4545,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4558,7 +4558,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (sai2rst),
       .per_bus_clks   (sai2_bus_clks),
-      .per_sync_rst_n (rcc_sai2_sync_rst_n)
+      .per_rst_n      (rcc_sai2_sync_rst_n)
   );
   // sai1 clock and reset control
   assign rcc_sai1_pclk     = sai1_bus_clks[0];
@@ -4595,7 +4595,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4608,7 +4608,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (sai1rst),
       .per_bus_clks   (sai1_bus_clks),
-      .per_sync_rst_n (rcc_sai1_sync_rst_n)
+      .per_rst_n      (rcc_sai1_sync_rst_n)
   );
   // spi5 clock and reset control
   assign rcc_spi5_pclk     = spi5_bus_clks[0];
@@ -4645,7 +4645,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4658,7 +4658,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spi5rst),
       .per_bus_clks   (spi5_bus_clks),
-      .per_sync_rst_n (rcc_spi5_sync_rst_n)
+      .per_rst_n      (rcc_spi5_sync_rst_n)
   );
   // tim17 clock and reset control
   assign rcc_tim17_pclk     = tim17_bus_clks[0];
@@ -4695,7 +4695,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4708,7 +4708,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim17rst),
       .per_bus_clks   (tim17_bus_clks),
-      .per_sync_rst_n (rcc_tim17_sync_rst_n)
+      .per_rst_n      (rcc_tim17_sync_rst_n)
   );
   // tim16 clock and reset control
   assign rcc_tim16_pclk     = tim16_bus_clks[0];
@@ -4745,7 +4745,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4758,7 +4758,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim16rst),
       .per_bus_clks   (tim16_bus_clks),
-      .per_sync_rst_n (rcc_tim16_sync_rst_n)
+      .per_rst_n      (rcc_tim16_sync_rst_n)
   );
   // tim15 clock and reset control
   assign rcc_tim15_pclk     = tim15_bus_clks[0];
@@ -4795,7 +4795,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4808,7 +4808,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim15rst),
       .per_bus_clks   (tim15_bus_clks),
-      .per_sync_rst_n (rcc_tim15_sync_rst_n)
+      .per_rst_n      (rcc_tim15_sync_rst_n)
   );
   // spi4 clock and reset control
   assign rcc_spi4_pclk     = spi4_bus_clks[0];
@@ -4845,7 +4845,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4858,7 +4858,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spi4rst),
       .per_bus_clks   (spi4_bus_clks),
-      .per_sync_rst_n (rcc_spi4_sync_rst_n)
+      .per_rst_n      (rcc_spi4_sync_rst_n)
   );
   // spi1 clock and reset control
   assign rcc_spi1_pclk     = spi1_bus_clks[0];
@@ -4895,7 +4895,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4908,7 +4908,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spi1rst),
       .per_bus_clks   (spi1_bus_clks),
-      .per_sync_rst_n (rcc_spi1_sync_rst_n)
+      .per_rst_n      (rcc_spi1_sync_rst_n)
   );
   // usart6 clock and reset control
   assign rcc_usart6_pclk     = usart6_bus_clks[0];
@@ -4945,7 +4945,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -4958,7 +4958,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(usart6_hsi_ker_clk_req),
       .sft_rst_n      (usart6rst),
       .per_bus_clks   (usart6_bus_clks),
-      .per_sync_rst_n (rcc_usart6_sync_rst_n)
+      .per_rst_n      (rcc_usart6_sync_rst_n)
   );
   // usart1 clock and reset control
   assign rcc_usart1_pclk     = usart1_bus_clks[0];
@@ -4995,7 +4995,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -5008,7 +5008,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(usart1_hsi_ker_clk_req),
       .sft_rst_n      (usart1rst),
       .per_bus_clks   (usart1_bus_clks),
-      .per_sync_rst_n (rcc_usart1_sync_rst_n)
+      .per_rst_n      (rcc_usart1_sync_rst_n)
   );
   // tim8 clock and reset control
   assign rcc_tim8_pclk     = tim8_bus_clks[0];
@@ -5045,7 +5045,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -5058,7 +5058,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim8rst),
       .per_bus_clks   (tim8_bus_clks),
-      .per_sync_rst_n (rcc_tim8_sync_rst_n)
+      .per_rst_n      (rcc_tim8_sync_rst_n)
   );
   // tim1 clock and reset control
   assign rcc_tim1_pclk     = tim1_bus_clks[0];
@@ -5095,7 +5095,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -5108,7 +5108,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (tim1rst),
       .per_bus_clks   (tim1_bus_clks),
-      .per_sync_rst_n (rcc_tim1_sync_rst_n)
+      .per_rst_n      (rcc_tim1_sync_rst_n)
   );
   // sram4 clock and reset control
   assign rcc_sram4_hclk     = sram4_bus_clks[0];
@@ -5134,14 +5134,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (sram4_bus_clks),
-      .per_sync_rst_n (rcc_sram4_sync_rst_n)
+      .per_rst_n      (rcc_sram4_sync_rst_n)
   );
   // bkpram clock and reset control
   assign rcc_bkpram_hclk     = bkpram_bus_clks[0];
@@ -5167,14 +5167,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (bkpram_bus_clks),
-      .per_sync_rst_n (rcc_bkpram_sync_rst_n)
+      .per_rst_n      (rcc_bkpram_sync_rst_n)
   );
   // ramecc3 clock and reset control
   assign rcc_ramecc3_hclk     = ramecc3_bus_clks[0];
@@ -5200,14 +5200,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (ramecc3_bus_clks),
-      .per_sync_rst_n (rcc_ramecc3_sync_rst_n)
+      .per_rst_n      (rcc_ramecc3_sync_rst_n)
   );
   // hsem clock and reset control
   assign rcc_hsem_hclk     = hsem_bus_clks[0];
@@ -5233,14 +5233,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (hsemrst),
       .per_bus_clks   (hsem_bus_clks),
-      .per_sync_rst_n (rcc_hsem_sync_rst_n)
+      .per_rst_n      (rcc_hsem_sync_rst_n)
   );
   // adc3 clock and reset control
   assign rcc_adc3_hclk     = adc3_bus_clks[0];
@@ -5277,7 +5277,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -5290,7 +5290,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (adc3rst),
       .per_bus_clks   (adc3_bus_clks),
-      .per_sync_rst_n (rcc_adc3_sync_rst_n)
+      .per_rst_n      (rcc_adc3_sync_rst_n)
   );
   // bdma clock and reset control
   assign rcc_bdma_hclk     = bdma_bus_clks[0];
@@ -5316,14 +5316,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (bdmarst),
       .per_bus_clks   (bdma_bus_clks),
-      .per_sync_rst_n (rcc_bdma_sync_rst_n)
+      .per_rst_n      (rcc_bdma_sync_rst_n)
   );
   // crc clock and reset control
   assign rcc_crc_hclk     = crc_bus_clks[0];
@@ -5349,14 +5349,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (crcrst),
       .per_bus_clks   (crc_bus_clks),
-      .per_sync_rst_n (rcc_crc_sync_rst_n)
+      .per_rst_n      (rcc_crc_sync_rst_n)
   );
   // gpiok clock and reset control
   assign rcc_gpiok_hclk     = gpiok_bus_clks[0];
@@ -5382,14 +5382,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiokrst),
       .per_bus_clks   (gpiok_bus_clks),
-      .per_sync_rst_n (rcc_gpiok_sync_rst_n)
+      .per_rst_n      (rcc_gpiok_sync_rst_n)
   );
   // gpioj clock and reset control
   assign rcc_gpioj_hclk     = gpioj_bus_clks[0];
@@ -5415,14 +5415,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiojrst),
       .per_bus_clks   (gpioj_bus_clks),
-      .per_sync_rst_n (rcc_gpioj_sync_rst_n)
+      .per_rst_n      (rcc_gpioj_sync_rst_n)
   );
   // gpioi clock and reset control
   assign rcc_gpioi_hclk     = gpioi_bus_clks[0];
@@ -5448,14 +5448,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpioirst),
       .per_bus_clks   (gpioi_bus_clks),
-      .per_sync_rst_n (rcc_gpioi_sync_rst_n)
+      .per_rst_n      (rcc_gpioi_sync_rst_n)
   );
   // gpioh clock and reset control
   assign rcc_gpioh_hclk     = gpioh_bus_clks[0];
@@ -5481,14 +5481,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiohrst),
       .per_bus_clks   (gpioh_bus_clks),
-      .per_sync_rst_n (rcc_gpioh_sync_rst_n)
+      .per_rst_n      (rcc_gpioh_sync_rst_n)
   );
   // gpiog clock and reset control
   assign rcc_gpiog_hclk     = gpiog_bus_clks[0];
@@ -5514,14 +5514,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiogrst),
       .per_bus_clks   (gpiog_bus_clks),
-      .per_sync_rst_n (rcc_gpiog_sync_rst_n)
+      .per_rst_n      (rcc_gpiog_sync_rst_n)
   );
   // gpiof clock and reset control
   assign rcc_gpiof_hclk     = gpiof_bus_clks[0];
@@ -5547,14 +5547,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiofrst),
       .per_bus_clks   (gpiof_bus_clks),
-      .per_sync_rst_n (rcc_gpiof_sync_rst_n)
+      .per_rst_n      (rcc_gpiof_sync_rst_n)
   );
   // gpioe clock and reset control
   assign rcc_gpioe_hclk     = gpioe_bus_clks[0];
@@ -5580,14 +5580,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpioerst),
       .per_bus_clks   (gpioe_bus_clks),
-      .per_sync_rst_n (rcc_gpioe_sync_rst_n)
+      .per_rst_n      (rcc_gpioe_sync_rst_n)
   );
   // gpiod clock and reset control
   assign rcc_gpiod_hclk     = gpiod_bus_clks[0];
@@ -5613,14 +5613,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiodrst),
       .per_bus_clks   (gpiod_bus_clks),
-      .per_sync_rst_n (rcc_gpiod_sync_rst_n)
+      .per_rst_n      (rcc_gpiod_sync_rst_n)
   );
   // gpioc clock and reset control
   assign rcc_gpioc_hclk     = gpioc_bus_clks[0];
@@ -5646,14 +5646,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiocrst),
       .per_bus_clks   (gpioc_bus_clks),
-      .per_sync_rst_n (rcc_gpioc_sync_rst_n)
+      .per_rst_n      (rcc_gpioc_sync_rst_n)
   );
   // gpiob clock and reset control
   assign rcc_gpiob_hclk     = gpiob_bus_clks[0];
@@ -5679,14 +5679,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpiobrst),
       .per_bus_clks   (gpiob_bus_clks),
-      .per_sync_rst_n (rcc_gpiob_sync_rst_n)
+      .per_rst_n      (rcc_gpiob_sync_rst_n)
   );
   // gpioa clock and reset control
   assign rcc_gpioa_hclk     = gpioa_bus_clks[0];
@@ -5712,14 +5712,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (gpioarst),
       .per_bus_clks   (gpioa_bus_clks),
-      .per_sync_rst_n (rcc_gpioa_sync_rst_n)
+      .per_rst_n      (rcc_gpioa_sync_rst_n)
   );
   // rcc clock and reset control
   assign rcc_rcc_hclk     = rcc_bus_clks[0];
@@ -5745,14 +5745,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (rcc_bus_clks),
-      .per_sync_rst_n (rcc_rcc_sync_rst_n)
+      .per_rst_n      (rcc_rcc_sync_rst_n)
   );
   // pwr clock and reset control
   assign rcc_pwr_hclk     = pwr_bus_clks[0];
@@ -5778,14 +5778,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (pwr_bus_clks),
-      .per_sync_rst_n (rcc_pwr_sync_rst_n)
+      .per_rst_n      (rcc_pwr_sync_rst_n)
   );
   // sai4 clock and reset control
   assign rcc_sai4_pclk     = sai4_bus_clks[0];
@@ -5822,7 +5822,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -5835,7 +5835,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (sai4rst),
       .per_bus_clks   (sai4_bus_clks),
-      .per_sync_rst_n (rcc_sai4_sync_rst_n)
+      .per_rst_n      (rcc_sai4_sync_rst_n)
   );
   // rtc clock and reset control
   assign rcc_rtc_pclk     = rtc_bus_clks[0];
@@ -5861,14 +5861,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (rtc_bus_clks),
-      .per_sync_rst_n (rcc_rtc_sync_rst_n)
+      .per_rst_n      (rcc_rtc_sync_rst_n)
   );
   // vref clock and reset control
   assign rcc_vref_pclk     = vref_bus_clks[0];
@@ -5894,14 +5894,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (vrefrst),
       .per_bus_clks   (vref_bus_clks),
-      .per_sync_rst_n (rcc_vref_sync_rst_n)
+      .per_rst_n      (rcc_vref_sync_rst_n)
   );
   // comp12 clock and reset control
   assign rcc_comp12_pclk     = comp12_bus_clks[0];
@@ -5927,14 +5927,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (comp12rst),
       .per_bus_clks   (comp12_bus_clks),
-      .per_sync_rst_n (rcc_comp12_sync_rst_n)
+      .per_rst_n      (rcc_comp12_sync_rst_n)
   );
   // lptim5 clock and reset control
   assign rcc_lptim5_pclk     = lptim5_bus_clks[0];
@@ -5971,7 +5971,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -5984,7 +5984,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (lptim5rst),
       .per_bus_clks   (lptim5_bus_clks),
-      .per_sync_rst_n (rcc_lptim5_sync_rst_n)
+      .per_rst_n      (rcc_lptim5_sync_rst_n)
   );
   // lptim4 clock and reset control
   assign rcc_lptim4_pclk     = lptim4_bus_clks[0];
@@ -6021,7 +6021,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -6034,7 +6034,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (lptim4rst),
       .per_bus_clks   (lptim4_bus_clks),
-      .per_sync_rst_n (rcc_lptim4_sync_rst_n)
+      .per_rst_n      (rcc_lptim4_sync_rst_n)
   );
   // lptim3 clock and reset control
   assign rcc_lptim3_pclk     = lptim3_bus_clks[0];
@@ -6071,7 +6071,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -6084,7 +6084,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (lptim3rst),
       .per_bus_clks   (lptim3_bus_clks),
-      .per_sync_rst_n (rcc_lptim3_sync_rst_n)
+      .per_rst_n      (rcc_lptim3_sync_rst_n)
   );
   // lptim2 clock and reset control
   assign rcc_lptim2_pclk     = lptim2_bus_clks[0];
@@ -6121,7 +6121,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -6134,7 +6134,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (lptim2rst),
       .per_bus_clks   (lptim2_bus_clks),
-      .per_sync_rst_n (rcc_lptim2_sync_rst_n)
+      .per_rst_n      (rcc_lptim2_sync_rst_n)
   );
   // i2c4 clock and reset control
   assign rcc_i2c4_pclk     = i2c4_bus_clks[0];
@@ -6171,7 +6171,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -6184,7 +6184,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(i2c4_hsi_ker_clk_req),
       .sft_rst_n      (i2c4rst),
       .per_bus_clks   (i2c4_bus_clks),
-      .per_sync_rst_n (rcc_i2c4_sync_rst_n)
+      .per_rst_n      (rcc_i2c4_sync_rst_n)
   );
   // spi6 clock and reset control
   assign rcc_spi6_pclk     = spi6_bus_clks[0];
@@ -6221,7 +6221,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -6234,7 +6234,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(),
       .sft_rst_n      (spi6rst),
       .per_bus_clks   (spi6_bus_clks),
-      .per_sync_rst_n (rcc_spi6_sync_rst_n)
+      .per_rst_n      (rcc_spi6_sync_rst_n)
   );
   // lpuart1 clock and reset control
   assign rcc_lpuart1_pclk     = lpuart1_bus_clks[0];
@@ -6271,7 +6271,7 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
@@ -6284,7 +6284,7 @@ module rcc_per_clk_rst_control #(
       .hsi_ker_clk_req(lpuart1_hsi_ker_clk_req),
       .sft_rst_n      (lpuart1rst),
       .per_bus_clks   (lpuart1_bus_clks),
-      .per_sync_rst_n (rcc_lpuart1_sync_rst_n)
+      .per_rst_n      (rcc_lpuart1_sync_rst_n)
   );
   // syscfg clock and reset control
   assign rcc_syscfg_pclk     = syscfg_bus_clks[0];
@@ -6310,14 +6310,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (syscfgrst),
       .per_bus_clks   (syscfg_bus_clks),
-      .per_sync_rst_n (rcc_syscfg_sync_rst_n)
+      .per_rst_n      (rcc_syscfg_sync_rst_n)
   );
   // iwdg2 clock and reset control
   assign rcc_iwdg2_pclk     = iwdg2_bus_clks[0];
@@ -6343,14 +6343,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (iwdg2_bus_clks),
-      .per_sync_rst_n (rcc_iwdg2_sync_rst_n)
+      .per_rst_n      (rcc_iwdg2_sync_rst_n)
   );
   // iwdg1 clock and reset control
   assign rcc_iwdg1_pclk     = iwdg1_bus_clks[0];
@@ -6376,14 +6376,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (iwdg1_bus_clks),
-      .per_sync_rst_n (rcc_iwdg1_sync_rst_n)
+      .per_rst_n      (rcc_iwdg1_sync_rst_n)
   );
   // exti clock and reset control
   assign rcc_exti_pclk     = exti_bus_clks[0];
@@ -6409,14 +6409,14 @@ module rcc_per_clk_rst_control #(
       .c2_sleep       (c2_sleep),
       .c2_deepsleep   (c2_deepsleep),
       .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (arcg_on),
+      .arcg_on        (rcc_arcg_on),
       .testmode       (testmode),
       .sys_rst_n      (sys_sync_rst_n),
       .d1_rst_n       (d1_sync_rst_n),
       .d2_rst_n       (d2_sync_rst_n),
       .sft_rst_n      (1'b1),
       .per_bus_clks   (exti_bus_clks),
-      .per_sync_rst_n (rcc_exti_sync_rst_n)
+      .per_rst_n      (rcc_exti_sync_rst_n)
   );
   // csi_ker_clk_122_div
   BB_clk_div_s #(

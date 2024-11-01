@@ -8,9 +8,35 @@ module rcc_rtc_clk_div_d #(
     output                 div_en
 );
 
-  wire div_disable;
+  wire                 div_disable;
+  wire [RATIO_WID-1:0] ratio_f;
+  wire [RATIO_WID-1:0] ratio_ff;
+  //==========================================================================
+  // syncronize the input ratio
+  //==========================================================================
 
-  assign div_disable = (ratio == 'b0 || ratio == 'b1);
+  BB_dffr #(
+      .DW     (RATIO_WID),
+      .RST_VAL(0)
+  ) u_BB_0_dffr (
+      .clk  (i_clk),
+      .rst_n(rst_n),
+      .din  (ratio),
+      .dout (ratio_f)
+  );
+
+  BB_dffr #(
+      .DW     (RATIO_WID),
+      .RST_VAL(0)
+  ) u_BB_1_dffr (
+      .clk  (i_clk),
+      .rst_n(rst_n),
+      .din  (ratio_f),
+      .dout (ratio_ff)
+  );
+
+
+  assign div_disable = (ratio_ff == 'b0 || ratio_ff == 'b1);
 
   BB_clk_div_d #(
       .RATIO_WID(RATIO_WID)

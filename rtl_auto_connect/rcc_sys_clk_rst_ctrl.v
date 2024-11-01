@@ -8,18 +8,20 @@ module rcc_sys_clk_rst_ctrl #(
     parameter CLK_ON_AFTER_CPU2_RST_RELEASE = 8
 ) (
     // reset signal sources
-    input nrst_in,
-    input iwdg1_out_rst,
-    input wwdg1_out_rst,
-    input iwdg2_out_rst,
-    input wwdg2_out_rst,
-    input lpwr2_rst,
-    input lpwr1_rst,
-    input pwr_bor_rst,
-    input pwr_por_rst,
-    input cpu2_sftrst,
-    input cpu1_sftrst,
-    input pre_vsw_rst_n,
+    input  nrst_in,
+    input  iwdg1_out_rst,
+    input  wwdg1_out_rst,
+    input  iwdg2_out_rst,
+    input  wwdg2_out_rst,
+    input  lpwr2_rst,
+    input  lpwr1_rst,
+    input  pwr_bor_rst,
+    input  pwr_por_rst,
+    input  cpu2_sftrst,
+    input  cpu1_sftrst,
+    input  pre_vsw_rst_n,
+    output d1_rst,
+    output d2_rst,
 
     //pwr signals 
     input pwr_vcore_ok,
@@ -34,7 +36,6 @@ module rcc_sys_clk_rst_ctrl #(
     //input arcg on
     input  rcc_arcg_on,
     // output reset signals
-    output pwr_por_rst_n,
     output sys_sync_rst_n,
     output d1_sync_rst_n,
     output d2_sync_rst_n,
@@ -49,18 +50,15 @@ module rcc_sys_clk_rst_ctrl #(
 
     // nrst output 
     output nrst_out,
-    output cpu1_rst_n,
-    output cpu2_rst_n,
-    output rcc_obl_rst_n,
-    output stby_rst_n,
+    output rcc_obl_sync_rst_n,
+
+    // pwr signals
     input  pwr_d1_wkup,
     input  pwr_d2_wkup,
     input  pwr_d3_wkup,
     output rcc_pwr_d1_req,
     output rcc_pwr_d2_req,
     output rcc_pwr_d3_req,
-
-
 
     // sys clocks
     output sys_clk,
@@ -89,9 +87,6 @@ module rcc_sys_clk_rst_ctrl #(
     output rcc_hrtimer_prescalar_clk,
     //rtc clocks
     output hse_rtc_clk,
-    // sys clocks
-    output sys_d1cpre_clk,
-    output sys_hpre_clk,
     // stop mode signals
     output rcc_d1_stop,
     output rcc_d2_stop,
@@ -180,11 +175,15 @@ module rcc_sys_clk_rst_ctrl #(
   wire [$clog2(D1_RST_DURATION)-1:0] cur_d2_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] nxt_d2_rst_n_counter;
   /*AUTOWIRE*/
+  wire                               rcc_obl_clk_arcg_en;
   wire                               sys_clk_arcg_en;
   wire                               d1_clk_arcg_en;
   wire                               d1_rst_n;
-  wire                               d2_clk_arcg_en;
   wire                               d2_rst_n;
+  wire                               pwr_por_rst_n;
+  wire                               pwr_por_hsi_sync_rst_n;
+  wire                               pwr_por_hse_sync_rst_n;
+  wire                               d2_clk_arcg_en;
   wire                               cpu1_clk_arcg_en;
   wire                               cpu2_clk_arcg_en;
   //Define assign wires here
@@ -195,6 +194,8 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               hw_init_done;
   wire                               obl_rst;
   wire                               rcc_vcore_rst;
+  wire                               rcc_obl_rst_n;
+  wire                               stby_rst_n;
   //Define instance wires here
   wire                               rcc_pwr_d1_req_set_n;
   wire                               rcc_pwr_d2_req_set_n;
@@ -217,14 +218,15 @@ module rcc_sys_clk_rst_ctrl #(
 
   assign rcc_exit_sys_stop    = pwr_d3_wkup;
 
-  assign rcc_d1_busy          = axibridge_d1_busy | ahb3bridge_d1_busy | apb3bridge_d1_busy | flash_busy;
-  assign rcc_d2_busy          = ahb1bridge_d2_busy | ahb2bridge_d2_busy | apb1bridge_d2_busy | apb2bridge_d2_busy;
-  assign rcc_d3_busy          = rcc_d1_busy | rcc_d2_busy | ahb4bridge_d3_busy | apb4bridge_d3_busy;
+  assign rcc_d1_busy          = axibridge_d1_busy || ahb3bridge_d1_busy || apb3bridge_d1_busy || flash_busy;
+  assign rcc_d2_busy          = ahb1bridge_d2_busy || ahb2bridge_d2_busy || apb1bridge_d2_busy || apb2bridge_d2_busy;
+  assign rcc_d3_busy          = rcc_d1_busy || rcc_d2_busy || ahb4bridge_d3_busy || apb4bridge_d3_busy;
 
 
-  assign rcc_pwr_d1_req_set_n = ~(c1_deepsleep & (~c2_per_alloc_d1 | c2_deepsleep) & ~rcc_d1_busy);  // 'c1 stop' and 'c2 stop or no peripherals in d1 allocate to c2' and 'd1 not busy' 
-  assign rcc_pwr_d2_req_set_n = ~(c2_deepsleep & (~c1_per_alloc_d2 | c1_deepsleep) & ~rcc_d2_busy);  // 'c2 stop' and 'c1 stop or no peripherals in d2 allocate to c1' and 'd2 not busy'
-  assign rcc_pwr_d3_req_set_n = ~((c1_deepsleep & c2_deepsleep & d3_deepsleep) & ~rcc_d3_busy);  // 'c1 stop' and 'c2 stop' and 'd3 stop' and 'd3 not busy'
+  assign rcc_pwr_d1_req_set_n = ~(c1_deepsleep && (~c2_per_alloc_d1 || c2_deepsleep) && ~rcc_d1_busy);  // 'c1 stop' and 'c2 stop or no peripherals in d1 allocate to c2' and 'd1 not busy' 
+  assign rcc_pwr_d2_req_set_n = ~(c2_deepsleep && (~c1_per_alloc_d2 || c1_deepsleep) && ~rcc_d2_busy);  // 'c2 stop' and 'c1 stop or no peripherals in d2 allocate to c1' and 'd2 not busy'
+  assign rcc_pwr_d3_req_set_n = ~((c1_deepsleep && c2_deepsleep && d3_deepsleep) && ~rcc_d3_busy);  // 'c1 stop' and 'c2 stop' and 'd3 stop' and 'd3 not busy'
+
 
   assign rcc_d1_stop          = rcc_pwr_d1_req;
   assign rcc_d2_stop          = rcc_pwr_d2_req;
@@ -254,8 +256,7 @@ module rcc_sys_clk_rst_ctrl #(
       .set_n(rcc_pwr_d2_req_set_n),
       .en   (pwr_d2_wkup),
       .din  (1'b0),
-
-      .dout(rcc_pwr_d2_req)
+      .dout (rcc_pwr_d2_req)
   );
 
   BB_dfflrs #(
@@ -268,25 +269,37 @@ module rcc_sys_clk_rst_ctrl #(
       .set_n(rcc_pwr_d3_req_set_n),
       .en   (pwr_d3_wkup),
       .din  (1'b0),
-
-      .dout(rcc_pwr_d3_req)
+      .dout (rcc_pwr_d3_req)
   );
 
 
   //generate rst_n for pwr_por_rst
-  assign pwr_por_rst_n         = ~pwr_por_rst;
-  //generate reset for option byte load module
-  assign rcc_obl_rst_n         = pwr_por_rst_n & pwr_vcore_ok;  // option byte load reset release until power on and vcore power ok
+  assign pwr_por_rst_n = ~pwr_por_rst;
+  //generate pwr_por_sync_rst_n
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_pwr_por_rst_sync_to_hsi (
+      .src_rst_n(pwr_por_rst_n),
+      .clk      (hsi_origin_clk),
+      .gen_rst_n(pwr_por_hsi_sync_rst_n)
+  );
 
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_pwr_por_rst_sync_to_hse (
+      .src_rst_n(pwr_por_rst_n),
+      .clk      (hse_clk),
+      .gen_rst_n(pwr_por_hse_sync_rst_n)
+  );
+  //generate reset for option byte load module
+  assign rcc_obl_rst_n         = pwr_por_rst_n && pwr_vcore_ok;  // option byte load reset release until power on and vcore power ok
   //==============================================================================================
   //nrst_out
   //==============================================================================================
-  assign nrst_out              = obl_rst | pwr_por_rst_n | pwr_bor_rst | lpwr1_rst | lpwr2_rst | (wwdg1_out_rst & ww1rsc) | (wwdg2_out_rst & ww2rsc) | iwdg1_out_rst | iwdg2_out_rst | cpu2_sftrst | cpu1_sftrst;
-
+  assign nrst_out              = obl_rst || pwr_por_rst_n || pwr_bor_rst || lpwr1_rst || lpwr2_rst || (wwdg1_out_rst && ww1rsc) || (wwdg2_out_rst && ww2rsc) || iwdg1_out_rst || iwdg2_out_rst || cpu2_sftrst || cpu1_sftrst;
   //==============================================================================================
-  //d1 d2 system standby reset generate//==============================================================================================
+  //d1 d2 system standby reset generate
   //==============================================================================================
-
   assign d1_rst_n_counter_wren = (cur_d1_rst_n_counter < D1_RST_DURATION);
   assign nxt_d1_rst_n_counter  = cur_d1_rst_n_counter + {{($clog2(D1_RST_DURATION) - 1) {1'b0}}, 1'b1};
 
@@ -301,8 +314,10 @@ module rcc_sys_clk_rst_ctrl #(
       .dout (cur_d1_rst_n_counter)
   );
 
-  assign nxt_d1_rst_n = d1_rst_n_counter_wren;
+  assign nxt_d1_rst_n = !d1_rst_n_counter_wren;
   assign d1_rst_n     = cur_d1_rst_n;
+  assign d1_rst       = ~cur_d1_rst_n;
+  //flash in d1 , so d1 have to wait until falsh power ok  
   BB_dfflr #(
       .DW     (1),
       .RST_VAL(0)
@@ -329,15 +344,16 @@ module rcc_sys_clk_rst_ctrl #(
       .dout (cur_d2_rst_n_counter)
   );
 
-  assign nxt_d2_rst_n = d2_rst_n_counter_wren;
+  assign nxt_d2_rst_n = !d2_rst_n_counter_wren;
   assign d2_rst_n     = cur_d2_rst_n;
-  BB_dfflr #(
+  assign d2_rst       = ~cur_d2_rst_n;
+  //falsh not in d2
+  BB_dffr #(
       .DW     (1),
       .RST_VAL(0)
   ) u_d2_rst_n_dfflr (
       .clk  (sys_hpre_clk),
       .rst_n(pwr_d2_ok),
-      .en   (flash_power_ok),
       .din  (nxt_d2_rst_n),
       .dout (cur_d2_rst_n)
   );
@@ -346,8 +362,8 @@ module rcc_sys_clk_rst_ctrl #(
   //system reset generate
   //==============================================================================================
 
-  assign sys_rst_n_assert = ~nrst_in & hw_init_done;
-  assign nxt_sys_rst_n    = hsi_rdy & flash_power_ok;
+  assign sys_rst_n_assert = ~nrst_in && hw_init_done;
+  assign nxt_sys_rst_n    = hsi_rdy && flash_power_ok;
   assign sys_rst_n        = cur_sys_rst_n;
   BB_dffr #(
       .DW     (1),
@@ -362,36 +378,46 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //hw init done generate 
   //==============================================================================================
-  assign hw_init_done      = ~pwr_por_rst & pwr_vcore_ok & ~flash_obl_reload & obl_done;
+  assign hw_init_done    = ~pwr_por_rst && pwr_vcore_ok && ~flash_obl_reload && obl_done;
 
   //==============================================================================================
   //obl reset generate
   //==============================================================================================
-  assign obl_rst           = ~obl_done | flash_obl_reload;
+  assign obl_rst         = ~obl_done || flash_obl_reload;
 
   //==============================================================================================
   //rcc vcore reset generate
   //==============================================================================================
-  assign rcc_vcore_rst     = pwr_por_rst | ~pwr_vcore_ok | ~obl_done;
+  assign rcc_vcore_rst   = pwr_por_rst || ~pwr_vcore_ok || ~obl_done;
 
   //==============================================================================================
   //standby reset generate
   //==============================================================================================
-  assign stby_rst_n        = ~rcc_vcore_rst;
+  assign stby_rst_n      = ~rcc_vcore_rst;
 
   //==============================================================================================
   //cpu and bus reset generate
   //==============================================================================================
-  assign cpu1_rst_n        = sys_rst_n & d1_rst_n & ~wwdg1_out_rst;
-  assign cpu2_rst_n        = sys_rst_n & d2_rst_n & ~wwdg2_out_rst;
+  assign cpu1_sync_rst_n = sys_sync_rst_n && d1_sync_rst_n && ~wwdg1_out_rst;
+  assign cpu2_sync_rst_n = sys_sync_rst_n && d2_sync_rst_n && ~wwdg2_out_rst;
 
 
   //==============================================================================================
   //sys rst arcg 
   //==============================================================================================
+  //obl reset and clock generate
+  async_reset_clk_gate #(
+      .DELAY(CLK_ON_AFTER_SYS_RST_RELEASE)
+  ) rcc_obl_clk_async_reset_clk_gate (
+      .src_rst_n (rcc_obl_rst_n),
+      .i_clk     (pre_sys_clk),
+      .arcg_on   (rcc_arcg_on),
+      .clk_en    (rcc_obl_clk_arcg_en),
+      .sync_rst_n(rcc_obl_sync_rst_n)
+  );
   //dx_bus_sync_rst_n generate
-  assign d1_bus_sync_rst_n = sys_sync_rst_n & d1_sync_rst_n;
-  assign d2_bus_sync_rst_n = sys_sync_rst_n & d2_sync_rst_n;
+  assign d1_bus_sync_rst_n = sys_sync_rst_n && d1_sync_rst_n;
+  assign d2_bus_sync_rst_n = sys_sync_rst_n && d2_sync_rst_n;
   assign d3_bus_sync_rst_n = sys_sync_rst_n;
 
   // system clock asynchoronous reset clock gating
@@ -399,7 +425,7 @@ module rcc_sys_clk_rst_ctrl #(
       .DELAY(CLK_ON_AFTER_SYS_RST_RELEASE)
   ) sys_clk_async_reset_clk_gate (
       .src_rst_n (sys_rst_n),
-      .i_clk     (sys_clk),
+      .i_clk     (pre_sys_clk),
       .arcg_on   (rcc_arcg_on),
       .clk_en    (sys_clk_arcg_en),
       .sync_rst_n(sys_sync_rst_n)
@@ -410,7 +436,7 @@ module rcc_sys_clk_rst_ctrl #(
       .DELAY(CLK_ON_AFTER_D1_RST_RELEASE)
   ) d1_clk_async_reset_clk_gate (
       .src_rst_n (d1_rst_n),
-      .i_clk     (sys_d1cpre_clk),
+      .i_clk     (sys_hpre_clk),
       .arcg_on   (rcc_arcg_on),
       .clk_en    (d1_clk_arcg_en),
       .sync_rst_n(d1_sync_rst_n)
@@ -428,24 +454,22 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   // cpu1 clock asynchoronous reset clock gating
-  async_reset_clk_gate #(
+  per_async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU1_RST_RELEASE)
   ) cpu1_clk_async_reset_clk_gate (
-      .src_rst_n (cpu1_rst_n),
-      .i_clk     (sys_d1cpre_clk),
-      .arcg_on   (rcc_arcg_on),
-      .clk_en    (cpu1_clk_arcg_en),
-      .sync_rst_n(cpu1_sync_rst_n)
+      .src_rst_n(cpu1_sync_rst_n),
+      .i_clk    (sys_d1cpre_clk),
+      .arcg_on  (rcc_arcg_on),
+      .clk_en   (cpu1_clk_arcg_en)
   );
   // cpu2 clock asynchoronous reset clock gating
-  async_reset_clk_gate #(
+  per_async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU2_RST_RELEASE)
   ) cpu2_clk_async_reset_clk_gate (
-      .src_rst_n (cpu2_rst_n),
-      .i_clk     (sys_d1cpre_clk),
-      .arcg_on   (rcc_arcg_on),
-      .clk_en    (cpu2_clk_arcg_en),
-      .sync_rst_n(cpu2_sync_rst_n)
+      .src_rst_n(cpu2_sync_rst_n),
+      .i_clk    (sys_hpre_clk),
+      .arcg_on  (rcc_arcg_on),
+      .clk_en   (cpu2_clk_arcg_en)
   );
 
 
