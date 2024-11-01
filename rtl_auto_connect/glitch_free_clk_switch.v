@@ -17,7 +17,7 @@ module glitch_free_clk_switch #(
   wire [$clog2(CLK_NUM)-1:0] sel_temp     [CLK_NUM-1:0];
 
 
-  assign clk_rst_n = (~clk_fail) & {CLK_NUM{rst_n}};  // Bitwise operation 
+  assign clk_rst_n = (~clk_fail) && {CLK_NUM{rst_n}};  // Bitwise operation 
 
   generate
     genvar i;  // generate variable can not be initalized

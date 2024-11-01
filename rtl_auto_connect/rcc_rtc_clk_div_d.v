@@ -41,7 +41,7 @@ module rcc_rtc_clk_div_d #(
   BB_clk_div_d #(
       .RATIO_WID(RATIO_WID)
   ) u_BB_clk_div_d (
-      .rst_n (rst_n & ~div_disable),
+      .rst_n (rst_n && ~div_disable),
       .i_clk (i_clk),
       .ratio (ratio),
       .o_clk (o_clk),

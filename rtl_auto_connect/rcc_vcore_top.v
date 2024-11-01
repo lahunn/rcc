@@ -32,7 +32,7 @@ module rcc_vcore_top #(
       .sresp (rsp[0]),
       .sdata (rdata),
       .mreq  (mreq),
-      .mwstrb (mwstrb),
+      .mwstrb(mwstrb),
       .maddr (maddr),
       .mdata (mdata),
       /*AUTOINST*/

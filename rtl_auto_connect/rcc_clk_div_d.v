@@ -8,7 +8,7 @@ module rcc_clk_div_d #(
     output                 div_en
 );
 
-  wire div_disable;
+  wire                 div_disable;
   wire [RATIO_WID-1:0] ratio_f;
   wire [RATIO_WID-1:0] ratio_ff;
   //==========================================================================
@@ -40,7 +40,7 @@ module rcc_clk_div_d #(
   BB_clk_div_d #(
       .RATIO_WID(RATIO_WID)
   ) u_BB_clk_div_d (
-      .rst_n (rst_n & ~div_disable),
+      .rst_n (rst_n && ~div_disable),
       .i_clk (i_clk),
       .ratio (ratio),
       .o_clk (o_clk),

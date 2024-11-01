@@ -74,7 +74,7 @@ module per_clk_rst_control #(
   generate
     if (DOMAIN == 3) begin : per_domain_d3
       if (SUPPORT_AMEN == 1) begin : per_domain_d3_amen
-        assign d3_bus_clk_en = rcc_per_amen & ~d3_deepsleep;
+        assign d3_bus_clk_en = rcc_per_amen && ~d3_deepsleep;
       end else begin : per_domain_d3_no_amen
         if (D3_DEFAULT_NO_CLK == 1) begin : per_domain_d3_no_clk
           assign d3_bus_clk_en = 1'b0;
@@ -87,7 +87,7 @@ module per_clk_rst_control #(
     end
   endgenerate
 
-  assign bus_clk_en = (c1_bus_clk_en || c2_bus_clk_en || d3_bus_clk_en) & arcg_clk_en;
+  assign bus_clk_en = (c1_bus_clk_en || c2_bus_clk_en || d3_bus_clk_en) && arcg_clk_en;
 
 
   //bus clock gates
@@ -106,11 +106,11 @@ module per_clk_rst_control #(
   //reset control
   generate
     if (DOMAIN == 1) begin : per_domain_d1_rst
-      assign per_rst_n = sys_rst_n & d1_rst_n & sft_rst_n;
+      assign per_rst_n = sys_rst_n && d1_rst_n && sft_rst_n;
     end else if (DOMAIN == 2) begin : per_domain_d2_rst
-      assign per_rst_n = sys_rst_n & d2_rst_n & sft_rst_n;
+      assign per_rst_n = sys_rst_n && d2_rst_n && sft_rst_n;
     end else begin : per_domain_d3_rst
-      assign per_rst_n = sys_rst_n & sft_rst_n;
+      assign per_rst_n = sys_rst_n && sft_rst_n;
     end
   endgenerate
 
@@ -118,10 +118,10 @@ module per_clk_rst_control #(
   per_async_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_per_async_reset_clk_gate (
-      .src_rst_n (per_rst_n),
-      .i_clk     (per_bus_clks[0]),
-      .arcg_on   (arcg_on),
-      .clk_en    (arcg_clk_en)
+      .src_rst_n(per_rst_n),
+      .i_clk    (per_bus_clks[0]),
+      .arcg_on  (arcg_on),
+      .clk_en   (arcg_clk_en)
   );
 
 endmodule

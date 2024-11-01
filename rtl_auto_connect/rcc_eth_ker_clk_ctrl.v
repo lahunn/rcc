@@ -111,14 +111,13 @@ module rcc_eth_ker_clk_ctrl (
       .div_en()
   );
 
-  assign pad_rcc_eth_mii_rx_clk_divided = sync_eth_rcc_fes ? pad_rcc_eth_mii_rx_clk_div_2 
-                                                           : pad_rcc_eth_mii_rx_clk_div_20;
+  assign pad_rcc_eth_mii_rx_clk_divided = sync_eth_rcc_fes ? pad_rcc_eth_mii_rx_clk_div_2 : pad_rcc_eth_mii_rx_clk_div_20;
 
   // gates
 
-  assign rcc_eth1rx_clk_en              = (rcc_c1_eth1rx_en & (~c1_sleep | rcc_c1_eth1rx_lpen) & ~c1_deepsleep) | (rcc_c2_eth1rx_en & (~c2_sleep | rcc_c2_eth1rx_lpen) & ~c2_deepsleep);
-  assign rcc_eth1tx_clk_en              = (rcc_c1_eth1tx_en & (~c1_sleep | rcc_c1_eth1tx_lpen) & ~c1_deepsleep) | (rcc_c2_eth1tx_en & (~c2_sleep | rcc_c2_eth1tx_lpen) & ~c2_deepsleep);
-  assign rcc_eth_rmii_ref_clk_en        = rcc_eth1rx_clk_en | rcc_eth1tx_clk_en;
+  assign rcc_eth1rx_clk_en              = (rcc_c1_eth1rx_en && (~c1_sleep || rcc_c1_eth1rx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1rx_en && (~c2_sleep || rcc_c2_eth1rx_lpen) && ~c2_deepsleep);
+  assign rcc_eth1tx_clk_en              = (rcc_c1_eth1tx_en && (~c1_sleep || rcc_c1_eth1tx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1tx_en && (~c2_sleep || rcc_c2_eth1tx_lpen) && ~c2_deepsleep);
+  assign rcc_eth_rmii_ref_clk_en        = rcc_eth1rx_clk_en || rcc_eth1tx_clk_en;
 
   BB_clk_gating eth_mii_tx_clk_gate (
       .raw_clk(rcc_eth_mii_tx_clk_pre),

@@ -20,7 +20,7 @@ module rcc_vsw_clk_rst_ctrl (
   wire rcc_rtcsel_clk;
   wire lse_clk_gated;
 
-  assign pre_vsw_rst_n = (~bdrst) & (~pwr_vsw_rst);
+  assign pre_vsw_rst_n = (~bdrst) && (~pwr_vsw_rst);
 
   // rtc ker clock gate
   BB_clk_gating rcc_rtc_ker_clk_gate (
