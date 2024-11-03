@@ -27,14 +27,16 @@ module rcc_vcore_top #(
   /*AUTO DECLARE*/
   BB_ahb2reg #(  /*AUTOINSTPARAM*/
   ) u_BB_rcc_ahb2reg (
-      .mwrite(),
-      .sready(1'b1),
-      .sresp (rsp[0]),
-      .sdata (rdata),
-      .mreq  (mreq),
-      .mwstrb(mwstrb),
-      .maddr (maddr),
-      .mdata (mdata),
+      .hclk   (rcc_rcc_hclk),
+      .hresetn(rcc_rcc_sync_rst_n),
+      .mwrite (),
+      .sready (1'b1),
+      .sresp  (rsp[0]),
+      .sdata  (rdata),
+      .mreq   (mreq),
+      .mwstrb (mwstrb),
+      .maddr  (maddr),
+      .mdata  (mdata),
       /*AUTOINST*/
   );
 
@@ -54,8 +56,8 @@ module rcc_vcore_top #(
 
   rcc_reg #(  /*AUTOINSTPARAM*/
   ) u_rcc_reg (
-      .clk  (hclk),
-      .rst_n(hresetn),
+      .clk  (rcc_rcc_hclk),
+      .rst_n(rcc_rcc_sync_rst_n),
       .req  (mreq),
       .we   (mwstrb),
       .addr (maddr),

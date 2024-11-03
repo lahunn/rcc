@@ -34,7 +34,6 @@ module rcc_top #(
 
   rcc_vcore_top #(  /*AUTOINSTPARAM*/
   ) u_rcc_vcore_top (
-    .hclk(rcc_rcc_hclk),
     /*AUTOINST*/
 
   );
