@@ -36,8 +36,8 @@ module rcc_reg #(
     input           sync_hsi_rdy,
     output          hsikeron,
     output          hsion,
-    input sync_lse_rdy,
-    input sync_lsi_rdy,
+    input           sync_lse_rdy,
+    input           sync_lsi_rdy,
     output [   7:0] rcc_csi_triming,
     input  [   7:0] flash_csi_opt,
     output [  11:0] rcc_hsi_triming,
@@ -3467,9 +3467,9 @@ module rcc_reg #(
       .N(4),
       .m(2)
   ) u_mux_sys_clk_rdy (
-      .inp   (sys_rdy_candidate),
-      .select(sw),
-      .out   (sys_clk_rdy)
+      .inp (sys_rdy_candidate),
+      .sel (sw),
+      .mout(sys_clk_rdy)
   );
 
 

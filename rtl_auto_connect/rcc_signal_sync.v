@@ -1,5 +1,4 @@
 module rcc_signal_sync (
-    input  sys_rst_n,
     input  sys_clk,
     input  rcc_rcc_hclk,
     input  rcc_rcc_sync_rst_n,

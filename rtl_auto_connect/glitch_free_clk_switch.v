@@ -15,8 +15,7 @@ module glitch_free_clk_switch #(
   wire [        CLK_NUM-1:0] clk_pre_out;
   wire [        CLK_NUM-1:0] clk_rst_n;
   wire [$clog2(CLK_NUM)-1:0] sel_temp     [CLK_NUM-1:0];
-
-
+  
   assign clk_rst_n = (~clk_fail) & {CLK_NUM{rst_n}};  // Bitwise operation 
 
   generate
@@ -68,8 +67,6 @@ module glitch_free_clk_switch #(
     end
   endgenerate
 
-
-  //
   assign clk_sel_ff_n = ~clk_sel_ff;
 
   //generate clk_pre_out

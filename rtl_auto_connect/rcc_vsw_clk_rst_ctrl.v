@@ -33,11 +33,11 @@ module rcc_vsw_clk_rst_ctrl (
   );
 
   // rtc ker clock select logic
-  glitch_free_clk_switch #(
+  zero_glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_rtc_clk_switch (
       .i_clk   ({hse_rtc_clk, lsi_clk, gated_lse_clk, 1'b0}),
-      .clk_fail({2'b0, lsecss_fail, 1'b1}),
+      .clk_fail({2'b0, lsecss_fail, 1'b0}),
       .sel     (rtcsel),
       .rst_n   (sync_vsw_rst_n),
       .o_clk   (rcc_rtcsel_clk)

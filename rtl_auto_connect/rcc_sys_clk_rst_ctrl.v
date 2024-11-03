@@ -198,8 +198,6 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               sys_clk_arcg_en;
   wire                               d1_clk_arcg_en;
   wire                               pwr_por_rst_n;
-  wire                               pwr_por_hsi_sync_rst_n;
-  wire                               pwr_por_hse_sync_rst_n;
   wire                               d2_clk_arcg_en;
   wire                               cpu1_clk_arcg_en;
   wire                               cpu2_clk_arcg_en;
@@ -338,23 +336,7 @@ module rcc_sys_clk_rst_ctrl #(
 
 
   //generate rst_n for pwr_por_rst
-  assign pwr_por_rst_n = ~pwr_por_rst;
-  //generate pwr_por_sync_rst_n
-  BB_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_pwr_por_rst_sync_to_hsi (
-      .src_rst_n(pwr_por_rst_n),
-      .clk      (hsi_origin_clk),
-      .gen_rst_n(pwr_por_hsi_sync_rst_n)
-  );
-
-  BB_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_pwr_por_rst_sync_to_hse (
-      .src_rst_n(pwr_por_rst_n),
-      .clk      (hse_clk),
-      .gen_rst_n(pwr_por_hse_sync_rst_n)
-  );
+  assign pwr_por_rst_n         = ~pwr_por_rst;
   //generate reset for option byte load module
   assign rcc_obl_rst_n         = pwr_por_rst_n && pwr_vcore_ok;  // option byte load reset release until power on and vcore power ok
   //==============================================================================================
@@ -381,7 +363,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign nxt_d1_rst_n = !d1_rst_n_counter_wren;
   assign d1_rst_n     = cur_d1_rst_n;
   assign d1_rst       = ~cur_d1_rst_n;
-  //flash in d1 , so d1 have to wait until falsh power ok  
+  //flash in d1 , so d1 reset release have to wait until falsh power ok
   BB_dfflr #(
       .DW     (1),
       .RST_VAL(0)
@@ -488,34 +470,34 @@ module rcc_sys_clk_rst_ctrl #(
   sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_SYS_RST_RELEASE)
   ) sys_clk_async_reset_clk_gate (
-      .src_rst_n (sys_rst_n),
-      .i_clk     (pre_sys_clk),
-      .arcg_on   (rcc_arcg_on),
-      .clk_en    (sys_clk_arcg_en)
+      .src_rst_n(sys_rst_n),
+      .i_clk    (pre_sys_clk),
+      .arcg_on  (rcc_arcg_on),
+      .clk_en   (sys_clk_arcg_en)
   );
 
   // d1 domain clock asynchoronous reset clock gating
   sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_D1_RST_RELEASE)
   ) d1_clk_async_reset_clk_gate (
-      .src_rst_n (d1_rst_n),
-      .i_clk     (sys_hpre_clk),
-      .arcg_on   (rcc_arcg_on),
-      .clk_en    (d1_clk_arcg_en)
+      .src_rst_n(d1_rst_n),
+      .i_clk    (sys_hpre_clk),
+      .arcg_on  (rcc_arcg_on),
+      .clk_en   (d1_clk_arcg_en)
   );
 
   // d2 domain clock asynchoronous reset clock gating
   sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_D2_RST_RELEASE)
   ) d2_clk_async_reset_clk_gate (
-      .src_rst_n (d2_rst_n),
-      .i_clk     (sys_hpre_clk),
-      .arcg_on   (rcc_arcg_on),
-      .clk_en    (d2_clk_arcg_en)
+      .src_rst_n(d2_rst_n),
+      .i_clk    (sys_hpre_clk),
+      .arcg_on  (rcc_arcg_on),
+      .clk_en   (d2_clk_arcg_en)
   );
 
   // cpu1 clock asynchoronous reset clock gating
-  per_async_reset_clk_gate #(
+  sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU1_RST_RELEASE)
   ) cpu1_clk_async_reset_clk_gate (
       .src_rst_n(cpu1_sync_rst_n),
@@ -524,7 +506,7 @@ module rcc_sys_clk_rst_ctrl #(
       .clk_en   (cpu1_clk_arcg_en)
   );
   // cpu2 clock asynchoronous reset clock gating
-  per_async_reset_clk_gate #(
+  sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU2_RST_RELEASE)
   ) cpu2_clk_async_reset_clk_gate (
       .src_rst_n(cpu2_sync_rst_n),
@@ -537,12 +519,13 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //vsw reset sync
   //==============================================================================================
-  BB_reset_sync #(
+  // to avoid combinational loop, use 2 flip flop to sync the vsw reset
+  BB_no_rst_signal_sync #(
       .STAGE_NUM(2)
   ) u_vsw_reset_sync (
-      .src_rst_n(pre_vsw_rst_n),
-      .clk      (pre_sys_clk),
-      .gen_rst_n(sync_vsw_rst_n)
+      .src_signal(pre_vsw_rst_n),
+      .clk       (pre_sys_clk),
+      .gen_signal(sync_vsw_rst_n)
   );
 
   //==============================================================================================
@@ -601,10 +584,9 @@ module rcc_sys_clk_rst_ctrl #(
       .N(5),
       .m(3)
   ) mco1_clk_switch_cell (
-      .inp   (mco1_clk_src),
-      .select(mco1sel),
-
-      .out(mco1_pre_clk)
+      .inp (mco1_clk_src),
+      .sel (mco1sel),
+      .mout(mco1_pre_clk)
   );
 
 
@@ -624,10 +606,9 @@ module rcc_sys_clk_rst_ctrl #(
       .N(6),
       .m(3)
   ) mco2_clk_switch_cell (
-      .inp   (mco2_clk_src),
-      .select(mco2sel),
-
-      .out(mco2_pre_clk)
+      .inp (mco2_clk_src),
+      .sel (mco2sel),
+      .mout(mco2_pre_clk)
   );
 
   rcc_clk_div_d #(
@@ -647,8 +628,8 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_rtc_clk_div_d #(
       .RATIO_WID(6)
-  ) hse_rtc_clk_div (
-      .rst_n (pwr_por_hse_sync_rst_n),
+  ) u_hse_rtc_clk_div (
+      .rst_n (pwr_por_rst_n),
       .i_clk (hse_clk),
       .ratio (rtcpre),
       .o_clk (hse_rtc_clk),
@@ -661,7 +642,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_hsi_div hsi_clk_div (
       .i_clk  (hsi_origin_clk),
-      .rst_n  (pwr_por_hsi_sync_rst_n),
+      .rst_n  (pwr_por_rst_n),
       .div_sel(hsidiv),
       .o_clk  (hsi_pre_clk)
   );

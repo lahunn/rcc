@@ -13,17 +13,11 @@ reset -async -name "hsecss_fail" -value 1
 # RST-Internal
 #============================================================================== 
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n" -value 0
-reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_sync_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_rst_n" -value 0
-reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_sync_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_rst_n" -value 0
-reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_sync_rst_n" -value 0
-
-reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_clk_rst_ctrl.pre_vsw_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sync_vsw_rst_n" -value 0
 reset -async -name "rcc_top.pwr_d1_ok"     -value 0
 reset -async -name "rcc_top.pwr_d2_ok"     -value 0
-reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_reg.lsecss_fail_rst_n"     -value 0
 #==============================================================================
 # IO
 #==============================================================================
@@ -62,6 +56,7 @@ reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_reg.lsecss_fail_rst_n"     -
 #lse clk
 input -name iwdg1_out_rst -clock lse_clk
 input -name iwdg2_out_rst -clock lse_clk
+input -name backup_protect -clock hsi_origin_clk
 # #async signals
 # input -name backup_protect
 # input -name csi_rdy

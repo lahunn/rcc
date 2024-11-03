@@ -50,7 +50,7 @@ module rcc_vcore_top #(
   //signal synchronize 
   //==============================================================================
 
-  rcc_signal_sync u_lsecss_fail_sync (
+  rcc_signal_sync u_rcc_signal_sync (
   /*AUTOINST*/
   );
 

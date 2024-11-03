@@ -41,8 +41,6 @@ module rcc_vsw_reg (
   /*AUTOWIRE*/
   wire rcc_bdcr_lsecssd_set;
   wire rcc_bdcr_lsecssd_clr;
-  wire rtcsel_wren_n;
-  wire lsecsson_wren_n;
   wire rcc_bdcr_rtcsel_wren;
   wire nxt_rcc_bdcr_rtcsel_wren;
   wire cur_rcc_bdcr_rtcsel_wren;
@@ -111,7 +109,7 @@ module rcc_vsw_reg (
       .DW     (2),
       .RST_VAL('h0)
   ) U_rcc_bdcr_rtcsel (
-      .clk  (rcc_bdcr_byte1_wren && (~rtcsel_wren_n)),
+      .clk  (rcc_bdcr_byte1_wren),
       .en   (rcc_bdcr_rtcsel_wren),
       .rst_n(rst_n),
       .din  (nxt_rcc_bdcr_rtcsel),
