@@ -6,6 +6,7 @@ sdc_data -file ./spy_lint_rcc.sdc
 #============================================================================== 
 # reset -async -name "hresetn" -value 0
 reset -async -name "pwr_por_rst" -value 1
+reset -async -name "hsecss_fail" -value 1
 #reset -async -name "nrst_in" -value 1
 
 #==============================================================================

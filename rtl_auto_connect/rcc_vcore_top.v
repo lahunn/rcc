@@ -23,8 +23,15 @@ module rcc_vcore_top #(
   wire [AW-1:0] maddr;
   wire [WW-1:0] mwstrb;
   wire [DW-1:0] mdata;
+  wire          sync_lsecss_fail;
+  wire          sync_hsecss_fail;
+  wire          async_hsecss_fail;  //async reset sync release
   /*AUTOWIRE*/
-  /*AUTO DECLARE*/
+
+  //==============================================================================
+  //rcc_ahb_lite bus
+  //==============================================================================
+
   BB_ahb2reg #(  /*AUTOINSTPARAM*/
   ) u_BB_rcc_ahb2reg (
       .hclk   (rcc_rcc_hclk),
@@ -39,21 +46,39 @@ module rcc_vcore_top #(
       .mdata  (mdata),
       /*AUTOINST*/
   );
+  //==============================================================================
+  //signal synchronize 
+  //==============================================================================
 
+  rcc_signal_sync u_lsecss_fail_sync (
+  /*AUTOINST*/
+  );
+
+
+  //==============================================================================
+  //clock and reset control
+  //==============================================================================
   rcc_sys_clk_rst_ctrl #(  /*AUTOINSTPARAM*/
   ) u_rcc_sys_clk_rst_ctrl (  /*AUTOINST*/
   );
+
+  //rcc_per_clk_rst_control
 
   rcc_per_clk_rst_control #(  /*AUTOINSTPARAM*/
   ) u_rcc_per_clk_rst_control (
   /*AUTOINST*/
   );
 
+  //rcc_eth_ker_clk_ctrl
   rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (
-      .rst_n(sys_sync_rst_n),
+      .rst_n(sys_rst_n),
       /*AUTOINST*/
   );
 
+
+  //==============================================================================
+  //rcc_reg
+  //==============================================================================
   rcc_reg #(  /*AUTOINSTPARAM*/
   ) u_rcc_reg (
       .clk  (rcc_rcc_hclk),

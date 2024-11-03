@@ -7,6 +7,7 @@ module rcc_vsw_clk_rst_ctrl (
     input        lsi_clk,          //lsi clock from vdd domain
     input        lse_clk,          //lsi clock from vsw domain
     input        lsecss_fail,
+    input        lse_rdy,
     //rtc clock control
     input        rtcen,
     input  [1:0] rtcsel,
@@ -18,7 +19,8 @@ module rcc_vsw_clk_rst_ctrl (
     input        testmode
 );
   wire rcc_rtcsel_clk;
-  wire lse_clk_gated;
+  wire gated_lse_clk;
+  wire lse_clk_en;
 
   assign pre_vsw_rst_n = (~bdrst) && (~pwr_vsw_rst);
 
@@ -34,7 +36,7 @@ module rcc_vsw_clk_rst_ctrl (
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_rtc_clk_switch (
-      .i_clk   ({hse_rtc_clk, lsi_clk, lse_clk_gated, 1'b0}),
+      .i_clk   ({hse_rtc_clk, lsi_clk, gated_lse_clk, 1'b0}),
       .clk_fail({2'b0, lsecss_fail, 1'b1}),
       .sel     (rtcsel),
       .rst_n   (sync_vsw_rst_n),
@@ -42,11 +44,13 @@ module rcc_vsw_clk_rst_ctrl (
   );
 
   // lse clock gate
+  assign lse_clk_en = lse_rdy;
+
   BB_clk_gating rcc_lse_clk_gate (
       .raw_clk(lse_clk),
-      .active (~lsecss_fail),
+      .active (lse_clk_en),
       .bypass (testmode),
-      .gen_clk(lse_clk_gated)
+      .gen_clk(gated_lse_clk)
   );
 
 endmodule

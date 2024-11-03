@@ -5,35 +5,24 @@ module rcc_hsi_div (
     output       o_clk
 );
 
-  wire [1:0] div_sel_f;
-  wire [1:0] div_sel_ff;
+  wire [1:0] sync_div_sel;
   reg  [2:0] div_ratio;
   //==========================================================================
   // syncronize the input ratio
   //==========================================================================
 
-  BB_dffr #(
-      .DW     (2),
-      .RST_VAL(0)
-  ) u_BB_0_dffr (
-      .clk  (i_clk),
-      .rst_n(rst_n),
-      .din  (div_sel),
-      .dout (div_sel_f)
-  );
-
-  BB_dffr #(
-      .DW     (2),
-      .RST_VAL(0)
-  ) u_BB_1_dffr (
-      .clk  (i_clk),
-      .rst_n(rst_n),
-      .din  (div_sel_f),
-      .dout (div_sel_ff)
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (2)
+  ) u_sync_div_sel (
+      .src_signal(div_sel),
+      .rst_n     (rst_n),
+      .clk       (i_clk),
+      .gen_signal(sync_div_sel)
   );
 
   always @(*) begin
-    case (div_sel_ff)
+    case (sync_div_sel)
       2'b00: div_ratio = 3'b001;  //DIV_RATIO = 1
       2'b01: div_ratio = 3'b010;  //DIV_RATIO = 2
       2'b10: div_ratio = 3'b100;  //DIV_RATIO = 4

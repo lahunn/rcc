@@ -17,25 +17,27 @@ module rcc_reg #(
     input  [DW-1:0] wdata,
     output [DW-1:0] rdata,
     output [   1:0] rsp,
-    input           pll3_rdy,
+    input           sync_pll3_rdy,
     output          pll3on,
-    input           pll2_rdy,
+    input           sync_pll2_rdy,
     output          pll2on,
-    input           pll1_rdy,
+    input           sync_pll1_rdy,
     output          pll1on,
     output          hsecsson,
     output          hsebyp,
-    input           hse_rdy,
+    input           sync_hse_rdy,
     output          hseon,
-    input           hsi48_rdy,
+    input           sync_hsi48_rdy,
     output          hsi48on,
     output          csikeron,
-    input           csi_rdy,
+    input           sync_csi_rdy,
     output          csion,
     output [   1:0] hsidiv,
-    input           hsi_rdy,
+    input           sync_hsi_rdy,
     output          hsikeron,
     output          hsion,
+    input sync_lse_rdy,
+    input sync_lsi_rdy,
     output [   7:0] rcc_csi_triming,
     input  [   7:0] flash_csi_opt,
     output [  11:0] rcc_hsi_triming,
@@ -636,10 +638,10 @@ module rcc_reg #(
     input           rcc_sys_stop,
     input           rcc_d1_stop,
     input           rcc_d2_stop,
-    input           hsecss_fail,
+    input           async_hsecss_fail,
+    input           sync_hsecss_fail,
     input           rcc_exit_sys_stop,
-    input           lsecss_fail,
-
+    input           sync_lsecss_fail,
 
     // rcc_bdcr 
     input        backup_protect,
@@ -3329,12 +3331,12 @@ module rcc_reg #(
   // 29:29               pll3rdy             RO                  0b0                 
   // --------------------------------------------------------------------------------
 
-  assign pllxon_clr_n = rst_n & ~(rcc_sys_stop | (hsecss_fail & cur_rcc_pllclkselr_pllsrc == 2'b10));
-  assign cur_rcc_cr_pll3rdy = pll3_rdy;
+  assign cur_rcc_cr_pll3rdy = sync_pll3_rdy;
 
   // --------------------------------------------------------------------------------
   // 28:28               pll3on              RW                  0b0                 
   // --------------------------------------------------------------------------------
+  assign pllxon_clr_n = rst_n & ~(rcc_sys_stop | (async_hsecss_fail & cur_rcc_pllclkselr_pllsrc == 2'b10));
   assign rcc_cr_pll3on_en = (|wr_req & rcc_cr_sel);
   assign nxt_rcc_cr_pll3on = wdata[28:28];
   assign pll3on = cur_rcc_cr_pll3on;
@@ -3352,7 +3354,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 27:27               pll2rdy             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_cr_pll2rdy = pll2_rdy;
+  assign cur_rcc_cr_pll2rdy = sync_pll2_rdy;
 
   // --------------------------------------------------------------------------------
   // 26:26               pll2on              RW                  0b0                 
@@ -3374,7 +3376,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 25:25               pll1rdy             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_cr_pll1rdy = pll1_rdy;
+  assign cur_rcc_cr_pll1rdy = sync_pll1_rdy;
 
   // --------------------------------------------------------------------------------
   // 24:24               pll1on              RW                  0b0                 
@@ -3430,8 +3432,8 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 17:17               hserdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign hseon_clr_n       = rst_n & ~(hsecss_fail | rcc_sys_stop);
-  assign cur_rcc_cr_hserdy = hse_rdy;
+  assign hseon_clr_n       = rst_n & ~(async_hsecss_fail | rcc_sys_stop);
+  assign cur_rcc_cr_hserdy = sync_hse_rdy;
 
   // --------------------------------------------------------------------------------
   // 16:16               hseon               RW                  0b0                 
@@ -3457,7 +3459,7 @@ module rcc_reg #(
 
   //clock ready logic generate
 
-  assign sys_rdy_candidate  = {pll1_rdy, hse_rdy, csi_rdy, hsi_rdy};
+  assign sys_rdy_candidate  = {sync_pll1_rdy, sync_hse_rdy, sync_csi_rdy, sync_hsi_rdy};
   assign d1_clk_rdy         = sys_clk_rdy & (~rcc_d1_stop);
   assign d2_clk_rdy         = sys_clk_rdy & (~rcc_d2_stop);
 
@@ -3480,7 +3482,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 13:13               hsi48rdy            RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_cr_hsi48rdy = hsi48_rdy;
+  assign cur_rcc_cr_hsi48rdy = sync_hsi48_rdy;
 
   // --------------------------------------------------------------------------------
   // 12:12               hsi48on             RW                  0b0                 
@@ -3520,7 +3522,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 8:8                 csirdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_cr_csirdy = csi_rdy;
+  assign cur_rcc_cr_csirdy = sync_csi_rdy;
 
   // --------------------------------------------------------------------------------
   // 7:7                 csion               RW                  0b0                 
@@ -3596,7 +3598,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 2:2                 hsirdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_cr_hsirdy   = hsi_rdy;
+  assign cur_rcc_cr_hsirdy   = sync_hsi_rdy;
 
   // --------------------------------------------------------------------------------
   // 1:1                 hsikeron            RW                  0b0                 
@@ -3618,7 +3620,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 0:0                 hsion               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | hsecss_fail);
+  assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | async_hsecss_fail);
   assign rcc_cr_hsion_en  = ~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b00));
   assign nxt_rcc_cr_hsion = wdata[0:0];
   assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion;
@@ -3906,7 +3908,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 2:0                 sw                  RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign sw_clr_n         = ~(hsecss_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;  //there is a difference with H7
+  assign sw_clr_n         = ~(async_hsecss_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;  //there is a difference with H7
   assign sw_set_n         = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 1);
 
   assign rcc_cfgr_sw_en   = (|wr_req & rcc_cfgr_sel);
@@ -5664,7 +5666,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 10:10               hsecssf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_hsecssf_set = hsecss_fail;
+  assign rcc_cifr_hsecssf_set = sync_hsecss_fail;
   assign rcc_cifr_hsecssf_clr = cur_rcc_cicr_hsecssc;
   assign rcc_cifr_hsecssf_en  = rcc_cifr_hsecssf_set | rcc_cifr_hsecssf_clr;
   assign nxt_rcc_cifr_hsecssf = rcc_cifr_hsecssf_set;
@@ -5683,7 +5685,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 9:9                 lsecssf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_lsecssf_set = lsecss_fail;
+  assign rcc_cifr_lsecssf_set = sync_lsecss_fail;
   assign rcc_cifr_lsecssf_clr = cur_rcc_cicr_lsecssc;
   assign rcc_cifr_lsecssf_en  = rcc_cifr_lsecssf_set | rcc_cifr_lsecssf_clr;
   assign nxt_rcc_cifr_lsecssf = rcc_cifr_lsecssf_set;
@@ -5702,7 +5704,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 8:8                 pll3rdyf            RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_pll3rdyf_set = pll3_rdy;
+  assign rcc_cifr_pll3rdyf_set = sync_pll3_rdy;
   assign rcc_cifr_pll3rdyf_clr = cur_rcc_cicr_pll3rdyc;
   assign rcc_cifr_pll3rdyf_en  = rcc_cifr_pll3rdyf_set | rcc_cifr_pll3rdyf_clr;
   assign nxt_rcc_cifr_pll3rdyf = rcc_cifr_pll3rdyf_set;
@@ -5721,7 +5723,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 7:7                 pll2rdyf            RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_pll2rdyf_set = pll2_rdy;
+  assign rcc_cifr_pll2rdyf_set = sync_pll2_rdy;
   assign rcc_cifr_pll2rdyf_clr = cur_rcc_cicr_pll3rdyc;
   assign rcc_cifr_pll2rdyf_en  = rcc_cifr_pll2rdyf_set | rcc_cifr_pll2rdyf_clr;
   assign nxt_rcc_cifr_pll2rdyf = rcc_cifr_pll2rdyf_set;
@@ -5740,7 +5742,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 6:6                 pll1rdyf            RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_pll1rdyf_set = pll1_rdy;
+  assign rcc_cifr_pll1rdyf_set = sync_pll1_rdy;
   assign rcc_cifr_pll1rdyf_clr = cur_rcc_cicr_pll2rdyc;
   assign rcc_cifr_pll1rdyf_en  = rcc_cifr_pll1rdyf_set | rcc_cifr_pll1rdyf_clr;
   assign nxt_rcc_cifr_pll1rdyf = rcc_cifr_pll1rdyf_set;
@@ -5759,7 +5761,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 5:5                 hsi48rdyf           RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_hsi48rdyf_set = hsi48_rdy;
+  assign rcc_cifr_hsi48rdyf_set = sync_hsi48_rdy;
   assign rcc_cifr_hsi48rdyf_clr = cur_rcc_cicr_pll1rdyc;
   assign rcc_cifr_hsi48rdyf_en  = rcc_cifr_hsi48rdyf_set | rcc_cifr_hsi48rdyf_clr;
   assign nxt_rcc_cifr_hsi48rdyf = rcc_cifr_hsi48rdyf_set;
@@ -5778,7 +5780,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 csirdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_csirdyf_set = csi_rdy;
+  assign rcc_cifr_csirdyf_set = sync_csi_rdy;
   assign rcc_cifr_csirdyf_clr = cur_rcc_cicr_hsi48rdyc;
   assign rcc_cifr_csirdyf_en  = rcc_cifr_csirdyf_set | rcc_cifr_csirdyf_clr;
   assign nxt_rcc_cifr_csirdyf = rcc_cifr_csirdyf_set;
@@ -5797,7 +5799,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 hserdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_hserdyf_set = hse_rdy;
+  assign rcc_cifr_hserdyf_set = sync_hse_rdy;
   assign rcc_cifr_hserdyf_clr = cur_rcc_cicr_csirdyc;
   assign rcc_cifr_hserdyf_en  = rcc_cifr_hserdyf_set | rcc_cifr_hserdyf_clr;
   assign nxt_rcc_cifr_hserdyf = rcc_cifr_hserdyf_set;
@@ -5816,7 +5818,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 2:2                 hsirdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_hsirdyf_set = hsi_rdy;
+  assign rcc_cifr_hsirdyf_set = sync_hsi_rdy;
   assign rcc_cifr_hsirdyf_clr = cur_rcc_cicr_hserdyc;
   assign rcc_cifr_hsirdyf_en  = rcc_cifr_hsirdyf_set | rcc_cifr_hsirdyf_clr;
   assign nxt_rcc_cifr_hsirdyf = rcc_cifr_hsirdyf_set;
@@ -5835,7 +5837,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 1:1                 lserdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_lserdyf_set = cur_rcc_bdcr_lserdy;
+  assign rcc_cifr_lserdyf_set = sync_lse_rdy;
   assign rcc_cifr_lserdyf_clr = cur_rcc_cicr_hsirdyc;
   assign rcc_cifr_lserdyf_en  = rcc_cifr_lserdyf_set | rcc_cifr_lserdyf_clr;
   assign nxt_rcc_cifr_lserdyf = rcc_cifr_lserdyf_set;
@@ -5854,7 +5856,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 0:0                 lsirdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cifr_lsirdyf_set = cur_rcc_csr_lsirdy;
+  assign rcc_cifr_lsirdyf_set = sync_lsi_rdy;
   assign rcc_cifr_lsirdyf_clr = cur_rcc_cicr_lserdyc;
   assign rcc_cifr_lsirdyf_en  = rcc_cifr_lsirdyf_set | rcc_cifr_lsirdyf_clr;
   assign nxt_rcc_cifr_lsirdyf = rcc_cifr_lsirdyf_set;

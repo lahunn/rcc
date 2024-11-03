@@ -22,7 +22,6 @@ BB_dffr #(
 );
 
 assign nxt_sync = {cur_sync[STAGE_NUM-2:0], 1'b1};
-
 assign gen_rst_n = cur_sync[STAGE_NUM-1];
 
 endmodule

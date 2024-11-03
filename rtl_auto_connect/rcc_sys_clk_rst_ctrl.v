@@ -35,9 +35,8 @@ module rcc_sys_clk_rst_ctrl #(
     input        rcc_arcg_on,
     // output reset signals
     output       sys_rst_n,
-    output       sys_sync_rst_n,
-    output       d1_sync_rst_n,
-    output       d2_sync_rst_n,
+    output       d1_rst_n,
+    output       d2_rst_n,
     output       cpu1_sync_rst_n,
     output       cpu2_sync_rst_n,
     output       d1_bus_sync_rst_n,
@@ -95,7 +94,7 @@ module rcc_sys_clk_rst_ctrl #(
     //==============================================================================================
     // signals connected to HSE
     input        hse_rdy,
-    input        hsecss_fail,
+    input        async_hsecss_fail,
     input        hse_origin_clk,
     // lse lsi clock
     input        lse_clk,
@@ -198,8 +197,6 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               rcc_obl_clk_arcg_en;
   wire                               sys_clk_arcg_en;
   wire                               d1_clk_arcg_en;
-  wire                               d1_rst_n;
-  wire                               d2_rst_n;
   wire                               pwr_por_rst_n;
   wire                               pwr_por_hsi_sync_rst_n;
   wire                               pwr_por_hse_sync_rst_n;
@@ -305,7 +302,7 @@ module rcc_sys_clk_rst_ctrl #(
       .SET_VAL(1)
   ) u_rcc_pwr_d1_req_dfflrs (
       .clk  (sys_clk),
-      .rst_n(sys_sync_rst_n),
+      .rst_n(sys_rst_n),
       .set_n(rcc_pwr_d1_req_set_n),
       .en   (pwr_d1_wkup),
       .din  (1'b0),
@@ -319,7 +316,7 @@ module rcc_sys_clk_rst_ctrl #(
       .SET_VAL(1)
   ) u_rcc_pwr_d2_req_dfflrs (
       .clk  (sys_clk),
-      .rst_n(sys_sync_rst_n),
+      .rst_n(sys_rst_n),
       .set_n(rcc_pwr_d2_req_set_n),
       .en   (pwr_d2_wkup),
       .din  (1'b0),
@@ -332,7 +329,7 @@ module rcc_sys_clk_rst_ctrl #(
       .SET_VAL(1)
   ) u_rcc_pwr_d3_req_dfflrs (
       .clk  (sys_clk),
-      .rst_n(sys_sync_rst_n),
+      .rst_n(sys_rst_n),
       .set_n(rcc_pwr_d3_req_set_n),
       .en   (pwr_d3_wkup),
       .din  (1'b0),
@@ -465,8 +462,8 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //cpu and bus reset generate
   //==============================================================================================
-  assign cpu1_sync_rst_n = sys_sync_rst_n && d1_sync_rst_n && ~wwdg1_out_rst;
-  assign cpu2_sync_rst_n = sys_sync_rst_n && d2_sync_rst_n && ~wwdg2_out_rst;
+  assign cpu1_sync_rst_n = sys_rst_n && d1_rst_n && ~wwdg1_out_rst;
+  assign cpu2_sync_rst_n = sys_rst_n && d2_rst_n && ~wwdg2_out_rst;
 
 
   //==============================================================================================
@@ -483,41 +480,38 @@ module rcc_sys_clk_rst_ctrl #(
       .sync_rst_n(rcc_obl_sync_rst_n)
   );
   //dx_bus_sync_rst_n generate
-  assign d1_bus_sync_rst_n = sys_sync_rst_n && d1_sync_rst_n;
-  assign d2_bus_sync_rst_n = sys_sync_rst_n && d2_sync_rst_n;
-  assign d3_bus_sync_rst_n = sys_sync_rst_n;
+  assign d1_bus_sync_rst_n = sys_rst_n && d1_rst_n;
+  assign d2_bus_sync_rst_n = sys_rst_n && d2_rst_n;
+  assign d3_bus_sync_rst_n = sys_rst_n;
 
   // system clock asynchoronous reset clock gating
-  async_reset_clk_gate #(
+  sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_SYS_RST_RELEASE)
   ) sys_clk_async_reset_clk_gate (
       .src_rst_n (sys_rst_n),
       .i_clk     (pre_sys_clk),
       .arcg_on   (rcc_arcg_on),
-      .clk_en    (sys_clk_arcg_en),
-      .sync_rst_n(sys_sync_rst_n)
+      .clk_en    (sys_clk_arcg_en)
   );
 
   // d1 domain clock asynchoronous reset clock gating
-  async_reset_clk_gate #(
+  sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_D1_RST_RELEASE)
   ) d1_clk_async_reset_clk_gate (
       .src_rst_n (d1_rst_n),
       .i_clk     (sys_hpre_clk),
       .arcg_on   (rcc_arcg_on),
-      .clk_en    (d1_clk_arcg_en),
-      .sync_rst_n(d1_sync_rst_n)
+      .clk_en    (d1_clk_arcg_en)
   );
 
   // d2 domain clock asynchoronous reset clock gating
-  async_reset_clk_gate #(
+  sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_D2_RST_RELEASE)
   ) d2_clk_async_reset_clk_gate (
       .src_rst_n (d2_rst_n),
       .i_clk     (sys_hpre_clk),
       .arcg_on   (rcc_arcg_on),
-      .clk_en    (d2_clk_arcg_en),
-      .sync_rst_n(d2_sync_rst_n)
+      .clk_en    (d2_clk_arcg_en)
   );
 
   // cpu1 clock asynchoronous reset clock gating
@@ -596,7 +590,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign hsi_ker_clk_en = hsi_rdy && (~rcc_sys_stop || hsi_ker_clk_req);
   assign csi_clk_en     = csi_rdy && (~rcc_sys_stop);
   assign csi_ker_clk_en = csi_rdy && (~rcc_sys_stop || csi_ker_clk_req);
-  assign hse_clk_en     = hse_rdy && ~hsecss_fail;
+  assign hse_clk_en     = hse_rdy && ~async_hsecss_fail;
 
   //====================================================================
   // MCO clock out
@@ -618,7 +612,7 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco1_clk_divider (
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .i_clk (mco1_pre_clk),
       .ratio (mco1pre),
       .o_clk (mco1),
@@ -639,7 +633,7 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco2_clk_divider (
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .i_clk (mco2_pre_clk),
       .ratio (mco2pre),
       .o_clk (mco2),
@@ -730,7 +724,7 @@ module rcc_sys_clk_rst_ctrl #(
       .CLK_NUM(3)
   ) per_clk_switch (
       .i_clk   (per_clk_src),
-      .clk_fail({hsecss_fail, 2'b0}),
+      .clk_fail({async_hsecss_fail, 2'b0}),
       .rst_n   (sys_rst_n),
       .sel     (clkpersel),
       .o_clk   (per_clk)
@@ -748,7 +742,7 @@ module rcc_sys_clk_rst_ctrl #(
       .CLK_NUM(3)
   ) pll_src_clk_switch (
       .i_clk   (pll_clk_src),
-      .clk_fail({hsecss_fail, 2'b0}),
+      .clk_fail({async_hsecss_fail, 2'b0}),
       .rst_n   (sys_rst_n),
       .sel     (pllsrc),
       .o_clk   (pll_src_clk)
@@ -758,7 +752,7 @@ module rcc_sys_clk_rst_ctrl #(
       .RATIO_WID(6)
   ) pll1_src_clk_div (
       .i_clk (pll_src_clk),
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .ratio (divm1),
       .o_clk (pll1_src_clk),
       .div_en()
@@ -768,7 +762,7 @@ module rcc_sys_clk_rst_ctrl #(
       .RATIO_WID(6)
   ) pll2_src_clk_div (
       .i_clk (pll_src_clk),
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .ratio (divm2),
       .o_clk (pll2_src_clk),
       .div_en()
@@ -778,7 +772,7 @@ module rcc_sys_clk_rst_ctrl #(
       .RATIO_WID(6)
   ) pll3_src_clk_div (
       .i_clk (pll_src_clk),
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .ratio (divm3),
       .o_clk (pll3_src_clk),
       .div_en()
@@ -795,7 +789,7 @@ module rcc_sys_clk_rst_ctrl #(
       .CLK_NUM(4)
   ) sys_clk_switch (
       .i_clk   (sys_clk_src),
-      .clk_fail({1'b0, hsecss_fail, 2'b0}),
+      .clk_fail({1'b0, async_hsecss_fail, 2'b0}),
       .rst_n   (sys_rst_n),
       .sel     (sw),
       .o_clk   (pre_sys_clk)
@@ -809,7 +803,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_512_div u_sys_d1cpre_clk_divider (
       .i_clk  (sys_clk),
-      .rst_n  (sys_sync_rst_n),
+      .rst_n  (sys_rst_n),
       .div_sel(d1cpre),
       .div_en (),
       .o_clk  (sys_d1cpre_clk)
@@ -830,14 +824,14 @@ module rcc_sys_clk_rst_ctrl #(
       .DIV_RATIO(8)
   ) c1_systick_clk_div (
       .i_clk (rcc_c1_clk),
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .o_clk (rcc_c1_systick_clk),
       .div_en()
   );
 
   rcc_512_div sys_hpre_clk_divider (
       .i_clk  (sys_d1cpre_clk),
-      .rst_n  (sys_sync_rst_n),
+      .rst_n  (sys_rst_n),
       .div_sel(hpre),
       .div_en (c1_to_axi_div_en),
       .o_clk  (sys_hpre_clk)
@@ -866,7 +860,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_16_div rcc_d2_bus_clk_divider (
       .i_clk  (rcc_d1_bus_clk),
-      .rst_n  (sys_sync_rst_n),
+      .rst_n  (sys_rst_n),
       .div_sel(d1ppre),
       .div_en (d1_h2b_div_en),
       .o_clk  (rcc_apb3bridge_d1_pre_clk)
@@ -896,7 +890,7 @@ module rcc_sys_clk_rst_ctrl #(
       .DIV_RATIO(8)
   ) c2_systick_clk_div (
       .i_clk (rcc_c2_clk),
-      .rst_n (sys_sync_rst_n),
+      .rst_n (sys_rst_n),
       .o_clk (rcc_c2_systick_clk),
       .div_en()
   );
@@ -924,7 +918,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_pclk_timer_div rcc_apb1clk_timer_div (
       .i_clk      (rcc_d2_bus_clk),
-      .rst_n      (sys_sync_rst_n),
+      .rst_n      (sys_rst_n),
       .div_sel    (d2ppre1),
       .div_en     (d2_h2b1_div_en),
       .timpre     (timpre),
@@ -941,7 +935,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_pclk_timer_div rcc_apb2clk_timer_div (
       .i_clk      (rcc_d2_bus_clk),
-      .rst_n      (sys_sync_rst_n),
+      .rst_n      (sys_rst_n),
       .div_sel    (d2ppre2),
       .div_en     (d2_h2b2_div_en),
       .timpre     (timpre),
@@ -978,7 +972,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_16_div rcc_d3_bus_clk_divider (
       .i_clk  (rcc_d3_bus_clk),
-      .rst_n  (sys_sync_rst_n),
+      .rst_n  (sys_rst_n),
       .div_sel(d3ppre),
       .div_en (d3_h2b_div_en),
       .o_clk  (rcc_apb4bridge_d3_pre_clk)

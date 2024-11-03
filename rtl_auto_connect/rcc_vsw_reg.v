@@ -8,7 +8,7 @@ module rcc_vsw_reg (
     output [1:0] rtcsel,
 
     input        lsecss_fail,
-    input        lserdy,
+    input        lse_rdy,
     output       lsecssd,
     output       lsecsson,
     output [1:0] lsedrv,
@@ -43,7 +43,12 @@ module rcc_vsw_reg (
   wire rcc_bdcr_lsecssd_clr;
   wire rtcsel_wren_n;
   wire lsecsson_wren_n;
-  wire lsecss_fail_rst_n;
+  wire rcc_bdcr_rtcsel_wren;
+  wire nxt_rcc_bdcr_rtcsel_wren;
+  wire cur_rcc_bdcr_rtcsel_wren;
+  wire rcc_bdcr_lsecsson_wren;
+  wire cur_rcc_bdcr_lsecsson_wren;
+  wire nxt_rcc_bdcr_lsecsson_wren;
   /*AUTO DECLARE*/
 
   // --------------------------------------------------------------------------------
@@ -87,24 +92,27 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   // 9:8               rtcsel              RWOnce                  2'b0                 
   // --------------------------------------------------------------------------------
-  assign rtcsel            = cur_rcc_bdcr_rtcsel;
-  assign lsecss_fail_rst_n = (~lsecss_fail) && rst_n;
+
+  assign rtcsel                   = cur_rcc_bdcr_rtcsel;
+  assign rcc_bdcr_rtcsel_wren     = cur_rcc_bdcr_rtcsel_wren || lsecss_fail;  //rtcsel can not be changed ， until lsecss_fail or vsw reset
+  assign nxt_rcc_bdcr_rtcsel_wren = (nxt_rcc_bdcr_rtcsel == 2'b00) && (cur_rcc_bdcr_rtcsel == 2'b00);  //when rtc sel not changed, rtcsel_wren is 1
 
   BB_dffr #(
       .DW     (1),
-      .RST_VAL('h0)
+      .RST_VAL('h1)
   ) U_rcc_bdcr_rtcsel_wren (
       .clk  (rcc_bdcr_byte1_wren),
-      .rst_n(lsecss_fail_rst_n),                                                 //rtcsel can not be changed ， until lsecss_fail
-      .din  ((nxt_rcc_bdcr_rtcsel != 2'b00) || (cur_rcc_bdcr_rtcsel != 2'b00)),
-      .dout (rtcsel_wren_n)
+      .rst_n(rst_n),
+      .din  (nxt_rcc_bdcr_rtcsel_wren),
+      .dout (cur_rcc_bdcr_rtcsel_wren)
   );
 
-  BB_dffr #(
+  BB_dfflr #(
       .DW     (2),
       .RST_VAL('h0)
   ) U_rcc_bdcr_rtcsel (
       .clk  (rcc_bdcr_byte1_wren && (~rtcsel_wren_n)),
+      .en   (rcc_bdcr_rtcsel_wren),
       .rst_n(rst_n),
       .din  (nxt_rcc_bdcr_rtcsel),
       .dout (cur_rcc_bdcr_rtcsel)
@@ -131,23 +139,26 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   // 5:5               lsecsson              W1S                  1'b0                 
   // --------------------------------------------------------------------------------
-  assign lsecsson = cur_rcc_bdcr_lsecsson;
+  assign lsecsson                   = cur_rcc_bdcr_lsecsson;
+  assign nxt_rcc_bdcr_lsecsson_wren = (nxt_rcc_bdcr_lsecsson == 1'b0) && (cur_rcc_bdcr_lsecsson == 1'b0);  //when lsecsson not changed, lsecsson_wren is 1
+  assign rcc_bdcr_lsecsson_wren     = cur_rcc_bdcr_lsecsson_wren || lsecss_fail;  //lsecsson can not be changed ， until lsecss_fail or vsw reset
 
   BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lsecsson_wren (
       .clk  (rcc_bdcr_byte0_wren),
-      .rst_n(lsecss_fail_rst_n),
-      .din  ((nxt_rcc_bdcr_lsecsson != 1'b0) || (cur_rcc_bdcr_lsecsson != 1'b0)),  //when lsecsson is set to 1, it can not be cleared until lsecss_fail
-      .dout (lsecsson_wren_n)
+      .rst_n(rst_n),
+      .din  (nxt_rcc_bdcr_lsecsson_wren),  //when lsecsson is set to 1, it can not be cleared until lsecss_fail
+      .dout (cur_rcc_bdcr_lsecsson_wren)
   );
 
-  BB_dffr #(
+  BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_bdcr_lsecsson (
-      .clk  (rcc_bdcr_byte0_wren && lsecsson_wren_n),
+      .clk  (rcc_bdcr_byte0_wren),
+      .en   (rcc_bdcr_lsecsson_wren),
       .rst_n(rst_n),
       .din  (nxt_rcc_bdcr_lsecsson),
       .dout (cur_rcc_bdcr_lsecsson)
@@ -196,9 +207,9 @@ module rcc_vsw_reg (
 
 
   // --------------------------------------------------------------------------------
-  // 1:1               lserdy              RO                  1'b0                 
+  // 1:1               lse_rdy              RO                  1'b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_bdcr_lserdy = lserdy;
+  assign cur_rcc_bdcr_lserdy = lse_rdy;
 
   // --------------------------------------------------------------------------------
   // 0:0               lseon              RW                  1'b0                 

@@ -183,9 +183,9 @@ module per_ker_clk_rst_control #(
   endgenerate
 
   //async reset clock control
-  per_async_reset_clk_gate #(
+  sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_per_async_reset_clk_gate (
+  ) u_sync_reset_clk_gate (
       .src_rst_n(per_rst_n),
       .i_clk    (per_bus_clks[0]),
       .arcg_on  (arcg_on),

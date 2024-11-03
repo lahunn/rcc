@@ -1,4 +1,4 @@
-module per_async_reset_clk_gate #(
+module sync_reset_clk_gate #(
     parameter DELAY = 8
 ) (
     input  src_rst_n,
