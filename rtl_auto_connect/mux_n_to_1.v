@@ -13,7 +13,7 @@ module mux_n_to_1 #(
       assign out = (select[0]) ? inp[1] : inp[0];
     end else if (N > 2) begin
       wire [1:0] temp;
-      if ((N && (N - 1)) == 0) begin
+      if ((N & (N - 1)) == 0) begin
         mux_n_to_1 #(
             .N(N / 2),
             .m(m - 1)
@@ -31,7 +31,7 @@ module mux_n_to_1 #(
             .out   (temp[1])
         );
         assign out = (select[m-1]) ? temp[1] : temp[0];
-      end else if (((N - 1) && (N - 2)) == 0) begin
+      end else if (((N - 1) & (N - 2)) == 0) begin
         mux_n_to_1 #(
             .N(2 ** (m - 1)),
             .m(m - 1)
@@ -42,7 +42,7 @@ module mux_n_to_1 #(
         );
         assign temp[1] = inp[N-1];
         assign out     = (select[m-1]) ? temp[1] : temp[0];
-      end else if (((N - 2) && (N - 3)) == 0) begin
+      end else if (((N - 2) & (N - 3)) == 0) begin
         mux_n_to_1 #(
             .N(2 ** (m - 1)),
             .m(m - 1)

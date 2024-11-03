@@ -152,7 +152,6 @@ module rcc_sys_clk_gen (
   wire       rcc_apb3bridge_d1_pre_clk;
   wire       rcc_apb4bridge_d3_pre_clk;
 
-  wire       rcc_obl_clk_en;
   wire       rcc_d1_bus_clk_en;
   wire       rcc_d2_bus_clk_en;
   wire       rcc_d3_bus_clk_en;

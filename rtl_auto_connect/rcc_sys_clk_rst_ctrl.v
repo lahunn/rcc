@@ -195,7 +195,6 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               obl_rst;
   wire                               rcc_vcore_rst;
   wire                               rcc_obl_rst_n;
-  wire                               stby_rst_n;
   //Define instance wires here
   wire                               rcc_pwr_d1_req_set_n;
   wire                               rcc_pwr_d2_req_set_n;
@@ -390,10 +389,10 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   assign rcc_vcore_rst   = pwr_por_rst || ~pwr_vcore_ok || ~obl_done;
 
-  //==============================================================================================
-  //standby reset generate
-  //==============================================================================================
-  assign stby_rst_n      = ~rcc_vcore_rst;
+  // //==============================================================================================
+  // //standby reset generate
+  // //==============================================================================================
+  // assign stby_rst_n      = ~rcc_vcore_rst;
 
   //==============================================================================================
   //cpu and bus reset generate

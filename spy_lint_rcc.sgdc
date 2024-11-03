@@ -26,38 +26,38 @@ reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_reg.lsecss_fail_rst_n"     -
 #==============================================================================
 # IO
 #==============================================================================
-input -name ahb1bridge_d2_busy -clock hclk
-input -name ahb2bridge_d2_busy -clock hclk
-input -name ahb3bridge_d1_busy -clock hclk
-input -name ahb4bridge_d3_busy -clock hclk
-input -name apb1bridge_d2_busy -clock hclk
-input -name apb2bridge_d2_busy -clock hclk
-input -name apb3bridge_d1_busy -clock hclk
-input -name apb4bridge_d3_busy -clock hclk
-input -name axibridge_d1_busy  -clock hclk
+# input -name ahb1bridge_d2_busy -clock hsi_pre_sys_clk
+# input -name ahb2bridge_d2_busy -clock hsi_pre_sys_clk
+# input -name ahb3bridge_d1_busy -clock hsi_pre_sys_clk
+# input -name ahb4bridge_d3_busy -clock hsi_pre_sys_clk
+# input -name apb1bridge_d2_busy -clock hsi_pre_sys_clk
+# input -name apb2bridge_d2_busy -clock hsi_pre_sys_clk
+# input -name apb3bridge_d1_busy -clock hsi_pre_sys_clk
+# input -name apb4bridge_d3_busy -clock hsi_pre_sys_clk
+# input -name axibridge_d1_busy  -clock hsi_pre_sys_clk
 
 
-input -name c1_deepsleep -clock hclk
-input -name c1_sleep -clock hclk
-input -name c2_deepsleep -clock hclk
-input -name c2_sleep -clock hclk
-input -name cpu1_sftrst -clock hclk
-input -name cpu2_sftrst -clock hclk
-input -name crs_hsi48_trim[9:0] -clock hclk
-input -name eth_rcc_epis_2 -clock hclk
-input -name eth_rcc_fes -clock hclk
+# input -name c1_deepsleep -clock hsi_pre_sys_clk
+# input -name c1_sleep -clock hsi_pre_sys_clk
+# input -name c2_deepsleep -clock hsi_pre_sys_clk
+# input -name c2_sleep -clock hsi_pre_sys_clk
+# input -name cpu1_sftrst -clock hsi_pre_sys_clk
+# input -name cpu2_sftrst -clock hsi_pre_sys_clk
+# input -name crs_hsi48_trim[9:0] -clock hsi_pre_sys_clk
+# input -name eth_rcc_epis_2 -clock hsi_pre_sys_clk
+# input -name eth_rcc_fes -clock hsi_pre_sys_clk
 
-input -name haddr[31:0] -clock hclk
-input -name hready -clock hclk
-input -name hresetn -clock hclk
-input -name hsel -clock hclk
-input -name hsize[2:0] -clock hclk
-input -name htrans[1:0] -clock hclk
-input -name hwdata[31:0] -clock hclk
-input -name hwrite -clock hclk
-input -name backup_protect -clock hclk
-input -name wwdg1_out_rst -clock hclk
-input -name wwdg2_out_rst -clock hclk
+# input -name haddr[31:0] -clock hsi_pre_sys_clk
+# input -name hready -clock hsi_pre_sys_clk
+# input -name hresetn -clock hsi_pre_sys_clk
+# input -name hsel -clock hsi_pre_sys_clk
+# input -name hsize[2:0] -clock hsi_pre_sys_clk
+# input -name htrans[1:0] -clock hsi_pre_sys_clk
+# input -name hwdata[31:0] -clock hsi_pre_sys_clk
+# input -name hwrite -clock hsi_pre_sys_clk
+# input -name backup_protect -clock hsi_pre_sys_clk
+# input -name wwdg1_out_rst -clock hsi_pre_sys_clk
+# input -name wwdg2_out_rst -clock hsi_pre_sys_clk
 #lse clk
 input -name iwdg1_out_rst -clock lse_clk
 input -name iwdg2_out_rst -clock lse_clk

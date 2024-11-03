@@ -8,16 +8,14 @@ module BB_clk_gating (
     output gen_clk
 );
   /* verilator lint_off Latch*/
-  reg  cur_en;
-  wire nxt_en;
+  reg [2:0] clk_en;
 
-  always @(*) begin
-    if (!raw_clk) begin
-      cur_en = nxt_en;
-    end
+  always @(posedge raw_clk) begin
+    clk_en[2] <= clk_en[1];
+    clk_en[1] <= clk_en[0];
+    clk_en[0] <= active || bypass;
   end
 
-  assign nxt_en  = active || bypass;
-  assign gen_clk = raw_clk && cur_en;
+  assign gen_clk = raw_clk && clk_en[2];
 
 endmodule

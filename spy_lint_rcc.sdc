@@ -2,10 +2,6 @@ current_design rcc_top
 #==============================================================================
 # CLK-External
 #============================================================================== 
-create_clock -name hsi_hclk       [get_ports hclk]            -period 5      -waveform {0 2.5} -add
-create_clock -name csi_hclk       [get_ports hclk]            -period 5      -waveform {0 2.5} -add
-create_clock -name hse_hclk       [get_ports hclk]            -period 5      -waveform {0 2.5} -add
-create_clock -name pll1_hclk      [get_ports hclk]            -period 5      -waveform {0 2.5} -add
 create_clock -name hsi_origin_clk [get_ports hsi_origin_clk]  -period 15.625 -waveform {0 7.3125}
 create_clock -name hsi48_clk      [get_ports hsi48_clk]       -period 20.83  -waveform {0 10.415}
 create_clock -name hse_origin_clk [get_ports hse_origin_clk]  -period 20.83  -waveform {0 10.415}
@@ -91,33 +87,38 @@ create_generated_clock -name pll1_rcc_d3_bus_clk -source [get_pins u_rcc_vcore_t
 #eth clock
 create_generated_clock -name eth_mii_rx_clk_divided -source [get_ports pad_rcc_eth_mii_rx_clk] [get_nets u_rcc_vcore_top/u_rcc_eth_ker_clk_ctrl/pad_rcc_eth_mii_rx_clk_divided] -divide_by 2 -master_clock eth_mii_rx_clk -add
 #ahb clock
-create_generated_clock -name hsi_rcc_bdcr_byte0_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock hsi_hclk    -add
-create_generated_clock -name hsi_rcc_bdcr_byte1_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock hsi_hclk    -add
-create_generated_clock -name hsi_rcc_bdcr_byte2_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock hsi_hclk    -add
-create_generated_clock -name hsi_rcc_c1_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock hsi_hclk    -add
-create_generated_clock -name hsi_rcc_c2_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock hsi_hclk    -add
-create_generated_clock -name hsi_rcc_csr_lsion_wren     -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock hsi_hclk    -add
+create_generated_clock -name hsi_hclk                   -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_rcc_sys_clk_gen/rcc_d3_bus_clk_gate/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] -combinational -master_clock hsi_rcc_d3_bus_clk    -add
+create_generated_clock -name csi_hclk                   -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_rcc_sys_clk_gen/rcc_d3_bus_clk_gate/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] -combinational -master_clock csi_rcc_d3_bus_clk    -add
+create_generated_clock -name hse_hclk                   -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_rcc_sys_clk_gen/rcc_d3_bus_clk_gate/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] -combinational -master_clock hse_rcc_d3_bus_clk    -add
+create_generated_clock -name pll1_hclk                  -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_rcc_sys_clk_gen/rcc_d3_bus_clk_gate/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] -combinational -master_clock pll1_rcc_d3_bus_clk   -add
 
-create_generated_clock -name csi_rcc_bdcr_byte0_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock csi_hclk    -add
-create_generated_clock -name csi_rcc_bdcr_byte1_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock csi_hclk    -add
-create_generated_clock -name csi_rcc_bdcr_byte2_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock csi_hclk    -add
-create_generated_clock -name csi_rcc_c1_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock csi_hclk    -add
-create_generated_clock -name csi_rcc_c2_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock csi_hclk    -add
-create_generated_clock -name csi_rcc_csr_lsion_wren     -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock csi_hclk    -add
+create_generated_clock -name hsi_rcc_bdcr_byte0_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock hsi_hclk    -add
+create_generated_clock -name hsi_rcc_bdcr_byte1_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock hsi_hclk    -add
+create_generated_clock -name hsi_rcc_bdcr_byte2_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock hsi_hclk    -add
+create_generated_clock -name hsi_rcc_c1_rsr_rmvf_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock hsi_hclk    -add
+create_generated_clock -name hsi_rcc_c2_rsr_rmvf_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock hsi_hclk    -add
+create_generated_clock -name hsi_rcc_csr_lsion_wren     -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock hsi_hclk    -add
 
-create_generated_clock -name hse_rcc_bdcr_byte0_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock hse_hclk    -add
-create_generated_clock -name hse_rcc_bdcr_byte1_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock hse_hclk    -add
-create_generated_clock -name hse_rcc_bdcr_byte2_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock hse_hclk    -add
-create_generated_clock -name hse_rcc_c1_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock hse_hclk    -add
-create_generated_clock -name hse_rcc_c2_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock hse_hclk    -add
-create_generated_clock -name hse_rcc_csr_lsion_wren     -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock hse_hclk    -add
+create_generated_clock -name csi_rcc_bdcr_byte0_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock csi_hclk    -add
+create_generated_clock -name csi_rcc_bdcr_byte1_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock csi_hclk    -add
+create_generated_clock -name csi_rcc_bdcr_byte2_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock csi_hclk    -add
+create_generated_clock -name csi_rcc_c1_rsr_rmvf_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock csi_hclk    -add
+create_generated_clock -name csi_rcc_c2_rsr_rmvf_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock csi_hclk    -add
+create_generated_clock -name csi_rcc_csr_lsion_wren     -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock csi_hclk    -add
 
-create_generated_clock -name pll1_rcc_bdcr_byte0_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock pll1_hclk    -add
-create_generated_clock -name pll1_rcc_bdcr_byte1_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock pll1_hclk    -add
-create_generated_clock -name pll1_rcc_bdcr_byte2_wren    -source [get_ports hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock pll1_hclk    -add
-create_generated_clock -name pll1_rcc_c1_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock pll1_hclk    -add
-create_generated_clock -name pll1_rcc_c2_rsr_rmvf_wren   -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock pll1_hclk    -add
-create_generated_clock -name pll1_rcc_csr_lsion_wren     -source [get_ports hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock pll1_hclk    -add
+create_generated_clock -name hse_rcc_bdcr_byte0_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock hse_hclk    -add
+create_generated_clock -name hse_rcc_bdcr_byte1_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock hse_hclk    -add
+create_generated_clock -name hse_rcc_bdcr_byte2_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock hse_hclk    -add
+create_generated_clock -name hse_rcc_c1_rsr_rmvf_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock hse_hclk    -add
+create_generated_clock -name hse_rcc_c2_rsr_rmvf_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock hse_hclk    -add
+create_generated_clock -name hse_rcc_csr_lsion_wren     -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock hse_hclk    -add
+
+create_generated_clock -name pll1_rcc_bdcr_byte0_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte0_wren]  -combinational -master_clock pll1_hclk    -add
+create_generated_clock -name pll1_rcc_bdcr_byte1_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte1_wren]  -combinational -master_clock pll1_hclk    -add
+create_generated_clock -name pll1_rcc_bdcr_byte2_wren   -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vsw_top/rcc_bdcr_byte2_wren]  -combinational -master_clock pll1_hclk    -add
+create_generated_clock -name pll1_rcc_c1_rsr_rmvf_wren  -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c1_rsr_rmvf_wren] -combinational -master_clock pll1_hclk    -add
+create_generated_clock -name pll1_rcc_c2_rsr_rmvf_wren  -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_c2_rsr_rmvf_wren] -combinational -master_clock pll1_hclk    -add
+create_generated_clock -name pll1_rcc_csr_lsion_wren    -source [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] [get_pins u_rcc_vdd_top/rcc_csr_lsion_wren]   -combinational -master_clock pll1_hclk    -add
 
    
 #==============================================================================
