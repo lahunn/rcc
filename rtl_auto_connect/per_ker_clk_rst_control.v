@@ -1,7 +1,7 @@
 /* verilator lint_off UNUSEDSIGNAL */
 module per_ker_clk_rst_control #(
     parameter KER_CLK_SRC_NUM = 5,
-    parameter KER_CLK_NUM = 0,
+    parameter KER_CLK_NUM = 5,
     parameter BUS_CLK_NUM = 1,
     parameter IS_LSI = 0,
     parameter LSI_INDEX = 0,
@@ -100,7 +100,7 @@ module per_ker_clk_rst_control #(
         end
       end
     end else begin : per_domain_d1_d2b
-      assign d3_bus_clk_en = ~d3_deepsleep;
+      assign d3_bus_clk_en = 1'b0;
     end
   endgenerate
 
@@ -112,10 +112,11 @@ module per_ker_clk_rst_control #(
   generate
     genvar i;
     for (i = 0; i < BUS_CLK_NUM; i = i + 1) begin : bus_clk_gate
-      BB_clk_gating bus_clk_gates_inst (
+      async_clk_gating u_bus_clk_gating (
           .raw_clk(bus_clks[i]),
           .active (bus_clk_en),
           .bypass (testmode),
+          .rst_n  (per_rst_n),
           .gen_clk(per_bus_clks[i])
       );
     end
@@ -162,10 +163,11 @@ module per_ker_clk_rst_control #(
   generate
     genvar j;
     for (j = 0; j < KER_CLK_NUM; j = j + 1) begin : ker_clk_gate
-      BB_clk_gating ker_clk_gates_inst (
+      async_clk_gating u_ker_clk_gating (
           .raw_clk(ker_src_clks[j]),
           .active (ker_clk_en),
           .bypass (testmode),
+          .rst_n  (per_rst_n),
           .gen_clk(per_ker_clks[j])
       );
     end

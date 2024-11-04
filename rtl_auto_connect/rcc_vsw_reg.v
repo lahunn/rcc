@@ -27,7 +27,7 @@ module rcc_vsw_reg (
     input  [1:0] nxt_rcc_bdcr_lsedrv,
     input        nxt_rcc_bdcr_lsebyp,
     input        nxt_rcc_bdcr_lseon,
-    output       cur_rcc_bdcr_lserdy,
+    // output       cur_rcc_bdcr_lserdy,
     output       cur_rcc_bdcr_bdrst,
     output       cur_rcc_bdcr_rtcen,
     output [1:0] cur_rcc_bdcr_rtcsel,
@@ -207,12 +207,12 @@ module rcc_vsw_reg (
   // --------------------------------------------------------------------------------
   // 1:1               lse_rdy              RO                  1'b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_bdcr_lserdy = lse_rdy;
+  // assign cur_rcc_bdcr_lserdy = lse_rdy;
 
   // --------------------------------------------------------------------------------
   // 0:0               lseon              RW                  1'b0                 
   // --------------------------------------------------------------------------------
-  assign lseon               = cur_rcc_bdcr_lseon;
+  assign lseon = cur_rcc_bdcr_lseon;
 
   BB_dffr #(
       .DW     (1),

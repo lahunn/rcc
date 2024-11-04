@@ -1,6 +1,7 @@
 module BB_signal_sync #(
     parameter STAGE_NUM = 2,  //no less than 2
-    parameter DW = 1
+    parameter DW = 1,
+    parameter RST_VAL = 'b0
 ) (
     input  [DW-1:0] src_signal,
     input           rst_n,
@@ -14,11 +15,11 @@ module BB_signal_sync #(
   assign gen_signal     = sync_signal[STAGE_NUM];
   generate
     genvar i;
-    for (i = 0; i < STAGE_NUM; i = i + 1) begin : SYNC_SIGNAL
+    for (i = 0; i < STAGE_NUM; i = i + 1) begin : signal_sync_dffr_blk
       BB_dffr #(
           .DW     (DW),
-          .RST_VAL('h0)
-      ) reset_sync_1 (
+          .RST_VAL(RST_VAL)
+      ) u_signal_sync_dffr (
           .clk  (clk),
           .rst_n(rst_n),
           .din  (sync_signal[i]),

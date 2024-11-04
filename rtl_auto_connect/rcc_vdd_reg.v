@@ -57,7 +57,7 @@ module rcc_vdd_reg (
     output cur_rcc_c2_rsr_oblrstf,
     output cur_rcc_c2_rsr_rmvf,
     // rcc_csr
-    output cur_rcc_csr_lsirdy,
+    // output cur_rcc_csr_lsirdy,
     output cur_rcc_csr_lsion
 );
   /* verilator lint_off LATCH */
@@ -582,7 +582,7 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   // 1:1                 lsirdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_csr_lsirdy = lsi_rdy;
+  // assign cur_rcc_csr_lsirdy = lsi_rdy;
 
   // --------------------------------------------------------------------------------
   // 0:0                 lsion               RW                  0b0                 

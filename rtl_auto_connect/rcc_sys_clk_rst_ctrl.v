@@ -269,6 +269,13 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               csi_ker_clk_en;
   wire                               hse_clk_en;
 
+  wire                               sync_flash_power_ok;
+  wire                               sync_pwr_d1_ok;
+  wire                               sync_pwr_d2_ok;
+  wire                               sys_rst_n_release;
+  wire                               sync_sys_rst_n_assert;
+  wire                               sync_sys_rst_n_release;
+
   wire [$clog2(D1_RST_DURATION)-1:0] cur_d1_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] nxt_d1_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] cur_d2_rst_n_counter;
@@ -304,8 +311,7 @@ module rcc_sys_clk_rst_ctrl #(
       .set_n(rcc_pwr_d1_req_set_n),
       .en   (pwr_d1_wkup),
       .din  (1'b0),
-
-      .dout(rcc_pwr_d1_req)
+      .dout (rcc_pwr_d1_req)
   );  // it could be chnaged with no reset
 
   BB_dfflrs #(
@@ -343,18 +349,29 @@ module rcc_sys_clk_rst_ctrl #(
   //nrst_out
   //==============================================================================================
   assign nrst_out              = obl_rst || pwr_por_rst_n || pwr_bor_rst || lpwr1_rst || lpwr2_rst || (wwdg1_out_rst && ww1rsc) || (wwdg2_out_rst && ww2rsc) || iwdg1_out_rst || iwdg2_out_rst || cpu2_sftrst || cpu1_sftrst;
+
+
   //==============================================================================================
-  //d1 d2 system standby reset generate
+  //d1 system standby reset generate
   //==============================================================================================
   assign d1_rst_n_counter_wren = (cur_d1_rst_n_counter < D1_RST_DURATION);
   assign nxt_d1_rst_n_counter  = cur_d1_rst_n_counter + {{($clog2(D1_RST_DURATION) - 1) {1'b0}}, 1'b1};
+
+  BB_reset_sync #(
+      .STAGE_NUM(2),
+      .RST_VAL  ('b0)
+  ) u_pwr_d1_ok_sync (
+      .src_rst_n(pwr_d1_ok),
+      .clk      (sys_d1cpre_clk),
+      .gen_rst_n(sync_pwr_d1_ok)
+  );
 
   BB_dfflr #(
       .DW     ($clog2(D1_RST_DURATION)),
       .RST_VAL(0)
   ) u_d1_rst_n_counter_dfflr (
       .clk  (sys_d1cpre_clk),
-      .rst_n(pwr_d1_ok),
+      .rst_n(sync_pwr_d1_ok),
       .en   (d1_rst_n_counter_wren),
       .din  (nxt_d1_rst_n_counter),
       .dout (cur_d1_rst_n_counter)
@@ -364,27 +381,49 @@ module rcc_sys_clk_rst_ctrl #(
   assign d1_rst_n     = cur_d1_rst_n;
   assign d1_rst       = ~cur_d1_rst_n;
   //flash in d1 , so d1 reset release have to wait until falsh power ok
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_flash_power_ok_sync (
+      .src_signal(flash_power_ok),
+      .rst_n     (sync_pwr_d1_ok),
+      .clk       (sys_d1cpre_clk),
+      .gen_signal(sync_flash_power_ok)
+  );
+
   BB_dfflr #(
       .DW     (1),
       .RST_VAL(0)
   ) u_d1_rst_n_dfflr (
       .clk  (sys_d1cpre_clk),
-      .rst_n(pwr_d1_ok),
-      .en   (flash_power_ok),
+      .rst_n(sync_pwr_d1_ok),
+      .en   (sync_flash_power_ok),
       .din  (nxt_d1_rst_n),
       .dout (cur_d1_rst_n)
   );
 
-
+  //==============================================================================================
+  //d2 system standby reset generate
+  //==============================================================================================
   assign d2_rst_n_counter_wren = (cur_d2_rst_n_counter < D2_RST_DURATION);
   assign nxt_d2_rst_n_counter  = cur_d2_rst_n_counter + {{($clog2(D2_RST_DURATION) - 1) {1'b0}}, 1'b1};
 
+  BB_reset_sync #(
+      .STAGE_NUM(2),
+      .RST_VAL  ('b0)
+  ) u_pwr_d2_ok_sync (
+      .src_rst_n(pwr_d2_ok),
+      .clk      (sys_hpre_clk),
+      .gen_rst_n(sync_pwr_d2_ok)
+  );
   BB_dfflr #(
       .DW     ($clog2(D2_RST_DURATION)),
       .RST_VAL(0)
   ) u_d2_rst_n_counter_dfflr (
       .clk  (sys_hpre_clk),
-      .rst_n(pwr_d2_ok),
+      .rst_n(sync_pwr_d2_ok),
       .en   (d2_rst_n_counter_wren),
       .din  (nxt_d2_rst_n_counter),
       .dout (cur_d2_rst_n_counter)
@@ -399,7 +438,7 @@ module rcc_sys_clk_rst_ctrl #(
       .RST_VAL(0)
   ) u_d2_rst_n_dfflr (
       .clk  (sys_hpre_clk),
-      .rst_n(pwr_d2_ok),
+      .rst_n(sync_pwr_d2_ok),
       .din  (nxt_d2_rst_n),
       .dout (cur_d2_rst_n)
   );
@@ -407,16 +446,38 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //system reset generate
   //==============================================================================================
+  // sys reset is asserted when power on reset or hw init not finished , and reset release when hsi_rdy and flash power ok
+  assign sys_rst_n_assert  = ~nrst_in && hw_init_done;
+  assign sys_rst_n_release = hsi_rdy && flash_power_ok;
+  assign nxt_sys_rst_n     = sync_sys_rst_n_release;
+  assign sys_rst_n         = cur_sys_rst_n;
 
-  assign sys_rst_n_assert = ~nrst_in && hw_init_done;
-  assign nxt_sys_rst_n    = hsi_rdy && flash_power_ok;
-  assign sys_rst_n        = cur_sys_rst_n;
+  BB_reset_sync #(
+      .STAGE_NUM(2),
+      .RST_VAL  ('b0)
+  ) u_sys_rst_n_assert_sync (
+      .src_rst_n(sys_rst_n_assert),
+      .clk      (pre_sys_clk),
+      .gen_rst_n(sync_sys_rst_n_assert)
+  );
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_sys_rst_n_release_sync (
+      .src_signal(sys_rst_n_release),
+      .rst_n     (sync_sys_rst_n_assert),
+      .clk       (pre_sys_clk),
+      .gen_signal(sync_sys_rst_n_release)
+  );
+
   BB_dffr #(
       .DW     (1),
       .RST_VAL(0)
   ) u_sys_rst_n_dfflr (
       .clk  (pre_sys_clk),
-      .rst_n(sys_rst_n_assert),
+      .rst_n(sync_sys_rst_n_assert),
       .din  (nxt_sys_rst_n),
       .dout (cur_sys_rst_n)
   );
@@ -520,10 +581,12 @@ module rcc_sys_clk_rst_ctrl #(
   //vsw reset sync
   //==============================================================================================
   // to avoid combinational loop, use 2 flip flop to sync the vsw reset
-  BB_no_rst_signal_sync #(
-      .STAGE_NUM(2)
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .RST_VAL  ('b1)
   ) u_vsw_reset_sync (
       .src_signal(pre_vsw_rst_n),
+      .rst_n     (sys_rst_n),
       .clk       (pre_sys_clk),
       .gen_signal(sync_vsw_rst_n)
   );
@@ -558,13 +621,16 @@ module rcc_sys_clk_rst_ctrl #(
   assign rcc_apb3bridge_d1_clk_en = ~c1_sleep || (c1_sleep_mode && c1_per_alloc_apb3) || (c2_sleep_mode && c2_per_alloc_apb3) || apb3bridge_d1_busy;
   assign rcc_apb4bridge_d3_clk_en = ~rcc_sys_stop;
 
-  //option byte load module clock
-  BB_clk_gating rcc_obl_clk_gate (
+  //option byte load module clock gating
+  async_clk_gating u_obl_clk_gating (
       .raw_clk(pre_sys_clk),
       .active (rcc_obl_clk_arcg_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_obl_clk)
   );
+
+
   //====================================================================
   // HSI CSI clock control 
   //====================================================================
@@ -653,48 +719,51 @@ module rcc_sys_clk_rst_ctrl #(
   //hsi clk gate
   //====================================================================
 
-  BB_clk_gating hsi_clk_gate (
+  async_clk_gating u_hsi_clk_gating (
       .raw_clk(hsi_pre_clk),
       .active (hsi_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(hsi_clk)
   );
 
-  BB_clk_gating hsi_ker_clk_gate (
+  async_clk_gating u_hsi_ker_clk_gating (
       .raw_clk(hsi_pre_clk),
       .active (hsi_ker_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(hsi_ker_clk)
   );
 
   //====================================================================
   //hse clk gate
   //====================================================================
-  BB_clk_gating hse_clk_gate (
+  async_clk_gating u_hse_clk_gating (
       .raw_clk(hse_origin_clk),
       .active (hse_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(hse_clk)
   );
 
   //====================================================================
   //csi clock gate
   //====================================================================
-
-  BB_clk_gating csi_clk_gate (
+  async_clk_gating u_csi_clk_gating (
       .raw_clk(csi_origin_clk),
       .active (csi_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(csi_clk)
   );
 
-  BB_clk_gating csi_ker_clk_gate (
+  async_clk_gating u_csi_ker_clk_gating (
       .raw_clk(csi_origin_clk),
       .active (csi_ker_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(csi_ker_clk)
   );
-
   //====================================================================
   //per_clk selection
   //====================================================================
@@ -775,10 +844,12 @@ module rcc_sys_clk_rst_ctrl #(
       .sel     (sw),
       .o_clk   (pre_sys_clk)
   );
-  BB_clk_gating sys_clk_gate (
+
+  async_clk_gating u_sys_clk_gating (
       .raw_clk(pre_sys_clk),
       .active (sys_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(sys_clk)
   );
 
@@ -793,12 +864,15 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
   // d1 domian clock generate
   //====================================================================
-  BB_clk_gating rcc_c1_clk_gate (
+
+  async_clk_gating u_c1_clk_gating (
       .raw_clk(sys_d1cpre_clk),
       .active (rcc_c1_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_c1_clk)
   );
+
   assign rcc_fclk_c1 = rcc_c1_clk;
 
   BB_clk_div_s #(
@@ -818,24 +892,27 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (sys_hpre_clk)
   );
 
-  BB_clk_gating rcc_d1_bus_clk_gate (
+  async_clk_gating u_d1_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d1_bus_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_d1_bus_clk)
   );
 
-  BB_clk_gating rcc_axibridge_d1_clk_gate (
+  async_clk_gating u_axibridge_d1_clk_gating (
       .raw_clk(rcc_d1_bus_clk),
       .active (rcc_axibridge_d1_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_axibridge_d1_clk)
   );
 
-  BB_clk_gating rcc_ahb3bridge_d1_clk_gate (
+  async_clk_gating u_ahb3bridge_d1_clk_gating (
       .raw_clk(rcc_d1_bus_clk),
       .active (rcc_ahb3bridge_d1_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_ahb3bridge_d1_clk)
   );
 
@@ -847,10 +924,11 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (rcc_apb3bridge_d1_pre_clk)
   );
 
-  BB_clk_gating rcc_apb3bridge_d1_clk_gate (
+  async_clk_gating u_apb3bridge_d1_clk_gating (
       .raw_clk(rcc_apb3bridge_d1_pre_clk),
       .active (rcc_apb3bridge_d1_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_apb3bridge_d1_clk)
   );
 
@@ -858,10 +936,11 @@ module rcc_sys_clk_rst_ctrl #(
   // d2 domian clock generate
   //====================================================================
 
-  BB_clk_gating rcc_c2_clk_gate (
+  async_clk_gating u_c2_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_c2_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_c2_clk)
   );
 
@@ -876,24 +955,27 @@ module rcc_sys_clk_rst_ctrl #(
       .div_en()
   );
 
-  BB_clk_gating rcc_d2_bus_clk_gate (
+  async_clk_gating u_d2_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d2_bus_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_d2_bus_clk)
   );
 
-  BB_clk_gating rcc_ahb1bridge_d2_clk_gate (
+  async_clk_gating u_ahb1bridge_d2_clk_gating (
       .raw_clk(rcc_d2_bus_clk),
       .active (rcc_ahb1bridge_d2_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_ahb1bridge_d2_clk)
   );
 
-  BB_clk_gating rcc_ahb2bridge_d2_clk_gate (
+  async_clk_gating u_ahb2bridge_d2_clk_gating (
       .raw_clk(rcc_d2_bus_clk),
       .active (rcc_ahb2bridge_d2_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_ahb2bridge_d2_clk)
   );
 
@@ -907,10 +989,11 @@ module rcc_sys_clk_rst_ctrl #(
       .pclk       (rcc_apb1bridge_d2_pre_clk)
   );
 
-  BB_clk_gating rcc_apb1bridge_d2_clk_gate (
+  async_clk_gating u_apb1bridge_d2_clk_gate (
       .raw_clk(rcc_apb1bridge_d2_pre_clk),
       .active (rcc_apb1bridge_d2_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_apb1bridge_d2_clk)
   );
 
@@ -924,10 +1007,11 @@ module rcc_sys_clk_rst_ctrl #(
       .pclk       (rcc_apb2bridge_d2_pre_clk)
   );
 
-  BB_clk_gating rcc_apb2bridge_d2_clk_gate (
+  async_clk_gating u_apb2bridge_d2_clk_gate (
       .raw_clk(rcc_apb2bridge_d2_pre_clk),
       .active (rcc_apb2bridge_d2_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_apb2bridge_d2_clk)
   );
 
@@ -937,17 +1021,19 @@ module rcc_sys_clk_rst_ctrl #(
   // d3 domian clock generate
   //====================================================================
 
-  BB_clk_gating rcc_d3_bus_clk_gate (
+  async_clk_gating u_d3_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d3_bus_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_d3_bus_clk)
   );
 
-  BB_clk_gating rcc_ahb4bridge_d3_clk_gate (
+  async_clk_gating u_ahb4bridge_d3_clk_gating (
       .raw_clk(rcc_d3_bus_clk),
       .active (rcc_ahb4bridge_d3_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_ahb4bridge_d3_clk)
   );
 
@@ -959,12 +1045,12 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (rcc_apb4bridge_d3_pre_clk)
   );
 
-  BB_clk_gating rcc_apb4bridge_d3_clk_gate (
+  async_clk_gating u_apb4bridge_d3_clk_gate (
       .raw_clk(rcc_apb4bridge_d3_pre_clk),
       .active (rcc_apb4bridge_d3_clk_en),
       .bypass (testmode),
+      .rst_n  (sys_rst_n),
       .gen_clk(rcc_apb4bridge_d3_clk)
   );
-
 
 endmodule

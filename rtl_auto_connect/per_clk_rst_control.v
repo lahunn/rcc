@@ -95,10 +95,11 @@ module per_clk_rst_control #(
   generate
     genvar i;
     for (i = 0; i < BUS_CLK_NUM; i = i + 1) begin : bus_clk_gate
-      BB_clk_gating bus_clk_gates_inst (
+      async_clk_gating u_bus_clk_gating (
           .raw_clk(bus_clks[i]),
           .active (bus_clk_en),
           .bypass (testmode),
+          .rst_n  (per_rst_n),
           .gen_clk(per_bus_clks[i])
       );
     end

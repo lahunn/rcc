@@ -1,3 +1,4 @@
+/* verilator lint_off LATCH */
 module BB_clk_gating (
     input  raw_clk,
     input  active,

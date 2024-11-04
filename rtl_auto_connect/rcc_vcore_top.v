@@ -81,14 +81,16 @@ module rcc_vcore_top #(
   //==============================================================================
   rcc_reg #(  /*AUTOINSTPARAM*/
   ) u_rcc_reg (
-      .clk  (rcc_rcc_hclk),
-      .rst_n(rcc_rcc_sync_rst_n),
-      .req  (mreq),
-      .we   (mwstrb),
-      .addr (maddr),
-      .wdata(mdata),
-      .rdata(rdata),
-      .rsp  (rsp),
+      .clk                (rcc_rcc_hclk),
+      .rst_n              (rcc_rcc_sync_rst_n),
+      .req                (mreq),
+      .we                 (mwstrb),
+      .addr               (maddr),
+      .wdata              (mdata),
+      .rdata              (rdata),
+      .rsp                (rsp),
+      .cur_rcc_csr_lsirdy (sync_lsi_rdy),
+      .cur_rcc_bdcr_lserdy(sync_lse_rdy),
       /*AUTOINST*/
   );
 

@@ -14,15 +14,16 @@ module zero_glitch_free_clk_switch #(
   wire [          CLK_NUM-2:0] u_clk_fail;
   wire                         o_clk_en;
 
-  assign o_clk_en = (sel != 'b0);
-  assign u_i_clk = i_clk[CLK_NUM-1:1];
+  assign o_clk_en   = (sel != 'b0);
+  assign u_i_clk    = i_clk[CLK_NUM-1:1];
   assign u_clk_fail = clk_fail[CLK_NUM-1:1];
-  assign u_sel = sel - 'b1;
+  assign u_sel      = sel - 'b1;
 
-  BB_clk_gating u_BB_clk_gating (
+  async_clk_gating u_async_clk_gating (
       .raw_clk(u_o_clk),
       .active (o_clk_en),
       .bypass (1'b0),
+      .rst_n  (rst_n),
       .gen_clk(o_clk)
   );
 

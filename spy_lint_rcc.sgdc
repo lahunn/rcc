@@ -32,10 +32,10 @@ reset -async -name "rcc_top.pwr_d2_ok"     -value 0
 # input -name axibridge_d1_busy  -clock hsi_pre_sys_clk
 
 
-# input -name c1_deepsleep -clock hsi_pre_sys_clk
-# input -name c1_sleep -clock hsi_pre_sys_clk
-# input -name c2_deepsleep -clock hsi_pre_sys_clk
-# input -name c2_sleep -clock hsi_pre_sys_clk
+input -name c1_deepsleep -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c1_clk
+input -name c1_sleep     -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c1_clk
+input -name c2_deepsleep -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c2_clk
+input -name c2_sleep     -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c2_clk
 # input -name cpu1_sftrst -clock hsi_pre_sys_clk
 # input -name cpu2_sftrst -clock hsi_pre_sys_clk
 # input -name crs_hsi48_trim[9:0] -clock hsi_pre_sys_clk
@@ -56,7 +56,7 @@ reset -async -name "rcc_top.pwr_d2_ok"     -value 0
 #lse clk
 input -name iwdg1_out_rst -clock lse_clk
 input -name iwdg2_out_rst -clock lse_clk
-input -name backup_protect -clock hsi_origin_clk
+input -name backup_protect -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_d3_bus_clk_gate.gen_clk
 # #async signals
 # input -name backup_protect
 # input -name csi_rdy

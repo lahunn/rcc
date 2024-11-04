@@ -25,10 +25,11 @@ module rcc_vsw_clk_rst_ctrl (
   assign pre_vsw_rst_n = (~bdrst) && (~pwr_vsw_rst);
 
   // rtc ker clock gate
-  BB_clk_gating rcc_rtc_ker_clk_gate (
+  async_clk_gating u_rtc_ker_clk_gating (
       .raw_clk(rcc_rtcsel_clk),
       .active (rtcen),
       .bypass (testmode),
+      .rst_n  (sync_vsw_rst_n),
       .gen_clk(rcc_rtc_ker_clk)
   );
 
@@ -46,10 +47,11 @@ module rcc_vsw_clk_rst_ctrl (
   // lse clock gate
   assign lse_clk_en = lse_rdy;
 
-  BB_clk_gating rcc_lse_clk_gate (
+  async_clk_gating u_lse_clk_gating (
       .raw_clk(lse_clk),
       .active (lse_clk_en),
       .bypass (testmode),
+      .rst_n  (sync_vsw_rst_n),
       .gen_clk(gated_lse_clk)
   );
 
