@@ -892,7 +892,7 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (sys_hpre_clk)
   );
 
-  async_clk_gating u_d1_clk_gating (
+  async_clk_gating u_d1_bus_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d1_bus_clk_en),
       .bypass (testmode),
@@ -955,7 +955,7 @@ module rcc_sys_clk_rst_ctrl #(
       .div_en()
   );
 
-  async_clk_gating u_d2_clk_gating (
+  async_clk_gating u_d2_bus_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d2_bus_clk_en),
       .bypass (testmode),
@@ -1021,7 +1021,7 @@ module rcc_sys_clk_rst_ctrl #(
   // d3 domian clock generate
   //====================================================================
 
-  async_clk_gating u_d3_clk_gating (
+  async_clk_gating u_d3_bus_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d3_bus_clk_en),
       .bypass (testmode),
