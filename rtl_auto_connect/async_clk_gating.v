@@ -5,7 +5,7 @@ module async_clk_gating (
     input  rst_n,
     output gen_clk
 );
-
+  
   wire sync_active;
 
   BB_signal_sync #(

@@ -8,7 +8,7 @@ module rcc_clk_div_d #(
     output                 div_en
 );
   wire                 div_i_clk;
-  wire                 div_disable;
+  wire                 div_enable;
   wire [RATIO_WID-1:0] sync_ratio;
   wire                 sync_rst_n;
   //==========================================================================
@@ -33,8 +33,14 @@ module rcc_clk_div_d #(
       .gen_signal(sync_ratio)
   );
 
-  assign div_disable = (sync_ratio == 0);
-  assign div_i_clk   = div_disable || i_clk;
+  assign div_enable = (sync_ratio != 'b0);
+
+  BB_clk_gating u_BB_clk_gating (
+      .raw_clk(i_clk),
+      .active (div_enable),
+      .bypass (1'b0),
+      .gen_clk(div_i_clk)
+  );
 
   BB_clk_div_d #(
       .RATIO_WID(RATIO_WID)

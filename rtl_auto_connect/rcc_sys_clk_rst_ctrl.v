@@ -837,7 +837,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) sys_clk_switch (
+  ) u_sys_clk_switch (
       .i_clk   (sys_clk_src),
       .clk_fail({1'b0, async_hsecss_fail, 2'b0}),
       .rst_n   (sys_rst_n),
