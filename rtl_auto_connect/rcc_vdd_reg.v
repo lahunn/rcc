@@ -22,7 +22,7 @@ module rcc_vdd_reg (
     input pwr_bor_rst,
     input d2_rst,
     input d1_rst,
-    input lsi_rdy,
+    // input lsi_rdy,
 
     // rcc_c1_rsr 
     output cur_rcc_c1_rsr_lpwr2rstf,

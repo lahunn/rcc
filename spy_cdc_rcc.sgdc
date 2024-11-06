@@ -4,10 +4,21 @@ include spy_lint_rtc.sgdc
 //==============================================================================
 // sys clock mux 
 //============================================================================== 
-//set_case_analysis -name "rtc_top.U_kernel.U_addr_decode.isr_initf" -value "0"   //Normal mode
 
 //==============================================================================
 // Shadow Register Ena
-//============================================================================== 
-//set_case_analysis -name "rtc_top.U_addr_encode.U_shad_dedicate_ff1.en" -value "1"
-//set_case_analysis -name "rtc_top.U_addr_encode.U_shad_dedicate_ff2.en" -value "1"
+//==============================================================================
+
+//==============================================================================
+// static signals
+//==============================================================================
+# static signals
+quasi_static -name testmode
+quasi_static -name rcc_arcg_on
+quasi_static -name lsecss_fail
+quasi_static -name hsi_rdy
+# quasi_static -name csi_rdy
+# quasi_static -name lse_rdy
+# quasi_static -name lsi_rdy
+# quasi_static -name hse_rdy
+# quasi_static -name hsi48_rdy

@@ -3,10 +3,8 @@ sdc_data -file ./spy_lint_rcc.sdc
 #==============================================================================
 # RST-External
 #============================================================================== 
-# reset -async -name "hresetn" -value 0
 reset -async -name "pwr_por_rst" -value 1
 reset -async -name "hsecss_fail" -value 1
-#reset -async -name "nrst_in" -value 1
 
 #==============================================================================
 # RST-Internal
@@ -20,41 +18,11 @@ reset -async -name "rcc_top.pwr_d2_ok"     -value 0
 #==============================================================================
 # IO
 #==============================================================================
-# input -name ahb1bridge_d2_busy -clock hsi_pre_sys_clk
-# input -name ahb2bridge_d2_busy -clock hsi_pre_sys_clk
-# input -name ahb3bridge_d1_busy -clock hsi_pre_sys_clk
-# input -name ahb4bridge_d3_busy -clock hsi_pre_sys_clk
-# input -name apb1bridge_d2_busy -clock hsi_pre_sys_clk
-# input -name apb2bridge_d2_busy -clock hsi_pre_sys_clk
-# input -name apb3bridge_d1_busy -clock hsi_pre_sys_clk
-# input -name apb4bridge_d3_busy -clock hsi_pre_sys_clk
-# input -name axibridge_d1_busy  -clock hsi_pre_sys_clk
-
-
 input -name c1_deepsleep -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c1_clk
 input -name c1_sleep     -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c1_clk
 input -name c2_deepsleep -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c2_clk
 input -name c2_sleep     -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_c2_clk
-# input -name cpu1_sftrst -clock hsi_pre_sys_clk
-# input -name cpu2_sftrst -clock hsi_pre_sys_clk
-# input -name crs_hsi48_trim[9:0] -clock hsi_pre_sys_clk
-# input -name eth_rcc_epis_2 -clock hsi_pre_sys_clk
-# input -name eth_rcc_fes -clock hsi_pre_sys_clk
-
-# input -name haddr[31:0] -clock hsi_pre_sys_clk
-# input -name hready -clock hsi_pre_sys_clk
-# input -name hresetn -clock hsi_pre_sys_clk
-# input -name hsel -clock hsi_pre_sys_clk
-# input -name hsize[2:0] -clock hsi_pre_sys_clk
-# input -name htrans[1:0] -clock hsi_pre_sys_clk
-# input -name hwdata[31:0] -clock hsi_pre_sys_clk
-# input -name hwrite -clock hsi_pre_sys_clk
-# input -name backup_protect -clock hsi_pre_sys_clk
-# input -name wwdg1_out_rst -clock hsi_pre_sys_clk
-# input -name wwdg2_out_rst -clock hsi_pre_sys_clk
 #lse clk
 input -name iwdg1_out_rst -clock lse_clk
 input -name iwdg2_out_rst -clock lse_clk
 input -name backup_protect -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
-# static signals
-quasi_static -name "testmode"

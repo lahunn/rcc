@@ -358,8 +358,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign nxt_d1_rst_n_counter  = cur_d1_rst_n_counter + {{($clog2(D1_RST_DURATION) - 1) {1'b0}}, 1'b1};
 
   BB_reset_sync #(
-      .STAGE_NUM(2),
-      .RST_VAL  ('b0)
+      .STAGE_NUM(2)
   ) u_pwr_d1_ok_sync (
       .src_rst_n(pwr_d1_ok),
       .clk      (sys_d1cpre_clk),
@@ -411,8 +410,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign nxt_d2_rst_n_counter  = cur_d2_rst_n_counter + {{($clog2(D2_RST_DURATION) - 1) {1'b0}}, 1'b1};
 
   BB_reset_sync #(
-      .STAGE_NUM(2),
-      .RST_VAL  ('b0)
+      .STAGE_NUM(2)
   ) u_pwr_d2_ok_sync (
       .src_rst_n(pwr_d2_ok),
       .clk      (sys_hpre_clk),
@@ -453,8 +451,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign sys_rst_n         = cur_sys_rst_n;
 
   BB_reset_sync #(
-      .STAGE_NUM(2),
-      .RST_VAL  ('b0)
+      .STAGE_NUM(2)
   ) u_sys_rst_n_assert_sync (
       .src_rst_n(sys_rst_n_assert),
       .clk      (pre_sys_clk),

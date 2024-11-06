@@ -8,7 +8,7 @@ module rcc_vsw_reg (
     output [1:0] rtcsel,
 
     input        lsecss_fail,
-    input        lse_rdy,
+    // input        lse_rdy,
     output       lsecssd,
     output       lsecsson,
     output [1:0] lsedrv,
