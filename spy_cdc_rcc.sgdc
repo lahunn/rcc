@@ -3,7 +3,8 @@ include spy_lint_rcc.sgdc
 #==============================================================================
 # sys clock mux 
 #============================================================================== 
-
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco1_clk_switch_cell.sel[2:0]" -value {h 3}
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco2_clk_switch_cell.sel[2:0]" -value {h 3}
 #==============================================================================
 # Shadow Register Ena
 #==============================================================================

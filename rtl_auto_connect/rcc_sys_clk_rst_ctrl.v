@@ -208,6 +208,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               hw_init_done;
   wire                               obl_rst;
   // wire                               rcc_vcore_rst;
+  wire                               stby_rst_n;
   wire                               rcc_obl_rst_n;
   //Define instance wires here
   wire                               rcc_pwr_d1_req_set_n;
@@ -482,12 +483,12 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //hw init done generate 
   //==============================================================================================
-  assign hw_init_done    = ~pwr_por_rst && pwr_vcore_ok && ~flash_obl_reload && obl_done;
+  assign hw_init_done    = stby_rst_n && obl_rst;
 
   //==============================================================================================
-  //obl reset generate
+  //obl reset generate , option byte load module request reset
   //==============================================================================================
-  assign obl_rst         = ~obl_done || flash_obl_reload;
+  assign obl_rst         = (~obl_done) || flash_obl_reload;
 
   //==============================================================================================
   //rcc vcore reset generate
@@ -497,13 +498,13 @@ module rcc_sys_clk_rst_ctrl #(
   // //==============================================================================================
   // //standby reset generate
   // //==============================================================================================
-  // assign stby_rst_n      = ~rcc_vcore_rst;
+  assign stby_rst_n      = pwr_por_rst_n && pwr_vcore_ok;
 
   //==============================================================================================
   //cpu and bus reset generate
   //==============================================================================================
-  assign cpu1_sync_rst_n = sys_rst_n && d1_rst_n && ~wwdg1_out_rst;
-  assign cpu2_sync_rst_n = sys_rst_n && d2_rst_n && ~wwdg2_out_rst;
+  assign cpu1_sync_rst_n = sys_rst_n && d1_rst_n && (~wwdg1_out_rst);
+  assign cpu2_sync_rst_n = sys_rst_n && d2_rst_n && (~wwdg2_out_rst);
 
 
   //==============================================================================================
@@ -692,7 +693,7 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_rtc_clk_div_d #(
       .RATIO_WID(6)
   ) u_hse_rtc_clk_div (
-      .rst_n (pwr_por_rst_n),
+      .rst_n (stby_rst_n),
       .i_clk (hse_clk),
       .ratio (rtcpre),
       .o_clk (hse_rtc_clk),
@@ -705,7 +706,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_hsi_div hsi_clk_div (
       .i_clk  (hsi_origin_clk),
-      .rst_n  (pwr_por_rst_n),
+      .rst_n  (sys_rst_n),
       .div_sel(hsidiv),
       .o_clk  (hsi_pre_clk)
   );

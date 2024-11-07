@@ -1,8 +1,10 @@
-/* verilator lint_off UNUSEDSIGNAL */
 // spyglass disable_block W240
 //regret not read input bug
 // spyglass disable_block W287b
 //neglect not used output bug
+// spyglass disable_block Reset_sync04
+//Reset_sync04 (50) : Reports asynchronous resets synchronized more than once in the same clock domain
+
 module per_ker_clk_rst_control #(
     parameter KER_CLK_SRC_NUM = 5,
     parameter KER_CLK_NUM = 5,
@@ -56,6 +58,7 @@ module per_ker_clk_rst_control #(
 );
 
   wire bus_clk_en;
+  wire sync_bus_clk_en;
   wire ker_clk_en;
   wire c1_bus_clk_en;
   wire c2_bus_clk_en;
@@ -116,7 +119,9 @@ module per_ker_clk_rst_control #(
   generate
     genvar i;
     for (i = 0; i < BUS_CLK_NUM; i = i + 1) begin : bus_clk_gate
-      async_clk_gating u_bus_clk_gating (
+      bus_clk_gating #(
+          .DOMAIN(DOMAIN)
+      ) u_bus_clk_gating (
           .raw_clk(bus_clks[i]),
           .active (bus_clk_en),
           .bypass (testmode),
@@ -201,3 +206,4 @@ module per_ker_clk_rst_control #(
 endmodule
 // spyglass enable_block W240
 // spyglass enable_block W287b
+// spyglass enable_block Reset_sync04
