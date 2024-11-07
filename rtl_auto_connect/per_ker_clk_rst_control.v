@@ -2,8 +2,6 @@
 //regret not read input bug
 // spyglass disable_block W287b
 //neglect not used output bug
-// spyglass disable_block Reset_sync04
-//Reset_sync04 (50) : Reports asynchronous resets synchronized more than once in the same clock domain
 
 module per_ker_clk_rst_control #(
     parameter KER_CLK_SRC_NUM = 5,
@@ -206,4 +204,3 @@ module per_ker_clk_rst_control #(
 endmodule
 // spyglass enable_block W240
 // spyglass enable_block W287b
-// spyglass enable_block Reset_sync04

@@ -12,6 +12,7 @@ reset -async -name "hsecss_fail" -value 1
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_obl_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.rcc_obl_rst_n" -value 0
+reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_clk_rst_ctrl.pre_vsw_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.stby_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_rst_n" -value 0
