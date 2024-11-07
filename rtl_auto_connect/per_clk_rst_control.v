@@ -1,4 +1,8 @@
 /* verilator lint_off UNUSEDSIGNAL */
+// spyglass disable_block W240
+//regret not read input bug
+// spyglass disable_block W287b
+//neglect not used output bug
 module per_clk_rst_control #(
     parameter BUS_CLK_NUM = 1,
     parameter SUPPORT_LPEN = 0,
@@ -126,3 +130,5 @@ module per_clk_rst_control #(
   );
 
 endmodule
+// spyglass enable_block W240
+// spyglass enable_block W287b

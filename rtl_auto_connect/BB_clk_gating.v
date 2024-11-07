@@ -1,4 +1,5 @@
 /* verilator lint_off LATCH */
+// spyglass disable_block InferLatch
 module BB_clk_gating (
     input  raw_clk,
     input  active,
@@ -18,3 +19,4 @@ module BB_clk_gating (
   assign gen_clk = raw_clk && cur_en;
 
 endmodule
+// spyglass enable_block InferLatch

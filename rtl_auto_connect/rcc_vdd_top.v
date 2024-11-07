@@ -20,7 +20,7 @@ module rcc_vdd_top (
     input pwr_bor_rst,           //low to high level, default 0
     input d2_rst,                //low to high level, default 0
     input d1_rst,                //low to high level, default 0
-    input lsi_rdy,
+    // input lsi_rdy,
 
     // rcc_vdd_reg Outputs
     output cur_rcc_c1_rsr_lpwr2rstf,  //hign to low level, default 0

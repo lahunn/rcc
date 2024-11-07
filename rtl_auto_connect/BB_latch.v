@@ -1,3 +1,4 @@
+// spyglass disable_block InferLatch
 module BB_latch(
   input D,
   input GN,
@@ -11,3 +12,4 @@ module BB_latch(
   end
 
 endmodule
+//spyglass enable_block InferLatch

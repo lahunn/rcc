@@ -2,19 +2,19 @@ current_design rcc_top
 sdc_data -file ./spy_lint_rcc.sdc
 #==============================================================================
 # RST-External
-#============================================================================== 
+#==============================================================================
 reset -async -name "pwr_por_rst" -value 1
 reset -async -name "hsecss_fail" -value 1
 
 #==============================================================================
 # RST-Internal
-#============================================================================== 
+#==============================================================================
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d1_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_rst_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sync_vsw_rst_n" -value 0
-reset -async -name "rcc_top.pwr_d1_ok"     -value 0
-reset -async -name "rcc_top.pwr_d2_ok"     -value 0
+reset -async -name "rcc_top.pwr_d1_ok" -value 0
+reset -async -name "rcc_top.pwr_d2_ok" -value 0
 #==============================================================================
 # IO
 #==============================================================================

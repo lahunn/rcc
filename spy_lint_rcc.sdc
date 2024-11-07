@@ -163,3 +163,9 @@ set_clock_groups -name mco2_clk_group -logically_exclusive -group [get_clocks {l
   -group [get_clocks {pll1_p_clk}] \
   -group [get_clocks {hse_clk}] \
   -group [get_clocks {pll2_p_clk}]
+
+#==============================================================================
+# sys clock mux 
+#============================================================================== 
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco1_clk_switch_cell.sel[2:0]" -value "{h 0}{h 1}{h 2}{h 3}{h 4}"
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco2_clk_switch_cell.sel[2:0]" -value "{h 0}{h 1}{h 2}{h 3}{h 4}{h 5}"

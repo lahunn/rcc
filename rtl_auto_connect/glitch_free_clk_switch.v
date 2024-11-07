@@ -1,3 +1,5 @@
+// spyglass disable_block Clock_info05b
+// Clock_info05b (46) : Reports clock signals converging at a combinational gate other than a MUX
 module glitch_free_clk_switch #(
     parameter CLK_NUM = 4
 ) (
@@ -83,3 +85,4 @@ module glitch_free_clk_switch #(
   assign o_clk = |clk_pre_out;
 
 endmodule
+// spyglass enable_block Clock_info05b

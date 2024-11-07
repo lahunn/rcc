@@ -6,7 +6,8 @@ module rcc_512_div (
     output       o_clk
 );
 
-  reg [8:0] div_ratio;
+  reg  [8:0] div_ratio;
+  wire [8:0] div_ratio_f;
 
   always @(*) begin
     case (div_sel)
@@ -22,12 +23,23 @@ module rcc_512_div (
     endcase
   end
 
+  // to avoid reconverge of signals from the same domain , need a flop to stop the propagation route
+  BB_dffr #(
+      .DW     (9),
+      .RST_VAL(0)
+  ) u_BB_dffr (
+      .clk  (i_clk),
+      .rst_n(rst_n),
+      .din  (div_ratio),
+      .dout (div_ratio_f)
+  );
+
   BB_clk_div_d #(
       .RATIO_WID(9)
   ) u_BB_clk_div_d (
       .rst_n (rst_n),
       .i_clk (i_clk),
-      .ratio (div_ratio),
+      .ratio (div_ratio_f),
       .o_clk (o_clk),
       .div_en(div_en)
   );

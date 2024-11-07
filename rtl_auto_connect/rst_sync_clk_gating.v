@@ -1,4 +1,4 @@
-module async_clk_gating (
+module rst_sync_clk_gating (
     input  raw_clk,
     input  active,
     input  bypass,

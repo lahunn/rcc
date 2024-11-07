@@ -1,4 +1,8 @@
 /* verilator lint_off UNUSEDSIGNAL */
+// spyglass disable_block W240
+//regret not read input bug
+// spyglass disable_block W287b
+//neglect not used output bug
 module per_ker_clk_rst_control #(
     parameter KER_CLK_SRC_NUM = 5,
     parameter KER_CLK_NUM = 5,
@@ -163,7 +167,7 @@ module per_ker_clk_rst_control #(
   generate
     genvar j;
     for (j = 0; j < KER_CLK_NUM; j = j + 1) begin : ker_clk_gate
-      async_rst_clk_gating u_ker_clk_gating (
+      rst_sync_clk_gating u_ker_clk_gating (
           .raw_clk(ker_src_clks[j]),
           .active (ker_clk_en),
           .bypass (testmode),
@@ -195,3 +199,5 @@ module per_ker_clk_rst_control #(
   );
 
 endmodule
+// spyglass enable_block W240
+// spyglass enable_block W287b
