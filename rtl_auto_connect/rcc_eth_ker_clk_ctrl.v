@@ -43,19 +43,13 @@ module rcc_eth_ker_clk_ctrl (
   wire rcc_eth_rmii_ref_clk_en;
   wire sync_eth_rcc_fes;
   wire eth_rx_clk_sync_rst_n;
+  wire eth_tx_clk_sync_rst_n;
 
 
 
   //=========================================================================
   //  synchrounous signals
   //=========================================================================
-  BB_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_eth_rst_sync (
-      .src_rst_n(rst_n),
-      .clk      (pad_rcc_eth_mii_rx_clk),
-      .gen_rst_n(eth_rx_clk_sync_rst_n)
-  );
 
   BB_signal_sync #(
       .STAGE_NUM(2),
@@ -67,25 +61,45 @@ module rcc_eth_ker_clk_ctrl (
       .gen_signal(sync_eth_rcc_fes)
   );
   //=========================================================================
+  //  reset sync
+  //=========================================================================
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_eth_rx_rst_n_sync (
+      .src_rst_n(rst_n),
+      .clk      (pad_rcc_eth_mii_rx_clk),
+      .gen_rst_n(eth_rx_clk_sync_rst_n)
+  );
+
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_eth_tx_rst_n_sync (
+      .src_rst_n(rst_n),
+      .clk      (pad_rcc_eth_mii_tx_clk),
+      .gen_rst_n(eth_tx_clk_sync_rst_n)
+  );
+
+
+  //=========================================================================
   //  eth clock control
   //=========================================================================
 
   glitch_free_clk_switch #(
       .CLK_NUM(2)
-  ) eth_mii_tx_clk_switch (
+  ) u_eth_mii_tx_clk_switch (
       .i_clk   ({pad_rcc_eth_mii_rx_clk_divided, pad_rcc_eth_mii_tx_clk}),
       .clk_fail(2'b0),
-      .rst_n   (rst_n),
+      .rst_n   ({eth_rx_clk_sync_rst_n, eth_tx_clk_sync_rst_n}),
       .sel     (eth_rcc_epis_2),
       .o_clk   (rcc_eth_mii_tx_clk_pre)
   );
 
   glitch_free_clk_switch #(
       .CLK_NUM(2)
-  ) eth_mii_rx_clk_switch (
+  ) u_eth_mii_rx_clk_switch (
       .i_clk   ({pad_rcc_eth_mii_rx_clk_divided, pad_rcc_eth_mii_rx_clk}),
       .clk_fail(2'b0),
-      .rst_n   (rst_n),
+      .rst_n   ({eth_rx_clk_sync_rst_n, eth_rx_clk_sync_rst_n}),
       .sel     (eth_rcc_epis_2),
       .o_clk   (rcc_eth_mii_rx_clk_pre)
   );
@@ -116,19 +130,19 @@ module rcc_eth_ker_clk_ctrl (
   assign rcc_eth1tx_clk_en              = (rcc_c1_eth1tx_en && (~c1_sleep || rcc_c1_eth1tx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1tx_en && (~c2_sleep || rcc_c2_eth1tx_lpen) && ~c2_deepsleep);
   assign rcc_eth_rmii_ref_clk_en        = rcc_eth1rx_clk_en || rcc_eth1tx_clk_en;
 
-  async_clk_gating u_eth_mii_tx_clk_gating (
+  rst_sync_clk_gating u_eth_mii_tx_clk_gating (
       .raw_clk(rcc_eth_mii_tx_clk_pre),
-      .active (rcc_eth1rx_clk_en),
+      .active (rcc_eth1tx_clk_en),
       .bypass (testmode),
-      .rst_n  (rst_n),
+      .rst_n  (eth_tx_clk_sync_rst_n),
       .gen_clk(rcc_eth_mii_tx_clk)
   );
 
   async_clk_gating u_eth_mii_rx_clk_gating (
       .raw_clk(rcc_eth_mii_rx_clk_pre),
-      .active (rcc_eth1tx_clk_en),
+      .active (rcc_eth1rx_clk_en),
       .bypass (testmode),
-      .rst_n  (rst_n),
+      .rst_n  (eth_rx_clk_sync_rst_n),
       .gen_clk(rcc_eth_mii_rx_clk)
   );
 
@@ -136,7 +150,7 @@ module rcc_eth_ker_clk_ctrl (
       .raw_clk(pad_rcc_eth_mii_rx_clk),
       .active (rcc_eth_rmii_ref_clk_en),
       .bypass (testmode),
-      .rst_n  (rst_n),
+      .rst_n  (eth_rx_clk_sync_rst_n),
       .gen_clk(rcc_eth_rmii_ref_clk)
   );
 

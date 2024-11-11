@@ -22,6 +22,11 @@ module rcc_sys_clk_rst_ctrl #(
     input        pre_vsw_rst_n,
     output       d1_rst,
     output       d2_rst,
+    //input synced reset signals
+    input        hse_sync_sys_rst_n,
+    input        csi_ker_sync_sys_rst_n,
+    input        hsi_ker_sync_sys_rst_n,
+    input        pll1_p_sync_sys_rst_n,
     //pwr signals 
     input        pwr_vcore_ok,
     input        pwr_d1_ok,
@@ -94,7 +99,7 @@ module rcc_sys_clk_rst_ctrl #(
     //==============================================================================================
     // signals connected to HSE
     input        hse_rdy,
-    input        async_hsecss_fail,
+    input        hsecss_fail,
     input        hse_origin_clk,
     // lse lsi clock
     input        lse_clk,
@@ -268,7 +273,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               hsi_ker_clk_en;
   wire                               csi_clk_en;
   wire                               csi_ker_clk_en;
-  wire                               hse_clk_en;
+  // wire                               hse_clk_en;
 
   wire                               sync_flash_power_ok;
   wire                               sync_pwr_d1_ok;
@@ -637,7 +642,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign hsi_ker_clk_en = hsi_rdy && (~rcc_sys_stop || hsi_ker_clk_req);
   assign csi_clk_en     = csi_rdy && (~rcc_sys_stop);
   assign csi_ker_clk_en = csi_rdy && (~rcc_sys_stop || csi_ker_clk_req);
-  assign hse_clk_en     = hse_rdy && ~async_hsecss_fail;
+  // assign hse_clk_en     = hse_rdy && ~hsecss_fail;
 
   //====================================================================
   // MCO clock out
@@ -706,7 +711,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   rcc_hsi_div hsi_clk_div (
       .i_clk  (hsi_origin_clk),
-      .rst_n  (sys_rst_n),
+      .rst_n  (hsi_ker_sync_sys_rst_n),
       .div_sel(hsidiv),
       .o_clk  (hsi_pre_clk)
   );
@@ -721,7 +726,7 @@ module rcc_sys_clk_rst_ctrl #(
       .raw_clk(hsi_pre_clk),
       .active (hsi_clk_en),
       .bypass (testmode),
-      .rst_n  (sys_rst_n),
+      .rst_n  (hsi_ker_sync_sys_rst_n),
       .gen_clk(hsi_clk)
   );
 
@@ -729,20 +734,21 @@ module rcc_sys_clk_rst_ctrl #(
       .raw_clk(hsi_pre_clk),
       .active (hsi_ker_clk_en),
       .bypass (testmode),
-      .rst_n  (sys_rst_n),
+      .rst_n  (hsi_ker_sync_sys_rst_n),
       .gen_clk(hsi_ker_clk)
   );
 
   //====================================================================
   //hse clk gate
   //====================================================================
-  async_clk_gating u_hse_clk_gating (
-      .raw_clk(hse_origin_clk),
-      .active (hse_clk_en),
-      .bypass (testmode),
-      .rst_n  (sys_rst_n),
-      .gen_clk(hse_clk)
-  );
+  assign hse_clk = hse_origin_clk;
+  // async_clk_gating u_hse_clk_gating (
+  //     .raw_clk(hse_origin_clk),
+  //     .active (hse_clk_en),
+  //     .bypass (testmode),
+  //     .rst_n  (hse_sync_sys_rst_n),
+  //     .gen_clk(hse_clk)
+  // );
 
   //====================================================================
   //csi clock gate
@@ -751,7 +757,7 @@ module rcc_sys_clk_rst_ctrl #(
       .raw_clk(csi_origin_clk),
       .active (csi_clk_en),
       .bypass (testmode),
-      .rst_n  (sys_rst_n),
+      .rst_n  (csi_ker_sync_sys_rst_n),
       .gen_clk(csi_clk)
   );
 
@@ -759,7 +765,7 @@ module rcc_sys_clk_rst_ctrl #(
       .raw_clk(csi_origin_clk),
       .active (csi_ker_clk_en),
       .bypass (testmode),
-      .rst_n  (sys_rst_n),
+      .rst_n  (csi_ker_sync_sys_rst_n),
       .gen_clk(csi_ker_clk)
   );
   //====================================================================
@@ -770,10 +776,10 @@ module rcc_sys_clk_rst_ctrl #(
 
   glitch_free_clk_switch #(
       .CLK_NUM(3)
-  ) per_clk_switch (
+  ) u_per_clk_switch (
       .i_clk   (per_clk_src),
-      .clk_fail({async_hsecss_fail, 2'b0}),
-      .rst_n   (sys_rst_n),
+      .clk_fail({hsecss_fail, 2'b0}),
+      .rst_n   ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
       .sel     (clkpersel),
       .o_clk   (per_clk)
   );
@@ -788,10 +794,10 @@ module rcc_sys_clk_rst_ctrl #(
 
   glitch_free_clk_switch #(
       .CLK_NUM(3)
-  ) pll_src_clk_switch (
+  ) u_pll_src_clk_switch (
       .i_clk   (pll_clk_src),
-      .clk_fail({async_hsecss_fail, 2'b0}),
-      .rst_n   (sys_rst_n),
+      .clk_fail({hsecss_fail, 2'b0}),
+      .rst_n   ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
       .sel     (pllsrc),
       .o_clk   (pll_src_clk)
   );
@@ -837,8 +843,8 @@ module rcc_sys_clk_rst_ctrl #(
       .CLK_NUM(4)
   ) u_sys_clk_switch (
       .i_clk   (sys_clk_src),
-      .clk_fail({1'b0, async_hsecss_fail, 2'b0}),
-      .rst_n   (sys_rst_n),
+      .clk_fail({1'b0, hsecss_fail, 2'b0}),
+      .rst_n   ({pll1_p_sync_sys_rst_n, hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
       .sel     (sw),
       .o_clk   (pre_sys_clk)
   );

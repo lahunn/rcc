@@ -1,12 +1,13 @@
 // spyglass disable_block Clock_info05b
 // Clock_info05b (46) : Reports clock signals converging at a combinational gate other than a MUX
+// spyglass disable_block Clock_glitch05
 module glitch_free_clk_switch #(
     parameter CLK_NUM = 4
 ) (
     input  [        CLK_NUM-1:0] i_clk,
     input  [        CLK_NUM-1:0] clk_fail,
     input  [$clog2(CLK_NUM)-1:0] sel,
-    input                        rst_n,
+    input  [        CLK_NUM-1:0] rst_n,
     output                       o_clk
 );
   wire [        CLK_NUM-1:0] onehot_sel;
@@ -19,7 +20,7 @@ module glitch_free_clk_switch #(
   wire [$clog2(CLK_NUM)-1:0] sel_temp     [CLK_NUM-1:0];
 
 
-  assign clk_rst_n = (~clk_fail) & {CLK_NUM{rst_n}};  // Bitwise operation 
+  assign clk_rst_n = (~clk_fail) & rst_n;  // Bitwise operation 
 
   generate
     genvar i;  // generate variable can not be initalized
@@ -86,3 +87,4 @@ module glitch_free_clk_switch #(
 
 endmodule
 // spyglass enable_block Clock_info05b
+// spyglass enable_block Clock_glitch05

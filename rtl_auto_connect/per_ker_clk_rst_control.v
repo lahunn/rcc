@@ -1,3 +1,4 @@
+// verilator lint_off UNUSEDSIGNAL
 // spyglass disable_block W240
 //regret not read input bug
 // spyglass disable_block W287b
@@ -56,7 +57,6 @@ module per_ker_clk_rst_control #(
 );
 
   wire bus_clk_en;
-  wire sync_bus_clk_en;
   wire ker_clk_en;
   wire c1_bus_clk_en;
   wire c2_bus_clk_en;

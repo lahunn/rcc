@@ -5,9 +5,22 @@ include spy_lint_rcc.sgdc
 #============================================================================== 
 set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco1_clk_switch_cell.sel[2:0]" -value {h 3}
 set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco2_clk_switch_cell.sel[2:0]" -value {h 3}
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.*per_clk_switch.sel[1:0]" -value {h 012}
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.*pll_src_clk_switch.sel[1:0]" -value {h 012}
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.*sys_clk_switch.sel[1:0]" -value {h 0123}
+
+set_case_analysis -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_clk_rst_ctrl.*clk_switch.sel[1:0]" -value {h 0123}
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_eth_ker_clk_ctrl.*clk_switch.sel[0]" -value {h 01}
 #==============================================================================
-# Shadow Register Ena
+# per clock mux
 #==============================================================================
+#one_hot coding
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*.clk_sel[0]" -value 0
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*.clk_sel[1]" -value 1
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*.clk_sel[2]" -value 0
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*.clk_sel[3]" -value 0
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*.clk_sel[4]" -value 0
+set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*.clk_sel[5]" -value 0
 
 #==============================================================================
 # static signals

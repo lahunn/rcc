@@ -1,3 +1,6 @@
+// verilator lint_off UNUSEDSIGNAL
+// spyglass disable_block W240
+//regret not read input bug
 module bus_clk_gating #(
     parameter DOMAIN = 1
 ) (
@@ -34,3 +37,4 @@ module bus_clk_gating #(
   );
 
 endmodule
+// spyglass enable_block W240

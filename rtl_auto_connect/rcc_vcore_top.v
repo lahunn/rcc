@@ -16,6 +16,16 @@ module rcc_vcore_top #(
 ) (
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
+    //bus clock signals
+    output rcc_axibridge_d1_clk,
+    output rcc_ahb3bridge_d1_clk,
+    output rcc_apb3bridge_d1_clk,
+    output rcc_ahb1bridge_d2_clk,
+    output rcc_ahb2bridge_d2_clk,
+    output rcc_apb1bridge_d2_clk,
+    output rcc_apb2bridge_d2_clk,
+    output rcc_ahb4bridge_d3_clk,
+    output rcc_apb4bridge_d3_clk
 );
   wire [DW-1:0] rdata;
   wire [   1:0] rsp;
@@ -25,7 +35,7 @@ module rcc_vcore_top #(
   wire [DW-1:0] mdata;
   wire          sync_lsecss_fail;
   wire          sync_hsecss_fail;
-  wire          async_hsecss_fail;  //async reset sync release
+  wire          sync_hsecss_fail_rst;  //async reset sync release
   /*AUTOWIRE*/
 
   //==============================================================================
@@ -50,7 +60,11 @@ module rcc_vcore_top #(
   //signal synchronize 
   //==============================================================================
 
-  rcc_signal_rst_sync u_rcc_signal_rst_sync (
+  rcc_signal_sync u_rcc_signal_sync (
+  /*AUTOINST*/
+  );
+
+  rcc_rst_sync u_rcc_rst_sync (
   /*AUTOINST*/
   );
 

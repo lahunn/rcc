@@ -638,7 +638,7 @@ module rcc_reg #(
     input           rcc_sys_stop,
     input           rcc_d1_stop,
     input           rcc_d2_stop,
-    input           async_hsecss_fail,
+    input           sync_hsecss_fail_rst,
     input           sync_hsecss_fail,
     input           rcc_exit_sys_stop,
     input           sync_lsecss_fail,
@@ -3336,7 +3336,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 28:28               pll3on              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign pllxon_clr_n = rst_n & ~(rcc_sys_stop | (async_hsecss_fail & cur_rcc_pllclkselr_pllsrc == 2'b10));
+  assign pllxon_clr_n = rst_n & ~(rcc_sys_stop | (sync_hsecss_fail_rst & cur_rcc_pllclkselr_pllsrc == 2'b10));
   assign rcc_cr_pll3on_en = (|wr_req & rcc_cr_sel);
   assign nxt_rcc_cr_pll3on = wdata[28:28];
   assign pll3on = cur_rcc_cr_pll3on;
@@ -3432,7 +3432,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 17:17               hserdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign hseon_clr_n       = rst_n & ~(async_hsecss_fail | rcc_sys_stop);
+  assign hseon_clr_n       = rst_n & ~(sync_hsecss_fail_rst | rcc_sys_stop);
   assign cur_rcc_cr_hserdy = sync_hse_rdy;
 
   // --------------------------------------------------------------------------------
@@ -3620,7 +3620,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 0:0                 hsion               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | async_hsecss_fail);
+  assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | sync_hsecss_fail_rst);
   assign rcc_cr_hsion_en  = ~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b00));
   assign nxt_rcc_cr_hsion = wdata[0:0];
   assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion;
@@ -3908,7 +3908,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 2:0                 sw                  RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign sw_clr_n         = ~(async_hsecss_fail | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;  //there is a difference with H7
+  assign sw_clr_n         = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;  //there is a difference with H7
   assign sw_set_n         = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 1);
 
   assign rcc_cfgr_sw_en   = (|wr_req & rcc_cfgr_sel);

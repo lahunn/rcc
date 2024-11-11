@@ -1,7 +1,5 @@
+// spyglass disable_block Reset_sync02
 module rcc_vdd_reg (
-
-    /*AUTOINPUT*/
-    /*AUTOOUTPUT*/
     input rcc_vdd_wdata,
     input rst_n,
     input rcc_c1_rsr_rmvf_wren,
@@ -23,7 +21,6 @@ module rcc_vdd_reg (
     input d2_rst,
     input d1_rst,
     // input lsi_rdy,
-
     // rcc_c1_rsr 
     output cur_rcc_c1_rsr_lpwr2rstf,
     output cur_rcc_c1_rsr_lpwr1rstf,
@@ -59,6 +56,8 @@ module rcc_vdd_reg (
     // rcc_csr
     // output cur_rcc_csr_lsirdy,
     output cur_rcc_csr_lsion
+    /*AUTOINPUT*/
+    /*AUTOOUTPUT*/
 );
   /* verilator lint_off LATCH */
   /*AUTOWIRE*/
@@ -601,3 +600,4 @@ module rcc_vdd_reg (
 
 
 endmodule
+// spyglass enable_block Reset_sync02
