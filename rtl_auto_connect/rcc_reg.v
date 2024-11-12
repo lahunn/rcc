@@ -1,3 +1,6 @@
+// spyglass disable_block Clock_info05c
+//Clock_info05c (56) : Reports unconstrained MUXes which do not receive clocks in all its data inputs
+
 module rcc_reg #(
     // ================================================================================
     // CONFIGURABLE PARAMETERS
@@ -17071,3 +17074,4 @@ module rcc_reg #(
   assign rcc_vdd_wdata = (rcc_c1_rsr_sel | rcc_c2_rsr_sel) ? wdata[17] : wdata[0];
 
 endmodule
+// spyglass enable_block Clock_info05c

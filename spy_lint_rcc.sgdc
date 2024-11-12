@@ -14,6 +14,7 @@ reset -async -name "rcc_top.u_rcc_vsw_top.u_rcc_vsw_clk_rst_ctrl.pre_vsw_rst_n" 
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.stby_rst_n" -value 0
 reset -async -name "rcc_top.pwr_d1_ok" -value 0
 reset -async -name "rcc_top.pwr_d2_ok" -value 0
+reset -async -name "rcc_top.pwr_vsw_rst" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n_assert_n" -value 0
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n_release_n" -value 0
 
@@ -37,3 +38,12 @@ input -name wwdg1_out_rst  -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl
 input -name wwdg2_out_rst  -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
 input -name hsecss_fail    -clock hse_origin_clk
 input -name backup_protect -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+
+input -name hready  -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name hsel    -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name htrans  -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name hwrite  -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name haddr   -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name hsize   -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name hwdata  -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
+input -name hmaster -clock rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.u_d3_bus_clk_gating.gen_clk
