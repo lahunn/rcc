@@ -19,7 +19,8 @@ module rcc_sys_clk_rst_ctrl #(
     input        pwr_por_rst,
     input        cpu2_sftrst,
     input        cpu1_sftrst,
-    input        pre_vsw_rst_n,
+    input        pwr_vsw_rst,
+    input        bdrst,
     output       d1_rst,
     output       d2_rst,
     //input synced reset signals
@@ -285,9 +286,11 @@ module rcc_sys_clk_rst_ctrl #(
   wire [$clog2(D1_RST_DURATION)-1:0] nxt_d1_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] cur_d2_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] nxt_d2_rst_n_counter;
-
+  //vsw signal sync 
+  wire                               sync_bdrst;
+  wire                               sync_pwr_vsw_rst;
   //==============================================================================================
-  // dx_req signal generate //==============================================================================================
+  // dx_req signal generate
   //==============================================================================================
 
   assign rcc_exit_sys_stop    = pwr_d3_wkup;
@@ -584,12 +587,22 @@ module rcc_sys_clk_rst_ctrl #(
   BB_signal_sync #(
       .STAGE_NUM(2),
       .RST_VAL  ('b1)
-  ) u_vsw_reset_sync (
-      .src_signal(pre_vsw_rst_n),
+  ) u_vsw_bdrst_sync (
+      .src_signal(bdrst),
       .rst_n     (sys_rst_n),
       .clk       (pre_sys_clk),
-      .gen_signal(sync_vsw_rst_n)
+      .gen_signal(sync_bdrst)
   );
+
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_vsw_pwr_vsw_rst_sync (
+      .src_rst_n(pwr_vsw_rst),
+      .clk      (pre_sys_clk),
+      .gen_rst_n(sync_pwr_vsw_rst)
+  );
+
+  assign sync_vsw_rst_n = ~sync_bdrst && ~sync_pwr_vsw_rst;
 
   //==============================================================================================
   //==============================================================================================

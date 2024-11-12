@@ -15,6 +15,7 @@ module rcc_reg #(
     input  [WW-1:0] we,
     input  [AW-1:0] addr,
     input  [DW-1:0] wdata,
+    input           hmaster,
     output [DW-1:0] rdata,
     output [   1:0] rsp,
     input           sync_pll3_rdy,
@@ -749,6 +750,7 @@ module rcc_reg #(
   localparam RCC_APB4RSTR = (RCC_REG + 'h9C) >> 2;
   localparam RCC_GCR = (RCC_REG + 'hA0) >> 2;
   localparam RCC_D3AMR = (RCC_REG + 'hA8) >> 2;
+  localparam RCC_RSR = (RCC_REG + 'h0D0) >> 2;
   localparam RCC_C1_RSR = (RCC_REG + 'h130) >> 2;
   localparam RCC_C1_AHB3ENR = (RCC_REG + 'h134) >> 2;
   localparam RCC_C1_AHB1ENR = (RCC_REG + 'h138) >> 2;
@@ -3042,6 +3044,8 @@ module rcc_reg #(
   wire          rcc_hsirdyf;
   wire          rcc_lserdyf;
   wire          rcc_lsirdyf;
+  //addr remap
+  wire [AW-1:0] remap_addr;
 
   // ================================================================================
   // interrupt logic
@@ -3060,97 +3064,103 @@ module rcc_reg #(
   // ADDRESS DECODER
   // ================================================================================
   // rcc_reg
-  assign rcc_cr_sel = (addr == RCC_CR);
-  assign rcc_icscr_sel = (addr == RCC_ICSCR);
-  assign rcc_crrcr_sel = (addr == RCC_CRRCR);
-  assign rcc_cfgr_sel = (addr == RCC_CFGR);
-  assign rcc_d1cfgr_sel = (addr == RCC_D1CFGR);
-  assign rcc_d2cfgr_sel = (addr == RCC_D2CFGR);
-  assign rcc_d3cfgr_sel = (addr == RCC_D3CFGR);
-  assign rcc_pllclkselr_sel = (addr == RCC_PLLCLKSELR);
-  assign rcc_pllcfgr_sel = (addr == RCC_PLLCFGR);
-  assign rcc_pll1divr_sel = (addr == RCC_PLL1DIVR);
-  assign rcc_pll1fracr_sel = (addr == RCC_PLL1FRACR);
-  assign rcc_pll2divr_sel = (addr == RCC_PLL2DIVR);
-  assign rcc_pll2fracr_sel = (addr == RCC_PLL2FRACR);
-  assign rcc_pll3divr_sel = (addr == RCC_PLL3DIVR);
-  assign rcc_pll3fracr_sel = (addr == RCC_PLL3FRACR);
-  assign rcc_d1ccipr_sel = (addr == RCC_D1CCIPR);
-  assign rcc_d2ccip1r_sel = (addr == RCC_D2CCIP1R);
-  assign rcc_d2ccip2r_sel = (addr == RCC_D2CCIP2R);
-  assign rcc_d3ccipr_sel = (addr == RCC_D3CCIPR);
-  assign rcc_cier_sel = (addr == RCC_CIER);
-  assign rcc_cifr_sel = (addr == RCC_CIFR);
-  assign rcc_cicr_sel = (addr == RCC_CICR);
-  assign rcc_bdcr_sel = (addr == RCC_BDCR);
-  assign rcc_csr_sel = (addr == RCC_CSR);
-  assign rcc_ahb3rstr_sel = (addr == RCC_AHB3RSTR);
-  assign rcc_ahb1rstr_sel = (addr == RCC_AHB1RSTR);
-  assign rcc_ahb2rstr_sel = (addr == RCC_AHB2RSTR);
-  assign rcc_ahb4rstr_sel = (addr == RCC_AHB4RSTR);
-  assign rcc_apb3rstr_sel = (addr == RCC_APB3RSTR);
-  assign rcc_apb1lrstr_sel = (addr == RCC_APB1LRSTR);
-  assign rcc_apb1hrstr_sel = (addr == RCC_APB1HRSTR);
-  assign rcc_apb2rstr_sel = (addr == RCC_APB2RSTR);
-  assign rcc_apb4rstr_sel = (addr == RCC_APB4RSTR);
-  assign rcc_gcr_sel = (addr == RCC_GCR);
-  assign rcc_d3amr_sel = (addr == RCC_D3AMR);
-  assign rcc_c1_rsr_sel = (addr == RCC_C1_RSR);
-  assign rcc_c1_ahb3enr_sel = (addr == RCC_C1_AHB3ENR);
-  assign rcc_c1_ahb1enr_sel = (addr == RCC_C1_AHB1ENR);
-  assign rcc_c1_ahb2enr_sel = (addr == RCC_C1_AHB2ENR);
-  assign rcc_c1_ahb4enr_sel = (addr == RCC_C1_AHB4ENR);
-  assign rcc_c1_apb3enr_sel = (addr == RCC_C1_APB3ENR);
-  assign rcc_c1_apb1lenr_sel = (addr == RCC_C1_APB1LENR);
-  assign rcc_c1_apb1henr_sel = (addr == RCC_C1_APB1HENR);
-  assign rcc_c1_apb2enr_sel = (addr == RCC_C1_APB2ENR);
-  assign rcc_c1_apb4enr_sel = (addr == RCC_C1_APB4ENR);
-  assign rcc_c1_ahb3lpenr_sel = (addr == RCC_C1_AHB3LPENR);
-  assign rcc_c1_ahb1lpenr_sel = (addr == RCC_C1_AHB1LPENR);
-  assign rcc_c1_ahb2lpenr_sel = (addr == RCC_C1_AHB2LPENR);
-  assign rcc_c1_ahb4lpenr_sel = (addr == RCC_C1_AHB4LPENR);
-  assign rcc_c1_apb3lpenr_sel = (addr == RCC_C1_APB3LPENR);
-  assign rcc_c1_apb1llpenr_sel = (addr == RCC_C1_APB1LLPENR);
-  assign rcc_c1_apb1hlpenr_sel = (addr == RCC_C1_APB1HLPENR);
-  assign rcc_c1_apb2lpenr_sel = (addr == RCC_C1_APB2LPENR);
-  assign rcc_c1_apb4lpenr_sel = (addr == RCC_C1_APB4LPENR);
-  assign rcc_c2_rsr_sel = (addr == RCC_C2_RSR);
-  assign rcc_c2_ahb3enr_sel = (addr == RCC_C2_AHB3ENR);
-  assign rcc_c2_ahb1enr_sel = (addr == RCC_C2_AHB1ENR);
-  assign rcc_c2_ahb2enr_sel = (addr == RCC_C2_AHB2ENR);
-  assign rcc_c2_ahb4enr_sel = (addr == RCC_C2_AHB4ENR);
-  assign rcc_c2_apb3enr_sel = (addr == RCC_C2_APB3ENR);
-  assign rcc_c2_apb1lenr_sel = (addr == RCC_C2_APB1LENR);
-  assign rcc_c2_apb1henr_sel = (addr == RCC_C2_APB1HENR);
-  assign rcc_c2_apb2enr_sel = (addr == RCC_C2_APB2ENR);
-  assign rcc_c2_apb4enr_sel = (addr == RCC_C2_APB4ENR);
-  assign rcc_c2_ahb3lpenr_sel = (addr == RCC_C2_AHB3LPENR);
-  assign rcc_c2_ahb1lpenr_sel = (addr == RCC_C2_AHB1LPENR);
-  assign rcc_c2_ahb2lpenr_sel = (addr == RCC_C2_AHB2LPENR);
-  assign rcc_c2_ahb4lpenr_sel = (addr == RCC_C2_AHB4LPENR);
-  assign rcc_c2_apb3lpenr_sel = (addr == RCC_C2_APB3LPENR);
-  assign rcc_c2_apb1llpenr_sel = (addr == RCC_C2_APB1LLPENR);
-  assign rcc_c2_apb1hlpenr_sel = (addr == RCC_C2_APB1HLPENR);
-  assign rcc_c2_apb2lpenr_sel = (addr == RCC_C2_APB2LPENR);
-  assign rcc_c2_apb4lpenr_sel = (addr == RCC_C2_APB4LPENR);
+  assign remap_addr = (addr <= RCC_RSR) ? addr 
+                                        : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? addr + 'h18 
+                                                                                 : addr + 'h30) 
+                                                               : addr;
+  assign rcc_cr_sel = (remap_addr == RCC_CR);
+  assign rcc_icscr_sel = (remap_addr == RCC_ICSCR);
+  assign rcc_crrcr_sel = (remap_addr == RCC_CRRCR);
+  assign rcc_cfgr_sel = (remap_addr == RCC_CFGR);
+  assign rcc_d1cfgr_sel = (remap_addr == RCC_D1CFGR);
+  assign rcc_d2cfgr_sel = (remap_addr == RCC_D2CFGR);
+  assign rcc_d3cfgr_sel = (remap_addr == RCC_D3CFGR);
+  assign rcc_pllclkselr_sel = (remap_addr == RCC_PLLCLKSELR);
+  assign rcc_pllcfgr_sel = (remap_addr == RCC_PLLCFGR);
+  assign rcc_pll1divr_sel = (remap_addr == RCC_PLL1DIVR);
+  assign rcc_pll1fracr_sel = (remap_addr == RCC_PLL1FRACR);
+  assign rcc_pll2divr_sel = (remap_addr == RCC_PLL2DIVR);
+  assign rcc_pll2fracr_sel = (remap_addr == RCC_PLL2FRACR);
+  assign rcc_pll3divr_sel = (remap_addr == RCC_PLL3DIVR);
+  assign rcc_pll3fracr_sel = (remap_addr == RCC_PLL3FRACR);
+  assign rcc_d1ccipr_sel = (remap_addr == RCC_D1CCIPR);
+  assign rcc_d2ccip1r_sel = (remap_addr == RCC_D2CCIP1R);
+  assign rcc_d2ccip2r_sel = (remap_addr == RCC_D2CCIP2R);
+  assign rcc_d3ccipr_sel = (remap_addr == RCC_D3CCIPR);
+  assign rcc_cier_sel = (remap_addr == RCC_CIER);
+  assign rcc_cifr_sel = (remap_addr == RCC_CIFR);
+  assign rcc_cicr_sel = (remap_addr == RCC_CICR);
+  assign rcc_bdcr_sel = (remap_addr == RCC_BDCR);
+  assign rcc_csr_sel = (remap_addr == RCC_CSR);
+  assign rcc_ahb3rstr_sel = (remap_addr == RCC_AHB3RSTR);
+  assign rcc_ahb1rstr_sel = (remap_addr == RCC_AHB1RSTR);
+  assign rcc_ahb2rstr_sel = (remap_addr == RCC_AHB2RSTR);
+  assign rcc_ahb4rstr_sel = (remap_addr == RCC_AHB4RSTR);
+  assign rcc_apb3rstr_sel = (remap_addr == RCC_APB3RSTR);
+  assign rcc_apb1lrstr_sel = (remap_addr == RCC_APB1LRSTR);
+  assign rcc_apb1hrstr_sel = (remap_addr == RCC_APB1HRSTR);
+  assign rcc_apb2rstr_sel = (remap_addr == RCC_APB2RSTR);
+  assign rcc_apb4rstr_sel = (remap_addr == RCC_APB4RSTR);
+  assign rcc_gcr_sel = (remap_addr == RCC_GCR);
+  assign rcc_d3amr_sel = (remap_addr == RCC_D3AMR);
+  assign rcc_c1_rsr_sel = (remap_addr == RCC_C1_RSR);
+  assign rcc_c1_ahb3enr_sel = (remap_addr == RCC_C1_AHB3ENR);
+  assign rcc_c1_ahb1enr_sel = (remap_addr == RCC_C1_AHB1ENR);
+  assign rcc_c1_ahb2enr_sel = (remap_addr == RCC_C1_AHB2ENR);
+  assign rcc_c1_ahb4enr_sel = (remap_addr == RCC_C1_AHB4ENR);
+  assign rcc_c1_apb3enr_sel = (remap_addr == RCC_C1_APB3ENR);
+  assign rcc_c1_apb1lenr_sel = (remap_addr == RCC_C1_APB1LENR);
+  assign rcc_c1_apb1henr_sel = (remap_addr == RCC_C1_APB1HENR);
+  assign rcc_c1_apb2enr_sel = (remap_addr == RCC_C1_APB2ENR);
+  assign rcc_c1_apb4enr_sel = (remap_addr == RCC_C1_APB4ENR);
+  assign rcc_c1_ahb3lpenr_sel = (remap_addr == RCC_C1_AHB3LPENR);
+  assign rcc_c1_ahb1lpenr_sel = (remap_addr == RCC_C1_AHB1LPENR);
+  assign rcc_c1_ahb2lpenr_sel = (remap_addr == RCC_C1_AHB2LPENR);
+  assign rcc_c1_ahb4lpenr_sel = (remap_addr == RCC_C1_AHB4LPENR);
+  assign rcc_c1_apb3lpenr_sel = (remap_addr == RCC_C1_APB3LPENR);
+  assign rcc_c1_apb1llpenr_sel = (remap_addr == RCC_C1_APB1LLPENR);
+  assign rcc_c1_apb1hlpenr_sel = (remap_addr == RCC_C1_APB1HLPENR);
+  assign rcc_c1_apb2lpenr_sel = (remap_addr == RCC_C1_APB2LPENR);
+  assign rcc_c1_apb4lpenr_sel = (remap_addr == RCC_C1_APB4LPENR);
+  assign rcc_c2_rsr_sel = (remap_addr == RCC_C2_RSR);
+  assign rcc_c2_ahb3enr_sel = (remap_addr == RCC_C2_AHB3ENR);
+  assign rcc_c2_ahb1enr_sel = (remap_addr == RCC_C2_AHB1ENR);
+  assign rcc_c2_ahb2enr_sel = (remap_addr == RCC_C2_AHB2ENR);
+  assign rcc_c2_ahb4enr_sel = (remap_addr == RCC_C2_AHB4ENR);
+  assign rcc_c2_apb3enr_sel = (remap_addr == RCC_C2_APB3ENR);
+  assign rcc_c2_apb1lenr_sel = (remap_addr == RCC_C2_APB1LENR);
+  assign rcc_c2_apb1henr_sel = (remap_addr == RCC_C2_APB1HENR);
+  assign rcc_c2_apb2enr_sel = (remap_addr == RCC_C2_APB2ENR);
+  assign rcc_c2_apb4enr_sel = (remap_addr == RCC_C2_APB4ENR);
+  assign rcc_c2_ahb3lpenr_sel = (remap_addr == RCC_C2_AHB3LPENR);
+  assign rcc_c2_ahb1lpenr_sel = (remap_addr == RCC_C2_AHB1LPENR);
+  assign rcc_c2_ahb2lpenr_sel = (remap_addr == RCC_C2_AHB2LPENR);
+  assign rcc_c2_ahb4lpenr_sel = (remap_addr == RCC_C2_AHB4LPENR);
+  assign rcc_c2_apb3lpenr_sel = (remap_addr == RCC_C2_APB3LPENR);
+  assign rcc_c2_apb1llpenr_sel = (remap_addr == RCC_C2_APB1LLPENR);
+  assign rcc_c2_apb1hlpenr_sel = (remap_addr == RCC_C2_APB1HLPENR);
+  assign rcc_c2_apb2lpenr_sel = (remap_addr == RCC_C2_APB2LPENR);
+  assign rcc_c2_apb4lpenr_sel = (remap_addr == RCC_C2_APB4LPENR);
 
   // ================================================================================
   // REG ACCESS ERROR
   // ================================================================================
-  assign rsv_reg_sel = (addr < RCC_CR)
-                  || ((addr > RCC_CRRCR) && (addr < RCC_CFGR))
-                  || ((addr > RCC_CFGR) && (addr < RCC_D1CFGR))
-                  || ((addr > RCC_D3CFGR) && (addr < RCC_PLLCLKSELR))
-                  || ((addr > RCC_PLL3FRACR) && (addr < RCC_D1CCIPR))
-                  || ((addr > RCC_D3CCIPR) && (addr < RCC_CIER))
-                  || ((addr > RCC_CICR) && (addr < RCC_BDCR))
-                  || ((addr > RCC_CSR) && (addr < RCC_AHB3RSTR))
-                  || ((addr > RCC_GCR) && (addr < RCC_D3AMR))
-                  || ((addr > RCC_D3AMR) && (addr < RCC_C1_RSR))
-                  || ((addr > RCC_C1_APB4ENR) && (addr < RCC_C1_AHB3LPENR))
-                  || ((addr > RCC_C1_APB4LPENR) && (addr < RCC_C2_RSR))
-                  || ((addr > RCC_C2_APB4ENR) && (addr < RCC_C2_AHB3LPENR))
-                  || (addr > RCC_C2_APB4LPENR);
+  assign rsv_reg_sel = (remap_addr < RCC_CR)
+                  || ((remap_addr > RCC_CRRCR) && (remap_addr < RCC_CFGR))
+                  || ((remap_addr > RCC_CFGR) && (remap_addr < RCC_D1CFGR))
+                  || ((remap_addr > RCC_D3CFGR) && (remap_addr < RCC_PLLCLKSELR))
+                  || ((remap_addr > RCC_PLL3FRACR) && (remap_addr < RCC_D1CCIPR))
+                  || ((remap_addr > RCC_D3CCIPR) && (remap_addr < RCC_CIER))
+                  || ((remap_addr > RCC_CICR) && (remap_addr < RCC_BDCR))
+                  || ((remap_addr > RCC_CSR) && (remap_addr < RCC_AHB3RSTR))
+                  || ((remap_addr > RCC_GCR) && (remap_addr < RCC_D3AMR))
+                  || ((remap_addr > RCC_D3AMR) && (remap_addr < RCC_C1_RSR))
+                  || ((remap_addr > RCC_C1_APB4ENR) && (remap_addr < RCC_C1_AHB3LPENR))
+                  || ((remap_addr > RCC_C1_APB4LPENR) && (remap_addr < RCC_C2_RSR))
+                  || ((remap_addr > RCC_C2_APB4ENR) && (remap_addr < RCC_C2_AHB3LPENR))
+                  || (remap_addr > RCC_C2_APB4LPENR)
+                  || ((remap_addr >= RCC_C1_RSR) && (remap_addr <= RCC_C1_APB4LPENR) && (hmaster == 1))
+                  || ((remap_addr >= RCC_C2_RSR) && (remap_addr <= RCC_C2_APB4LPENR) && (hmaster == 0));//hamster = 0 , cpu1 ; hmaster = 1, cpu2
 
   assign rsv_acs_err = rsv_reg_sel && req;
   assign rsp = {1'b0, rsv_acs_err};
