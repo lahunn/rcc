@@ -98,7 +98,7 @@ module rcc_sys_clk_rst_ctrl #(
     // oscilator signals
     //==============================================================================================
     // signals connected to HSE
-    input        hse_rdy,
+    // input        hse_rdy,
     input        hsecss_fail,
     input        hse_origin_clk,
     // lse lsi clock
@@ -233,8 +233,6 @@ module rcc_sys_clk_rst_ctrl #(
   // sys_clk_generate
   wire                               pll_src_clk;
   wire                               sys_clk_en;
-  wire                               sys_csi_clk;
-  wire                               sys_hsi_clk;
   wire                               hsi_clk;
   wire                               csi_clk;
   wire                               rcc_d1_bus_clk;
@@ -454,7 +452,7 @@ module rcc_sys_clk_rst_ctrl #(
   // sys reset is asserted when power on reset or hw init not finished , and reset release when hsi_rdy and flash power ok
   assign sys_rst_n_assert_n  = ~nrst_in && hw_init_done;
   assign sys_rst_n_release_n = ~(hsi_rdy && flash_power_ok);
-  assign nxt_sys_rst_n       = ~sys_rst_n_release_n;  //redundant logic
+  assign nxt_sys_rst_n       = ~sync_sys_rst_n_release_n;  //redundant logic
   assign sys_rst_n           = cur_sys_rst_n;
 
   BB_reset_sync #(
@@ -836,23 +834,7 @@ module rcc_sys_clk_rst_ctrl #(
   // system clock generate
   //====================================================================
 
-  assign sys_clk_src = {pll1_p_clk, hse_clk, sys_csi_clk, sys_hsi_clk};
-
-  async_clk_gating u_sys_csi_clk_gating (
-      .raw_clk(csi_clk),
-      .active (csi_clk_en),
-      .bypass (testmode),
-      .rst_n  (csi_ker_sync_sys_rst_n),
-      .gen_clk(sys_csi_clk)
-  );
-
-  async_clk_gating u_sys_hsi_clk_gating (
-      .raw_clk(hsi_clk),
-      .active (hsi_clk_en),
-      .bypass (testmode),
-      .rst_n  (hsi_ker_sync_sys_rst_n),
-      .gen_clk(sys_hsi_clk)
-  );
+  assign sys_clk_src = {pll1_p_clk, hse_clk, csi_clk, hsi_clk};
 
   glitch_free_clk_switch #(
       .CLK_NUM(4)

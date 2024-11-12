@@ -38,10 +38,10 @@ create_generated_clock -name csi_ker_clk_122_div -source [get_pins u_rcc_vcore_t
 # SYS CLK FROM DIFFERENT SOURCES
 #==============================================================================
 # clock -name "u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/pre_sys_clk" -period 1.25 -edge {0 0.625} -domain "pre_sys_clk"
-create_generated_clock -name hsi_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_hsi_clk_gating/gen_clk] [get_nets u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_hsi_clk_gating/gen_clk]          -combinational -master_clock hsi_clk         -add
-create_generated_clock -name csi_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_csi_clk_gating/gen_clk] [get_nets u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_csi_clk_gating/gen_clk]          -combinational -master_clock csi_clk         -add
-create_generated_clock -name hse_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/hse_clk] [get_nets u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/i_clk[2]]                  -combinational
-create_generated_clock -name pll1_p_sys_clk      -source [get_ports pll1_p_clk] [get_nets u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/i_clk[3]]               -combinational
+create_generated_clock -name hsi_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_hsi_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/i_clk[0]]          -combinational
+create_generated_clock -name csi_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_csi_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/i_clk[1]]          -combinational
+create_generated_clock -name hse_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/hse_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/i_clk[2]]                  -combinational
+create_generated_clock -name pll1_p_sys_clk      -source [get_ports pll1_p_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/i_clk[3]]               -combinational
 
 # create_generated_clock -name pre_sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/o_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/pre_sys_clk]          -combinational
 create_generated_clock -name sys_clk         -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/pre_sys_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/sys_clk]                                    -combinational

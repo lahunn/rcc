@@ -1,4 +1,5 @@
-/* verilator lint_off PINCONNECTEMPTY */
+// spyglass disable_block W287b
+//neglect not used output bug
 module rcc_per_clk_rst_control #(
     parameter CLK_ON_AFTER_PER_RST_RELEASE                  = 8
 )  (
@@ -6464,3 +6465,4 @@ wire [0:0] exti_bus_clks;
 
 
 endmodule
+// spyglass enable_block W287b

@@ -6,14 +6,12 @@ module BB_clk_div_s #(
     output o_clk,
     output div_en
 );
-/* verilator lint_off WIDTHEXPAND */
   //=========================================================================================
   //FIXED PARAMETERS
   //=========================================================================================
   localparam CNT_CEIL = (DIV_RATIO % 2 == 0) ? (DIV_RATIO / 2 - 1) : (DIV_RATIO - 1);
   localparam CNT_CEIL_PLUS = CNT_CEIL + 1;
-  localparam CNT_WID = (CNT_CEIL_PLUS > 1) ? $clog2(CNT_CEIL_PLUS)
-                                           : 1;
+  localparam CNT_WID = (CNT_CEIL_PLUS > 1) ? $clog2(CNT_CEIL_PLUS) : 1;
 
   //=========================================================================================
   //INTERNAL SIGNALS  DECLEARATION
