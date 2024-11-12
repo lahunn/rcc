@@ -91,8 +91,17 @@ module per_clk_rst_control #(
     end
   endgenerate
 
-  assign bus_clk_en = (c1_bus_clk_en || c2_bus_clk_en || d3_bus_clk_en) && arcg_clk_en;
+  //async reset clock control, use the slowest clock to control arcg_clk_en
+  sync_reset_clk_gate #(
+      .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_sync_reset_clk_gate (
+      .src_rst_n(per_rst_n),
+      .i_clk    (bus_clks[0]),
+      .arcg_on  (arcg_on),
+      .clk_en   (arcg_clk_en)
+  );
 
+  assign bus_clk_en = (c1_bus_clk_en || c2_bus_clk_en || d3_bus_clk_en) && arcg_clk_en;
 
   //bus clock gates
 
@@ -118,16 +127,6 @@ module per_clk_rst_control #(
       assign per_rst_n = sys_rst_n && sft_rst_n;
     end
   endgenerate
-
-  //async reset clock control
-  sync_reset_clk_gate #(
-      .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_sync_reset_clk_gate (
-      .src_rst_n(per_rst_n),
-      .i_clk    (per_bus_clks[0]),
-      .arcg_on  (arcg_on),
-      .clk_en   (arcg_clk_en)
-  );
 
 endmodule
 // spyglass enable_block W240

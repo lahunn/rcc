@@ -7,7 +7,9 @@ module rcc_sys_clk_rst_ctrl #(
     parameter CLK_ON_AFTER_CPU1_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_CPU2_RST_RELEASE = 8
 ) (
+    //==============================================================================================
     // reset signal sources
+    //==============================================================================================
     input        nrst_in,
     input        iwdg1_out_rst,
     input        wwdg1_out_rst,
@@ -21,80 +23,10 @@ module rcc_sys_clk_rst_ctrl #(
     input        cpu1_sftrst,
     input        pwr_vsw_rst,
     input        bdrst,
-    output       d1_rst,
-    output       d2_rst,
-    //input synced reset signals
-    input        hse_sync_sys_rst_n,
-    input        csi_ker_sync_sys_rst_n,
-    input        hsi_ker_sync_sys_rst_n,
-    input        pll1_p_sync_sys_rst_n,
-    //pwr signals 
-    input        pwr_vcore_ok,
-    input        pwr_d1_ok,
-    input        pwr_d2_ok,
-    input        d3_deepsleep,
-    // flash signals
-    input        flash_obl_reload,
-    input        obl_done,
-    input        flash_power_ok,
-    //input arcg on
-    input        rcc_arcg_on,
-    // output reset signals
-    output       sys_rst_n,
-    output       d1_rst_n,
-    output       d2_rst_n,
-    output       cpu1_sync_rst_n,
-    output       cpu2_sync_rst_n,
-    output       d1_bus_sync_rst_n,
-    output       d2_bus_sync_rst_n,
-    output       d3_bus_sync_rst_n,
-    output       sync_vsw_rst_n,
-    // nrst output 
-    output       nrst_out,
-    output       rcc_obl_sync_rst_n,
-    // pwr signals
-    input        pwr_d1_wkup,
-    input        pwr_d2_wkup,
-    input        pwr_d3_wkup,
-    output       rcc_pwr_d1_req,
-    output       rcc_pwr_d2_req,
-    output       rcc_pwr_d3_req,
-    // sys clocks
-    output       sys_clk,
-    output       pre_sys_clk,
-    //PAD signals 
-    output       mco1,
-    output       mco2,
-    //indicate peripheral alloction
-    input        c2_per_alloc_d1,
-    input        c1_per_alloc_d2,
-    // signals connected to CPU 
-    input        c2_sleep,
-    input        c2_deepsleep,
-    input        c1_sleep,
-    input        c1_deepsleep,
-    output       rcc_c2_clk,
-    output       rcc_fclk_c2,
-    output       rcc_c2_systick_clk,
-    output       rcc_c1_clk,
-    output       rcc_fclk_c1,
-    output       rcc_c1_systick_clk,
-    // timer clocks
-    output       rcc_timx_ker_clk,
-    output       rcc_timy_ker_clk,
-    output       rcc_hrtimer_prescalar_clk,
-    //rtc clocks
-    output       hse_rtc_clk,
-    //per clock source
-    output       hse_clk,
-    output       rcc_obl_clk,
-    output       hsi_ker_clk,
-    output       csi_ker_clk,
-    output       per_clk,
-    // stop mode signals
-    output       rcc_d1_stop,
-    output       rcc_d2_stop,
-    output       rcc_sys_stop,
+    //==============================================================================================
+    //testmode signal
+    //==============================================================================================
+    input        testmode,
     //==============================================================================================
     // oscilator signals
     //==============================================================================================
@@ -128,43 +60,6 @@ module rcc_sys_clk_rst_ctrl #(
     input        ahb4bridge_d3_busy,
     input        apb4bridge_d3_busy,
     input        flash_busy,
-    // peripheral allocate  signals
-    input        c1_per_alloc_ahb1,
-    input        c1_per_alloc_ahb2,
-    input        c1_per_alloc_ahb3,
-    input        c1_per_alloc_apb1,
-    input        c1_per_alloc_apb2,
-    input        c1_per_alloc_apb3,
-    input        c2_per_alloc_ahb1,
-    input        c2_per_alloc_ahb2,
-    input        c2_per_alloc_ahb3,
-    input        c2_per_alloc_apb1,
-    input        c2_per_alloc_apb2,
-    input        c2_per_alloc_apb3,
-    //peripheral kernel clock request
-    input        csi_ker_clk_req,
-    input        hsi_ker_clk_req,
-    //bus clock signals
-    output       rcc_axibridge_d1_clk,
-    output       rcc_ahb3bridge_d1_clk,
-    output       rcc_apb3bridge_d1_clk,
-    output       rcc_ahb1bridge_d2_clk,
-    output       rcc_ahb2bridge_d2_clk,
-    output       rcc_apb1bridge_d2_clk,
-    output       rcc_apb2bridge_d2_clk,
-    output       rcc_ahb4bridge_d3_clk,
-    output       rcc_apb4bridge_d3_clk,
-    //bus clock div en
-    output       c1_to_axi_div_en,
-    output       d1_h2b_div_en,
-    output       d2_h2b1_div_en,
-    output       d2_h2b2_div_en,
-    output       d3_h2b_div_en,
-    //pll signals
-    input  [1:0] pllsrc,
-    output       pll1_src_clk,
-    output       pll2_src_clk,
-    output       pll3_src_clk,
     //==============================================================================================
     // register signals
     //==============================================================================================
@@ -192,9 +87,120 @@ module rcc_sys_clk_rst_ctrl #(
     input  [5:0] divm1,
     input  [5:0] divm2,
     input  [5:0] divm3,
+    // peripheral allocate  signals
+    input        c1_per_alloc_ahb1,
+    input        c1_per_alloc_ahb2,
+    input        c1_per_alloc_ahb3,
+    input        c1_per_alloc_apb1,
+    input        c1_per_alloc_apb2,
+    input        c1_per_alloc_apb3,
+    input        c2_per_alloc_ahb1,
+    input        c2_per_alloc_ahb2,
+    input        c2_per_alloc_ahb3,
+    input        c2_per_alloc_apb1,
+    input        c2_per_alloc_apb2,
+    input        c2_per_alloc_apb3,
+    //peripheral kernel clock request
+    input        csi_ker_clk_req,
+    input        hsi_ker_clk_req,
+    //input synced reset signals
+    input        hse_sync_sys_rst_n,
+    input        csi_ker_sync_sys_rst_n,
+    input        hsi_ker_sync_sys_rst_n,
+    input        pll1_p_sync_sys_rst_n,
+    //pwr signals 
+    input        pwr_vcore_ok,
+    input        pwr_d1_ok,
+    input        pwr_d2_ok,
+    input        d3_deepsleep,
+    // flash signals
+    input        flash_obl_reload,
+    input        obl_done,
+    input        flash_power_ok,
+    //input arcg on
+    input        rcc_arcg_on,
+    // pwr signals
+    input        pwr_d1_wkup,
+    input        pwr_d2_wkup,
+    input        pwr_d3_wkup,
+    output       rcc_pwr_d1_req,
+    output       rcc_pwr_d2_req,
+    output       rcc_pwr_d3_req,
+    // sys clocks
+    output       sys_clk,
+    //PAD signals 
+    output       mco1,
+    output       mco2,
+    //indicate peripheral alloction
+    input        c2_per_alloc_d1,
+    input        c1_per_alloc_d2,
+    // signals connected to CPU 
+    input        c2_sleep,
+    input        c2_deepsleep,
+    input        c1_sleep,
+    input        c1_deepsleep,
+    output       rcc_c2_clk,
+    output       rcc_fclk_c2,
+    output       rcc_c2_systick_clk,
+    output       rcc_c1_clk,
+    output       rcc_fclk_c1,
+    output       rcc_c1_systick_clk,
+    // timer clocks
+    output       rcc_timx_ker_clk,
+    output       rcc_timy_ker_clk,
+    output       rcc_hrtimer_prescalar_clk,
+    //rtc clocks
+    output       hse_rtc_clk,
+    //per clock source
+    output       hse_clk,
+    output       rcc_obl_clk,
+    output       hsi_ker_clk,
+    output       csi_ker_clk,
+    output       per_clk,
+    // stop mode signals
+    output       rcc_d1_stop,
+    output       rcc_d2_stop,
+    output       rcc_sys_stop,
+    // output reset signals
+    output       sys_rst_n,
+    output       d1_rst_n,
+    output       d2_rst_n,
+    output       cpu1_sync_rst_n,
+    output       cpu2_sync_rst_n,
+    output       d1_bus_sync_rst_n,
+    output       d2_bus_sync_rst_n,
+    output       d3_bus_sync_rst_n,
+    output       sync_vsw_rst_n,
+    output       obl_rst,
+    output       d1_rst,
+    output       d2_rst,
+    // nrst output 
+    output       nrst_out,
+    output       rcc_obl_sync_rst_n,
 
-    output rcc_exit_sys_stop,
-    input  testmode
+    //bus clock signals
+    output       rcc_axibridge_d1_clk,
+    output       rcc_ahb3bridge_d1_clk,
+    output       rcc_apb3bridge_d1_clk,
+    output       rcc_ahb1bridge_d2_clk,
+    output       rcc_ahb2bridge_d2_clk,
+    output       rcc_apb1bridge_d2_clk,
+    output       rcc_apb2bridge_d2_clk,
+    output       rcc_ahb4bridge_d3_clk,
+    output       rcc_apb4bridge_d3_clk,
+    //bus clock div en
+    output       c1_to_axi_div_en,
+    output       d1_h2b_div_en,
+    output       d2_h2b1_div_en,
+    output       d2_h2b2_div_en,
+    output       d3_h2b_div_en,
+    //pll signals
+    input  [1:0] pllsrc,
+    output       pll1_src_clk,
+    output       pll2_src_clk,
+    output       pll3_src_clk,
+    //system state
+    output       rcc_exit_sys_stop
 
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
@@ -212,7 +218,6 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               rcc_d2_busy;
   wire                               rcc_d3_busy;
   wire                               hw_init_done;
-  wire                               obl_rst;
   // wire                               rcc_vcore_rst;
   wire                               stby_rst_n;
   wire                               rcc_obl_rst_n;
@@ -602,7 +607,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_rst_n(sync_pwr_vsw_rst)
   );
 
-  assign sync_vsw_rst_n = ~sync_bdrst && ~sync_pwr_vsw_rst;
+  assign sync_vsw_rst_n           = ~sync_bdrst && ~sync_pwr_vsw_rst;
 
   //==============================================================================================
   //==============================================================================================

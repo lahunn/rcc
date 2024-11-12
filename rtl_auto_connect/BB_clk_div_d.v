@@ -1,5 +1,6 @@
 // spyglass disable_block Clock_info05c
 // Clock_info05c (13) : Reports unconstrained MUXes which do not receive clocks in all its data inputs
+// spyglass disable_block Clock_check01
 module BB_clk_div_d #(
     parameter RATIO_WID = 8
 ) (
@@ -87,3 +88,4 @@ module BB_clk_div_d #(
 
 endmodule
 // spyglass enable_block Clock_info05c
+// spyglass enable_block Clock_check01

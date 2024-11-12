@@ -73,7 +73,9 @@ module rcc_vcore_top #(
   //clock and reset control
   //==============================================================================
   rcc_sys_clk_rst_ctrl #(  /*AUTOINSTPARAM*/
-  ) u_rcc_sys_clk_rst_ctrl (  /*AUTOINST*/
+  ) u_rcc_sys_clk_rst_ctrl (
+    .bdrst(cur_rcc_bdcr_bdrst),  
+    /*AUTOINST*/
   );
 
   //rcc_per_clk_rst_control
