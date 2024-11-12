@@ -18,6 +18,8 @@ reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.d2_rst_n" -va
 reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sync_vsw_rst_n" -value 0
 reset -async -name "rcc_top.pwr_d1_ok" -value 0
 reset -async -name "rcc_top.pwr_d2_ok" -value 0
+reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n_assert_n" -value 0
+reset -async -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.sys_rst_n_release_n" -value 0
 reset -sync -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.u_*_per_clk_rst_control.per_rst_n" -value 0
 #==============================================================================
 # IO

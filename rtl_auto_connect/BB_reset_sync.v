@@ -1,6 +1,5 @@
 module BB_reset_sync #(
-  parameter STAGE_NUM = 2,//no less than 2
-  parameter RST_VAL   = 'b0//default value of reset signal
+  parameter STAGE_NUM = 2//no less than 2
 )
 (
   input src_rst_n,
@@ -14,7 +13,7 @@ wire [STAGE_NUM-1:0] nxt_sync;
 
 BB_dffr #(
   .DW     (STAGE_NUM),
-  .RST_VAL(RST_VAL)
+  .RST_VAL('b0)
 ) reset_sync_1 (
   .clk  (clk       ),
   .rst_n(src_rst_n ),

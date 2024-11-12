@@ -225,7 +225,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               d2_rst_n_counter_wren;
   wire                               nxt_d2_rst_n;
   wire                               cur_d2_rst_n;
-  wire                               sys_rst_n_assert;
+  wire                               sys_rst_n_assert_n;
   wire                               nxt_sys_rst_n;
   wire                               cur_sys_rst_n;
   wire                               sys_d1cpre_clk;
@@ -233,7 +233,8 @@ module rcc_sys_clk_rst_ctrl #(
   // sys_clk_generate
   wire                               pll_src_clk;
   wire                               sys_clk_en;
-
+  wire                               sys_csi_clk;
+  wire                               sys_hsi_clk;
   wire                               hsi_clk;
   wire                               csi_clk;
   wire                               rcc_d1_bus_clk;
@@ -278,9 +279,9 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               sync_flash_power_ok;
   wire                               sync_pwr_d1_ok;
   wire                               sync_pwr_d2_ok;
-  wire                               sys_rst_n_release;
-  wire                               sync_sys_rst_n_assert;
-  wire                               sync_sys_rst_n_release;
+  wire                               sys_rst_n_release_n;
+  wire                               sync_sys_rst_n_assert_n;
+  wire                               sync_sys_rst_n_release_n;
 
   wire [$clog2(D1_RST_DURATION)-1:0] cur_d1_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] nxt_d1_rst_n_counter;
@@ -451,36 +452,34 @@ module rcc_sys_clk_rst_ctrl #(
   //system reset generate
   //==============================================================================================
   // sys reset is asserted when power on reset or hw init not finished , and reset release when hsi_rdy and flash power ok
-  assign sys_rst_n_assert  = ~nrst_in && hw_init_done;
-  assign sys_rst_n_release = hsi_rdy && flash_power_ok;
-  assign nxt_sys_rst_n     = sync_sys_rst_n_release;
-  assign sys_rst_n         = cur_sys_rst_n;
+  assign sys_rst_n_assert_n  = ~nrst_in && hw_init_done;
+  assign sys_rst_n_release_n = ~(hsi_rdy && flash_power_ok);
+  assign nxt_sys_rst_n       = ~sys_rst_n_release_n;  //redundant logic
+  assign sys_rst_n           = cur_sys_rst_n;
 
   BB_reset_sync #(
       .STAGE_NUM(2)
-  ) u_sys_rst_n_assert_sync (
-      .src_rst_n(sys_rst_n_assert),
+  ) u_sys_rst_n_assert_n_sync (
+      .src_rst_n(sys_rst_n_assert_n),
       .clk      (pre_sys_clk),
-      .gen_rst_n(sync_sys_rst_n_assert)
+      .gen_rst_n(sync_sys_rst_n_assert_n)
   );
 
-  BB_signal_sync #(
-      .STAGE_NUM(2),
-      .DW       (1),
-      .RST_VAL  ('b0)
-  ) u_sys_rst_n_release_sync (
-      .src_signal(sys_rst_n_release),
-      .rst_n     (sync_sys_rst_n_assert),
-      .clk       (pre_sys_clk),
-      .gen_signal(sync_sys_rst_n_release)
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_sys_rst_n_release_n_sync (
+      .src_rst_n(sys_rst_n_release_n),
+      .clk      (pre_sys_clk),
+      .gen_rst_n(sync_sys_rst_n_release_n)
   );
 
-  BB_dffr #(
+  BB_dffrs #(
       .DW     (1),
       .RST_VAL(0)
   ) u_sys_rst_n_dfflr (
       .clk  (pre_sys_clk),
-      .rst_n(sync_sys_rst_n_assert),
+      .rst_n(sync_sys_rst_n_assert_n),
+      .set_n(sync_sys_rst_n_release_n),
       .din  (nxt_sys_rst_n),
       .dout (cur_sys_rst_n)
   );
@@ -837,7 +836,23 @@ module rcc_sys_clk_rst_ctrl #(
   // system clock generate
   //====================================================================
 
-  assign sys_clk_src = {pll1_p_clk, hse_clk, csi_clk, hsi_clk};
+  assign sys_clk_src = {pll1_p_clk, hse_clk, sys_csi_clk, sys_hsi_clk};
+
+  async_clk_gating u_sys_csi_clk_gating (
+      .raw_clk(csi_clk),
+      .active (csi_clk_en),
+      .bypass (testmode),
+      .rst_n  (csi_ker_sync_sys_rst_n),
+      .gen_clk(sys_csi_clk)
+  );
+
+  async_clk_gating u_sys_hsi_clk_gating (
+      .raw_clk(hsi_clk),
+      .active (hsi_clk_en),
+      .bypass (testmode),
+      .rst_n  (hsi_ker_sync_sys_rst_n),
+      .gen_clk(sys_hsi_clk)
+  );
 
   glitch_free_clk_switch #(
       .CLK_NUM(4)
