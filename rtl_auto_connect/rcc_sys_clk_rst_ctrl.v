@@ -237,6 +237,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               sys_d1cpre_clk;
   wire                               sys_hpre_clk;
   // sys_clk_generate
+  wire                               pre_sys_clk;
   wire                               pll_src_clk;
   wire                               sys_clk_en;
   wire                               hsi_clk;
