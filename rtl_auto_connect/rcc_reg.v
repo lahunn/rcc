@@ -3453,7 +3453,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 16:16               hseon               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cr_hseon_en   = ~((cur_rcc_cfgr_sws == 3'b010) | (cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b10));
+  assign rcc_cr_hseon_en   = (~((cur_rcc_cfgr_sws == 3'b010) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b10))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hseon  = wdata[16:16];
   assign hseon             = cur_rcc_cr_hseon;
   BB_dfflr #(
@@ -3546,7 +3546,7 @@ module rcc_reg #(
   assign csion_clr_n       = rst_n;
   assign csion_set_n       = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 1 | cur_rcc_cfgr_stopkerwuck == 1);
 
-  assign rcc_cr_csion_en   = ~((cur_rcc_cfgr_sws == 3'b001) | (cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b01));
+  assign rcc_cr_csion_en   = (~((cur_rcc_cfgr_sws == 3'b001) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_csion  = wdata[7:7];
   assign csion             = rcc_sys_stop ? csikeron : cur_rcc_cr_csion;
   BB_dfflrs #(
@@ -3636,7 +3636,7 @@ module rcc_reg #(
   // 0:0                 hsion               RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | sync_hsecss_fail_rst);
-  assign rcc_cr_hsion_en  = ~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on & cur_rcc_pllclkselr_pllsrc == 2'b00));
+  assign rcc_cr_hsion_en  = (~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hsion = wdata[0:0];
   assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion;
   BB_dfflrs #(
@@ -5922,10 +5922,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 10:10               hsecssc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_hsecssc_set = wdata[10];
+  assign rcc_cicr_hsecssc_set = wdata[10] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_hsecssc_clr = ~cur_rcc_cifr_hsecssf;
   assign rcc_cicr_hsecssc_en  = rcc_cicr_hsecssc_set | rcc_cicr_hsecssc_clr;
-  assign nxt_rcc_cicr_hsecssc = ~rcc_cicr_hsecssc_clr;
+  assign nxt_rcc_cicr_hsecssc = rcc_cicr_hsecssc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -5940,10 +5940,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 9:9                 lsecssc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_lsecssc_set = wdata[9];
+  assign rcc_cicr_lsecssc_set = wdata[9] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_lsecssc_clr = ~cur_rcc_cifr_lsecssf;
   assign rcc_cicr_lsecssc_en  = rcc_cicr_lsecssc_set | rcc_cicr_lsecssc_clr;
-  assign nxt_rcc_cicr_lsecssc = ~rcc_cicr_lsecssc_clr;
+  assign nxt_rcc_cicr_lsecssc = rcc_cicr_lsecssc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -5958,10 +5958,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 8:8                 pll3rdyc            W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_pll3rdyc_set = wdata[8];
+  assign rcc_cicr_pll3rdyc_set = wdata[8] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_pll3rdyc_clr = ~cur_rcc_cifr_pll3rdyf;
   assign rcc_cicr_pll3rdyc_en  = rcc_cicr_pll3rdyc_set | rcc_cicr_pll3rdyc_clr;
-  assign nxt_rcc_cicr_pll3rdyc = ~rcc_cicr_pll3rdyc_clr;
+  assign nxt_rcc_cicr_pll3rdyc = rcc_cicr_pll3rdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -5976,10 +5976,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 7:7                 pll2rdyc            W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_pll2rdyc_set = wdata[7];
+  assign rcc_cicr_pll2rdyc_set = wdata[7] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_pll2rdyc_clr = ~cur_rcc_cifr_pll2rdyf;
   assign rcc_cicr_pll2rdyc_en  = rcc_cicr_pll2rdyc_set | rcc_cicr_pll2rdyc_clr;
-  assign nxt_rcc_cicr_pll2rdyc = ~rcc_cicr_pll2rdyc_clr;
+  assign nxt_rcc_cicr_pll2rdyc = rcc_cicr_pll2rdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -5994,10 +5994,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 6:6                 pll1rdyc            W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_pll1rdyc_set = wdata[6];
+  assign rcc_cicr_pll1rdyc_set = wdata[6] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_pll1rdyc_clr = ~cur_rcc_cifr_pll1rdyf;
   assign rcc_cicr_pll1rdyc_en  = rcc_cicr_pll1rdyc_set | rcc_cicr_pll1rdyc_clr;
-  assign nxt_rcc_cicr_pll1rdyc = ~rcc_cicr_pll1rdyc_clr;
+  assign nxt_rcc_cicr_pll1rdyc = rcc_cicr_pll1rdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6012,10 +6012,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 5:5                 hsi48rdyc           W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_hsi48rdyc_set = wdata[5];
+  assign rcc_cicr_hsi48rdyc_set = wdata[5] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_hsi48rdyc_clr = ~cur_rcc_cifr_hsi48rdyf;
   assign rcc_cicr_hsi48rdyc_en  = rcc_cicr_hsi48rdyc_set | rcc_cicr_hsi48rdyc_clr;
-  assign nxt_rcc_cicr_hsi48rdyc = ~rcc_cicr_hsi48rdyc_clr;
+  assign nxt_rcc_cicr_hsi48rdyc = rcc_cicr_hsi48rdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6030,10 +6030,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 csirdyc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_csirdyc_set = wdata[4];
+  assign rcc_cicr_csirdyc_set = wdata[4] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_csirdyc_clr = ~cur_rcc_cifr_csirdyf;
   assign rcc_cicr_csirdyc_en  = rcc_cicr_csirdyc_set | rcc_cicr_csirdyc_clr;
-  assign nxt_rcc_cicr_csirdyc = ~rcc_cicr_csirdyc_clr;
+  assign nxt_rcc_cicr_csirdyc = rcc_cicr_csirdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6048,10 +6048,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 hserdyc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_hserdyc_set = wdata[3];
+  assign rcc_cicr_hserdyc_set = wdata[3] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_hserdyc_clr = ~cur_rcc_cifr_hserdyf;
   assign rcc_cicr_hserdyc_en  = rcc_cicr_hserdyc_set | rcc_cicr_hserdyc_clr;
-  assign nxt_rcc_cicr_hserdyc = ~rcc_cicr_hserdyc_clr;
+  assign nxt_rcc_cicr_hserdyc = rcc_cicr_hserdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6066,10 +6066,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 2:2                 hsirdyc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_hsirdyc_set = wdata[2];
+  assign rcc_cicr_hsirdyc_set = wdata[2] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_hsirdyc_clr = ~cur_rcc_cifr_hsirdyf;
   assign rcc_cicr_hsirdyc_en  = rcc_cicr_hsirdyc_set | rcc_cicr_hsirdyc_clr;
-  assign nxt_rcc_cicr_hsirdyc = ~rcc_cicr_hsirdyc_clr;
+  assign nxt_rcc_cicr_hsirdyc = rcc_cicr_hsirdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6084,10 +6084,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 1:1                 lserdyc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_lserdyc_set = wdata[1];
+  assign rcc_cicr_lserdyc_set = wdata[1] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_lserdyc_clr = ~cur_rcc_cifr_lserdyf;
   assign rcc_cicr_lserdyc_en  = rcc_cicr_lserdyc_set | rcc_cicr_lserdyc_clr;
-  assign nxt_rcc_cicr_lserdyc = ~rcc_cicr_lserdyc_clr;
+  assign nxt_rcc_cicr_lserdyc = rcc_cicr_lserdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6102,10 +6102,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 0:0                 lsirdyc             W1C                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cicr_lsirdyc_set = wdata[0];
+  assign rcc_cicr_lsirdyc_set = wdata[0] && (|wr_req && rcc_cicr_sel);
   assign rcc_cicr_lsirdyc_clr = ~cur_rcc_cifr_lsirdyf;
   assign rcc_cicr_lsirdyc_en  = rcc_cicr_lsirdyc_set | rcc_cicr_lsirdyc_clr;
-  assign nxt_rcc_cicr_lsirdyc = ~rcc_cicr_lsirdyc_clr;
+  assign nxt_rcc_cicr_lsirdyc = rcc_cicr_lsirdyc_set;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
