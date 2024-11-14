@@ -3054,6 +3054,10 @@ module rcc_reg #(
   wire          rcc_lsirdyf;
   //addr remap
   wire [AW-1:0] remap_addr;
+  //PLL forbidden
+  wire          pll3_forbidden;
+  wire          pll2_forbidden;
+  wire          pll1_forbidden;
 
   // ================================================================================
   // interrupt logic
@@ -4108,7 +4112,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 25:20               divm3               RW                  0b100000            
   // --------------------------------------------------------------------------------
-  assign rcc_pllclkselr_divm3_en  = (|wr_req & rcc_pllclkselr_sel);
+  assign rcc_pllclkselr_divm3_en  = (~cur_rcc_cr_pll3on) && (|wr_req && rcc_pllclkselr_sel);
   assign nxt_rcc_pllclkselr_divm3 = wdata[25:20];
   assign divm3                    = cur_rcc_pllclkselr_divm3;
   BB_dfflr #(
@@ -4125,7 +4129,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 17:12               divm2               RW                  0b100000            
   // --------------------------------------------------------------------------------
-  assign rcc_pllclkselr_divm2_en  = (|wr_req & rcc_pllclkselr_sel);
+  assign rcc_pllclkselr_divm2_en  = (~cur_rcc_cr_pll2on) && (|wr_req && rcc_pllclkselr_sel);
   assign nxt_rcc_pllclkselr_divm2 = wdata[17:12];
   assign divm2                    = cur_rcc_pllclkselr_divm2;
   BB_dfflr #(
@@ -4142,7 +4146,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 9:4                 divm1               RW                  0b100000            
   // --------------------------------------------------------------------------------
-  assign rcc_pllclkselr_divm1_en  = (|wr_req & rcc_pllclkselr_sel);
+  assign rcc_pllclkselr_divm1_en  = (~cur_rcc_cr_pll1on) && (|wr_req && rcc_pllclkselr_sel);
   assign nxt_rcc_pllclkselr_divm1 = wdata[9:4];
   assign divm1                    = cur_rcc_pllclkselr_divm1;
   BB_dfflr #(
@@ -4159,7 +4163,10 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 1:0                 pllsrc              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllclkselr_pllsrc_en  = (|wr_req & rcc_pllclkselr_sel);
+  assign pll3_forbidden            = ~pll3on && ~sync_pll3_rdy;
+  assign pll2_forbidden            = ~pll2on && ~sync_pll2_rdy;
+  assign pll1_forbidden            = ~pll1on && ~sync_pll1_rdy;
+  assign rcc_pllclkselr_pllsrc_en  = (pll3_forbidden && pll2_forbidden && pll1_forbidden) && (|wr_req && rcc_pllclkselr_sel);
   assign nxt_rcc_pllclkselr_pllsrc = wdata[1:0];
   assign pllsrc                    = cur_rcc_pllclkselr_pllsrc;
   BB_dfflr #(
@@ -4243,7 +4250,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 24:24               divr3en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divr3en_en = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divr3en_en = pll3_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divr3en = wdata[24:24];
   assign divr3en = cur_rcc_pllcfgr_divr3en;
   BB_dfflr #(
@@ -4260,7 +4267,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 23:23               divq3en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divq3en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divq3en_en  = pll3_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divq3en = wdata[23:23];
   assign divq3en                 = cur_rcc_pllcfgr_divq3en;
   BB_dfflr #(
@@ -4277,7 +4284,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 22:22               divp3en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divp3en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divp3en_en  = pll3_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divp3en = wdata[22:22];
   assign divp3en                 = cur_rcc_pllcfgr_divp3en;
   BB_dfflr #(
@@ -4294,7 +4301,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 21:21               divr2en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divr2en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divr2en_en  = pll2_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divr2en = wdata[21:21];
   assign divr2en                 = cur_rcc_pllcfgr_divr2en;
   BB_dfflr #(
@@ -4311,7 +4318,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 20:20               divq2en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divq2en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divq2en_en  = pll2_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divq2en = wdata[20:20];
   assign divq2en                 = cur_rcc_pllcfgr_divq2en;
   BB_dfflr #(
@@ -4328,7 +4335,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 19:19               divp2en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divp2en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divp2en_en  = pll2_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divp2en = wdata[19:19];
   assign divp2en                 = cur_rcc_pllcfgr_divp2en;
   BB_dfflr #(
@@ -4345,7 +4352,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 18:18               divr1en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divr1en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divr1en_en  = pll1_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divr1en = wdata[18:18];
   assign divr1en                 = cur_rcc_pllcfgr_divr1en;
   BB_dfflr #(
@@ -4362,7 +4369,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 17:17               divq1en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divq1en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divq1en_en  = pll1_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divq1en = wdata[17:17];
   assign divq1en                 = cur_rcc_pllcfgr_divq1en;
   BB_dfflr #(
@@ -4379,7 +4386,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 16:16               divp1en             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pllcfgr_divp1en_en  = (|wr_req & rcc_pllcfgr_sel);
+  assign rcc_pllcfgr_divp1en_en  = pll1_forbidden && (|wr_req && rcc_pllcfgr_sel);
   assign nxt_rcc_pllcfgr_divp1en = wdata[16:16];
   assign divp1en                 = cur_rcc_pllcfgr_divp1en;
   BB_dfflr #(
@@ -4567,7 +4574,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 30:24               divr1               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll1divr_divr1_en  = (|wr_req & rcc_pll1divr_sel);
+  assign rcc_pll1divr_divr1_en  = pll1_forbidden && (|wr_req && rcc_pll1divr_sel);
   assign nxt_rcc_pll1divr_divr1 = wdata[30:24];
   assign divr1                  = cur_rcc_pll1divr_divr1;
   BB_dfflr #(
@@ -4584,7 +4591,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 22:16               divq1               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll1divr_divq1_en  = (|wr_req & rcc_pll1divr_sel);
+  assign rcc_pll1divr_divq1_en  = pll1_forbidden && (|wr_req && rcc_pll1divr_sel);
   assign nxt_rcc_pll1divr_divq1 = wdata[22:16];
   assign divq1                  = cur_rcc_pll1divr_divq1;
   BB_dfflr #(
@@ -4601,7 +4608,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 15:9                divp1               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll1divr_divp1_en  = (|wr_req & rcc_pll1divr_sel);
+  assign rcc_pll1divr_divp1_en  = pll1_forbidden && (|wr_req && rcc_pll1divr_sel);
   assign nxt_rcc_pll1divr_divp1 = wdata[15:9];
   assign divp1                  = cur_rcc_pll1divr_divp1;
   BB_dfflr #(
@@ -4618,7 +4625,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 8:0                 divn1               RW                  0b10000000          
   // --------------------------------------------------------------------------------
-  assign rcc_pll1divr_divn1_en  = (|wr_req & rcc_pll1divr_sel);
+  assign rcc_pll1divr_divn1_en  = pll1_forbidden && (|wr_req && rcc_pll1divr_sel);
   assign nxt_rcc_pll1divr_divn1 = wdata[8:0];
   assign divn1                  = cur_rcc_pll1divr_divn1;
   BB_dfflr #(
@@ -4682,7 +4689,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 30:24               divr2               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll2divr_divr2_en  = (|wr_req & rcc_pll2divr_sel);
+  assign rcc_pll2divr_divr2_en  = pll2_forbidden && (|wr_req && rcc_pll2divr_sel);
   assign nxt_rcc_pll2divr_divr2 = wdata[30:24];
   assign divr2                  = cur_rcc_pll2divr_divr2;
   BB_dfflr #(
@@ -4699,7 +4706,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 22:16               divq2               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll2divr_divq2_en  = (|wr_req & rcc_pll2divr_sel);
+  assign rcc_pll2divr_divq2_en  = pll2_forbidden && (|wr_req && rcc_pll2divr_sel);
   assign nxt_rcc_pll2divr_divq2 = wdata[22:16];
   assign divq2                  = cur_rcc_pll2divr_divq2;
   BB_dfflr #(
@@ -4716,7 +4723,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 15:9                divp2               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll2divr_divp2_en  = (|wr_req & rcc_pll2divr_sel);
+  assign rcc_pll2divr_divp2_en  = pll2_forbidden && (|wr_req && rcc_pll2divr_sel);
   assign nxt_rcc_pll2divr_divp2 = wdata[15:9];
   assign divp2                  = cur_rcc_pll2divr_divp2;
   BB_dfflr #(
@@ -4733,7 +4740,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 8:0                 divn2               RW                  0b10000000          
   // --------------------------------------------------------------------------------
-  assign rcc_pll2divr_divn2_en  = (|wr_req & rcc_pll2divr_sel);
+  assign rcc_pll2divr_divn2_en  = pll2_forbidden && (|wr_req && rcc_pll2divr_sel);
   assign nxt_rcc_pll2divr_divn2 = wdata[8:0];
   assign divn2                  = cur_rcc_pll2divr_divn2;
   BB_dfflr #(
@@ -4797,7 +4804,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 30:24               divr3               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll3divr_divr3_en  = (|wr_req & rcc_pll3divr_sel);
+  assign rcc_pll3divr_divr3_en  = pll3_forbidden && (|wr_req && rcc_pll3divr_sel);
   assign nxt_rcc_pll3divr_divr3 = wdata[30:24];
   assign divr3                  = cur_rcc_pll3divr_divr3;
   BB_dfflr #(
@@ -4814,7 +4821,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 22:16               divq3               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll3divr_divq3_en  = (|wr_req & rcc_pll3divr_sel);
+  assign rcc_pll3divr_divq3_en  = pll3_forbidden && (|wr_req && rcc_pll3divr_sel);
   assign nxt_rcc_pll3divr_divq3 = wdata[22:16];
   assign divq3                  = cur_rcc_pll3divr_divq3;
   BB_dfflr #(
@@ -4831,7 +4838,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 15:9                divp3               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_pll3divr_divp3_en  = (|wr_req & rcc_pll3divr_sel);
+  assign rcc_pll3divr_divp3_en  = pll3_forbidden && (|wr_req && rcc_pll3divr_sel);
   assign nxt_rcc_pll3divr_divp3 = wdata[15:9];
   assign divp3                  = cur_rcc_pll3divr_divp3;
   BB_dfflr #(
@@ -4848,7 +4855,7 @@ module rcc_reg #(
   // --------------------------------------------------------------------------------
   // 8:0                 divn3               RW                  0b10000000          
   // --------------------------------------------------------------------------------
-  assign rcc_pll3divr_divn3_en  = (|wr_req & rcc_pll3divr_sel);
+  assign rcc_pll3divr_divn3_en  = pll3_forbidden && (|wr_req && rcc_pll3divr_sel);
   assign nxt_rcc_pll3divr_divn3 = wdata[8:0];
   assign divn3                  = cur_rcc_pll3divr_divn3;
   BB_dfflr #(
