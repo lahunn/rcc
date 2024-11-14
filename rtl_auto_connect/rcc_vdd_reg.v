@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : RCC register in VDD domain
+// ****************************************************************
 // spyglass disable_block Reset_sync02
 module rcc_vdd_reg (
     input rcc_vdd_wdata,

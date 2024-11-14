@@ -29,7 +29,6 @@ indent_files:
 	emacs --batch ./rtl_connected/rcc_vsw_reg.v						-f  verilog-batch-indent
 	emacs --batch ./rtl_connected/rcc_vsw_top.v						-f  verilog-batch-indent
 	emacs --batch ./rtl_connected/rcc_top.v								-f  verilog-batch-indent
-
 	
 vim_auto:
 	vim -c "source ~/.vim/plugin/automatic-verilog-master-plugin/automatic.vim" -c"edit rcc_sys_clk_gen.v" -c "call AutoWire()" -c "wq"
@@ -42,3 +41,10 @@ inject_auto_files:
 	emacs --batch ./rtl_connected/rcc_vsw_reg.v						-f  verilog-batch-inject-auto
 	emacs --batch ./rtl_connected/rcc_vsw_top.v						-f  verilog-batch-inject-auto
 	emacs --batch ./rtl_connected/rcc_top.v								-f  verilog-batch-inject-auto
+
+gen_rtl_zip:
+	rm -rf rtl_connected.zip
+	cp *dc rtl_connected/
+	zip -r rtl_connected.zip rtl_connected/
+	rm -rf rtl_connected/*dc
+	

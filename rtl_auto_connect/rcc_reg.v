@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : RCC register in vcore domain
+// ****************************************************************
 // spyglass disable_block Clock_info05c
 //Clock_info05c (56) : Reports unconstrained MUXes which do not receive clocks in all its data inputs
 
@@ -3067,10 +3072,7 @@ module rcc_reg #(
   // ADDRESS DECODER
   // ================================================================================
   // rcc_reg
-  assign remap_addr = (addr <= RCC_RSR) ? addr 
-                                        : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? addr + 'h18 
-                                                                                 : addr + 'h30) 
-                                                               : addr;
+  assign remap_addr = (addr <= RCC_RSR) ? addr : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? addr + 'h18 : addr + 'h30) : addr;
   assign rcc_cr_sel = (remap_addr == RCC_CR);
   assign rcc_icscr_sel = (remap_addr == RCC_ICSCR);
   assign rcc_crrcr_sel = (remap_addr == RCC_CRRCR);
@@ -5737,7 +5739,7 @@ module rcc_reg #(
   // 7:7                 pll2rdyf            RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_pll2rdyf_set = sync_pll2_rdy;
-  assign rcc_cifr_pll2rdyf_clr = cur_rcc_cicr_pll3rdyc;
+  assign rcc_cifr_pll2rdyf_clr = cur_rcc_cicr_pll2rdyc;
   assign rcc_cifr_pll2rdyf_en  = rcc_cifr_pll2rdyf_set | rcc_cifr_pll2rdyf_clr;
   assign nxt_rcc_cifr_pll2rdyf = rcc_cifr_pll2rdyf_set;
   assign rcc_pll2rdyf          = cur_rcc_cifr_pll2rdyf;
@@ -5756,7 +5758,7 @@ module rcc_reg #(
   // 6:6                 pll1rdyf            RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_pll1rdyf_set = sync_pll1_rdy;
-  assign rcc_cifr_pll1rdyf_clr = cur_rcc_cicr_pll2rdyc;
+  assign rcc_cifr_pll1rdyf_clr = cur_rcc_cicr_pll1rdyc;
   assign rcc_cifr_pll1rdyf_en  = rcc_cifr_pll1rdyf_set | rcc_cifr_pll1rdyf_clr;
   assign nxt_rcc_cifr_pll1rdyf = rcc_cifr_pll1rdyf_set;
   assign rcc_pll1rdyf          = cur_rcc_cifr_pll1rdyf;
@@ -5775,7 +5777,7 @@ module rcc_reg #(
   // 5:5                 hsi48rdyf           RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_hsi48rdyf_set = sync_hsi48_rdy;
-  assign rcc_cifr_hsi48rdyf_clr = cur_rcc_cicr_pll1rdyc;
+  assign rcc_cifr_hsi48rdyf_clr = cur_rcc_cicr_hsi48rdyc;
   assign rcc_cifr_hsi48rdyf_en  = rcc_cifr_hsi48rdyf_set | rcc_cifr_hsi48rdyf_clr;
   assign nxt_rcc_cifr_hsi48rdyf = rcc_cifr_hsi48rdyf_set;
   assign rcc_hsi48rdyf          = cur_rcc_cifr_hsi48rdyf;
@@ -5794,7 +5796,7 @@ module rcc_reg #(
   // 4:4                 csirdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_csirdyf_set = sync_csi_rdy;
-  assign rcc_cifr_csirdyf_clr = cur_rcc_cicr_hsi48rdyc;
+  assign rcc_cifr_csirdyf_clr = cur_rcc_cicr_csirdyc;
   assign rcc_cifr_csirdyf_en  = rcc_cifr_csirdyf_set | rcc_cifr_csirdyf_clr;
   assign nxt_rcc_cifr_csirdyf = rcc_cifr_csirdyf_set;
   assign rcc_csirdyf          = cur_rcc_cifr_csirdyf;
@@ -5813,7 +5815,7 @@ module rcc_reg #(
   // 3:3                 hserdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_hserdyf_set = sync_hse_rdy;
-  assign rcc_cifr_hserdyf_clr = cur_rcc_cicr_csirdyc;
+  assign rcc_cifr_hserdyf_clr = cur_rcc_cicr_hserdyc;
   assign rcc_cifr_hserdyf_en  = rcc_cifr_hserdyf_set | rcc_cifr_hserdyf_clr;
   assign nxt_rcc_cifr_hserdyf = rcc_cifr_hserdyf_set;
   assign rcc_hserdyf          = cur_rcc_cifr_hserdyf;
@@ -5832,7 +5834,7 @@ module rcc_reg #(
   // 2:2                 hsirdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_hsirdyf_set = sync_hsi_rdy;
-  assign rcc_cifr_hsirdyf_clr = cur_rcc_cicr_hserdyc;
+  assign rcc_cifr_hsirdyf_clr = cur_rcc_cicr_hsirdyc;
   assign rcc_cifr_hsirdyf_en  = rcc_cifr_hsirdyf_set | rcc_cifr_hsirdyf_clr;
   assign nxt_rcc_cifr_hsirdyf = rcc_cifr_hsirdyf_set;
   assign rcc_hsirdyf          = cur_rcc_cifr_hsirdyf;
@@ -5851,7 +5853,7 @@ module rcc_reg #(
   // 1:1                 lserdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_lserdyf_set = sync_lse_rdy;
-  assign rcc_cifr_lserdyf_clr = cur_rcc_cicr_hsirdyc;
+  assign rcc_cifr_lserdyf_clr = cur_rcc_cicr_lserdyc;
   assign rcc_cifr_lserdyf_en  = rcc_cifr_lserdyf_set | rcc_cifr_lserdyf_clr;
   assign nxt_rcc_cifr_lserdyf = rcc_cifr_lserdyf_set;
   assign rcc_lserdyf          = cur_rcc_cifr_lserdyf;
@@ -5870,7 +5872,7 @@ module rcc_reg #(
   // 0:0                 lsirdyf             RO                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cifr_lsirdyf_set = sync_lsi_rdy;
-  assign rcc_cifr_lsirdyf_clr = cur_rcc_cicr_lserdyc;
+  assign rcc_cifr_lsirdyf_clr = cur_rcc_cicr_lsirdyc;
   assign rcc_cifr_lsirdyf_en  = rcc_cifr_lsirdyf_set | rcc_cifr_lsirdyf_clr;
   assign nxt_rcc_cifr_lsirdyf = rcc_cifr_lsirdyf_set;
   assign rcc_lsirdyf          = cur_rcc_cifr_lsirdyf;

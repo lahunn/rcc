@@ -1,3 +1,10 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : asynchronous reset control clock gating
+//            the clock would be gated until DELAY cycles after reset release
+//            and the reset signal would be synchronized with i_clk 
+// ****************************************************************
 module async_reset_clk_gate #(
     parameter DELAY = 8
 ) (

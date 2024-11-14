@@ -1,3 +1,4 @@
+
 module rst_sync_clk_gating (
     input  raw_clk,
     input  active,

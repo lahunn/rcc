@@ -1,3 +1,10 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : peripheral clock and reset control from each domain
+//            with ker clockes 
+// ****************************************************************
+
 // verilator lint_off UNUSEDSIGNAL
 // spyglass disable_block W240
 //regret not read input bug
@@ -64,8 +71,12 @@ module per_ker_clk_rst_control #(
   wire c2_bus_clk_lpen;
   wire d3_bus_clk_en;
   wire arcg_clk_en;
+  wire lse_ker_clk_req;
+  wire lsi_ker_clk_req;
 
-  // clock control
+  //================================================================
+  // peripheral bus clock control
+  //================================================================
 
   generate
     if (SUPPORT_LPEN == 1) begin : lp_support
@@ -104,7 +115,7 @@ module per_ker_clk_rst_control #(
           assign d3_bus_clk_en = ~d3_deepsleep;
         end
       end
-    end else begin : per_domain_d1_d2b
+    end else begin : per_domain_d1_d2
       assign d3_bus_clk_en = 1'b0;
     end
   endgenerate
@@ -139,9 +150,9 @@ module per_ker_clk_rst_control #(
     end
   endgenerate
 
-  // kernel clock control
-  wire lse_ker_clk_req;
-  wire lsi_ker_clk_req;
+  //================================================================
+  // peripheral ker clock control
+  //================================================================
 
   generate
     if (IS_CSI == 1) begin : csi_support
@@ -190,7 +201,9 @@ module per_ker_clk_rst_control #(
     end
   endgenerate
 
-  //reset control
+  //================================================================
+  // peripheral reset control
+  //================================================================
   generate
     if (DOMAIN == 1) begin : per_domain_d1_rst
       assign per_rst_n = sys_rst_n && d1_rst_n && sft_rst_n;

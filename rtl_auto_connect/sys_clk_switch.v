@@ -1,13 +1,7 @@
-// ****************************************************************
-// DATA : 2024-11-14
-// AUTHOR : yunbai@zju.edu.cn
-// FUNCTION : glitch free clock switch, the sel could be changed at any time
-//            and the output clock would not have glitches
-// ****************************************************************
 // spyglass disable_block Clock_info05b
 // Clock_info05b (46) : Reports clock signals converging at a combinational gate other than a MUX
 // spyglass disable_block Clock_glitch05
-module glitch_free_clk_switch #(
+module sys_clk_switch #(
     parameter CLK_NUM = 4
 ) (
     input  [        CLK_NUM-1:0] i_clk,
@@ -26,10 +20,8 @@ module glitch_free_clk_switch #(
   wire [$clog2(CLK_NUM)-1:0] sel_temp     [CLK_NUM-1:0];
 
 
-  assign clk_rst_n = (~clk_fail) & rst_n;  // Bitwise operation 
-  //================================================================
-  // generate onehot_sel 
-  //================================================================
+  assign clk_rst_n = (~clk_fail) & rst_n;  // Bitwise operation
+
   generate
     genvar i;  // generate variable can not be initalized
     for (i = 0; i < CLK_NUM; i = i + 1) begin : sel_temp_gen
@@ -43,10 +35,9 @@ module glitch_free_clk_switch #(
     end
   endgenerate
 
-  //================================================================
   // generate clk_sel
-  //================================================================
-  assign clk_sel[0] = onehot_sel[0] && (&clk_sel_ff_n[CLK_NUM-1:1]);
+  assign clk_sel_ff_n = ~clk_sel_ff;
+  assign clk_sel[0]   = onehot_sel[0] && (&clk_sel_ff_n[CLK_NUM-1:1]);
   generate
     genvar j;
     for (j = 1; j < CLK_NUM - 1; j = j + 1) begin : clk_sel_gen
@@ -55,12 +46,37 @@ module glitch_free_clk_switch #(
   endgenerate
   assign clk_sel[CLK_NUM-1] = onehot_sel[CLK_NUM-1] && (&clk_sel_ff_n[CLK_NUM-2:0]);
 
-  //================================================================
-  // two stage flip-flop to synchronize the sel signal
-  //================================================================ 
+  //===================================================================
+  //generate two stage flip-flop
+  //===================================================================
+
+  //in default case, pre_sys_clk choose hsi_clk , and pre_sys_clk should be generated before reset release
+  BB_dffrs #(
+      .DW     (1),
+      .RST_VAL(1),
+      .SET_VAL(0)
+  ) u_BB_dffr0_0 (
+      .clk  (i_clk[0]),
+      .rst_n(rst_n[0]),
+      .set_n(clk_rst_n[0]),
+      .din  (clk_sel[0]),
+      .dout (clk_sel_f[0])
+  );
+
+  BB_dffrs #(
+      .DW     (1),
+      .RST_VAL(1),
+      .SET_VAL(0)
+  ) u_BB_dffr0_1 (
+      .clk  (i_clk[0]),
+      .rst_n(rst_n[0]),
+      .set_n(clk_rst_n[0]),
+      .din  (clk_sel_f[0]),
+      .dout (clk_sel_ff[0])
+  );
   generate
     genvar k;
-    for (k = 0; k < CLK_NUM; k = k + 1) begin : clock_flip_flops
+    for (k = 1; k < CLK_NUM; k = k + 1) begin : clock_flip_flops
       BB_dffr #(
           .DW     (1),
           .RST_VAL(0)
@@ -82,13 +98,9 @@ module glitch_free_clk_switch #(
       );
     end
   endgenerate
-  
-  assign clk_sel_ff_n = ~clk_sel_ff;
 
-  //================================================================
-  // clk_pre_out is i_clk gating by onehot_sel , 
-  // only one clk is active at the same time
-  //================================================================
+
+  //generate clk_pre_out
   generate
     genvar m;
     for (m = 0; m < CLK_NUM; m = m + 1) begin : clk_pre_out_gen
@@ -96,9 +108,6 @@ module glitch_free_clk_switch #(
     end
   endgenerate
 
-  //================================================================
-  // o_clk is OR of clk_pre_out
-  //================================================================
   assign o_clk = |clk_pre_out;
 
 endmodule

@@ -1,3 +1,10 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : dynamic clock divider,synchronize ratio and reset 
+//            with i_clk before divide the clock, and gate the clock
+//            if ratio equals to zero
+// ****************************************************************
 module rcc_clk_div_d #(
     parameter RATIO_WID = 8
 ) (

@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : RCC VSW domain clock and reset control
+// ****************************************************************
 module rcc_vsw_clk_rst_ctrl (
     //test mode
     input        testmode,

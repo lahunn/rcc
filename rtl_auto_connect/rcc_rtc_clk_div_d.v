@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : generate hse_rtc clock, when ratio == 0, the clock is disabled
+// ****************************************************************
 module rcc_rtc_clk_div_d #(
     parameter RATIO_WID = 6
 ) (

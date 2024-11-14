@@ -1,4 +1,14 @@
-/* verilator lint_off UNUSEDSIGNAL */
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : peripheral clock and reset control from each domain
+//            without any ker clockes 
+// ****************************************************************
+
+//================================================================
+// spyglass disable rules
+//================================================================
+// verilator lint_off UNUSEDSIGNAL
 // spyglass disable_block W240
 //regret not read input bug
 // spyglass disable_block W287b
@@ -47,8 +57,11 @@ module per_clk_rst_control #(
   wire d3_bus_clk_en;
   wire arcg_clk_en;
 
-  // clock control
+  //================================================================
+  // peripheral clock control
+  //================================================================
 
+  //low power mode enable control
   generate
     if (SUPPORT_LPEN == 1) begin : lp_support
       assign c1_bus_clk_lpen = ~c1_sleep || rcc_c1_per_lpen;
@@ -59,6 +72,7 @@ module per_clk_rst_control #(
     end
   endgenerate
 
+  // if assigned to CPU1 , rcc_c1_per_en == 1
   generate
     if (ASSIGNED_TO_CPU1 == 1) begin : per_assigned_to_cpu1
       assign c1_bus_clk_en = c1_bus_clk_lpen && ~c1_deepsleep;
@@ -67,6 +81,7 @@ module per_clk_rst_control #(
     end
   endgenerate
 
+  // if assigned to CPU2 , rcc_c2_per_en == 1
   generate
     if (ASSIGNED_TO_CPU2 == 1) begin : per_assigned_to_cpu2
       assign c2_bus_clk_en = c2_bus_clk_lpen && ~c2_deepsleep;
@@ -75,6 +90,7 @@ module per_clk_rst_control #(
     end
   endgenerate
 
+  // clock enable control in STOP mode
   generate
     if (DOMAIN == 3) begin : per_domain_d3
       if (SUPPORT_AMEN == 1) begin : per_domain_d3_amen
@@ -86,12 +102,12 @@ module per_clk_rst_control #(
           assign d3_bus_clk_en = ~d3_deepsleep;
         end
       end
-    end else begin : per_domain_d1_d2b
-      assign d3_bus_clk_en = ~d3_deepsleep;
+    end else begin : per_domain_d1_d2
+      assign d3_bus_clk_en = 1'b0;
     end
   endgenerate
 
-  //async reset clock control, use the slowest clock to control arcg_clk_en
+  //synchronous reset clock control, use the slowest clock to control arcg_clk_en
   sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sync_reset_clk_gate (
@@ -117,7 +133,11 @@ module per_clk_rst_control #(
       );
     end
   endgenerate
-  //reset control
+  
+  //================================================================
+  // peripheral reset control
+  //================================================================
+
   generate
     if (DOMAIN == 1) begin : per_domain_d1_rst
       assign per_rst_n = sys_rst_n && d1_rst_n && sft_rst_n;
@@ -129,5 +149,8 @@ module per_clk_rst_control #(
   endgenerate
 
 endmodule
+//================================================================
+// spyglass enable rules
+//================================================================
 // spyglass enable_block W240
 // spyglass enable_block W287b

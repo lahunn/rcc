@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : RCC VSW top module
+// ****************************************************************
 module rcc_vsw_top (
     input  pwr_vsw_rst,
     input  sync_vsw_rst_n,   // vsw reset signal sync with sys clk

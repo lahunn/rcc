@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : synchronize signals from ports with different clocks
+// ****************************************************************
 module rcc_signal_sync (
     input  rcc_rcc_hclk,
     input  rcc_rcc_sync_rst_n,

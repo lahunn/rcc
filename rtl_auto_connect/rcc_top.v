@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : RCC TOP MODULE
+// ****************************************************************
 module rcc_top #(
     parameter CLK_ON_AFTER_PER_RST_RELEASE = 8,
     parameter CLK_ON_AFTER_SYS_RST_RELEASE = 8,

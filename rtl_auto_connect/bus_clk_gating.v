@@ -1,3 +1,9 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : RCC bus clock gating for peripherals 
+//            , for D3 domain IP , the active signal should be synchronized first
+// ****************************************************************
 // verilator lint_off UNUSEDSIGNAL
 // spyglass disable_block W240
 //regret not read input bug
@@ -12,7 +18,9 @@ module bus_clk_gating #(
 );
 
   wire sync_active;
-
+  //================================================================
+  // synchronize the active signal for D3 domain IP
+  //================================================================
   generate
     if (DOMAIN == 3) begin : domain_3
       BB_signal_sync #(

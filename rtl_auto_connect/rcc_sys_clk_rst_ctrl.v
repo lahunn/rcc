@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : generate system clock and reset for different domains
+// ****************************************************************
 module rcc_sys_clk_rst_ctrl #(
     parameter D2_RST_DURATION = 10,
     parameter D1_RST_DURATION = 10,
@@ -362,7 +367,7 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //nrst_out
   //==============================================================================================
-  assign nrst_out              = obl_rst || pwr_por_rst_n || pwr_bor_rst || lpwr1_rst || lpwr2_rst || (wwdg1_out_rst && ww1rsc) || (wwdg2_out_rst && ww2rsc) || iwdg1_out_rst || iwdg2_out_rst || cpu2_sftrst || cpu1_sftrst;
+  assign nrst_out              = obl_rst || pwr_por_rst || pwr_bor_rst || lpwr1_rst || lpwr2_rst || (wwdg1_out_rst && ww1rsc) || (wwdg2_out_rst && ww2rsc) || iwdg1_out_rst || iwdg2_out_rst || cpu2_sftrst || cpu1_sftrst;
 
 
   //==============================================================================================
@@ -461,7 +466,7 @@ module rcc_sys_clk_rst_ctrl #(
   // sys reset is asserted when power on reset or hw init not finished , and reset release when hsi_rdy and flash power ok
   assign sys_rst_n_assert_n  = ~nrst_in && hw_init_done;
   assign sys_rst_n_release_n = ~(hsi_rdy && flash_power_ok);
-  assign nxt_sys_rst_n       = ~sync_sys_rst_n_release_n;  //redundant logic
+  assign nxt_sys_rst_n       = 1'b1;  //
   assign sys_rst_n           = cur_sys_rst_n;
 
   BB_reset_sync #(
@@ -494,7 +499,7 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //hw init done generate 
   //==============================================================================================
-  assign hw_init_done    = stby_rst_n && obl_rst;
+  assign hw_init_done    = stby_rst_n && (~obl_rst);
 
   //==============================================================================================
   //obl reset generate , option byte load module request reset
@@ -641,7 +646,9 @@ module rcc_sys_clk_rst_ctrl #(
   assign rcc_apb4bridge_d3_clk_en = ~rcc_sys_stop;
 
   //option byte load module clock gating
-  async_clk_gating u_obl_clk_gating (
+  async_clk_gating #(
+    .RST_VAL(1)
+  )u_obl_clk_gating (
       .raw_clk(pre_sys_clk),
       .active (rcc_obl_clk_arcg_en),
       .bypass (testmode),
@@ -738,7 +745,9 @@ module rcc_sys_clk_rst_ctrl #(
   //hsi clk gate
   //====================================================================
 
-  async_clk_gating u_hsi_clk_gating (
+  async_clk_gating #(
+    .RST_VAL(1)
+  )u_hsi_clk_gating (
       .raw_clk(hsi_pre_clk),
       .active (hsi_clk_en),
       .bypass (testmode),
@@ -746,7 +755,9 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(hsi_clk)
   );
 
-  async_clk_gating u_hsi_ker_clk_gating (
+  async_clk_gating #(
+    .RST_VAL(1)
+  )u_hsi_ker_clk_gating (
       .raw_clk(hsi_pre_clk),
       .active (hsi_ker_clk_en),
       .bypass (testmode),
@@ -769,7 +780,9 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
   //csi clock gate
   //====================================================================
-  async_clk_gating u_csi_clk_gating (
+  async_clk_gating #(
+    .RST_VAL(1)
+  )u_csi_clk_gating (
       .raw_clk(csi_origin_clk),
       .active (csi_clk_en),
       .bypass (testmode),
@@ -777,7 +790,9 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(csi_clk)
   );
 
-  async_clk_gating u_csi_ker_clk_gating (
+  async_clk_gating #(
+    .RST_VAL(1)
+  )u_csi_ker_clk_gating (
       .raw_clk(csi_origin_clk),
       .active (csi_ker_clk_en),
       .bypass (testmode),
@@ -855,7 +870,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   assign sys_clk_src = {pll1_p_clk, hse_clk, csi_clk, hsi_clk};
 
-  glitch_free_clk_switch #(
+  sys_clk_switch #(
       .CLK_NUM(4)
   ) u_sys_clk_switch (
       .i_clk   (sys_clk_src),
@@ -865,7 +880,9 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk   (pre_sys_clk)
   );
 
-  async_clk_gating u_sys_clk_gating (
+  async_clk_gating #(
+    .RST_VAL(1)
+  )u_sys_clk_gating (
       .raw_clk(pre_sys_clk),
       .active (sys_clk_en),
       .bypass (testmode),

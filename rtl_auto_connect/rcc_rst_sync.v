@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : synchronize reset signals with different clocks
+// ****************************************************************
 module rcc_rst_sync (
     //input clocks
     input  sys_clk,

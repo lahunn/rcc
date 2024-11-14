@@ -1,3 +1,8 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : generate APB BUS clock and timer clock
+// ****************************************************************
 module rcc_pclk_timer_div (
     input        i_clk,
     input        rst_n,
@@ -19,7 +24,9 @@ module rcc_pclk_timer_div (
   );
 
   always @(*) begin
-    case ({timpre, div_sel})
+    case ({
+      timpre, div_sel
+    })
       4'b0000: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
       4'b0001: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
       4'b0010: tim_div_ratio = 3'b001;  //DIV_RATIO = 1
