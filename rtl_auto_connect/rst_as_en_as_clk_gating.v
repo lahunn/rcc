@@ -1,12 +1,10 @@
 // ****************************************************************
 // DATA : 2024-11-14
 // AUTHOR : yunbai@zju.edu.cn
-// FUNCTION : when active is not synchronized with raw_clk,
-//            the active signal should be synchronized first
+// FUNCTION : active and rst_n is not synchronized with raw_clk,
+//            active and rst_n should be synchronized first
 // ****************************************************************
-module async_clk_gating #(
-    parameter RST_VAL = 0
-) (
+module rst_as_en_as_clk_gating (
     input  raw_clk,
     input  active,
     input  bypass,
@@ -15,14 +13,22 @@ module async_clk_gating #(
 );
 
   wire sync_active;
+  wire sync_rst_n;
+
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_BB_reset_sync (
+      .src_rst_n(rst_n),
+      .clk      (raw_clk),
+      .gen_rst_n(sync_rst_n)
+  );
 
   BB_signal_sync #(
       .STAGE_NUM(2),
-      .DW       (1),
-      .RST_VAL  (RST_VAL)
+      .DW       (1)
   ) u_BB_signal_sync (
       .src_signal(active),
-      .rst_n     (rst_n),
+      .rst_n     (sync_rst_n),
       .clk       (raw_clk),
       .gen_signal(sync_active)
   );

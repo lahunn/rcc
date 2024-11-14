@@ -646,7 +646,7 @@ module rcc_sys_clk_rst_ctrl #(
   assign rcc_apb4bridge_d3_clk_en = ~rcc_sys_stop;
 
   //option byte load module clock gating
-  async_clk_gating #(
+  en_as_clk_gating #(
     .RST_VAL(1)
   )u_obl_clk_gating (
       .raw_clk(pre_sys_clk),
@@ -745,7 +745,7 @@ module rcc_sys_clk_rst_ctrl #(
   //hsi clk gate
   //====================================================================
 
-  async_clk_gating #(
+  en_as_clk_gating #(
     .RST_VAL(1)
   )u_hsi_clk_gating (
       .raw_clk(hsi_pre_clk),
@@ -755,7 +755,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(hsi_clk)
   );
 
-  async_clk_gating #(
+  en_as_clk_gating #(
     .RST_VAL(1)
   )u_hsi_ker_clk_gating (
       .raw_clk(hsi_pre_clk),
@@ -769,7 +769,7 @@ module rcc_sys_clk_rst_ctrl #(
   //hse clk gate
   //====================================================================
   assign hse_clk = hse_origin_clk;
-  // async_clk_gating u_hse_clk_gating (
+  // en_as_clk_gating u_hse_clk_gating (
   //     .raw_clk(hse_origin_clk),
   //     .active (hse_clk_en),
   //     .bypass (testmode),
@@ -780,7 +780,7 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
   //csi clock gate
   //====================================================================
-  async_clk_gating #(
+  en_as_clk_gating #(
     .RST_VAL(1)
   )u_csi_clk_gating (
       .raw_clk(csi_origin_clk),
@@ -790,7 +790,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(csi_clk)
   );
 
-  async_clk_gating #(
+  en_as_clk_gating #(
     .RST_VAL(1)
   )u_csi_ker_clk_gating (
       .raw_clk(csi_origin_clk),
@@ -880,7 +880,7 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk   (pre_sys_clk)
   );
 
-  async_clk_gating #(
+  en_as_clk_gating #(
     .RST_VAL(1)
   )u_sys_clk_gating (
       .raw_clk(pre_sys_clk),
@@ -902,7 +902,7 @@ module rcc_sys_clk_rst_ctrl #(
   // d1 domian clock generate
   //====================================================================
 
-  async_clk_gating u_c1_clk_gating (
+  en_as_clk_gating u_c1_clk_gating (
       .raw_clk(sys_d1cpre_clk),
       .active (rcc_c1_clk_en),
       .bypass (testmode),
@@ -929,7 +929,7 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (sys_hpre_clk)
   );
 
-  async_clk_gating u_d1_bus_clk_gating (
+  en_as_clk_gating u_d1_bus_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d1_bus_clk_en),
       .bypass (testmode),
@@ -937,7 +937,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(rcc_d1_bus_clk)
   );
 
-  async_clk_gating u_axibridge_d1_clk_gating (
+  en_as_clk_gating u_axibridge_d1_clk_gating (
       .raw_clk(rcc_d1_bus_clk),
       .active (rcc_axibridge_d1_clk_en),
       .bypass (testmode),
@@ -945,7 +945,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(rcc_axibridge_d1_clk)
   );
 
-  async_clk_gating u_ahb3bridge_d1_clk_gating (
+  en_as_clk_gating u_ahb3bridge_d1_clk_gating (
       .raw_clk(rcc_d1_bus_clk),
       .active (rcc_ahb3bridge_d1_clk_en),
       .bypass (testmode),
@@ -961,7 +961,7 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (rcc_apb3bridge_d1_pre_clk)
   );
 
-  async_clk_gating u_apb3bridge_d1_clk_gating (
+  en_as_clk_gating u_apb3bridge_d1_clk_gating (
       .raw_clk(rcc_apb3bridge_d1_pre_clk),
       .active (rcc_apb3bridge_d1_clk_en),
       .bypass (testmode),
@@ -973,7 +973,7 @@ module rcc_sys_clk_rst_ctrl #(
   // d2 domian clock generate
   //====================================================================
 
-  async_clk_gating u_c2_clk_gating (
+  en_as_clk_gating u_c2_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_c2_clk_en),
       .bypass (testmode),
@@ -992,7 +992,7 @@ module rcc_sys_clk_rst_ctrl #(
       .div_en()
   );
 
-  async_clk_gating u_d2_bus_clk_gating (
+  en_as_clk_gating u_d2_bus_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d2_bus_clk_en),
       .bypass (testmode),
@@ -1000,7 +1000,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(rcc_d2_bus_clk)
   );
 
-  async_clk_gating u_ahb1bridge_d2_clk_gating (
+  en_as_clk_gating u_ahb1bridge_d2_clk_gating (
       .raw_clk(rcc_d2_bus_clk),
       .active (rcc_ahb1bridge_d2_clk_en),
       .bypass (testmode),
@@ -1008,7 +1008,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(rcc_ahb1bridge_d2_clk)
   );
 
-  async_clk_gating u_ahb2bridge_d2_clk_gating (
+  en_as_clk_gating u_ahb2bridge_d2_clk_gating (
       .raw_clk(rcc_d2_bus_clk),
       .active (rcc_ahb2bridge_d2_clk_en),
       .bypass (testmode),
@@ -1026,7 +1026,7 @@ module rcc_sys_clk_rst_ctrl #(
       .pclk       (rcc_apb1bridge_d2_pre_clk)
   );
 
-  async_clk_gating u_apb1bridge_d2_clk_gate (
+  en_as_clk_gating u_apb1bridge_d2_clk_gate (
       .raw_clk(rcc_apb1bridge_d2_pre_clk),
       .active (rcc_apb1bridge_d2_clk_en),
       .bypass (testmode),
@@ -1044,7 +1044,7 @@ module rcc_sys_clk_rst_ctrl #(
       .pclk       (rcc_apb2bridge_d2_pre_clk)
   );
 
-  async_clk_gating u_apb2bridge_d2_clk_gate (
+  en_as_clk_gating u_apb2bridge_d2_clk_gate (
       .raw_clk(rcc_apb2bridge_d2_pre_clk),
       .active (rcc_apb2bridge_d2_clk_en),
       .bypass (testmode),
@@ -1058,7 +1058,7 @@ module rcc_sys_clk_rst_ctrl #(
   // d3 domian clock generate
   //====================================================================
 
-  async_clk_gating u_d3_bus_clk_gating (
+  en_as_clk_gating u_d3_bus_clk_gating (
       .raw_clk(sys_hpre_clk),
       .active (rcc_d3_bus_clk_en),
       .bypass (testmode),
@@ -1066,7 +1066,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_clk(rcc_d3_bus_clk)
   );
 
-  async_clk_gating u_ahb4bridge_d3_clk_gating (
+  en_as_clk_gating u_ahb4bridge_d3_clk_gating (
       .raw_clk(rcc_d3_bus_clk),
       .active (rcc_ahb4bridge_d3_clk_en),
       .bypass (testmode),
@@ -1082,7 +1082,7 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk  (rcc_apb4bridge_d3_pre_clk)
   );
 
-  async_clk_gating u_apb4bridge_d3_clk_gate (
+  en_as_clk_gating u_apb4bridge_d3_clk_gate (
       .raw_clk(rcc_apb4bridge_d3_pre_clk),
       .active (rcc_apb4bridge_d3_clk_en),
       .bypass (testmode),

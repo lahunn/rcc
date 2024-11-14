@@ -1,3 +1,10 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : glitch free clock switch, the sel could be changed at any time
+//            and the output clock would not have glitches,
+//            if all reset signals are asserted, the output clock would be i_clk[0]
+// ****************************************************************
 // spyglass disable_block Clock_info05b
 // Clock_info05b (46) : Reports clock signals converging at a combinational gate other than a MUX
 // spyglass disable_block Clock_glitch05

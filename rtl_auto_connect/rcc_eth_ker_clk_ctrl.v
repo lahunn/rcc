@@ -142,7 +142,7 @@ module rcc_eth_ker_clk_ctrl (
   assign rcc_eth1tx_clk_en       = (rcc_c1_eth1tx_en && (~c1_sleep || rcc_c1_eth1tx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1tx_en && (~c2_sleep || rcc_c2_eth1tx_lpen) && ~c2_deepsleep);
   assign rcc_eth_rmii_ref_clk_en = rcc_eth1rx_clk_en || rcc_eth1tx_clk_en;
 
-  rst_sync_clk_gating u_eth_mii_tx_clk_gating (
+  rst_as_en_as_clk_gating u_eth_mii_tx_clk_gating (
       .raw_clk(rcc_eth_mii_tx_clk_pre),
       .active (rcc_eth1tx_clk_en),
       .bypass (testmode),
@@ -150,7 +150,7 @@ module rcc_eth_ker_clk_ctrl (
       .gen_clk(rcc_eth_mii_tx_clk)
   );
 
-  async_clk_gating u_eth_mii_rx_clk_gating (
+  en_as_clk_gating u_eth_mii_rx_clk_gating (
       .raw_clk(rcc_eth_mii_rx_clk_pre),
       .active (rcc_eth1rx_clk_en),
       .bypass (testmode),
@@ -158,7 +158,7 @@ module rcc_eth_ker_clk_ctrl (
       .gen_clk(rcc_eth_mii_rx_clk)
   );
 
-  async_clk_gating u_eth_rmii_ref_clk_gating (
+  en_as_clk_gating u_eth_rmii_ref_clk_gating (
       .raw_clk(pad_rcc_eth_mii_rx_clk),
       .active (rcc_eth_rmii_ref_clk_en),
       .bypass (testmode),

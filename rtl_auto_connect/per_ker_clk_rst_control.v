@@ -191,7 +191,7 @@ module per_ker_clk_rst_control #(
   generate
     genvar j;
     for (j = 0; j < KER_CLK_NUM; j = j + 1) begin : ker_clk_gate
-      rst_sync_clk_gating u_ker_clk_gating (
+      rst_as_en_as_clk_gating u_ker_clk_gating (
           .raw_clk(ker_src_clks[j]),
           .active (ker_clk_en),
           .bypass (testmode),

@@ -39,7 +39,7 @@ module rcc_vsw_clk_rst_ctrl (
       .gen_rst_n(rtc_clk_sync_vsw_rst_n)
   );
 
-  async_clk_gating u_rtc_ker_clk_gating (
+  en_as_clk_gating u_rtc_ker_clk_gating (
       .raw_clk(rcc_rtcsel_clk),
       .active (rtcen),
       .bypass (testmode),

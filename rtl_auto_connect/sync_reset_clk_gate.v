@@ -1,3 +1,9 @@
+// ****************************************************************
+// DATA : 2024-11-14
+// AUTHOR : yunbai@zju.edu.cn
+// FUNCTION : synchronous reset control clock gating
+//            the clock would be gated until DELAY cycles after reset release
+// ****************************************************************
 module sync_reset_clk_gate #(
     parameter DELAY = 8
 ) (
