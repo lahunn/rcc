@@ -722,7 +722,7 @@ module rcc_reg #(
   // LOCAL PARAMETERS
   // ================================================================================
   // rcc_reg
-  localparam RCC_REG = 'h00000000;
+  localparam RCC_REG = 'h0;
   localparam RCC_CR = (RCC_REG + 'h0) >> 2;
   localparam RCC_ICSCR = (RCC_REG + 'h4) >> 2;
   localparam RCC_CRRCR = (RCC_REG + 'h8) >> 2;
