@@ -1,7 +1,8 @@
 all:cp_src_rtl connect_files remove_auto 
 
 cp_src_rtl:
-	cp -f ./rtl_auto_connect/*.v ./rtl_connected/
+	rm -rf ./rtl_connected/*.v
+	cp -f  ./rtl_auto_connect/*.v ./rtl_connected/
 
 connect_files:
 	emacs --batch ./rtl_connected/rcc_sys_clk_rst_ctrl.v	-f  verilog-batch-auto
