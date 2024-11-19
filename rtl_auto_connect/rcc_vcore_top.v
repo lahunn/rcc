@@ -98,10 +98,10 @@ module rcc_vcore_top #(
 
 
   //==============================================================================
-  //rcc_reg
+  //rcc_vcore_reg
   //==============================================================================
-  rcc_reg #(  /*AUTOINSTPARAM*/
-  ) u_rcc_reg (
+  rcc_vcore_reg #(  /*AUTOINSTPARAM*/
+  ) u_rcc_vcore_reg (
       .clk                (rcc_rcc_hclk),
       .rst_n              (rcc_rcc_sync_rst_n),
       .req                (mreq),

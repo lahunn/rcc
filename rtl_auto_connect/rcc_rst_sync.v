@@ -21,7 +21,7 @@ module rcc_rst_sync (
     input  lse_clk,
     input  lsi_clk,
     input  per_clk,
-    input  I2S_clk_IN,
+    input  i2s_clk_in,
     //input resets
     input  hsecss_fail,
     input  sys_rst_n,
@@ -42,7 +42,7 @@ module rcc_rst_sync (
     output lse_sync_sys_rst_n,
     output lsi_sync_sys_rst_n,
     output per_sync_sys_rst_n,
-    output I2S_clk_IN_sync_sys_rst_n
+    output i2s_clk_in_sync_sys_rst_n
 
 );
 
@@ -182,10 +182,10 @@ module rcc_rst_sync (
 
   BB_reset_sync #(
     .STAGE_NUM(2)
-  ) u_I2S_clk_IN_rst_sync (
+  ) u_i2s_clk_in_rst_sync (
     .src_rst_n(sys_rst_n),
-    .clk      (I2S_clk_IN),
-    .gen_rst_n(I2S_clk_IN_sync_sys_rst_n)
+    .clk      (i2s_clk_in),
+    .gen_rst_n(i2s_clk_in_sync_sys_rst_n)
   );
 
 endmodule

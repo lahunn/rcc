@@ -48,4 +48,5 @@ gen_rtl_zip:
 	cp *dc rtl_connected/
 	zip -r rtl_connected.zip rtl_connected/
 	rm -rf rtl_connected/*dc
+	cp rtl_connected.zip /mnt/d/各类资料/实验室/RCC学习/rtl/
 	

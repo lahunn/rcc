@@ -6,7 +6,7 @@
 // spyglass disable_block Clock_info05c
 //Clock_info05c (56) : Reports unconstrained MUXes which do not receive clocks in all its data inputs
 
-module rcc_reg #(
+module rcc_vcore_reg #(
     // ================================================================================
     // CONFIGURABLE PARAMETERS
     // ================================================================================
@@ -714,14 +714,14 @@ module rcc_reg #(
     output rcc_bdcr_byte2_wren,
     output rcc_bdcr_byte1_wren,
     output rcc_bdcr_byte0_wren,
-    output rcc_hsefail_it,
-    output rcc_lsefail_it,
+    output rcc_hsecss_it,
+    output rcc_lsecss_it,
     output rcc_it
 );
   // ================================================================================
   // LOCAL PARAMETERS
   // ================================================================================
-  // rcc_reg
+  // rcc_vcore_reg
   localparam RCC_REG = 'h0;
   localparam RCC_CR = (RCC_REG + 'h0) >> 2;
   localparam RCC_ICSCR = (RCC_REG + 'h4) >> 2;
@@ -808,7 +808,7 @@ module rcc_reg #(
   wire          rsv_reg_sel;
   wire          rsv_acs_err;
   wire [DW-1:0] rdata_tmp;
-  // rcc_reg
+  // rcc_vcore_reg
   // rcc_cr
   wire [  31:0] rcc_cr_read;
   wire          rcc_cr_sel;
@@ -3062,8 +3062,8 @@ module rcc_reg #(
   // ================================================================================
   // interrupt logic
   // ================================================================================
-  assign rcc_hsefail_it = rcc_hsecssf;
-  assign rcc_lsefail_it = rcc_lsecssf & lsecssie;
+  assign rcc_hsecss_it = rcc_hsecssf;
+  assign rcc_lsecss_it = rcc_lsecssf & lsecssie;
   assign rcc_it = (rcc_pll3rdyf & pll3rdyie) | (rcc_pll2rdyf & pll2rdyie) | (rcc_pll1rdyf & pll1rdyie) | (rcc_hsi48rdyf & hsi48rdyie) | (rcc_csirdyf & csirdyie) | (rcc_hserdyf & hserdyie) | (rcc_hsirdyf & hsirdyie) | (rcc_lserdyf & lserdyie) | (rcc_lsirdyf & lsirdyie);
 
   // ================================================================================
@@ -3075,7 +3075,7 @@ module rcc_reg #(
   // ================================================================================
   // ADDRESS DECODER
   // ================================================================================
-  // rcc_reg
+  // rcc_vcore_reg
   assign remap_addr = (addr <= RCC_RSR) ? addr : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? addr + 'h18 : addr + 'h30) : addr;
   assign rcc_cr_sel = (remap_addr == RCC_CR);
   assign rcc_icscr_sel = (remap_addr == RCC_ICSCR);

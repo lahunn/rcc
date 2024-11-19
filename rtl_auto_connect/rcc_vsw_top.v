@@ -17,7 +17,7 @@ module rcc_vsw_top (
     //rtc kernel clk
     output rcc_rtc_ker_clk,
     //vsw reset signal not sync with sys clk
-    output pre_vsw_rst_n
+    output vsw_rst_n
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );

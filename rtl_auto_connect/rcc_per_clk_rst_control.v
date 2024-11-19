@@ -26,7 +26,7 @@ module rcc_per_clk_rst_control #(
     input        lse_sync_sys_rst_n,
     input        lsi_sync_sys_rst_n,
     input        per_sync_sys_rst_n,
-    input        I2S_clk_IN_sync_sys_rst_n,
+    input        i2s_clk_in_sync_sys_rst_n,
     // peripheral allocate signals
     output       c2_per_alloc_d1,
     output       c1_per_alloc_d2,
@@ -71,8 +71,8 @@ module rcc_per_clk_rst_control #(
     input        lse_clk,
     input        lsi_clk,
     input        per_clk,
-    input        I2S_clk_IN,
-    input        USB_PHY1,
+    input        i2s_clk_in,
+    input        usb_phy1,
     // control signals
     input        c1_sleep,
     input        c1_deepsleep,
@@ -1512,9 +1512,9 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_spi123sel_clk_switch (
-      .i_clk   ({per_clk, I2S_clk_IN, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, I2S_clk_IN_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel     (spi123sel),
       .o_clk   (rcc_spi123sel_clk)
   );
@@ -1552,9 +1552,9 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai1sel_clk_switch (
-      .i_clk   ({per_clk, I2S_clk_IN, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, I2S_clk_IN_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel     (sai1sel),
       .o_clk   (rcc_sai1sel_clk)
   );
@@ -1572,9 +1572,9 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai23sel_clk_switch (
-      .i_clk   ({per_clk, I2S_clk_IN, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, I2S_clk_IN_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel     (sai23sel),
       .o_clk   (rcc_sai23sel_clk)
   );
@@ -1602,9 +1602,9 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai4asel_clk_switch (
-      .i_clk   ({per_clk, I2S_clk_IN, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, I2S_clk_IN_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel     (sai4asel),
       .o_clk   (rcc_sai4asel_clk)
   );
@@ -1612,9 +1612,9 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai4bsel_clk_switch (
-      .i_clk   ({per_clk, I2S_clk_IN, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, I2S_clk_IN_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel     (sai4bsel),
       .o_clk   (rcc_sai4bsel_clk)
   );
@@ -2323,7 +2323,7 @@ module rcc_per_clk_rst_control #(
   // usb1ulpi clock and reset control
   assign rcc_usb1ulpi_hclk     = usb1ulpi_bus_clks[0];
   assign usb1ulpi_src_bus_clks = {rcc_ahb1bridge_d2_clk};
-  assign usb1ulpi_src_ker_clks = {USB_PHY1};
+  assign usb1ulpi_src_ker_clks = {usb_phy1};
   per_ker_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),

@@ -20,8 +20,8 @@ create_clock -name pll3_r_clk     [get_ports pll3_r_clk]      -period 1.25   -wa
 create_clock -name eth_mii_rx_clk [get_ports pad_rcc_eth_mii_rx_clk]  -period 100 -waveform {0 50}
 create_clock -name eth_mii_tx_clk [get_ports pad_rcc_eth_mii_tx_clk]  -period 100 -waveform {0 50}
 
-create_clock -name I2S_clk_IN [get_ports I2S_clk_IN]  -period 100   -waveform {0 50}
-create_clock -name USB_PHY1   [get_ports USB_PHY1]    -period 20.83 -waveform {0 10.415}
+create_clock -name i2s_clk_in [get_ports i2s_clk_in]  -period 100   -waveform {0 50}
+create_clock -name usb_phy1   [get_ports usb_phy1]    -period 20.83 -waveform {0 10.415}
 
 #==============================================================================
 # CLK-Internal
@@ -43,7 +43,7 @@ create_generated_clock -name csi_ker_clk_122_div -source [get_pins u_rcc_vcore_t
 # SYS CLK FROM DIFFERENT SOURCES
 #==============================================================================
 # clock -name "u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/pre_sys_clk" -period 1.25 -edge {0 0.625} -domain "pre_sys_clk"
-create_generated_clock -name hsi_pre_sys_clk -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_hsi_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch] -combinational  -master_clock hsi_clk             -add
+create_generated_clock -name hsi_pre_sys_clk -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_hsi_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/o_clk] -combinational  -master_clock hsi_clk             -add
 create_generated_clock -name csi_pre_sys_clk -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_csi_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/o_clk] -combinational  -master_clock csi_clk             -add
 create_generated_clock -name hse_pre_sys_clk -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/hse_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/o_clk]              -combinational  -master_clock hse_clk             -add
 create_generated_clock -name pll1_pre_sys_clk -source [get_ports pll1_p_clk]                                                               [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_clk_switch/o_clk]    -combinational  -master_clock pll1_p_clk          -add
@@ -140,8 +140,8 @@ set_clock_groups -name total_group -asynchronous -group [get_clocks {hsi_origin_
   -group [get_clocks {hsi48_clk}] \
   -group [get_clocks {eth_mii_rx_clk eth_mii_rx_clk_divided}] \
   -group [get_clocks {eth_mii_tx_clk}] \
-  -group [get_clocks {I2S_clk_IN}] \
-  -group [get_clocks {USB_PHY1}]
+  -group [get_clocks {i2s_clk_in}] \
+  -group [get_clocks {usb_phy1}]
 
 # set_clock_groups -name sys_clk_group -logically_exclusive -group [get_clocks {hsi_clk}] \
 #   -group [get_clocks {csi_clk}] \

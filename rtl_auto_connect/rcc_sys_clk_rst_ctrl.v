@@ -170,8 +170,8 @@ module rcc_sys_clk_rst_ctrl #(
     output       sys_rst_n,
     output       d1_rst_n,
     output       d2_rst_n,
-    output       cpu1_sync_rst_n,
-    output       cpu2_sync_rst_n,
+    output       rcc_c1_rst_n,
+    output       rcc_c2_rst_n,
     output       d1_bus_sync_rst_n,
     output       d2_bus_sync_rst_n,
     output       d3_bus_sync_rst_n,
@@ -181,7 +181,7 @@ module rcc_sys_clk_rst_ctrl #(
     output       d2_rst,
     // nrst output 
     output       nrst_out,
-    output       rcc_obl_sync_rst_n,
+    output       rcc_obl_rst_n,
 
     //bus clock signals
     output       rcc_axibridge_d1_clk,
@@ -225,7 +225,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               hw_init_done;
   // wire                               rcc_vcore_rst;
   wire                               stby_rst_n;
-  wire                               rcc_obl_rst_n;
+  // wire                               rcc_obl_rst_n;
   //Define instance wires here
   wire                               rcc_pwr_d1_req_set_n;
   wire                               rcc_pwr_d2_req_set_n;
@@ -237,8 +237,17 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               nxt_d2_rst_n;
   wire                               cur_d2_rst_n;
   wire                               sys_rst_n_assert_n;
+  wire                               sys_rst_n_release;
+  wire                               sync_sys_rst_n_assert_n;
+  wire                               sync_sys_rst_n_release;
   wire                               nxt_sys_rst_n;
   wire                               cur_sys_rst_n;
+  wire                               stby_rst_n_assert_n;
+  wire                               stby_rst_n_release;
+  wire                               sync_stby_rst_n_assert_n;
+  wire                               sync_stby_rst_n_release;
+  wire                               nxt_stby_rst_n;
+  wire                               cur_stby_rst_n;
   wire                               sys_d1cpre_clk;
   wire                               sys_hpre_clk;
   // sys_clk_generate
@@ -289,9 +298,8 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               sync_flash_power_ok;
   wire                               sync_pwr_d1_ok;
   wire                               sync_pwr_d2_ok;
-  wire                               sys_rst_n_release_n;
-  wire                               sync_sys_rst_n_assert_n;
-  wire                               sync_sys_rst_n_release_n;
+  wire                               c1_rst_n;
+  wire                               c2_rst_n;
 
   wire [$clog2(D1_RST_DURATION)-1:0] cur_d1_rst_n_counter;
   wire [$clog2(D1_RST_DURATION)-1:0] nxt_d1_rst_n_counter;
@@ -361,9 +369,91 @@ module rcc_sys_clk_rst_ctrl #(
 
 
   //generate rst_n for pwr_por_rst
-  assign pwr_por_rst_n         = ~pwr_por_rst;
-  //generate reset for option byte load module
-  assign rcc_obl_rst_n         = pwr_por_rst_n && pwr_vcore_ok;  // option byte load reset release until power on and vcore power ok
+  assign pwr_por_rst_n       = ~pwr_por_rst;
+  //==============================================================================================
+  //standby reset generate
+  //==============================================================================================
+  assign stby_rst_n_assert_n = pwr_por_rst_n && pwr_vcore_ok;  // stby_rst_n is asserted when power on reset or vcore not ok
+  assign stby_rst_n_release  = hsi_rdy && flash_power_ok;  // stby_rst_n is released when hsi_rdy and flash power ok
+  assign nxt_stby_rst_n      = 1'b1;  //
+  assign stby_rst_n          = cur_stby_rst_n;
+
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_stby_rst_n_assert_n_sync (
+      .src_rst_n(stby_rst_n_assert_n),
+      .clk      (pre_sys_clk),
+      .gen_rst_n(sync_stby_rst_n_assert_n)
+  );
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_stby_rst_n_release_sync (
+      .src_signal(stby_rst_n_release),
+      .rst_n     (sync_stby_rst_n_assert_n),
+      .clk       (pre_sys_clk),
+      .gen_signal(sync_stby_rst_n_release)
+  );
+
+  // stby_rst_n is asserted when power on reset or vcore not ok
+  // stby_rst_n is released when hsi_rdy and flash power ok
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL(0)
+  ) u_stby_rst_n_dfflr (
+      .clk  (pre_sys_clk),
+      .rst_n(sync_stby_rst_n_assert_n),
+      .en   (sync_stby_rst_n_release),
+      .din  (nxt_stby_rst_n),
+      .dout (cur_stby_rst_n)
+  );
+
+  //==============================================================================================
+  //hw init done generate 
+  //==============================================================================================
+  assign hw_init_done       = stby_rst_n && (~obl_rst);
+
+  //==============================================================================================
+  //system reset generate
+  //==============================================================================================
+  // sys reset is asserted when power on reset or hw init not finished , and reset release when hsi_rdy and flash power ok
+  assign sys_rst_n_assert_n = ~nrst_in && hw_init_done;
+  assign sys_rst_n_release  = hsi_rdy && flash_power_ok;
+  assign nxt_sys_rst_n      = 1'b1;  //
+  assign sys_rst_n          = cur_sys_rst_n;
+
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_sys_rst_n_assert_n_sync (
+      .src_rst_n(sys_rst_n_assert_n),
+      .clk      (pre_sys_clk),
+      .gen_rst_n(sync_sys_rst_n_assert_n)
+  );
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_sys_rst_n_release_sync (
+      .src_signal(sys_rst_n_release),
+      .rst_n     (sync_sys_rst_n_assert_n),
+      .clk       (pre_sys_clk),
+      .gen_signal(sync_sys_rst_n_release)
+  );
+
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL(0)
+  ) u_sys_rst_n_dfflr (
+      .clk  (pre_sys_clk),
+      .rst_n(sync_sys_rst_n_assert_n),
+      .en   (sync_sys_rst_n_release),
+      .din  (nxt_sys_rst_n),
+      .dout (cur_sys_rst_n)
+  );
+
   //==============================================================================================
   //nrst_out
   //==============================================================================================
@@ -402,8 +492,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   BB_signal_sync #(
       .STAGE_NUM(2),
-      .DW       (1),
-      .RST_VAL  ('b0)
+      .DW       (1)
   ) u_flash_power_ok_sync (
       .src_signal(flash_power_ok),
       .rst_n     (sync_pwr_d1_ok),
@@ -461,85 +550,47 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   //==============================================================================================
-  //system reset generate
-  //==============================================================================================
-  // sys reset is asserted when power on reset or hw init not finished , and reset release when hsi_rdy and flash power ok
-  assign sys_rst_n_assert_n  = ~nrst_in && hw_init_done;
-  assign sys_rst_n_release_n = ~(hsi_rdy && flash_power_ok);
-  assign nxt_sys_rst_n       = 1'b1;  //
-  assign sys_rst_n           = cur_sys_rst_n;
-
-  BB_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_sys_rst_n_assert_n_sync (
-      .src_rst_n(sys_rst_n_assert_n),
-      .clk      (pre_sys_clk),
-      .gen_rst_n(sync_sys_rst_n_assert_n)
-  );
-
-  BB_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_sys_rst_n_release_n_sync (
-      .src_rst_n(sys_rst_n_release_n),
-      .clk      (pre_sys_clk),
-      .gen_rst_n(sync_sys_rst_n_release_n)
-  );
-
-  BB_dffrs #(
-      .DW     (1),
-      .RST_VAL(0)
-  ) u_sys_rst_n_dfflr (
-      .clk  (pre_sys_clk),
-      .rst_n(sync_sys_rst_n_assert_n),
-      .set_n(sync_sys_rst_n_release_n),
-      .din  (nxt_sys_rst_n),
-      .dout (cur_sys_rst_n)
-  );
-
-  //==============================================================================================
-  //hw init done generate 
-  //==============================================================================================
-  assign hw_init_done    = stby_rst_n && (~obl_rst);
-
-  //==============================================================================================
   //obl reset generate , option byte load module request reset
   //==============================================================================================
-  assign obl_rst         = (~obl_done) || flash_obl_reload;
+  assign obl_rst  = (~obl_done) || flash_obl_reload;
 
   //==============================================================================================
   //rcc vcore reset generate
   //==============================================================================================
   // assign rcc_vcore_rst   = pwr_por_rst || ~pwr_vcore_ok || ~obl_done;
 
-  // //==============================================================================================
-  // //standby reset generate
-  // //==============================================================================================
-  assign stby_rst_n      = pwr_por_rst_n && pwr_vcore_ok;
-
   //==============================================================================================
   //cpu and bus reset generate
   //==============================================================================================
-  assign cpu1_sync_rst_n = sys_rst_n && d1_rst_n && (~wwdg1_out_rst);
-  assign cpu2_sync_rst_n = sys_rst_n && d2_rst_n && (~wwdg2_out_rst);
+  assign c1_rst_n = sys_rst_n && d1_rst_n && (~wwdg1_out_rst);
+  assign c2_rst_n = sys_rst_n && d2_rst_n && (~wwdg2_out_rst);
+
+  // to ensure c1 and c2 reset release after d1 and d2 reset release
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_c1_rst_n_delay (
+      .src_rst_n(c1_rst_n),
+      .clk      (rcc_c1_clk),
+      .gen_rst_n(rcc_c1_rst_n)
+  );
+
+  BB_reset_sync #(
+      .STAGE_NUM(2)
+  ) u_c2_rst_n_delay (
+      .src_rst_n(c2_rst_n),
+      .clk      (rcc_c2_clk),
+      .gen_rst_n(rcc_c2_rst_n)
+  );
+
+  //dx_bus_sync_rst_n generate
+  assign d1_bus_sync_rst_n = sys_rst_n && d1_rst_n;
+  assign d2_bus_sync_rst_n = sys_rst_n && d2_rst_n;
+  assign d3_bus_sync_rst_n = sys_rst_n;
 
 
   //==============================================================================================
   //sys rst arcg 
   //==============================================================================================
-  //obl reset and clock generate
-  async_reset_clk_gate #(
-      .DELAY(CLK_ON_AFTER_SYS_RST_RELEASE)
-  ) rcc_obl_clk_async_reset_clk_gate (
-      .src_rst_n (rcc_obl_rst_n),
-      .i_clk     (pre_sys_clk),
-      .arcg_on   (rcc_arcg_on),
-      .clk_en    (rcc_obl_clk_arcg_en),
-      .sync_rst_n(rcc_obl_sync_rst_n)
-  );
-  //dx_bus_sync_rst_n generate
-  assign d1_bus_sync_rst_n = sys_rst_n && d1_rst_n;
-  assign d2_bus_sync_rst_n = sys_rst_n && d2_rst_n;
-  assign d3_bus_sync_rst_n = sys_rst_n;
 
   // system clock asynchoronous reset clock gating
   sync_reset_clk_gate #(
@@ -550,6 +601,17 @@ module rcc_sys_clk_rst_ctrl #(
       .arcg_on  (rcc_arcg_on),
       .clk_en   (sys_clk_arcg_en)
   );
+
+  //obl reset and clock generate
+  sync_reset_clk_gate #(
+      .DELAY(CLK_ON_AFTER_SYS_RST_RELEASE)
+  ) rcc_obl_clk_async_reset_clk_gate (
+      .src_rst_n(stby_rst_n),
+      .i_clk    (pre_sys_clk),
+      .arcg_on  (rcc_arcg_on),
+      .clk_en   (rcc_obl_clk_arcg_en)
+  );
+  assign rcc_obl_rst_n = stby_rst_n;
 
   // d1 domain clock asynchoronous reset clock gating
   sync_reset_clk_gate #(
@@ -575,7 +637,7 @@ module rcc_sys_clk_rst_ctrl #(
   sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU1_RST_RELEASE)
   ) cpu1_clk_async_reset_clk_gate (
-      .src_rst_n(cpu1_sync_rst_n),
+      .src_rst_n(rcc_c1_rst_n),
       .i_clk    (sys_d1cpre_clk),
       .arcg_on  (rcc_arcg_on),
       .clk_en   (cpu1_clk_arcg_en)
@@ -584,7 +646,7 @@ module rcc_sys_clk_rst_ctrl #(
   sync_reset_clk_gate #(
       .DELAY(CLK_ON_AFTER_CPU2_RST_RELEASE)
   ) cpu2_clk_async_reset_clk_gate (
-      .src_rst_n(cpu2_sync_rst_n),
+      .src_rst_n(rcc_c2_rst_n),
       .i_clk    (sys_hpre_clk),
       .arcg_on  (rcc_arcg_on),
       .clk_en   (cpu2_clk_arcg_en)
@@ -597,6 +659,7 @@ module rcc_sys_clk_rst_ctrl #(
   // to avoid combinational loop, use 2 flip flop to sync the vsw reset
   BB_signal_sync #(
       .STAGE_NUM(2),
+      .DW       (1),
       .RST_VAL  ('b1)
   ) u_vsw_bdrst_sync (
       .src_signal(bdrst),
@@ -647,8 +710,8 @@ module rcc_sys_clk_rst_ctrl #(
 
   //option byte load module clock gating
   en_as_clk_gating #(
-    .RST_VAL(1)
-  )u_obl_clk_gating (
+      .RST_VAL(1)
+  ) u_obl_clk_gating (
       .raw_clk(pre_sys_clk),
       .active (rcc_obl_clk_arcg_en),
       .bypass (testmode),
@@ -746,8 +809,8 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
 
   en_as_clk_gating #(
-    .RST_VAL(1)
-  )u_hsi_clk_gating (
+      .RST_VAL(1)
+  ) u_hsi_clk_gating (
       .raw_clk(hsi_pre_clk),
       .active (hsi_clk_en),
       .bypass (testmode),
@@ -756,8 +819,8 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   en_as_clk_gating #(
-    .RST_VAL(1)
-  )u_hsi_ker_clk_gating (
+      .RST_VAL(1)
+  ) u_hsi_ker_clk_gating (
       .raw_clk(hsi_pre_clk),
       .active (hsi_ker_clk_en),
       .bypass (testmode),
@@ -781,8 +844,8 @@ module rcc_sys_clk_rst_ctrl #(
   //csi clock gate
   //====================================================================
   en_as_clk_gating #(
-    .RST_VAL(1)
-  )u_csi_clk_gating (
+      .RST_VAL(1)
+  ) u_csi_clk_gating (
       .raw_clk(csi_origin_clk),
       .active (csi_clk_en),
       .bypass (testmode),
@@ -791,8 +854,8 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   en_as_clk_gating #(
-    .RST_VAL(1)
-  )u_csi_ker_clk_gating (
+      .RST_VAL(1)
+  ) u_csi_ker_clk_gating (
       .raw_clk(csi_origin_clk),
       .active (csi_ker_clk_en),
       .bypass (testmode),
@@ -881,8 +944,8 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   en_as_clk_gating #(
-    .RST_VAL(1)
-  )u_sys_clk_gating (
+      .RST_VAL(1)
+  ) u_sys_clk_gating (
       .raw_clk(pre_sys_clk),
       .active (sys_clk_en),
       .bypass (testmode),

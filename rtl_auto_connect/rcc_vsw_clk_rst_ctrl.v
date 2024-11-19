@@ -20,7 +20,7 @@ module rcc_vsw_clk_rst_ctrl (
     //rtc kernel clk
     output       rcc_rtc_ker_clk,
     //vsw reset signal not sync with sys clk
-    output       pre_vsw_rst_n,
+    output       vsw_rst_n,
     output       rtc_clk_sync_vsw_rst_n
 );
   wire rcc_rtcsel_clk;
@@ -28,13 +28,13 @@ module rcc_vsw_clk_rst_ctrl (
   wire lsi_sync_vsw_rst_n;
   wire lse_sync_vsw_rst_n;
 
-  assign pre_vsw_rst_n = (~bdrst) && (~pwr_vsw_rst);
+  assign vsw_rst_n = (~bdrst) && (~pwr_vsw_rst);
 
   // rtc ker clock gate
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_BB_reset_sync (
-      .src_rst_n(pre_vsw_rst_n),
+      .src_rst_n(vsw_rst_n),
       .clk      (rcc_rtcsel_clk),
       .gen_rst_n(rtc_clk_sync_vsw_rst_n)
   );
@@ -51,7 +51,7 @@ module rcc_vsw_clk_rst_ctrl (
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_hse_rtc_vsw_rst_sync (
-      .src_rst_n(pre_vsw_rst_n),
+      .src_rst_n(vsw_rst_n),
       .clk      (hse_rtc_clk),
       .gen_rst_n(hse_rtc_sync_vsw_rst_n)
   );
@@ -59,7 +59,7 @@ module rcc_vsw_clk_rst_ctrl (
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_lsi_vsw_rst_sync (
-      .src_rst_n(pre_vsw_rst_n),
+      .src_rst_n(vsw_rst_n),
       .clk      (lsi_clk),
       .gen_rst_n(lsi_sync_vsw_rst_n)
   );
@@ -67,7 +67,7 @@ module rcc_vsw_clk_rst_ctrl (
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_lse_vsw_rst_sync (
-      .src_rst_n(pre_vsw_rst_n),
+      .src_rst_n(vsw_rst_n),
       .clk      (lse_clk),
       .gen_rst_n(lse_sync_vsw_rst_n)
   );
