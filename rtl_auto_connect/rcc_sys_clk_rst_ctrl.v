@@ -570,7 +570,7 @@ module rcc_sys_clk_rst_ctrl #(
       .func_rst_n(raw_stby_rst_n),
       .testmode  (testmode),
       .rst_n     (stby_rst_n)
-  );
+  );   
 
   BB_dfflr #(
       .DW     (1),
