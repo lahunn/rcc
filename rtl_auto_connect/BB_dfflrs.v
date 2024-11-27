@@ -23,6 +23,4 @@ module BB_dfflrs #(
     end
   end
 
-
-
 endmodule
