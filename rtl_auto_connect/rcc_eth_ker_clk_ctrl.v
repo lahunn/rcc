@@ -24,6 +24,8 @@ module rcc_eth_ker_clk_ctrl (
     input c2_deepsleep,
     //test mode
     input testmode,
+    input scan_mode,
+    input test_clk,
 
     //register signals
     // eth1rx control signals
@@ -49,7 +51,7 @@ module rcc_eth_ker_clk_ctrl (
   wire sync_eth_rcc_fes;
   wire eth_rx_clk_sync_rst_n;
   wire eth_tx_clk_sync_rst_n;
-
+  wire gen_pad_rcc_eth_mii_rx_div_clk;
 
 
   //================================================================
@@ -87,25 +89,36 @@ module rcc_eth_ker_clk_ctrl (
   //================================================================
   //  eth clock control
   //================================================================
+  // pad_rcc_eth_mii_rx_div_clk test clock mux
+  test_clk_mux u_pad_rcc_eth_mii_rx_div_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (pad_rcc_eth_mii_rx_div_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (gen_pad_rcc_eth_mii_rx_div_clk)
+  );
 
   glitch_free_clk_switch #(
       .CLK_NUM(2)
   ) u_eth_mii_tx_clk_switch (
-      .i_clk   ({pad_rcc_eth_mii_rx_div_clk, pad_rcc_eth_mii_tx_clk}),
-      .clk_fail(2'b0),
-      .rst_n   ({eth_rx_clk_sync_rst_n, eth_tx_clk_sync_rst_n}),
-      .sel     (eth_rcc_epis_2),
-      .o_clk   (rcc_eth_mii_tx_clk_pre)
+      .i_clk    ({gen_pad_rcc_eth_mii_rx_div_clk, pad_rcc_eth_mii_tx_clk}),
+      .clk_fail (2'b0),
+      .rst_n    ({eth_rx_clk_sync_rst_n, eth_tx_clk_sync_rst_n}),
+      .sel      (eth_rcc_epis_2),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_eth_mii_tx_clk_pre)
   );
 
   glitch_free_clk_switch #(
       .CLK_NUM(2)
   ) u_eth_mii_rx_clk_switch (
-      .i_clk   ({pad_rcc_eth_mii_rx_div_clk, pad_rcc_eth_mii_rx_clk}),
-      .clk_fail(2'b0),
-      .rst_n   ({eth_rx_clk_sync_rst_n, eth_rx_clk_sync_rst_n}),
-      .sel     (eth_rcc_epis_2),
-      .o_clk   (rcc_eth_mii_rx_clk_pre)
+      .i_clk    ({gen_pad_rcc_eth_mii_rx_div_clk, pad_rcc_eth_mii_rx_clk}),
+      .clk_fail (2'b0),
+      .rst_n    ({eth_rx_clk_sync_rst_n, eth_rx_clk_sync_rst_n}),
+      .sel      (eth_rcc_epis_2),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_eth_mii_rx_clk_pre)
   );
 
   BB_clk_div_s #(

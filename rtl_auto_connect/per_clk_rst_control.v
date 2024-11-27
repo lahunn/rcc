@@ -37,6 +37,7 @@ module per_clk_rst_control #(
     input                   arcg_on,
     //testmode
     input                   testmode,
+    input                   test_rst_n,
     // sys reset
     input                   sys_rst_n,
     // dx reset
@@ -56,6 +57,7 @@ module per_clk_rst_control #(
   wire c2_bus_clk_lpen;
   wire d3_bus_clk_en;
   wire arcg_clk_en;
+  wire raw_per_rst_n;
 
   //================================================================
   // peripheral clock control
@@ -133,21 +135,27 @@ module per_clk_rst_control #(
       );
     end
   endgenerate
-  
+
   //================================================================
-  // peripheral reset control
+  // peripheral reset generate
   //================================================================
 
   generate
     if (DOMAIN == 1) begin : per_domain_d1_rst
-      assign per_rst_n = sys_rst_n && d1_rst_n && sft_rst_n;
+      assign raw_per_rst_n = sys_rst_n && d1_rst_n && sft_rst_n;
     end else if (DOMAIN == 2) begin : per_domain_d2_rst
-      assign per_rst_n = sys_rst_n && d2_rst_n && sft_rst_n;
+      assign raw_per_rst_n = sys_rst_n && d2_rst_n && sft_rst_n;
     end else begin : per_domain_d3_rst
-      assign per_rst_n = sys_rst_n && sft_rst_n;
+      assign raw_per_rst_n = sys_rst_n && sft_rst_n;
     end
   endgenerate
 
+  test_rst_mux u_per_rst_n_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(raw_per_rst_n),
+      .testmode  (testmode),
+      .rst_n     (per_rst_n)
+  );
 endmodule
 //================================================================
 // spyglass enable rules

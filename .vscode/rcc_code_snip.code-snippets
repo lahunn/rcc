@@ -1,0 +1,46 @@
+{
+	// Place your rcc 工作区 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+  "test_clk_mux": {
+    "scope": "",
+    "prefix": "test_clk_mux",
+    "body": [
+      "// goal_clock test clock mux",
+      "test_clk_mux u_goal_clock_tmux (",
+      ".test_clk (test_clk),",
+      ".func_clk (raw_goal_clock),",
+      ".scan_mode(scan_mode),",
+      ".gen_clk  (goal_clock)",
+      ");"
+    ],
+    "description": "test clock mux"
+  },
+  "test_rst_mux": {
+    "scope": "",
+    "prefix": "test_rst_mux",
+    "body": [
+      "// goal_reset test reset mux",
+      "test_rst_mux u_goal_reset_mux (",
+      ".test_rst_n(test_rst_n),",
+      ".func_rst_n(raw_goal_reset),",
+      ".testmode  (testmode),",
+      ".rst_n     (goal_reset)",
+      ");"
+    ],
+    "description": "test reset mux"
+  }
+}

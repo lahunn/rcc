@@ -1,0 +1,12 @@
+instance_name\s*\w+\s*
+instance_name\s*(\w+)\s*\(\s*\n
+\s*\.port_name0\s*\((\S+)\),\s*\n
+\s*\.port_name1\s*\((\S+)\),\s*\n
+\s*\.port_name_final\s*\((\S+)\)\s*\n
+
+BB_latch $1 (
+      .D ($2),
+      .GN($3),
+      .testmode(testmode),
+      .Q ($4)
+  );

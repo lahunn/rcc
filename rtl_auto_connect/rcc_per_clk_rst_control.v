@@ -8,10 +8,16 @@
 module rcc_per_clk_rst_control #(
     parameter CLK_ON_AFTER_PER_RST_RELEASE = 8
 ) (
+    //================================================================
+    // test mode signals
+    //================================================================
+    input        testmode,
+    input        test_rst_n,
+    input        test_clk,
+    input        scan_mode,
     // system reset
     input        sys_rst_n,
     input        rcc_arcg_on,
-    input        testmode,
     input        pll1_q_sync_sys_rst_n,
     input        pll2_p_sync_sys_rst_n,
     input        pll2_q_sync_sys_rst_n,
@@ -1412,261 +1418,313 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_qspisel_clk_switch (
-      .i_clk   ({per_clk, pll2_r_clk, pll1_q_clk, rcc_ahb3bridge_d1_clk}),
-      .clk_fail(4'b0),
-      .rst_n   ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (qspisel),
-      .o_clk   (rcc_qspisel_clk)
+      .i_clk    ({per_clk, pll2_r_clk, pll1_q_clk, rcc_ahb3bridge_d1_clk}),
+      .clk_fail (4'b0),
+      .rst_n    ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (qspisel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_qspisel_clk)
   );
   // fmcsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_fmcsel_clk_switch (
-      .i_clk   ({per_clk, pll2_r_clk, pll1_q_clk, rcc_ahb3bridge_d1_clk}),
-      .clk_fail(4'b0),
-      .rst_n   ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (fmcsel),
-      .o_clk   (rcc_fmcsel_clk)
+      .i_clk    ({per_clk, pll2_r_clk, pll1_q_clk, rcc_ahb3bridge_d1_clk}),
+      .clk_fail (4'b0),
+      .rst_n    ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (fmcsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_fmcsel_clk)
   );
   // sdmmcsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(2)
   ) rcc_sdmmcsel_clk_switch (
-      .i_clk   ({pll2_r_clk, pll1_q_clk}),
-      .clk_fail(2'b0),
-      .rst_n   ({pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (sdmmcsel),
-      .o_clk   (rcc_sdmmcsel_clk)
+      .i_clk    ({pll2_r_clk, pll1_q_clk}),
+      .clk_fail (2'b0),
+      .rst_n    ({pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (sdmmcsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_sdmmcsel_clk)
   );
   // usbsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_usbsel_clk_switch (
-      .i_clk   ({hsi48_clk, pll3_q_clk, pll1_q_clk, 1'b0}),
-      .clk_fail(4'b0),
-      .rst_n   ({hsi48_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, 1'b0}),
-      .sel     (usbsel),
-      .o_clk   (rcc_usbsel_clk)
+      .i_clk    ({hsi48_clk, pll3_q_clk, pll1_q_clk, 1'b0}),
+      .clk_fail (4'b0),
+      .rst_n    ({hsi48_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, 1'b0}),
+      .sel      (usbsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_usbsel_clk)
   );
   // adcsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(3)
   ) rcc_adcsel_clk_switch (
-      .i_clk   ({per_clk, pll3_r_clk, pll2_p_clk}),
-      .clk_fail(3'b0),
-      .rst_n   ({per_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n}),
-      .sel     (adcsel),
-      .o_clk   (rcc_adcsel_clk)
+      .i_clk    ({per_clk, pll3_r_clk, pll2_p_clk}),
+      .clk_fail (3'b0),
+      .rst_n    ({per_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n}),
+      .sel      (adcsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_adcsel_clk)
   );
   // rngsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_rngsel_clk_switch (
-      .i_clk   ({lsi_clk, lse_clk, pll1_q_clk, hsi48_clk}),
-      .clk_fail(4'b0),
-      .rst_n   ({lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hsi48_sync_sys_rst_n}),
-      .sel     (rngsel),
-      .o_clk   (rcc_rngsel_clk)
+      .i_clk    ({lsi_clk, lse_clk, pll1_q_clk, hsi48_clk}),
+      .clk_fail (4'b0),
+      .rst_n    ({lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hsi48_sync_sys_rst_n}),
+      .sel      (rngsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_rngsel_clk)
   );
   // usart234578sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_usart234578sel_clk_switch (
-      .i_clk   ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb1bridge_d2_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (usart234578sel),
-      .o_clk   (rcc_usart234578sel_clk)
+      .i_clk    ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb1bridge_d2_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (usart234578sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_usart234578sel_clk)
   );
   // cecsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(3)
   ) rcc_cecsel_clk_switch (
-      .i_clk   ({csi_ker_clk_122_div, lsi_clk, lse_clk}),
-      .clk_fail(3'b0),
-      .rst_n   ({csi_ker_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n}),
-      .sel     (cecsel),
-      .o_clk   (rcc_cecsel_clk)
+      .i_clk    ({csi_ker_clk_122_div, lsi_clk, lse_clk}),
+      .clk_fail (3'b0),
+      .rst_n    ({csi_ker_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n}),
+      .sel      (cecsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_cecsel_clk)
   );
   // i2c123sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_i2c123sel_clk_switch (
-      .i_clk   ({csi_ker_clk, hsi_ker_clk, pll3_r_clk, rcc_apb1bridge_d2_clk}),
-      .clk_fail(4'b0),
-      .rst_n   ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
-      .sel     (i2c123sel),
-      .o_clk   (rcc_i2c123sel_clk)
+      .i_clk    ({csi_ker_clk, hsi_ker_clk, pll3_r_clk, rcc_apb1bridge_d2_clk}),
+      .clk_fail (4'b0),
+      .rst_n    ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
+      .sel      (i2c123sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_i2c123sel_clk)
   );
   // spdifsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_spdifsel_clk_switch (
-      .i_clk   ({hsi_ker_clk, pll3_r_clk, pll2_r_clk, pll1_q_clk}),
-      .clk_fail(4'b0),
-      .rst_n   ({hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (spdifsel),
-      .o_clk   (rcc_spdifsel_clk)
+      .i_clk    ({hsi_ker_clk, pll3_r_clk, pll2_r_clk, pll1_q_clk}),
+      .clk_fail (4'b0),
+      .rst_n    ({hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (spdifsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_spdifsel_clk)
   );
   // spi123sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_spi123sel_clk_switch (
-      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
-      .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (spi123sel),
-      .o_clk   (rcc_spi123sel_clk)
+      .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .clk_fail (5'b0),
+      .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (spi123sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_spi123sel_clk)
   );
   // lptim1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_lptim1sel_clk_switch (
-      .i_clk   ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb1bridge_d2_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
-      .sel     (lptim1sel),
-      .o_clk   (rcc_lptim1sel_clk)
+      .i_clk    ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb1bridge_d2_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
+      .sel      (lptim1sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_lptim1sel_clk)
   );
   // fdcansel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(3)
   ) rcc_fdcansel_clk_switch (
-      .i_clk   ({pll2_q_clk, pll1_q_clk, hse_clk}),
-      .clk_fail(3'b0),
-      .rst_n   ({pll2_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hse_sync_sys_rst_n}),
-      .sel     (fdcansel),
-      .o_clk   (rcc_fdcansel_clk)
+      .i_clk    ({pll2_q_clk, pll1_q_clk, hse_clk}),
+      .clk_fail (3'b0),
+      .rst_n    ({pll2_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hse_sync_sys_rst_n}),
+      .sel      (fdcansel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_fdcansel_clk)
   );
   // swpmisel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(2)
   ) rcc_swpmisel_clk_switch (
-      .i_clk   ({hsi_ker_clk, rcc_apb1bridge_d2_clk}),
-      .clk_fail(2'b0),
-      .rst_n   ({hsi_ker_sync_sys_rst_n, sys_rst_n}),
-      .sel     (swpmisel),
-      .o_clk   (rcc_swpmisel_clk)
+      .i_clk    ({hsi_ker_clk, rcc_apb1bridge_d2_clk}),
+      .clk_fail (2'b0),
+      .rst_n    ({hsi_ker_sync_sys_rst_n, sys_rst_n}),
+      .sel      (swpmisel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_swpmisel_clk)
   );
   // sai1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai1sel_clk_switch (
-      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
-      .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (sai1sel),
-      .o_clk   (rcc_sai1sel_clk)
+      .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .clk_fail (5'b0),
+      .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (sai1sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_sai1sel_clk)
   );
   // dfsdm1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(2)
   ) rcc_dfsdm1sel_clk_switch (
-      .i_clk   ({sys_clk, rcc_apb2bridge_d2_clk}),
-      .clk_fail(2'b0),
-      .rst_n   ({sys_rst_n, sys_rst_n}),
-      .sel     (dfsdm1sel),
-      .o_clk   (rcc_dfsdm1sel_clk)
+      .i_clk    ({sys_clk, rcc_apb2bridge_d2_clk}),
+      .clk_fail (2'b0),
+      .rst_n    ({sys_rst_n, sys_rst_n}),
+      .sel      (dfsdm1sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_dfsdm1sel_clk)
   );
   // sai23sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai23sel_clk_switch (
-      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
-      .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (sai23sel),
-      .o_clk   (rcc_sai23sel_clk)
+      .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .clk_fail (5'b0),
+      .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (sai23sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_sai23sel_clk)
   );
   // spi45sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_spi45sel_clk_switch (
-      .i_clk   ({hse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (spi45sel),
-      .o_clk   (rcc_spi45sel_clk)
+      .i_clk    ({hse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (spi45sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_spi45sel_clk)
   );
   // usart16sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_usart16sel_clk_switch (
-      .i_clk   ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (usart16sel),
-      .o_clk   (rcc_usart16sel_clk)
+      .i_clk    ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (usart16sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_usart16sel_clk)
   );
   // sai4asel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai4asel_clk_switch (
-      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
-      .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (sai4asel),
-      .o_clk   (rcc_sai4asel_clk)
+      .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .clk_fail (5'b0),
+      .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (sai4asel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_sai4asel_clk)
   );
   // sai4bsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
   ) rcc_sai4bsel_clk_switch (
-      .i_clk   ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
-      .clk_fail(5'b0),
-      .rst_n   ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
-      .sel     (sai4bsel),
-      .o_clk   (rcc_sai4bsel_clk)
+      .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
+      .clk_fail (5'b0),
+      .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
+      .sel      (sai4bsel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_sai4bsel_clk)
   );
   // lptim345sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_lptim345sel_clk_switch (
-      .i_clk   ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb4bridge_d3_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
-      .sel     (lptim345sel),
-      .o_clk   (rcc_lptim345sel_clk)
+      .i_clk    ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb4bridge_d3_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
+      .sel      (lptim345sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_lptim345sel_clk)
   );
   // lptim2sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_lptim2sel_clk_switch (
-      .i_clk   ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb4bridge_d3_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
-      .sel     (lptim2sel),
-      .o_clk   (rcc_lptim2sel_clk)
+      .i_clk    ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb4bridge_d3_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
+      .sel      (lptim2sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_lptim2sel_clk)
   );
   // i2c4sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_i2c4sel_clk_switch (
-      .i_clk   ({csi_ker_clk, hsi_ker_clk, pll3_r_clk, rcc_apb4bridge_d3_clk}),
-      .clk_fail(4'b0),
-      .rst_n   ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
-      .sel     (i2c4sel),
-      .o_clk   (rcc_i2c4sel_clk)
+      .i_clk    ({csi_ker_clk, hsi_ker_clk, pll3_r_clk, rcc_apb4bridge_d3_clk}),
+      .clk_fail (4'b0),
+      .rst_n    ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
+      .sel      (i2c4sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_i2c4sel_clk)
   );
   // spi6sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_spi6sel_clk_switch (
-      .i_clk   ({hse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (spi6sel),
-      .o_clk   (rcc_spi6sel_clk)
+      .i_clk    ({hse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (spi6sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_spi6sel_clk)
   );
   // lpuart1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_lpuart1sel_clk_switch (
-      .i_clk   ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
-      .clk_fail(6'b0),
-      .rst_n   ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
-      .sel     (lpuart1sel),
-      .o_clk   (rcc_lpuart1sel_clk)
+      .i_clk    ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
+      .clk_fail (6'b0),
+      .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
+      .sel      (lpuart1sel),
+      .scan_mode(scan_mode),
+      .test_clk (test_clk),
+      .o_clk    (rcc_lpuart1sel_clk)
   );
   // flash clock and reset control
   assign rcc_flash_aclk     = flash_bus_clks[0];
@@ -1682,6 +1740,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_flash_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (flash_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (rcc_c2_flash_en),
@@ -1727,6 +1786,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_qspi_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (qspi_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_qspi_en),
       .rcc_c2_per_en  (rcc_c2_qspi_en),
@@ -1766,6 +1826,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_axisram_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (axisram_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (rcc_c2_axisram_en),
@@ -1811,6 +1872,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_fmc_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (fmc_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_fmc_en),
       .rcc_c2_per_en  (rcc_c2_fmc_en),
@@ -1851,6 +1913,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dma2d_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dma2d_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_dma2d_en),
       .rcc_c2_per_en  (rcc_c2_dma2d_en),
@@ -1885,6 +1948,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_mdma_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (mdma_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_mdma_en),
       .rcc_c2_per_en  (rcc_c2_mdma_en),
@@ -1930,6 +1994,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_ltdc_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (ltdc_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_ltdc_en),
       .rcc_c2_per_en  (rcc_c2_ltdc_en),
@@ -1969,6 +2034,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_ramecc1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (ramecc1_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -2002,6 +2068,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpv_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpv_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -2035,6 +2102,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_itcm_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (itcm_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (rcc_c2_itcm_en),
@@ -2068,6 +2136,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dtcm2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dtcm2_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (rcc_c2_dtcm2_en),
@@ -2101,6 +2170,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dtcm1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dtcm1_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (rcc_c2_dtcm1_en),
@@ -2134,6 +2204,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_jpgdec_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (jpgdec_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_jpgdec_en),
       .rcc_c2_per_en  (rcc_c2_jpgdec_en),
@@ -2178,6 +2249,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sdmmc1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sdmmc1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sdmmc1_en),
       .rcc_c2_per_en  (rcc_c2_sdmmc1_en),
@@ -2217,6 +2289,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_wwdg1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (wwdg1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_wwdg1_en),
       .rcc_c2_per_en  (rcc_c2_wwdg1_en),
@@ -2250,6 +2323,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usb2ulpi_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usb2ulpi_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usb2ulpi_en),
       .rcc_c2_per_en  (rcc_c2_usb2ulpi_en),
@@ -2294,6 +2368,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usb2otg_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usb2otg_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usb2otg_en),
       .rcc_c2_per_en  (rcc_c2_usb2otg_en),
@@ -2344,6 +2419,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usb1ulpi_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usb1ulpi_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usb1ulpi_en),
       .rcc_c2_per_en  (rcc_c2_usb1ulpi_en),
@@ -2394,6 +2470,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usb1otg_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usb1otg_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usb1otg_en),
       .rcc_c2_per_en  (rcc_c2_usb1otg_en),
@@ -2433,6 +2510,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_eth1rx_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (eth1rx_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_eth1rx_en),
       .rcc_c2_per_en  (rcc_c2_eth1rx_en),
@@ -2466,6 +2544,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_eth1tx_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (eth1tx_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_eth1tx_en),
       .rcc_c2_per_en  (rcc_c2_eth1tx_en),
@@ -2499,6 +2578,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_eth1mac_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (eth1mac_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_eth1mac_en),
       .rcc_c2_per_en  (rcc_c2_eth1mac_en),
@@ -2543,6 +2623,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_adc12_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (adc12_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_adc12_en),
       .rcc_c2_per_en  (rcc_c2_adc12_en),
@@ -2582,6 +2663,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dma2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dma2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_dma2_en),
       .rcc_c2_per_en  (rcc_c2_dma2_en),
@@ -2615,6 +2697,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dma1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dma1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_dma1_en),
       .rcc_c2_per_en  (rcc_c2_dma1_en),
@@ -2648,6 +2731,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sram3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sram3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sram3_en),
       .rcc_c2_per_en  (1'b1),
@@ -2681,6 +2765,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sram2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sram2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sram2_en),
       .rcc_c2_per_en  (1'b1),
@@ -2714,6 +2799,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sram1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sram1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sram1_en),
       .rcc_c2_per_en  (1'b1),
@@ -2758,6 +2844,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sdmmc2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sdmmc2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sdmmc2_en),
       .rcc_c2_per_en  (rcc_c2_sdmmc2_en),
@@ -2808,6 +2895,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_rng_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (rng_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_rng_en),
       .rcc_c2_per_en  (rcc_c2_rng_en),
@@ -2847,6 +2935,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_hash_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (hash_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_hash_en),
       .rcc_c2_per_en  (rcc_c2_hash_en),
@@ -2880,6 +2969,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_crypt_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (crypt_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_crypt_en),
       .rcc_c2_per_en  (rcc_c2_crypt_en),
@@ -2913,6 +3003,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dcmi_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dcmi_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_dcmi_en),
       .rcc_c2_per_en  (rcc_c2_dcmi_en),
@@ -2946,6 +3037,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_ramecc2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (ramecc2_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -2990,6 +3082,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_uart8_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (uart8_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_uart8_en),
       .rcc_c2_per_en  (rcc_c2_uart8_en),
@@ -3040,6 +3133,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_uart7_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (uart7_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_uart7_en),
       .rcc_c2_per_en  (rcc_c2_uart7_en),
@@ -3079,6 +3173,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dac12_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dac12_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_dac12_en),
       .rcc_c2_per_en  (rcc_c2_dac12_en),
@@ -3123,6 +3218,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_hdmicec_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (hdmicec_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_hdmicec_en),
       .rcc_c2_per_en  (rcc_c2_hdmicec_en),
@@ -3173,6 +3269,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_i2c3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (i2c3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_i2c3_en),
       .rcc_c2_per_en  (rcc_c2_i2c3_en),
@@ -3223,6 +3320,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_i2c2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (i2c2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_i2c2_en),
       .rcc_c2_per_en  (rcc_c2_i2c2_en),
@@ -3273,6 +3371,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_i2c1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (i2c1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_i2c1_en),
       .rcc_c2_per_en  (rcc_c2_i2c1_en),
@@ -3323,6 +3422,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_uart5_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (uart5_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_uart5_en),
       .rcc_c2_per_en  (rcc_c2_uart5_en),
@@ -3373,6 +3473,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_uart4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (uart4_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_uart4_en),
       .rcc_c2_per_en  (rcc_c2_uart4_en),
@@ -3423,6 +3524,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usart3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usart3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usart3_en),
       .rcc_c2_per_en  (rcc_c2_usart3_en),
@@ -3473,6 +3575,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usart2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usart2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usart2_en),
       .rcc_c2_per_en  (rcc_c2_usart2_en),
@@ -3523,6 +3626,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spdifrx_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spdifrx_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spdifrx_en),
       .rcc_c2_per_en  (rcc_c2_spdifrx_en),
@@ -3573,6 +3677,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spi3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spi3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spi3_en),
       .rcc_c2_per_en  (rcc_c2_spi3_en),
@@ -3623,6 +3728,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spi2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spi2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spi2_en),
       .rcc_c2_per_en  (rcc_c2_spi2_en),
@@ -3662,6 +3768,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_wwdg2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (wwdg2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_wwdg2_en),
       .rcc_c2_per_en  (rcc_c2_wwdg2_en),
@@ -3706,6 +3813,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_lptim1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (lptim1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_lptim1_en),
       .rcc_c2_per_en  (rcc_c2_lptim1_en),
@@ -3756,6 +3864,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim14_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim14_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim14_en),
       .rcc_c2_per_en  (rcc_c2_tim14_en),
@@ -3806,6 +3915,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim13_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim13_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim13_en),
       .rcc_c2_per_en  (rcc_c2_tim13_en),
@@ -3856,6 +3966,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim12_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim12_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim12_en),
       .rcc_c2_per_en  (rcc_c2_tim12_en),
@@ -3906,6 +4017,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim7_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim7_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim7_en),
       .rcc_c2_per_en  (rcc_c2_tim7_en),
@@ -3956,6 +4068,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim6_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim6_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim6_en),
       .rcc_c2_per_en  (rcc_c2_tim6_en),
@@ -4006,6 +4119,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim5_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim5_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim5_en),
       .rcc_c2_per_en  (rcc_c2_tim5_en),
@@ -4056,6 +4170,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim4_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim4_en),
       .rcc_c2_per_en  (rcc_c2_tim4_en),
@@ -4106,6 +4221,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim3_en),
       .rcc_c2_per_en  (rcc_c2_tim3_en),
@@ -4156,6 +4272,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim2_en),
       .rcc_c2_per_en  (rcc_c2_tim2_en),
@@ -4206,6 +4323,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_fdcan_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (fdcan_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_fdcan_en),
       .rcc_c2_per_en  (rcc_c2_fdcan_en),
@@ -4245,6 +4363,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_mdios_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (mdios_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_mdios_en),
       .rcc_c2_per_en  (rcc_c2_mdios_en),
@@ -4278,6 +4397,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_opamp_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (opamp_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_opamp_en),
       .rcc_c2_per_en  (rcc_c2_opamp_en),
@@ -4322,6 +4442,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_swpmi_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (swpmi_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_swpmi_en),
       .rcc_c2_per_en  (rcc_c2_swpmi_en),
@@ -4361,6 +4482,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (2),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_crs_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (crs_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_crs_en),
       .rcc_c2_per_en  (rcc_c2_crs_en),
@@ -4405,6 +4527,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_hrtim_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (hrtim_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_hrtim_en),
       .rcc_c2_per_en  (rcc_c2_hrtim_en),
@@ -4455,6 +4578,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_dfsdm1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (dfsdm1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_dfsdm1_en),
       .rcc_c2_per_en  (rcc_c2_dfsdm1_en),
@@ -4505,6 +4629,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sai3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sai3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sai3_en),
       .rcc_c2_per_en  (rcc_c2_sai3_en),
@@ -4555,6 +4680,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sai2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sai2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sai2_en),
       .rcc_c2_per_en  (rcc_c2_sai2_en),
@@ -4605,6 +4731,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sai1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sai1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sai1_en),
       .rcc_c2_per_en  (rcc_c2_sai1_en),
@@ -4655,6 +4782,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spi5_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spi5_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spi5_en),
       .rcc_c2_per_en  (rcc_c2_spi5_en),
@@ -4705,6 +4833,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim17_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim17_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim17_en),
       .rcc_c2_per_en  (rcc_c2_tim17_en),
@@ -4755,6 +4884,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim16_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim16_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim16_en),
       .rcc_c2_per_en  (rcc_c2_tim16_en),
@@ -4805,6 +4935,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim15_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim15_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim15_en),
       .rcc_c2_per_en  (rcc_c2_tim15_en),
@@ -4855,6 +4986,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spi4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spi4_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spi4_en),
       .rcc_c2_per_en  (rcc_c2_spi4_en),
@@ -4905,6 +5037,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spi1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spi1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spi1_en),
       .rcc_c2_per_en  (rcc_c2_spi1_en),
@@ -4955,6 +5088,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usart6_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usart6_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usart6_en),
       .rcc_c2_per_en  (rcc_c2_usart6_en),
@@ -5005,6 +5139,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_usart1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (usart1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_usart1_en),
       .rcc_c2_per_en  (rcc_c2_usart1_en),
@@ -5055,6 +5190,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim8_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim8_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim8_en),
       .rcc_c2_per_en  (rcc_c2_tim8_en),
@@ -5105,6 +5241,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_tim1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (tim1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_tim1_en),
       .rcc_c2_per_en  (rcc_c2_tim1_en),
@@ -5144,6 +5281,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sram4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sram4_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -5177,6 +5315,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_bkpram_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (bkpram_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_bkpram_en),
       .rcc_c2_per_en  (rcc_c2_bkpram_en),
@@ -5210,6 +5349,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_ramecc3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (ramecc3_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -5243,6 +5383,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_hsem_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (hsem_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_hsem_en),
       .rcc_c2_per_en  (rcc_c2_hsem_en),
@@ -5287,6 +5428,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_adc3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (adc3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_adc3_en),
       .rcc_c2_per_en  (rcc_c2_adc3_en),
@@ -5326,6 +5468,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_bdma_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (bdma_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_bdma_en),
       .rcc_c2_per_en  (rcc_c2_bdma_en),
@@ -5359,6 +5502,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_crc_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (crc_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_crc_en),
       .rcc_c2_per_en  (rcc_c2_crc_en),
@@ -5392,6 +5536,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpiok_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpiok_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpiok_en),
       .rcc_c2_per_en  (rcc_c2_gpiok_en),
@@ -5425,6 +5570,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpioj_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpioj_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpioj_en),
       .rcc_c2_per_en  (rcc_c2_gpioj_en),
@@ -5458,6 +5604,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpioi_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpioi_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpioi_en),
       .rcc_c2_per_en  (rcc_c2_gpioi_en),
@@ -5491,6 +5638,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpioh_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpioh_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpioh_en),
       .rcc_c2_per_en  (rcc_c2_gpioh_en),
@@ -5524,6 +5672,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpiog_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpiog_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpiog_en),
       .rcc_c2_per_en  (rcc_c2_gpiog_en),
@@ -5557,6 +5706,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpiof_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpiof_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpiof_en),
       .rcc_c2_per_en  (rcc_c2_gpiof_en),
@@ -5590,6 +5740,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpioe_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpioe_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpioe_en),
       .rcc_c2_per_en  (rcc_c2_gpioe_en),
@@ -5623,6 +5774,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpiod_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpiod_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpiod_en),
       .rcc_c2_per_en  (rcc_c2_gpiod_en),
@@ -5656,6 +5808,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpioc_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpioc_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpioc_en),
       .rcc_c2_per_en  (rcc_c2_gpioc_en),
@@ -5689,6 +5842,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpiob_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpiob_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpiob_en),
       .rcc_c2_per_en  (rcc_c2_gpiob_en),
@@ -5722,6 +5876,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_gpioa_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (gpioa_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_gpioa_en),
       .rcc_c2_per_en  (rcc_c2_gpioa_en),
@@ -5755,6 +5910,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_rcc_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (rcc_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -5788,6 +5944,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_pwr_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (pwr_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -5832,6 +5989,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_sai4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (sai4_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_sai4_en),
       .rcc_c2_per_en  (rcc_c2_sai4_en),
@@ -5871,6 +6029,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_rtc_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (rtc_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_rtc_en),
       .rcc_c2_per_en  (rcc_c2_rtc_en),
@@ -5904,6 +6063,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_vref_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (vref_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_vref_en),
       .rcc_c2_per_en  (rcc_c2_vref_en),
@@ -5937,6 +6097,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_comp12_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (comp12_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_comp12_en),
       .rcc_c2_per_en  (rcc_c2_comp12_en),
@@ -5981,6 +6142,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_lptim5_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (lptim5_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_lptim5_en),
       .rcc_c2_per_en  (rcc_c2_lptim5_en),
@@ -6031,6 +6193,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_lptim4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (lptim4_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_lptim4_en),
       .rcc_c2_per_en  (rcc_c2_lptim4_en),
@@ -6081,6 +6244,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_lptim3_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (lptim3_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_lptim3_en),
       .rcc_c2_per_en  (rcc_c2_lptim3_en),
@@ -6131,6 +6295,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_lptim2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (lptim2_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_lptim2_en),
       .rcc_c2_per_en  (rcc_c2_lptim2_en),
@@ -6181,6 +6346,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_i2c4_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (i2c4_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_i2c4_en),
       .rcc_c2_per_en  (rcc_c2_i2c4_en),
@@ -6231,6 +6397,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (0),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_spi6_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (spi6_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_spi6_en),
       .rcc_c2_per_en  (rcc_c2_spi6_en),
@@ -6281,6 +6448,7 @@ module rcc_per_clk_rst_control #(
       .CSI_INDEX                   (1),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_lpuart1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (lpuart1_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_lpuart1_en),
       .rcc_c2_per_en  (rcc_c2_lpuart1_en),
@@ -6320,6 +6488,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_syscfg_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (syscfg_src_bus_clks),
       .rcc_c1_per_en  (rcc_c1_syscfg_en),
       .rcc_c2_per_en  (rcc_c2_syscfg_en),
@@ -6353,6 +6522,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_iwdg2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (iwdg2_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -6386,6 +6556,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_iwdg1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (iwdg1_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),
@@ -6419,6 +6590,7 @@ module rcc_per_clk_rst_control #(
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
   ) u_exti_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
       .bus_clks       (exti_src_bus_clks),
       .rcc_c1_per_en  (1'b1),
       .rcc_c2_per_en  (1'b1),

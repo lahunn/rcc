@@ -20,6 +20,22 @@ module rcc_vcore_top #(
     parameter WW = 4
 ) (
     /*AUTOINPUT*/
+    input  raw_i2s_clk_in,
+    input  raw_usb_phy1,
+    input  raw_csi_origin_clk,
+    input  raw_hse_origin_clk,
+    input  raw_hsi48_origin_clk,
+    input  raw_hsi_origin_clk,
+    input  raw_pad_rcc_eth_mii_tx_clk,
+    input  raw_pad_rcc_eth_mii_rx_clk,
+    input  raw_pll1_p_clk,
+    input  raw_pll1_q_clk,
+    input  raw_pll2_p_clk,
+    input  raw_pll2_q_clk,
+    input  raw_pll2_r_clk,
+    input  raw_pll3_p_clk,
+    input  raw_pll3_q_clk,
+    input  raw_pll3_r_clk,
     /*AUTOOUTPUT*/
     //bus clock signals
     output rcc_axibridge_d1_clk,
@@ -41,6 +57,40 @@ module rcc_vcore_top #(
   wire          sync_lsecss_fail;
   wire          sync_hsecss_fail;
   wire          sync_hsecss_fail_rst;  //async reset sync release
+
+  //select signals
+  wire [   1:0] raw_pllsrc;
+  wire [   2:0] raw_mco1sel;
+  wire [   2:0] raw_mco2sel;
+  wire [   1:0] raw_sw;
+  wire          raw_hrtimsel;
+  wire [   1:0] raw_clkpersel;
+  //division ratio signals
+  wire [   1:0] raw_hsidiv;
+  wire [   5:0] raw_divm1;
+  wire [   5:0] raw_divm2;
+  wire [   5:0] raw_divm3;
+  wire [   3:0] raw_mco1pre;
+  wire [   3:0] raw_mco2pre;
+  wire [   5:0] raw_rtcpre;
+  wire [   3:0] raw_d1cpre;
+  wire [   2:0] raw_d1ppre;
+  wire [   3:0] raw_hpre;
+  wire [   2:0] raw_d2ppre1;
+  wire [   2:0] raw_d2ppre2;
+  wire [   2:0] raw_d3ppre;
+  wire          raw_timpre;
+
+  wire          gen_pll1_q_clk;
+  wire          gen_pll2_p_clk;
+  wire          gen_pll2_q_clk;
+  wire          gen_pll2_r_clk;
+  wire          gen_pll3_p_clk;
+  wire          gen_pll3_q_clk;
+  wire          gen_pll3_r_clk;
+
+  wire          gen_eth_rcc_fes;
+  wire          gen_eth_rcc_epis_2;
   /*AUTOWIRE*/
 
   //==============================================================================
@@ -58,9 +108,13 @@ module rcc_vcore_top #(
       .mreq   (mreq),
       .mwstrb (mwstrb),
       .maddr  (maddr),
-      .mdata  (mdata),
+      .mdata  (mdata)
       /*AUTOINST*/
   );
+  //================================================================
+  // rcc PAD clock mux 
+  //================================================================
+
   //==============================================================================
   //signal synchronize 
   //==============================================================================
@@ -79,23 +133,47 @@ module rcc_vcore_top #(
   //==============================================================================
   rcc_sys_clk_rst_ctrl #(  /*AUTOINSTPARAM*/
   ) u_rcc_sys_clk_rst_ctrl (
-    .bdrst(cur_rcc_bdcr_bdrst),  
-    /*AUTOINST*/
+      .bdrst         (cur_rcc_bdcr_bdrst),
+      .gen_pll1_q_clk(gen_pll1_q_clk),
+      .gen_pll2_p_clk(gen_pll2_p_clk),
+      .gen_pll2_q_clk(gen_pll2_q_clk),
+      .gen_pll2_r_clk(gen_pll2_r_clk),
+      .gen_pll3_p_clk(gen_pll3_p_clk),
+      .gen_pll3_q_clk(gen_pll3_q_clk),
+      .gen_pll3_r_clk(gen_pll3_r_clk)
+      /*AUTOINST*/
   );
 
   //rcc_per_clk_rst_control
 
   rcc_per_clk_rst_control #(  /*AUTOINSTPARAM*/
   ) u_rcc_per_clk_rst_control (
-  /*AUTOINST*/
+      .pll1_q_clk(gen_pll1_q_clk),
+      .pll2_p_clk(gen_pll2_p_clk),
+      .pll2_q_clk(gen_pll2_q_clk),
+      .pll2_r_clk(gen_pll2_r_clk),
+      .pll3_p_clk(gen_pll3_p_clk),
+      .pll3_q_clk(gen_pll3_q_clk),
+      .pll3_r_clk(gen_pll3_r_clk)
+      /*AUTOINST*/
   );
 
   //rcc_eth_ker_clk_ctrl
   rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (
-      .rst_n(sys_rst_n),
+      .rst_n         (sys_rst_n),
+      .eth_rcc_fes   (gen_eth_rcc_fes),
+      .eth_rcc_epis_2(gen_eth_rcc_epis_2)
       /*AUTOINST*/
   );
 
+  //================================================================
+  // rcc config mux for atspeed test
+  //================================================================
+  rcc_config_mux u_rcc_config_mux (
+      .gen_eth_rcc_fes   (gen_eth_rcc_fes),
+      .gen_eth_rcc_epis_2(gen_eth_rcc_epis_2)
+      /*AUTOINST*/
+  );
 
   //==============================================================================
   //rcc_vcore_reg
@@ -112,6 +190,26 @@ module rcc_vcore_top #(
       .rsp                (rsp),
       .cur_rcc_csr_lsirdy (sync_lsi_rdy),
       .cur_rcc_bdcr_lserdy(sync_lse_rdy),
+      .pllsrc             (raw_pllsrc),
+      .mco1sel            (raw_mco1sel),
+      .mco2sel            (raw_mco2sel),
+      .sw                 (raw_sw),
+      .hrtimsel           (raw_hrtimsel),
+      .clkpersel          (raw_clkpersel),
+      .hsidiv             (raw_hsidiv),
+      .divm1              (raw_divm1),
+      .divm2              (raw_divm2),
+      .divm3              (raw_divm3),
+      .mco1pre            (raw_mco1pre),
+      .mco2pre            (raw_mco2pre),
+      .rtcpre             (raw_rtcpre),
+      .d1cpre             (raw_d1cpre),
+      .d1ppre             (raw_d1ppre),
+      .hpre               (raw_hpre),
+      .d2ppre1            (raw_d2ppre1),
+      .d2ppre2            (raw_d2ppre2),
+      .d3ppre             (raw_d3ppre),
+      .timpre             (raw_timpre)
       /*AUTOINST*/
   );
 

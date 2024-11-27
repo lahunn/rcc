@@ -3548,7 +3548,8 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
 
   assign csion_clr_n       = rst_n;
-  assign csion_set_n       = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 1 | cur_rcc_cfgr_stopkerwuck == 1);
+  //when 
+  assign csion_set_n       = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 1 | cur_rcc_cfgr_stopkerwuck == 1); 
 
   assign rcc_cr_csion_en   = (~((cur_rcc_cfgr_sws == 3'b001) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_csion  = wdata[7:7];
@@ -3927,7 +3928,9 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 2:0                 sw                  RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign sw_clr_n         = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;  //there is a difference with H7
+  //RCC switch logic, sys_clk is set to hsi_clk while sys_rst / hsefail / exit form stop mode and stopwuck is 0  
+  assign sw_clr_n         = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;
+  //sys_clk is set to csi_clk while exit form stop mode and stopwuck is 1
   assign sw_set_n         = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 1);
 
   assign rcc_cfgr_sw_en   = (|wr_req & rcc_cfgr_sel);

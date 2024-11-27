@@ -15,13 +15,15 @@ module sys_clk_switch #(
     input  [        CLK_NUM-1:0] clk_fail,
     input  [$clog2(CLK_NUM)-1:0] sel,
     input  [        CLK_NUM-1:0] rst_n,
+    input                        scan_mode,
+    input                        test_clk,
     output                       o_clk
 );
   wire [        CLK_NUM-1:0] onehot_sel;
   wire [        CLK_NUM-1:0] clk_sel;
-  wire [        CLK_NUM-1:0] clk_sel_f;
-  wire [        CLK_NUM-1:0] clk_sel_ff;
-  wire [        CLK_NUM-1:0] clk_sel_ff_n;
+  wire [        CLK_NUM-1:0] d1_clk_sel;
+  wire [        CLK_NUM-1:0] d2_clk_sel;
+  wire [        CLK_NUM-1:0] d2_clk_sel_n;
   wire [        CLK_NUM-1:0] clk_pre_out;
   wire [        CLK_NUM-1:0] clk_rst_n;
   wire [$clog2(CLK_NUM)-1:0] sel_temp     [CLK_NUM-1:0];
@@ -43,15 +45,15 @@ module sys_clk_switch #(
   endgenerate
 
   // generate clk_sel
-  assign clk_sel_ff_n = ~clk_sel_ff;
-  assign clk_sel[0]   = onehot_sel[0] && (&clk_sel_ff_n[CLK_NUM-1:1]);
+  assign d2_clk_sel_n = ~d2_clk_sel;
+  assign clk_sel[0]   = onehot_sel[0] && (&d2_clk_sel_n[CLK_NUM-1:1]);
   generate
     genvar j;
     for (j = 1; j < CLK_NUM - 1; j = j + 1) begin : clk_sel_gen
-      assign clk_sel[j] = onehot_sel[j] && (&clk_sel_ff_n[j-1:0]) && (&clk_sel_ff_n[CLK_NUM-1:j]);
+      assign clk_sel[j] = onehot_sel[j] && (&d2_clk_sel_n[j-1:0]) && (&d2_clk_sel_n[CLK_NUM-1:j]);
     end
   endgenerate
-  assign clk_sel[CLK_NUM-1] = onehot_sel[CLK_NUM-1] && (&clk_sel_ff_n[CLK_NUM-2:0]);
+  assign clk_sel[CLK_NUM-1] = onehot_sel[CLK_NUM-1] && (&d2_clk_sel_n[CLK_NUM-2:0]);
 
   //===================================================================
   //generate two stage flip-flop
@@ -62,24 +64,24 @@ module sys_clk_switch #(
       .DW     (1),
       .RST_VAL(1),
       .SET_VAL(0)
-  ) u_BB_dffr0_0 (
+  ) u_BB_dffrs0_0 (
       .clk  (i_clk[0]),
       .rst_n(rst_n[0]),
-      .set_n(clk_rst_n[0]),
+      .set_n(~clk_fail[0]),
       .din  (clk_sel[0]),
-      .dout (clk_sel_f[0])
+      .dout (d1_clk_sel[0])
   );
 
   BB_dffrs #(
       .DW     (1),
       .RST_VAL(1),
       .SET_VAL(0)
-  ) u_BB_dffr0_1 (
+  ) u_BB_dffrs0_1 (
       .clk  (i_clk[0]),
       .rst_n(rst_n[0]),
-      .set_n(clk_rst_n[0]),
-      .din  (clk_sel_f[0]),
-      .dout (clk_sel_ff[0])
+      .set_n(~clk_fail[0]),
+      .din  (d1_clk_sel[0]),
+      .dout (d2_clk_sel[0])
   );
   generate
     genvar k;
@@ -91,7 +93,7 @@ module sys_clk_switch #(
           .clk  (i_clk[k]),
           .rst_n(clk_rst_n[k]),
           .din  (clk_sel[k]),
-          .dout (clk_sel_f[k])
+          .dout (d1_clk_sel[k])
       );
 
       BB_dffr #(
@@ -100,8 +102,8 @@ module sys_clk_switch #(
       ) u_BB_dffr_1 (
           .clk  (i_clk[k]),
           .rst_n(clk_rst_n[k]),
-          .din  (clk_sel_f[k]),
-          .dout (clk_sel_ff[k])
+          .din  (d1_clk_sel[k]),
+          .dout (d2_clk_sel[k])
       );
     end
   endgenerate
@@ -111,11 +113,22 @@ module sys_clk_switch #(
   generate
     genvar m;
     for (m = 0; m < CLK_NUM; m = m + 1) begin : clk_pre_out_gen
-      assign clk_pre_out[m] = i_clk[m] && clk_sel_ff[m];
+      assign clk_pre_out[m] = i_clk[m] && d2_clk_sel[m];
     end
   endgenerate
 
-  assign o_clk = |clk_pre_out;
+  //================================================================
+  // o_clk is OR of clk_pre_out
+  //================================================================
+  assign raw_o_clk = |clk_pre_out;
+
+  // o_clk test clock mux
+  test_clk_mux u_o_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_o_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (o_clk)
+  );
 
 endmodule
 // spyglass enable_block Clock_info05b

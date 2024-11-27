@@ -15,6 +15,8 @@ module glitch_free_clk_switch #(
     input  [        CLK_NUM-1:0] clk_fail,
     input  [$clog2(CLK_NUM)-1:0] sel,
     input  [        CLK_NUM-1:0] rst_n,
+    input                        scan_mode,
+    input                        test_clk,
     output                       o_clk
 );
   wire [        CLK_NUM-1:0] onehot_sel;
@@ -83,7 +85,7 @@ module glitch_free_clk_switch #(
       );
     end
   endgenerate
-  
+
   assign clk_sel_ff_n = ~clk_sel_ff;
 
   //================================================================
@@ -100,7 +102,15 @@ module glitch_free_clk_switch #(
   //================================================================
   // o_clk is OR of clk_pre_out
   //================================================================
-  assign o_clk = |clk_pre_out;
+  assign raw_o_clk = |clk_pre_out;
+
+  // o_clk test clock mux
+  test_clk_mux u_o_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_o_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (o_clk)
+  );
 
 endmodule
 // spyglass enable_block Clock_info05b
