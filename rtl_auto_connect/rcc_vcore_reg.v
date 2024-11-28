@@ -3006,14 +3006,19 @@ module rcc_vcore_reg #(
 
 
   //register async set or reset
+  wire          raw_pllxon_clr_n;
   wire          pllxon_clr_n;
+  wire          raw_hseon_clr_n;
   wire          hseon_clr_n;
+  wire          raw_hsi48on_clr_n;
   wire          hsi48on_clr_n;
+
   wire [   1:0] eff_hsidiv;
   wire          rcc_eff_hsidiv_en;
   wire          csion_clr_n;
   wire          csion_set_n;
   wire          hsion_set_n;
+  wire          raw_sw_clr_n;
   wire          sw_clr_n;
   wire          sw_set_n;
   // rcc_csr
@@ -3355,10 +3360,19 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 28:28               pll3on              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign pllxon_clr_n = rst_n & ~(rcc_sys_stop | (sync_hsecss_fail_rst & cur_rcc_pllclkselr_pllsrc == 2'b10));
-  assign rcc_cr_pll3on_en = (|wr_req & rcc_cr_sel);
+  assign raw_pllxon_clr_n = rst_n & ~(rcc_sys_stop | (sync_hsecss_fail_rst & cur_rcc_pllclkselr_pllsrc == 2'b10));
+
+  // pllxon_clr_n test reset mux
+  test_rst_mux u_pllxon_clr_n_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(raw_pllxon_clr_n),
+      .testmode  (testmode),
+      .rst_n     (pllxon_clr_n)
+  );
+
+  assign rcc_cr_pll3on_en  = (|wr_req & rcc_cr_sel);
   assign nxt_rcc_cr_pll3on = wdata[28:28];
-  assign pll3on = cur_rcc_cr_pll3on;
+  assign pll3on            = cur_rcc_cr_pll3on;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -3451,7 +3465,14 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 17:17               hserdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign hseon_clr_n       = rst_n & ~(sync_hsecss_fail_rst | rcc_sys_stop);
+  assign hseon_clr_n = rst_n & ~(sync_hsecss_fail_rst | rcc_sys_stop);
+  // hseon_clr_n test reset mux
+  test_rst_mux u_hseon_clr_n_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(raw_hseon_clr_n),
+      .testmode  (testmode),
+      .rst_n     (hseon_clr_n)
+  );
   assign cur_rcc_cr_hserdy = sync_hse_rdy;
 
   // --------------------------------------------------------------------------------
@@ -3507,9 +3528,16 @@ module rcc_vcore_reg #(
   // 12:12               hsi48on             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign hsi48on_clr_n       = rst_n & ~rcc_sys_stop;
-  assign rcc_cr_hsi48on_en   = (|wr_req & rcc_cr_sel);
-  assign nxt_rcc_cr_hsi48on  = wdata[12:12];
-  assign hsi48on             = cur_rcc_cr_hsi48on;
+  // hsi48on_clr_n test reset mux
+  test_rst_mux u_hsi48on_clr_n_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(raw_hsi48on_clr_n),
+      .testmode  (testmode),
+      .rst_n     (hsi48on_clr_n)
+  );
+  assign rcc_cr_hsi48on_en  = (|wr_req & rcc_cr_sel);
+  assign nxt_rcc_cr_hsi48on = wdata[12:12];
+  assign hsi48on            = cur_rcc_cr_hsi48on;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -3546,10 +3574,10 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 7:7                 csion               RW                  0b0                 
   // --------------------------------------------------------------------------------
-
+  //csi on value doesn't change when system stop
   assign csion_clr_n       = rst_n;
   //when 
-  assign csion_set_n       = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 1 | cur_rcc_cfgr_stopkerwuck == 1); 
+  assign csion_set_n       = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 1 | cur_rcc_cfgr_stopkerwuck == 1);
 
   assign rcc_cr_csion_en   = (~((cur_rcc_cfgr_sws == 3'b001) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_csion  = wdata[7:7];
@@ -3640,6 +3668,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 0:0                 hsion               RW                  0b1                 
   // --------------------------------------------------------------------------------
+  ////hsi on value doesn't change when system stop
   assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | sync_hsecss_fail_rst);
   assign rcc_cr_hsion_en  = (~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hsion = wdata[0:0];
@@ -3930,12 +3959,20 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   //RCC switch logic, sys_clk is set to hsi_clk while sys_rst / hsefail / exit form stop mode and stopwuck is 0  
   assign sw_clr_n         = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;
-  //sys_clk is set to csi_clk while exit form stop mode and stopwuck is 1
-  assign sw_set_n         = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 1);
 
-  assign rcc_cfgr_sw_en   = (|wr_req & rcc_cfgr_sel);
-  assign nxt_rcc_cfgr_sw  = wdata[2:0];
-  assign sw               = cur_rcc_cfgr_sw[1:0];  //the MSB is not used
+  // sw_clr_n test reset mux
+  test_rst_mux u_sw_clr_n_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(raw_sw_clr_n),
+      .testmode  (testmode),
+      .rst_n     (sw_clr_n)
+  );
+  //sys_clk is set to csi_clk while exit form stop mode and stopwuck is 1
+  assign sw_set_n        = ~(rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 1);
+
+  assign rcc_cfgr_sw_en  = (|wr_req & rcc_cfgr_sel);
+  assign nxt_rcc_cfgr_sw = wdata[2:0];
+  assign sw              = cur_rcc_cfgr_sw[1:0];  //the MSB is not used
 
   BB_dfflrs #(
       .DW     (3),

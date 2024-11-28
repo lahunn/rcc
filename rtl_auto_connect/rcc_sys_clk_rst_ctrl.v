@@ -59,11 +59,6 @@ module rcc_sys_clk_rst_ctrl #(
     input        pll1_p_clk,
     input        pll1_q_clk,
     input        pll2_p_clk,
-    input        pll2_q_clk,
-    input        pll2_r_clk,
-    input        pll3_p_clk,
-    input        pll3_q_clk,
-    input        pll3_r_clk,
     // indicate busy state 
     input        axibridge_d1_busy,
     input        ahb3bridge_d1_busy,
@@ -266,6 +261,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               sys_clk_en;
   wire                               hsi_clk;
   wire                               csi_clk;
+  wire                               hsi48_clk;
   wire                               rcc_d1_bus_clk;
   wire                               rcc_d2_bus_clk;
   wire                               rcc_d3_bus_clk;
@@ -539,6 +535,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_stby_rst_n_assert_n_sync (
       .src_rst_n(stby_rst_n_assert_n),
       .clk      (pre_sys_clk),
+      .testmode (testmode),
       .gen_rst_n(raw_sync_stby_rst_n_assert_n)
   );
 
@@ -570,7 +567,7 @@ module rcc_sys_clk_rst_ctrl #(
       .func_rst_n(raw_stby_rst_n),
       .testmode  (testmode),
       .rst_n     (stby_rst_n)
-  );   
+  );
 
   BB_dfflr #(
       .DW     (1),
@@ -607,6 +604,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_sys_rst_n_assert_n_sync (
       .src_rst_n(sys_rst_n_assert_n),
       .clk      (pre_sys_clk),
+      .testmode (testmode),
       .gen_rst_n(raw_sync_sys_rst_n_assert_n)
   );
 
@@ -679,6 +677,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_pwr_d1_ok_sync (
       .src_rst_n(gen_pwr_d1_ok),
       .clk      (sys_d1cpre_clk),
+      .testmode (testmode),
       .gen_rst_n(raw_sync_pwr_d1_ok)
   );
 
@@ -749,6 +748,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_pwr_d2_ok_sync (
       .src_rst_n(gen_pwr_d2_ok),
       .clk      (sys_hpre_clk),
+      .testmode (testmode),
       .gen_rst_n(raw_sync_pwr_d2_ok)
   );
 
@@ -825,6 +825,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_c1_rst_n_delay (
       .src_rst_n(c1_rst_n),
       .clk      (rcc_c1_clk),
+      .testmode (testmode),
       .gen_rst_n(raw_rcc_c1_rst_n)
   );
 
@@ -833,6 +834,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_c2_rst_n_delay (
       .src_rst_n(c2_rst_n),
       .clk      (rcc_c2_clk),
+      .testmode (testmode),
       .gen_rst_n(raw_rcc_c2_rst_n)
   );
 
@@ -902,6 +904,7 @@ module rcc_sys_clk_rst_ctrl #(
   ) u_vsw_pwr_vsw_rst_sync (
       .src_rst_n(gen_pwr_vsw_rst),
       .clk      (pre_sys_clk),
+      .testmode (testmode),
       .gen_rst_n(sync_pwr_vsw_rst)
   );
 
@@ -987,10 +990,11 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
 
   rcc_hsi_div hsi_clk_div (
-      .i_clk  (hsi_origin_clk),
-      .rst_n  (hsi_ker_sync_sys_rst_n),
-      .div_sel(hsidiv),
-      .o_clk  (raw_hsi_pre_clk)
+      .i_clk   (hsi_origin_clk),
+      .rst_n   (hsi_ker_sync_sys_rst_n),
+      .testmode(testmode),
+      .div_sel (hsidiv),
+      .o_clk   (raw_hsi_pre_clk)
   );
 
   test_clk_mux u_hsi_pre_clk_tmux (
@@ -1132,11 +1136,12 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco1_clk_divider (
-      .rst_n (sys_rst_n),
-      .i_clk (mco1_pre_clk),
-      .ratio (mco1pre),
-      .o_clk (mco1),
-      .div_en()
+      .rst_n   (sys_rst_n),
+      .i_clk   (mco1_pre_clk),
+      .ratio   (mco1pre),
+      .testmode(testmode),
+      .o_clk   (mco1),
+      .div_en  ()
   );
 
   assign mco2_clk_src = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
@@ -1159,11 +1164,12 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_clk_div_d #(
       .RATIO_WID(4)
   ) mco2_clk_divider (
-      .rst_n (sys_rst_n),
-      .i_clk (mco2_pre_clk),
-      .ratio (mco2pre),
-      .o_clk (mco2),
-      .div_en()
+      .rst_n   (sys_rst_n),
+      .i_clk   (mco2_pre_clk),
+      .ratio   (mco2pre),
+      .testmode(testmode),
+      .o_clk   (mco2),
+      .div_en  ()
   );
 
 
@@ -1174,11 +1180,12 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_rtc_clk_div_d #(
       .RATIO_WID(6)
   ) u_hse_rtc_clk_div (
-      .rst_n (stby_rst_n),
-      .i_clk (hse_clk),
-      .ratio (rtcpre),
-      .o_clk (hse_rtc_clk),
-      .div_en()
+      .rst_n   (stby_rst_n),
+      .i_clk   (hse_clk),
+      .ratio   (rtcpre),
+      .testmode(testmode),
+      .o_clk   (hse_rtc_clk),
+      .div_en  ()
   );
 
 
@@ -1227,31 +1234,34 @@ module rcc_sys_clk_rst_ctrl #(
   rcc_clk_div_d #(
       .RATIO_WID(6)
   ) pll1_src_clk_div (
-      .i_clk (pll_src_clk),
-      .rst_n (sys_rst_n),
-      .ratio (divm1),
-      .o_clk (pll1_src_clk),
-      .div_en()
+      .i_clk   (pll_src_clk),
+      .rst_n   (sys_rst_n),
+      .ratio   (divm1),
+      .testmode(testmode),
+      .o_clk   (pll1_src_clk),
+      .div_en  ()
   );
 
   rcc_clk_div_d #(
       .RATIO_WID(6)
   ) pll2_src_clk_div (
-      .i_clk (pll_src_clk),
-      .rst_n (sys_rst_n),
-      .ratio (divm2),
-      .o_clk (pll2_src_clk),
-      .div_en()
+      .i_clk   (pll_src_clk),
+      .rst_n   (sys_rst_n),
+      .ratio   (divm2),
+      .testmode(testmode),
+      .o_clk   (pll2_src_clk),
+      .div_en  ()
   );
 
   rcc_clk_div_d #(
       .RATIO_WID(6)
   ) pll3_src_clk_div (
-      .i_clk (pll_src_clk),
-      .rst_n (sys_rst_n),
-      .ratio (divm3),
-      .o_clk (pll3_src_clk),
-      .div_en()
+      .i_clk   (pll_src_clk),
+      .rst_n   (sys_rst_n),
+      .ratio   (divm3),
+      .testmode(testmode),
+      .o_clk   (pll3_src_clk),
+      .div_en  ()
   );
 
 

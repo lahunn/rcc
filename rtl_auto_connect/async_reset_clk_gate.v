@@ -11,6 +11,7 @@ module async_reset_clk_gate #(
     input  src_rst_n,
     input  i_clk,
     input  arcg_on,
+    input  testmode,
     output clk_en,
     output sync_rst_n
 );
@@ -30,9 +31,10 @@ module async_reset_clk_gate #(
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_BB_reset_sync (
-      .src_rst_n(src_rst_n),
-      .clk      (i_clk),
-      .gen_rst_n(sync_rst_n)
+      .src_rst_n (src_rst_n),
+      .clk       (i_clk),
+      .testmode  (testmode),
+      .gen_rst_n (sync_rst_n)
   );
 
   assign counter_wren = (cur_counter < DELAY);

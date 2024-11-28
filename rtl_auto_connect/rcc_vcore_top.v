@@ -81,14 +81,6 @@ module rcc_vcore_top #(
   wire [   2:0] raw_d3ppre;
   wire          raw_timpre;
 
-  wire          gen_pll1_q_clk;
-  wire          gen_pll2_p_clk;
-  wire          gen_pll2_q_clk;
-  wire          gen_pll2_r_clk;
-  wire          gen_pll3_p_clk;
-  wire          gen_pll3_q_clk;
-  wire          gen_pll3_r_clk;
-
   wire          gen_eth_rcc_fes;
   wire          gen_eth_rcc_epis_2;
   /*AUTOWIRE*/
@@ -112,9 +104,12 @@ module rcc_vcore_top #(
       /*AUTOINST*/
   );
   //================================================================
-  // rcc PAD clock mux 
+  // rcc port clock mux 
   //================================================================
 
+  rcc_port_clock_rst_mux u_rcc_port_clock_rst_mux (
+    /*AUTOINST*/
+  );
   //==============================================================================
   //signal synchronize 
   //==============================================================================
@@ -133,14 +128,7 @@ module rcc_vcore_top #(
   //==============================================================================
   rcc_sys_clk_rst_ctrl #(  /*AUTOINSTPARAM*/
   ) u_rcc_sys_clk_rst_ctrl (
-      .bdrst         (cur_rcc_bdcr_bdrst),
-      .gen_pll1_q_clk(gen_pll1_q_clk),
-      .gen_pll2_p_clk(gen_pll2_p_clk),
-      .gen_pll2_q_clk(gen_pll2_q_clk),
-      .gen_pll2_r_clk(gen_pll2_r_clk),
-      .gen_pll3_p_clk(gen_pll3_p_clk),
-      .gen_pll3_q_clk(gen_pll3_q_clk),
-      .gen_pll3_r_clk(gen_pll3_r_clk)
+      .bdrst         (cur_rcc_bdcr_bdrst)
       /*AUTOINST*/
   );
 
@@ -148,13 +136,6 @@ module rcc_vcore_top #(
 
   rcc_per_clk_rst_control #(  /*AUTOINSTPARAM*/
   ) u_rcc_per_clk_rst_control (
-      .pll1_q_clk(gen_pll1_q_clk),
-      .pll2_p_clk(gen_pll2_p_clk),
-      .pll2_q_clk(gen_pll2_q_clk),
-      .pll2_r_clk(gen_pll2_r_clk),
-      .pll3_p_clk(gen_pll3_p_clk),
-      .pll3_q_clk(gen_pll3_q_clk),
-      .pll3_r_clk(gen_pll3_r_clk)
       /*AUTOINST*/
   );
 
@@ -174,6 +155,8 @@ module rcc_vcore_top #(
       .gen_eth_rcc_epis_2(gen_eth_rcc_epis_2)
       /*AUTOINST*/
   );
+
+
 
   //==============================================================================
   //rcc_vcore_reg

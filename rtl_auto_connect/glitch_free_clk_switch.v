@@ -25,11 +25,25 @@ module glitch_free_clk_switch #(
   wire [        CLK_NUM-1:0] clk_sel_ff;
   wire [        CLK_NUM-1:0] clk_sel_ff_n;
   wire [        CLK_NUM-1:0] clk_pre_out;
+  wire [        CLK_NUM-1:0] raw_clk_rst_n;
   wire [        CLK_NUM-1:0] clk_rst_n;
-  wire [$clog2(CLK_NUM)-1:0] sel_temp     [CLK_NUM-1:0];
+  wire [$clog2(CLK_NUM)-1:0] sel_temp      [CLK_NUM-1:0];
+  wire                       raw_o_clk;
 
+  assign raw_clk_rst_n = (~clk_fail) & rst_n;  // Bitwise operation 
+  generate
+    genvar n;
+    for (n = 0; n < CLK_NUM; n = n + 1) begin : test_rst_mux
+      // clk_rst_n test reset mux
+      test_rst_mux u_clk_rst_n_mux (
+          .test_rst_n(rst_n[n]),
+          .func_rst_n(raw_clk_rst_n[n]),
+          .testmode  (testmode),
+          .rst_n     (clk_rst_n[n])
+      );
+    end
+  endgenerate
 
-  assign clk_rst_n = (~clk_fail) & rst_n;  // Bitwise operation 
   //================================================================
   // generate onehot_sel 
   //================================================================

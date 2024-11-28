@@ -70,10 +70,10 @@ module rcc_per_clk_rst_control #(
     input        pll3_q_clk,
     input        pll3_r_clk,
     input        sys_clk,
-    input        hse_clk,
+    input        hse_origin_clk,
     input        hsi_ker_clk,
     input        csi_ker_clk,
-    input        hsi48_clk,
+    input        hsi48_origin_clk,
     input        lse_clk,
     input        lsi_clk,
     input        per_clk,
@@ -1100,6 +1100,7 @@ module rcc_per_clk_rst_control #(
   wire       rcc_spi6sel_clk;
   // lpuart1sel ker clock source select
   wire       rcc_lpuart1sel_clk;
+  wire       raw_csi_ker_clk_122_div;
   wire       csi_ker_clk_122_div;
   wire [1:0] flash_src_bus_clks;
   wire [1:0] flash_bus_clks;
@@ -1414,6 +1415,30 @@ module rcc_per_clk_rst_control #(
   wire [0:0] iwdg1_bus_clks;
   wire [0:0] exti_src_bus_clks;
   wire [0:0] exti_bus_clks;
+
+  wire       usbsel_clk_0;
+  wire       usbsel_clk_rst_0;
+
+  //================================================================
+  // clock mux and rst mux for test mode
+  //================================================================
+
+  // usbsel_clk_0 test clock mux
+  test_clk_mux u_usbsel_clk_0_tmux (
+      .test_clk (test_clk),
+      .func_clk (1'b0),
+      .scan_mode(scan_mode),
+      .gen_clk  (usbsel_clk_0)
+  );
+
+  // usbsel_clk_rst_0 test reset mux
+  test_rst_mux u_usbsel_clk_rst_0_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(1'b0),
+      .testmode  (testmode),
+      .rst_n     (usbsel_clk_rst_0)
+  );
+
   // qspisel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
@@ -1454,7 +1479,7 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_usbsel_clk_switch (
-      .i_clk    ({hsi48_clk, pll3_q_clk, pll1_q_clk, 1'b0}),
+      .i_clk    ({hsi48_origin_clk, pll3_q_clk, pll1_q_clk, 1'b0}),
       .clk_fail (4'b0),
       .rst_n    ({hsi48_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, 1'b0}),
       .sel      (usbsel),
@@ -1478,7 +1503,7 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_rngsel_clk_switch (
-      .i_clk    ({lsi_clk, lse_clk, pll1_q_clk, hsi48_clk}),
+      .i_clk    ({lsi_clk, lse_clk, pll1_q_clk, hsi48_origin_clk}),
       .clk_fail (4'b0),
       .rst_n    ({lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hsi48_sync_sys_rst_n}),
       .sel      (rngsel),
@@ -1562,7 +1587,7 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(3)
   ) rcc_fdcansel_clk_switch (
-      .i_clk    ({pll2_q_clk, pll1_q_clk, hse_clk}),
+      .i_clk    ({pll2_q_clk, pll1_q_clk, hse_origin_clk}),
       .clk_fail (3'b0),
       .rst_n    ({pll2_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hse_sync_sys_rst_n}),
       .sel      (fdcansel),
@@ -1622,7 +1647,7 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_spi45sel_clk_switch (
-      .i_clk    ({hse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
+      .i_clk    ({hse_origin_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
       .clk_fail (6'b0),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (spi45sel),
@@ -1706,7 +1731,7 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(6)
   ) rcc_spi6sel_clk_switch (
-      .i_clk    ({hse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
+      .i_clk    ({hse_origin_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
       .clk_fail (6'b0),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (spi6sel),
@@ -1809,7 +1834,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_qspi_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (qspirst),
+      .sft_rst_n      (!qspirst),
       .per_bus_clks   (qspi_bus_clks),
       .per_rst_n      (rcc_qspi_sync_rst_n)
   );
@@ -1895,7 +1920,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_fmc_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (fmcrst),
+      .sft_rst_n      (!fmcrst),
       .per_bus_clks   (fmc_bus_clks),
       .per_rst_n      (rcc_fmc_sync_rst_n)
   );
@@ -1930,7 +1955,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (dma2drst),
+      .sft_rst_n      (!dma2drst),
       .per_bus_clks   (dma2d_bus_clks),
       .per_rst_n      (rcc_dma2d_sync_rst_n)
   );
@@ -1965,7 +1990,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (mdmarst),
+      .sft_rst_n      (!mdmarst),
       .per_bus_clks   (mdma_bus_clks),
       .per_rst_n      (rcc_mdma_sync_rst_n)
   );
@@ -2017,7 +2042,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_ltdc_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (ltdcrst),
+      .sft_rst_n      (!ltdcrst),
       .per_bus_clks   (ltdc_bus_clks),
       .per_rst_n      (rcc_ltdc_sync_rst_n)
   );
@@ -2221,7 +2246,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (jpgdecrst),
+      .sft_rst_n      (!jpgdecrst),
       .per_bus_clks   (jpgdec_bus_clks),
       .per_rst_n      (rcc_jpgdec_sync_rst_n)
   );
@@ -2272,7 +2297,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_sdmmc1_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (sdmmc1rst),
+      .sft_rst_n      (!sdmmc1rst),
       .per_bus_clks   (sdmmc1_bus_clks),
       .per_rst_n      (rcc_sdmmc1_sync_rst_n)
   );
@@ -2391,7 +2416,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_usb2otg_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (usb2otgrst),
+      .sft_rst_n      (!usb2otgrst),
       .per_bus_clks   (usb2otg_bus_clks),
       .per_rst_n      (rcc_usb2otg_sync_rst_n)
   );
@@ -2493,7 +2518,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_usb1otg_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (usb1otgrst),
+      .sft_rst_n      (!usb1otgrst),
       .per_bus_clks   (usb1otg_bus_clks),
       .per_rst_n      (rcc_usb1otg_sync_rst_n)
   );
@@ -2595,7 +2620,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (eth1macrst),
+      .sft_rst_n      (!eth1macrst),
       .per_bus_clks   (eth1mac_bus_clks),
       .per_rst_n      (rcc_eth1mac_sync_rst_n)
   );
@@ -2646,7 +2671,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_adc12_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (adc12rst),
+      .sft_rst_n      (!adc12rst),
       .per_bus_clks   (adc12_bus_clks),
       .per_rst_n      (rcc_adc12_sync_rst_n)
   );
@@ -2680,7 +2705,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (dma2rst),
+      .sft_rst_n      (!dma2rst),
       .per_bus_clks   (dma2_bus_clks),
       .per_rst_n      (rcc_dma2_sync_rst_n)
   );
@@ -2714,7 +2739,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (dma1rst),
+      .sft_rst_n      (!dma1rst),
       .per_bus_clks   (dma1_bus_clks),
       .per_rst_n      (rcc_dma1_sync_rst_n)
   );
@@ -2867,7 +2892,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_sdmmc2_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (sdmmc2rst),
+      .sft_rst_n      (!sdmmc2rst),
       .per_bus_clks   (sdmmc2_bus_clks),
       .per_rst_n      (rcc_sdmmc2_sync_rst_n)
   );
@@ -2918,7 +2943,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_rng_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (rngrst),
+      .sft_rst_n      (!rngrst),
       .per_bus_clks   (rng_bus_clks),
       .per_rst_n      (rcc_rng_sync_rst_n)
   );
@@ -2952,7 +2977,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (hashrst),
+      .sft_rst_n      (!hashrst),
       .per_bus_clks   (hash_bus_clks),
       .per_rst_n      (rcc_hash_sync_rst_n)
   );
@@ -2986,7 +3011,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (cryptrst),
+      .sft_rst_n      (!cryptrst),
       .per_bus_clks   (crypt_bus_clks),
       .per_rst_n      (rcc_crypt_sync_rst_n)
   );
@@ -3020,7 +3045,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (dcmirst),
+      .sft_rst_n      (!dcmirst),
       .per_bus_clks   (dcmi_bus_clks),
       .per_rst_n      (rcc_dcmi_sync_rst_n)
   );
@@ -3105,7 +3130,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_uart8_ker_clk),
       .csi_ker_clk_req(uart8_csi_ker_clk_req),
       .hsi_ker_clk_req(uart8_hsi_ker_clk_req),
-      .sft_rst_n      (uart8rst),
+      .sft_rst_n      (!uart8rst),
       .per_bus_clks   (uart8_bus_clks),
       .per_rst_n      (rcc_uart8_sync_rst_n)
   );
@@ -3156,7 +3181,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_uart7_ker_clk),
       .csi_ker_clk_req(uart7_csi_ker_clk_req),
       .hsi_ker_clk_req(uart7_hsi_ker_clk_req),
-      .sft_rst_n      (uart7rst),
+      .sft_rst_n      (!uart7rst),
       .per_bus_clks   (uart7_bus_clks),
       .per_rst_n      (rcc_uart7_sync_rst_n)
   );
@@ -3190,7 +3215,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (dac12rst),
+      .sft_rst_n      (!dac12rst),
       .per_bus_clks   (dac12_bus_clks),
       .per_rst_n      (rcc_dac12_sync_rst_n)
   );
@@ -3241,7 +3266,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_hdmicec_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (hdmicecrst),
+      .sft_rst_n      (!hdmicecrst),
       .per_bus_clks   (hdmicec_bus_clks),
       .per_rst_n      (rcc_hdmicec_sync_rst_n)
   );
@@ -3292,7 +3317,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_i2c3_ker_clk),
       .csi_ker_clk_req(i2c3_csi_ker_clk_req),
       .hsi_ker_clk_req(i2c3_hsi_ker_clk_req),
-      .sft_rst_n      (i2c3rst),
+      .sft_rst_n      (!i2c3rst),
       .per_bus_clks   (i2c3_bus_clks),
       .per_rst_n      (rcc_i2c3_sync_rst_n)
   );
@@ -3343,7 +3368,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_i2c2_ker_clk),
       .csi_ker_clk_req(i2c2_csi_ker_clk_req),
       .hsi_ker_clk_req(i2c2_hsi_ker_clk_req),
-      .sft_rst_n      (i2c2rst),
+      .sft_rst_n      (!i2c2rst),
       .per_bus_clks   (i2c2_bus_clks),
       .per_rst_n      (rcc_i2c2_sync_rst_n)
   );
@@ -3394,7 +3419,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_i2c1_ker_clk),
       .csi_ker_clk_req(i2c1_csi_ker_clk_req),
       .hsi_ker_clk_req(i2c1_hsi_ker_clk_req),
-      .sft_rst_n      (i2c1rst),
+      .sft_rst_n      (!i2c1rst),
       .per_bus_clks   (i2c1_bus_clks),
       .per_rst_n      (rcc_i2c1_sync_rst_n)
   );
@@ -3445,7 +3470,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_uart5_ker_clk),
       .csi_ker_clk_req(uart5_csi_ker_clk_req),
       .hsi_ker_clk_req(uart5_hsi_ker_clk_req),
-      .sft_rst_n      (uart5rst),
+      .sft_rst_n      (!uart5rst),
       .per_bus_clks   (uart5_bus_clks),
       .per_rst_n      (rcc_uart5_sync_rst_n)
   );
@@ -3496,7 +3521,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_uart4_ker_clk),
       .csi_ker_clk_req(uart4_csi_ker_clk_req),
       .hsi_ker_clk_req(uart4_hsi_ker_clk_req),
-      .sft_rst_n      (uart4rst),
+      .sft_rst_n      (!uart4rst),
       .per_bus_clks   (uart4_bus_clks),
       .per_rst_n      (rcc_uart4_sync_rst_n)
   );
@@ -3547,7 +3572,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_usart3_ker_clk),
       .csi_ker_clk_req(usart3_csi_ker_clk_req),
       .hsi_ker_clk_req(usart3_hsi_ker_clk_req),
-      .sft_rst_n      (usart3rst),
+      .sft_rst_n      (!usart3rst),
       .per_bus_clks   (usart3_bus_clks),
       .per_rst_n      (rcc_usart3_sync_rst_n)
   );
@@ -3598,7 +3623,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_usart2_ker_clk),
       .csi_ker_clk_req(usart2_csi_ker_clk_req),
       .hsi_ker_clk_req(usart2_hsi_ker_clk_req),
-      .sft_rst_n      (usart2rst),
+      .sft_rst_n      (!usart2rst),
       .per_bus_clks   (usart2_bus_clks),
       .per_rst_n      (rcc_usart2_sync_rst_n)
   );
@@ -3649,7 +3674,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spdifrx_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spdifrxrst),
+      .sft_rst_n      (!spdifrxrst),
       .per_bus_clks   (spdifrx_bus_clks),
       .per_rst_n      (rcc_spdifrx_sync_rst_n)
   );
@@ -3700,7 +3725,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spi3_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spi3rst),
+      .sft_rst_n      (!spi3rst),
       .per_bus_clks   (spi3_bus_clks),
       .per_rst_n      (rcc_spi3_sync_rst_n)
   );
@@ -3751,7 +3776,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spi2_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spi2rst),
+      .sft_rst_n      (!spi2rst),
       .per_bus_clks   (spi2_bus_clks),
       .per_rst_n      (rcc_spi2_sync_rst_n)
   );
@@ -3836,7 +3861,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_lptim1_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (lptim1rst),
+      .sft_rst_n      (!lptim1rst),
       .per_bus_clks   (lptim1_bus_clks),
       .per_rst_n      (rcc_lptim1_sync_rst_n)
   );
@@ -3887,7 +3912,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim14_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim14rst),
+      .sft_rst_n      (!tim14rst),
       .per_bus_clks   (tim14_bus_clks),
       .per_rst_n      (rcc_tim14_sync_rst_n)
   );
@@ -3938,7 +3963,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim13_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim13rst),
+      .sft_rst_n      (!tim13rst),
       .per_bus_clks   (tim13_bus_clks),
       .per_rst_n      (rcc_tim13_sync_rst_n)
   );
@@ -3989,7 +4014,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim12_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim12rst),
+      .sft_rst_n      (!tim12rst),
       .per_bus_clks   (tim12_bus_clks),
       .per_rst_n      (rcc_tim12_sync_rst_n)
   );
@@ -4040,7 +4065,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim7_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim7rst),
+      .sft_rst_n      (!tim7rst),
       .per_bus_clks   (tim7_bus_clks),
       .per_rst_n      (rcc_tim7_sync_rst_n)
   );
@@ -4091,7 +4116,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim6_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim6rst),
+      .sft_rst_n      (!tim6rst),
       .per_bus_clks   (tim6_bus_clks),
       .per_rst_n      (rcc_tim6_sync_rst_n)
   );
@@ -4142,7 +4167,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim5_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim5rst),
+      .sft_rst_n      (!tim5rst),
       .per_bus_clks   (tim5_bus_clks),
       .per_rst_n      (rcc_tim5_sync_rst_n)
   );
@@ -4193,7 +4218,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim4_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim4rst),
+      .sft_rst_n      (!tim4rst),
       .per_bus_clks   (tim4_bus_clks),
       .per_rst_n      (rcc_tim4_sync_rst_n)
   );
@@ -4244,7 +4269,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim3_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim3rst),
+      .sft_rst_n      (!tim3rst),
       .per_bus_clks   (tim3_bus_clks),
       .per_rst_n      (rcc_tim3_sync_rst_n)
   );
@@ -4295,7 +4320,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim2_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim2rst),
+      .sft_rst_n      (!tim2rst),
       .per_bus_clks   (tim2_bus_clks),
       .per_rst_n      (rcc_tim2_sync_rst_n)
   );
@@ -4346,7 +4371,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_fdcan_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (fdcanrst),
+      .sft_rst_n      (!fdcanrst),
       .per_bus_clks   (fdcan_bus_clks),
       .per_rst_n      (rcc_fdcan_sync_rst_n)
   );
@@ -4380,7 +4405,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (mdiosrst),
+      .sft_rst_n      (!mdiosrst),
       .per_bus_clks   (mdios_bus_clks),
       .per_rst_n      (rcc_mdios_sync_rst_n)
   );
@@ -4414,7 +4439,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (opamprst),
+      .sft_rst_n      (!opamprst),
       .per_bus_clks   (opamp_bus_clks),
       .per_rst_n      (rcc_opamp_sync_rst_n)
   );
@@ -4465,7 +4490,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_swpmi_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (swpmirst),
+      .sft_rst_n      (!swpmirst),
       .per_bus_clks   (swpmi_bus_clks),
       .per_rst_n      (rcc_swpmi_sync_rst_n)
   );
@@ -4499,7 +4524,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (crsrst),
+      .sft_rst_n      (!crsrst),
       .per_bus_clks   (crs_bus_clks),
       .per_rst_n      (rcc_crs_sync_rst_n)
   );
@@ -4550,7 +4575,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_hrtim_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (hrtimrst),
+      .sft_rst_n      (!hrtimrst),
       .per_bus_clks   (hrtim_bus_clks),
       .per_rst_n      (rcc_hrtim_sync_rst_n)
   );
@@ -4601,7 +4626,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_dfsdm1_ker_clks),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (dfsdm1rst),
+      .sft_rst_n      (!dfsdm1rst),
       .per_bus_clks   (dfsdm1_bus_clks),
       .per_rst_n      (rcc_dfsdm1_sync_rst_n)
   );
@@ -4652,7 +4677,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_sai3_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (sai3rst),
+      .sft_rst_n      (!sai3rst),
       .per_bus_clks   (sai3_bus_clks),
       .per_rst_n      (rcc_sai3_sync_rst_n)
   );
@@ -4703,7 +4728,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_sai2_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (sai2rst),
+      .sft_rst_n      (!sai2rst),
       .per_bus_clks   (sai2_bus_clks),
       .per_rst_n      (rcc_sai2_sync_rst_n)
   );
@@ -4754,7 +4779,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_sai1_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (sai1rst),
+      .sft_rst_n      (!sai1rst),
       .per_bus_clks   (sai1_bus_clks),
       .per_rst_n      (rcc_sai1_sync_rst_n)
   );
@@ -4805,7 +4830,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spi5_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spi5rst),
+      .sft_rst_n      (!spi5rst),
       .per_bus_clks   (spi5_bus_clks),
       .per_rst_n      (rcc_spi5_sync_rst_n)
   );
@@ -4856,7 +4881,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim17_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim17rst),
+      .sft_rst_n      (!tim17rst),
       .per_bus_clks   (tim17_bus_clks),
       .per_rst_n      (rcc_tim17_sync_rst_n)
   );
@@ -4907,7 +4932,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim16_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim16rst),
+      .sft_rst_n      (!tim16rst),
       .per_bus_clks   (tim16_bus_clks),
       .per_rst_n      (rcc_tim16_sync_rst_n)
   );
@@ -4958,7 +4983,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim15_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim15rst),
+      .sft_rst_n      (!tim15rst),
       .per_bus_clks   (tim15_bus_clks),
       .per_rst_n      (rcc_tim15_sync_rst_n)
   );
@@ -5009,7 +5034,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spi4_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spi4rst),
+      .sft_rst_n      (!spi4rst),
       .per_bus_clks   (spi4_bus_clks),
       .per_rst_n      (rcc_spi4_sync_rst_n)
   );
@@ -5060,7 +5085,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spi1_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spi1rst),
+      .sft_rst_n      (!spi1rst),
       .per_bus_clks   (spi1_bus_clks),
       .per_rst_n      (rcc_spi1_sync_rst_n)
   );
@@ -5111,7 +5136,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_usart6_ker_clk),
       .csi_ker_clk_req(usart6_csi_ker_clk_req),
       .hsi_ker_clk_req(usart6_hsi_ker_clk_req),
-      .sft_rst_n      (usart6rst),
+      .sft_rst_n      (!usart6rst),
       .per_bus_clks   (usart6_bus_clks),
       .per_rst_n      (rcc_usart6_sync_rst_n)
   );
@@ -5162,7 +5187,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_usart1_ker_clk),
       .csi_ker_clk_req(usart1_csi_ker_clk_req),
       .hsi_ker_clk_req(usart1_hsi_ker_clk_req),
-      .sft_rst_n      (usart1rst),
+      .sft_rst_n      (!usart1rst),
       .per_bus_clks   (usart1_bus_clks),
       .per_rst_n      (rcc_usart1_sync_rst_n)
   );
@@ -5213,7 +5238,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim8_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim8rst),
+      .sft_rst_n      (!tim8rst),
       .per_bus_clks   (tim8_bus_clks),
       .per_rst_n      (rcc_tim8_sync_rst_n)
   );
@@ -5264,7 +5289,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_tim1_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (tim1rst),
+      .sft_rst_n      (!tim1rst),
       .per_bus_clks   (tim1_bus_clks),
       .per_rst_n      (rcc_tim1_sync_rst_n)
   );
@@ -5400,7 +5425,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (hsemrst),
+      .sft_rst_n      (!hsemrst),
       .per_bus_clks   (hsem_bus_clks),
       .per_rst_n      (rcc_hsem_sync_rst_n)
   );
@@ -5451,7 +5476,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_adc3_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (adc3rst),
+      .sft_rst_n      (!adc3rst),
       .per_bus_clks   (adc3_bus_clks),
       .per_rst_n      (rcc_adc3_sync_rst_n)
   );
@@ -5485,7 +5510,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (bdmarst),
+      .sft_rst_n      (!bdmarst),
       .per_bus_clks   (bdma_bus_clks),
       .per_rst_n      (rcc_bdma_sync_rst_n)
   );
@@ -5519,7 +5544,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (crcrst),
+      .sft_rst_n      (!crcrst),
       .per_bus_clks   (crc_bus_clks),
       .per_rst_n      (rcc_crc_sync_rst_n)
   );
@@ -5553,7 +5578,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiokrst),
+      .sft_rst_n      (!gpiokrst),
       .per_bus_clks   (gpiok_bus_clks),
       .per_rst_n      (rcc_gpiok_sync_rst_n)
   );
@@ -5587,7 +5612,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiojrst),
+      .sft_rst_n      (!gpiojrst),
       .per_bus_clks   (gpioj_bus_clks),
       .per_rst_n      (rcc_gpioj_sync_rst_n)
   );
@@ -5621,7 +5646,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpioirst),
+      .sft_rst_n      (!gpioirst),
       .per_bus_clks   (gpioi_bus_clks),
       .per_rst_n      (rcc_gpioi_sync_rst_n)
   );
@@ -5655,7 +5680,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiohrst),
+      .sft_rst_n      (!gpiohrst),
       .per_bus_clks   (gpioh_bus_clks),
       .per_rst_n      (rcc_gpioh_sync_rst_n)
   );
@@ -5689,7 +5714,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiogrst),
+      .sft_rst_n      (!gpiogrst),
       .per_bus_clks   (gpiog_bus_clks),
       .per_rst_n      (rcc_gpiog_sync_rst_n)
   );
@@ -5723,7 +5748,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiofrst),
+      .sft_rst_n      (!gpiofrst),
       .per_bus_clks   (gpiof_bus_clks),
       .per_rst_n      (rcc_gpiof_sync_rst_n)
   );
@@ -5757,7 +5782,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpioerst),
+      .sft_rst_n      (!gpioerst),
       .per_bus_clks   (gpioe_bus_clks),
       .per_rst_n      (rcc_gpioe_sync_rst_n)
   );
@@ -5791,7 +5816,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiodrst),
+      .sft_rst_n      (!gpiodrst),
       .per_bus_clks   (gpiod_bus_clks),
       .per_rst_n      (rcc_gpiod_sync_rst_n)
   );
@@ -5825,7 +5850,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiocrst),
+      .sft_rst_n      (!gpiocrst),
       .per_bus_clks   (gpioc_bus_clks),
       .per_rst_n      (rcc_gpioc_sync_rst_n)
   );
@@ -5859,7 +5884,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpiobrst),
+      .sft_rst_n      (!gpiobrst),
       .per_bus_clks   (gpiob_bus_clks),
       .per_rst_n      (rcc_gpiob_sync_rst_n)
   );
@@ -5893,7 +5918,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (gpioarst),
+      .sft_rst_n      (!gpioarst),
       .per_bus_clks   (gpioa_bus_clks),
       .per_rst_n      (rcc_gpioa_sync_rst_n)
   );
@@ -6012,7 +6037,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_sai4_ker_clks),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (sai4rst),
+      .sft_rst_n      (!sai4rst),
       .per_bus_clks   (sai4_bus_clks),
       .per_rst_n      (rcc_sai4_sync_rst_n)
   );
@@ -6080,7 +6105,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (vrefrst),
+      .sft_rst_n      (!vrefrst),
       .per_bus_clks   (vref_bus_clks),
       .per_rst_n      (rcc_vref_sync_rst_n)
   );
@@ -6114,7 +6139,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (comp12rst),
+      .sft_rst_n      (!comp12rst),
       .per_bus_clks   (comp12_bus_clks),
       .per_rst_n      (rcc_comp12_sync_rst_n)
   );
@@ -6165,7 +6190,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_lptim5_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (lptim5rst),
+      .sft_rst_n      (!lptim5rst),
       .per_bus_clks   (lptim5_bus_clks),
       .per_rst_n      (rcc_lptim5_sync_rst_n)
   );
@@ -6216,7 +6241,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_lptim4_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (lptim4rst),
+      .sft_rst_n      (!lptim4rst),
       .per_bus_clks   (lptim4_bus_clks),
       .per_rst_n      (rcc_lptim4_sync_rst_n)
   );
@@ -6267,7 +6292,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_lptim3_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (lptim3rst),
+      .sft_rst_n      (!lptim3rst),
       .per_bus_clks   (lptim3_bus_clks),
       .per_rst_n      (rcc_lptim3_sync_rst_n)
   );
@@ -6318,7 +6343,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_lptim2_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (lptim2rst),
+      .sft_rst_n      (!lptim2rst),
       .per_bus_clks   (lptim2_bus_clks),
       .per_rst_n      (rcc_lptim2_sync_rst_n)
   );
@@ -6369,7 +6394,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_i2c4_ker_clk),
       .csi_ker_clk_req(i2c4_csi_ker_clk_req),
       .hsi_ker_clk_req(i2c4_hsi_ker_clk_req),
-      .sft_rst_n      (i2c4rst),
+      .sft_rst_n      (!i2c4rst),
       .per_bus_clks   (i2c4_bus_clks),
       .per_rst_n      (rcc_i2c4_sync_rst_n)
   );
@@ -6420,7 +6445,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_spi6_ker_clk),
       .csi_ker_clk_req(),
       .hsi_ker_clk_req(),
-      .sft_rst_n      (spi6rst),
+      .sft_rst_n      (!spi6rst),
       .per_bus_clks   (spi6_bus_clks),
       .per_rst_n      (rcc_spi6_sync_rst_n)
   );
@@ -6471,7 +6496,7 @@ module rcc_per_clk_rst_control #(
       .per_ker_clks   (rcc_lpuart1_ker_clk),
       .csi_ker_clk_req(lpuart1_csi_ker_clk_req),
       .hsi_ker_clk_req(lpuart1_hsi_ker_clk_req),
-      .sft_rst_n      (lpuart1rst),
+      .sft_rst_n      (!lpuart1rst),
       .per_bus_clks   (lpuart1_bus_clks),
       .per_rst_n      (rcc_lpuart1_sync_rst_n)
   );
@@ -6505,7 +6530,7 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (syscfgrst),
+      .sft_rst_n      (!syscfgrst),
       .per_bus_clks   (syscfg_bus_clks),
       .per_rst_n      (rcc_syscfg_sync_rst_n)
   );
@@ -6617,9 +6642,19 @@ module rcc_per_clk_rst_control #(
   ) csi_ker_clk_122_divider (
       .i_clk (csi_ker_clk),
       .rst_n (csi_ker_sync_sys_rst_n),
-      .o_clk (csi_ker_clk_122_div),
+      .o_clk (raw_csi_ker_clk_122_div),
       .div_en()
   );
+
+  // csi_ker_clk_122_div test clock mux
+  test_clk_mux u_csi_ker_clk_122_div_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_csi_ker_clk_122_div),
+      .scan_mode(scan_mode),
+      .gen_clk  (csi_ker_clk_122_div)
+  );
+
+
   // generate c2_per_alloc_d1 and c1_per_alloc_d2
   assign c2_per_alloc_d1 =  rcc_c1_qspi_en || rcc_c1_fmc_en || rcc_c1_dma2d_en || rcc_c1_mdma_en || rcc_c1_ltdc_en || rcc_c1_jpgdec_en || rcc_c1_sdmmc1_en || rcc_c1_wwdg1_en || rcc_c1_usb2ulpi_en || rcc_c1_usb2otg_en || rcc_c1_usb1ulpi_en || rcc_c1_usb1otg_en || rcc_c1_eth1rx_en || rcc_c1_eth1tx_en || rcc_c1_eth1mac_en || rcc_c1_adc12_en || rcc_c1_dma2_en || rcc_c1_dma1_en || rcc_c1_sram3_en || rcc_c1_sram2_en || rcc_c1_sram1_en || rcc_c1_sdmmc2_en || rcc_c1_rng_en || rcc_c1_hash_en || rcc_c1_crypt_en || rcc_c1_dcmi_en || rcc_c1_uart8_en || rcc_c1_uart7_en || rcc_c1_dac12_en || rcc_c1_hdmicec_en || rcc_c1_i2c3_en || rcc_c1_i2c2_en || rcc_c1_i2c1_en || rcc_c1_uart5_en || rcc_c1_uart4_en || rcc_c1_usart3_en || rcc_c1_usart2_en || rcc_c1_spdifrx_en || rcc_c1_spi3_en || rcc_c1_spi2_en || rcc_c1_wwdg2_en || rcc_c1_lptim1_en || rcc_c1_tim14_en || rcc_c1_tim13_en || rcc_c1_tim12_en || rcc_c1_tim7_en || rcc_c1_tim6_en || rcc_c1_tim5_en || rcc_c1_tim4_en || rcc_c1_tim3_en || rcc_c1_tim2_en || rcc_c1_fdcan_en || rcc_c1_mdios_en || rcc_c1_opamp_en || rcc_c1_swpmi_en || rcc_c1_crs_en || rcc_c1_hrtim_en || rcc_c1_dfsdm1_en || rcc_c1_sai3_en || rcc_c1_sai2_en || rcc_c1_sai1_en || rcc_c1_spi5_en || rcc_c1_tim17_en || rcc_c1_tim16_en || rcc_c1_tim15_en || rcc_c1_spi4_en || rcc_c1_spi1_en || rcc_c1_usart6_en || rcc_c1_usart1_en || rcc_c1_tim8_en || rcc_c1_tim1_en || rcc_c1_bkpram_en || rcc_c1_hsem_en || rcc_c1_adc3_en || rcc_c1_bdma_en || rcc_c1_crc_en || rcc_c1_gpiok_en || rcc_c1_gpioj_en || rcc_c1_gpioi_en || rcc_c1_gpioh_en || rcc_c1_gpiog_en || rcc_c1_gpiof_en || rcc_c1_gpioe_en || rcc_c1_gpiod_en || rcc_c1_gpioc_en || rcc_c1_gpiob_en || rcc_c1_gpioa_en || rcc_c1_sai4_en || rcc_c1_rtc_en || rcc_c1_vref_en || rcc_c1_comp12_en || rcc_c1_lptim5_en || rcc_c1_lptim4_en || rcc_c1_lptim3_en || rcc_c1_lptim2_en || rcc_c1_i2c4_en || rcc_c1_spi6_en || rcc_c1_lpuart1_en || rcc_c1_syscfg_en ;
   assign c1_per_alloc_d2 =  rcc_c2_flash_en || rcc_c2_qspi_en || rcc_c2_axisram_en || rcc_c2_fmc_en || rcc_c2_dma2d_en || rcc_c2_mdma_en || rcc_c2_ltdc_en || rcc_c2_itcm_en || rcc_c2_dtcm2_en || rcc_c2_dtcm1_en || rcc_c2_jpgdec_en || rcc_c2_sdmmc1_en || rcc_c2_wwdg1_en || rcc_c2_usb2ulpi_en || rcc_c2_usb2otg_en || rcc_c2_usb1ulpi_en || rcc_c2_usb1otg_en || rcc_c2_eth1rx_en || rcc_c2_eth1tx_en || rcc_c2_eth1mac_en || rcc_c2_adc12_en || rcc_c2_dma2_en || rcc_c2_dma1_en || rcc_c2_sdmmc2_en || rcc_c2_rng_en || rcc_c2_hash_en || rcc_c2_crypt_en || rcc_c2_dcmi_en || rcc_c2_uart8_en || rcc_c2_uart7_en || rcc_c2_dac12_en || rcc_c2_hdmicec_en || rcc_c2_i2c3_en || rcc_c2_i2c2_en || rcc_c2_i2c1_en || rcc_c2_uart5_en || rcc_c2_uart4_en || rcc_c2_usart3_en || rcc_c2_usart2_en || rcc_c2_spdifrx_en || rcc_c2_spi3_en || rcc_c2_spi2_en || rcc_c2_wwdg2_en || rcc_c2_lptim1_en || rcc_c2_tim14_en || rcc_c2_tim13_en || rcc_c2_tim12_en || rcc_c2_tim7_en || rcc_c2_tim6_en || rcc_c2_tim5_en || rcc_c2_tim4_en || rcc_c2_tim3_en || rcc_c2_tim2_en || rcc_c2_fdcan_en || rcc_c2_mdios_en || rcc_c2_opamp_en || rcc_c2_swpmi_en || rcc_c2_crs_en || rcc_c2_hrtim_en || rcc_c2_dfsdm1_en || rcc_c2_sai3_en || rcc_c2_sai2_en || rcc_c2_sai1_en || rcc_c2_spi5_en || rcc_c2_tim17_en || rcc_c2_tim16_en || rcc_c2_tim15_en || rcc_c2_spi4_en || rcc_c2_spi1_en || rcc_c2_usart6_en || rcc_c2_usart1_en || rcc_c2_tim8_en || rcc_c2_tim1_en || rcc_c2_bkpram_en || rcc_c2_hsem_en || rcc_c2_adc3_en || rcc_c2_bdma_en || rcc_c2_crc_en || rcc_c2_gpiok_en || rcc_c2_gpioj_en || rcc_c2_gpioi_en || rcc_c2_gpioh_en || rcc_c2_gpiog_en || rcc_c2_gpiof_en || rcc_c2_gpioe_en || rcc_c2_gpiod_en || rcc_c2_gpioc_en || rcc_c2_gpiob_en || rcc_c2_gpioa_en || rcc_c2_sai4_en || rcc_c2_rtc_en || rcc_c2_vref_en || rcc_c2_comp12_en || rcc_c2_lptim5_en || rcc_c2_lptim4_en || rcc_c2_lptim3_en || rcc_c2_lptim2_en || rcc_c2_i2c4_en || rcc_c2_spi6_en || rcc_c2_lpuart1_en || rcc_c2_syscfg_en ;

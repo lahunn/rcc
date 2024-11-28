@@ -7,8 +7,8 @@
 module rst_as_en_as_clk_gating (
     input  raw_clk,
     input  active,
-    input  bypass,
     input  rst_n,
+    input  testmode,
     output gen_clk
 );
 
@@ -20,6 +20,7 @@ module rst_as_en_as_clk_gating (
   ) u_BB_reset_sync (
       .src_rst_n(rst_n),
       .clk      (raw_clk),
+      .testmode (testmode),
       .gen_rst_n(sync_rst_n)
   );
 
@@ -36,7 +37,7 @@ module rst_as_en_as_clk_gating (
   BB_clk_gating u_BB_clk_gating (
       .raw_clk(raw_clk),
       .active (sync_active),
-      .bypass (bypass),
+      .bypass (testmode),
       .gen_clk(gen_clk)
   );
 

@@ -74,6 +74,7 @@ module rcc_eth_ker_clk_ctrl (
   ) u_eth_rx_rst_n_sync (
       .src_rst_n(rst_n),
       .clk      (pad_rcc_eth_mii_rx_clk),
+      .testmode (testmode),
       .gen_rst_n(eth_rx_clk_sync_rst_n)
   );
 
@@ -82,6 +83,7 @@ module rcc_eth_ker_clk_ctrl (
   ) u_eth_tx_rst_n_sync (
       .src_rst_n(rst_n),
       .clk      (pad_rcc_eth_mii_tx_clk),
+      .testmode (testmode),
       .gen_rst_n(eth_tx_clk_sync_rst_n)
   );
 
@@ -156,11 +158,11 @@ module rcc_eth_ker_clk_ctrl (
   assign rcc_eth_rmii_ref_clk_en = rcc_eth1rx_clk_en || rcc_eth1tx_clk_en;
 
   rst_as_en_as_clk_gating u_eth_mii_tx_clk_gating (
-      .raw_clk(rcc_eth_mii_tx_clk_pre),
-      .active (rcc_eth1tx_clk_en),
-      .bypass (testmode),
-      .rst_n  (eth_tx_clk_sync_rst_n),
-      .gen_clk(rcc_eth_mii_tx_clk)
+      .raw_clk (rcc_eth_mii_tx_clk_pre),
+      .active  (rcc_eth1tx_clk_en),
+      .testmode(testmode),
+      .rst_n   (eth_tx_clk_sync_rst_n),
+      .gen_clk (rcc_eth_mii_tx_clk)
   );
 
   en_as_clk_gating u_eth_mii_rx_clk_gating (

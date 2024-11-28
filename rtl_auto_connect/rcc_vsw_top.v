@@ -4,25 +4,33 @@
 // FUNCTION : RCC VSW top module
 // ****************************************************************
 module rcc_vsw_top (
-    input  pwr_vsw_rst,
-    input  sync_vsw_rst_n,   // vsw reset signal sync with sys clk
+    input pwr_vsw_rst,
+    input sync_vsw_rst_n,  // vsw reset signal sync with sys clk
     //hse rtc clk
-    input  hse_rtc_clk,      //hse clock from vcore domain
-    input  lsi_clk,          //lsi clock from vdd domain
-    input  lse_clk,          //lsi clock from vsw domain
+    input raw_hse_rtc_clk,     //hse clock from vcore domain
+    input lsi_clk,         //lsi clock from vdd domain
+    input lse_clk,         //lsi clock from vsw domain
     //test mode
-    input  testmode,
+    input testmode,
+    input scan_mode,
+    input test_clk,
     /*AUTOINPUT*/
-    /*AUTOOUTPUT*/
     //rtc kernel clk
     output rcc_rtc_ker_clk,
     //vsw reset signal not sync with sys clk
     output vsw_rst_n
-    /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
 
   /*AUTOWIRE*/
+
+  ///================================================================
+  // rcc vsw domain test clock mux 
+  //================================================================
+
+  rcc_vsw_port_clock_mux u_rcc_vsw_port_clock_mux (
+  /*AUTOINST*/
+  );
 
   // rcc vsw registers
   rcc_vsw_reg u_rcc_vsw_reg (
@@ -30,7 +38,8 @@ module rcc_vsw_top (
       /*AUTOINST*/
   );
   rcc_vsw_clk_rst_ctrl u_rcc_vsw_clk_rst_ctrl (
-  /*AUTOINST*/
+      .lse_clk(gen_lse_clk)
+      /*AUTOINST*/
   );
   // level shift
   // level shift should be added in integration

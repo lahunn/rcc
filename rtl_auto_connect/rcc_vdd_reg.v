@@ -366,13 +366,12 @@ module rcc_vdd_reg (
   // --------------------------------------------------------------------------------
   assign nxt_rcc_c1_rsr_rmvf = rcc_vdd_wdata;
 
-  BB_dfflr #(
+  BB_dffr #(
       .DW     (1),
       .RST_VAL('h0)
   ) U_rcc_c1_rsr_rmvf (
       .clk  (rcc_c1_rsr_rmvf_wren),
       .rst_n(gen_rst_n),
-      .en   (rcc_vdd_wdata),
       .din  (nxt_rcc_c1_rsr_rmvf),
       .dout (cur_rcc_c1_rsr_rmvf)
   );

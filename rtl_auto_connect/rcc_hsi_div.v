@@ -7,6 +7,7 @@ module rcc_hsi_div (
     input        i_clk,
     input        rst_n,
     input  [1:0] div_sel,
+    input        testmode,
     output       o_clk
 );
   wire       sync_rst_n;
@@ -18,9 +19,10 @@ module rcc_hsi_div (
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_BB_reset_sync (
-      .src_rst_n(rst_n),
-      .clk      (i_clk),
-      .gen_rst_n(sync_rst_n)
+      .src_rst_n (rst_n),
+      .clk       (i_clk),
+      .testmode  (testmode),
+      .gen_rst_n (sync_rst_n)
   );
 
   BB_signal_sync #(

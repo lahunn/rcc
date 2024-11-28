@@ -194,11 +194,11 @@ module per_ker_clk_rst_control #(
     genvar j;
     for (j = 0; j < KER_CLK_NUM; j = j + 1) begin : ker_clk_gate
       rst_as_en_as_clk_gating u_ker_clk_gating (
-          .raw_clk(ker_src_clks[j]),
-          .active (ker_clk_en),
-          .bypass (testmode),
-          .rst_n  (per_rst_n),
-          .gen_clk(per_ker_clks[j])
+          .raw_clk (ker_src_clks[j]),
+          .active  (ker_clk_en),
+          .testmode(testmode),
+          .rst_n   (per_rst_n),
+          .gen_clk (per_ker_clks[j])
       );
     end
   endgenerate

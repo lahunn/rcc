@@ -9,6 +9,7 @@ module rcc_rtc_clk_div_d #(
     input                  rst_n,
     input                  i_clk,
     input  [RATIO_WID-1:0] ratio,
+    input                  testmode,
     output                 o_clk,
     output                 div_en
 );
@@ -22,9 +23,10 @@ module rcc_rtc_clk_div_d #(
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_BB_reset_sync (
-      .src_rst_n(rst_n),
-      .clk      (i_clk),
-      .gen_rst_n(sync_rst_n)
+      .src_rst_n (rst_n),
+      .clk       (i_clk),
+      .testmode  (testmode),
+      .gen_rst_n (sync_rst_n)
   );
 
   BB_signal_sync #(
@@ -43,7 +45,7 @@ module rcc_rtc_clk_div_d #(
   BB_clk_gating u_BB_clk_gating (
       .raw_clk(i_clk),
       .active (div_enable),
-      .bypass (1'b0),
+      .bypass (testmode),
       .gen_clk(div_i_clk)
   );
 

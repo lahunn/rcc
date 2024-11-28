@@ -22,20 +22,17 @@ module rcc_vsw_clk_rst_ctrl (
     input  [1:0] rtcsel,
     //rtc kernel clk
     output       rcc_rtc_ker_clk,
-    output       gen_lse_clk,
     //vsw reset signal not sync with sys clk
     output       vsw_rst_n,
     output       rtc_clk_sync_vsw_rst_n
 );
   wire rcc_rtcsel_clk;
+  wire rtcsel_clk_0;
   wire hse_rtc_sync_vsw_rst_n;
   wire lsi_sync_vsw_rst_n;
   wire lse_sync_vsw_rst_n;
   wire raw_vsw_rst_n;
-  wire raw_rtc_clk_sync_vsw_rst_n;
-  wire raw_hse_rtc_sync_vsw_rst_n;
-  wire raw_lsi_sync_vsw_rst_n;
-  wire raw_lse_sync_vsw_rst_n;
+  wire rtcsel_clk_rst_0;
 
   //================================================================
   // vsw rst control
@@ -55,47 +52,31 @@ module rcc_vsw_clk_rst_ctrl (
 
   BB_reset_sync #(
       .STAGE_NUM(2)
-  ) u_BB_reset_sync (
+  ) u_rtc_clk_sync_vsw_rst_n_sync (
       .src_rst_n(vsw_rst_n),
       .clk      (rcc_rtcsel_clk),
-      .gen_rst_n(raw_rtc_clk_sync_vsw_rst_n)
+      .testmode (testmode),
+      .gen_rst_n(rtc_clk_sync_vsw_rst_n)
   );
 
-  test_rst_mux u_rtc_clk_sync_vsw_rst_n_mux (
-      .test_rst_n(test_rst_n),
-      .func_rst_n(raw_rtc_clk_sync_vsw_rst_n),
-      .testmode  (testmode),
-      .rst_n     (rtc_clk_sync_vsw_rst_n)
-  );
 
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_hse_rtc_vsw_rst_sync (
       .src_rst_n(vsw_rst_n),
       .clk      (hse_rtc_clk),
-      .gen_rst_n(raw_hse_rtc_sync_vsw_rst_n)
+      .testmode (testmode),
+      .gen_rst_n(hse_rtc_sync_vsw_rst_n)
   );
 
-  test_rst_mux u_hse_rtc_sync_vsw_rst_n_mux (
-      .test_rst_n(test_rst_n),
-      .func_rst_n(raw_hse_rtc_sync_vsw_rst_n),
-      .testmode  (testmode),
-      .rst_n     (hse_rtc_sync_vsw_rst_n)
-  );
 
   BB_reset_sync #(
       .STAGE_NUM(2)
   ) u_lsi_vsw_rst_sync (
       .src_rst_n(vsw_rst_n),
       .clk      (lsi_clk),
-      .gen_rst_n(raw_lsi_sync_vsw_rst_n)
-  );
-
-  test_rst_mux u_lsi_sync_vsw_rst_n_mux (
-      .test_rst_n(test_rst_n),
-      .func_rst_n(raw_lsi_sync_vsw_rst_n),
-      .testmode  (testmode),
-      .rst_n     (lsi_sync_vsw_rst_n)
+      .testmode (testmode),
+      .gen_rst_n(lsi_sync_vsw_rst_n)
   );
 
 
@@ -104,35 +85,37 @@ module rcc_vsw_clk_rst_ctrl (
   ) u_lse_vsw_rst_sync (
       .src_rst_n(vsw_rst_n),
       .clk      (lse_clk),
-      .gen_rst_n(raw_lse_sync_vsw_rst_n)
-  );
-
-  test_rst_mux u_lse_sync_vsw_rst__mux (
-      .test_rst_n(test_rst_n),
-      .func_rst_n(raw_lse_sync_vsw_rst_n),
-      .testmode  (testmode),
-      .rst_n     (lse_sync_vsw_rst_n)
+      .testmode (testmode),
+      .gen_rst_n(lse_sync_vsw_rst_n)
   );
 
   //================================================================
   // vsw clock control
   //================================================================
-  //lsi clock mux 
-  test_clk_mux u_lse_clk_tmux (
+
+  // rtcsel_clk_0 test clock mux
+  test_clk_mux u_rtcsel_clk_0_tmux (
       .test_clk (test_clk),
-      .func_clk (lse_clk),
+      .func_clk (1'b0),
       .scan_mode(scan_mode),
-      .gen_clk  (gen_lse_clk)
+      .gen_clk  (rtcsel_clk_0)
   );
 
+  // rtcsel_clk_rst_0 test reset mux
+  test_rst_mux u_rtcsel_clk_rst_0_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(1'b0),
+      .testmode  (testmode),
+      .rst_n     (rtcsel_clk_rst_0)
+  );
   // rtc ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) u_rcc_rtc_clk_switch (
-      .i_clk    ({hse_rtc_clk, lsi_clk, gen_lse_clk, 1'b0}),
+      .i_clk    ({hse_rtc_clk, lsi_clk, lse_clk, rtcsel_clk_0}),
       .clk_fail ({2'b0, lsecss_fail, 1'b1}),
       .sel      (rtcsel),
-      .rst_n    ({hse_rtc_sync_vsw_rst_n, lsi_sync_vsw_rst_n, lse_sync_vsw_rst_n, 1'b0}),
+      .rst_n    ({hse_rtc_sync_vsw_rst_n, lsi_sync_vsw_rst_n, lse_sync_vsw_rst_n, rtcsel_clk_rst_0}),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_rtcsel_clk)

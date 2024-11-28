@@ -594,20 +594,23 @@ module rcc_top #(
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
-
+  wire hse_rtc_clk;
   /*AUTOWIRE*/
   /*AUTO DECLARE*/
 
   //INSTANTCE
 
   rcc_vsw_top u_rcc_vsw_top (
-      .gen_lse_clk  (gen_lse_clk)
+      .lsi_clk                (gen_lsi_clk),
+      .raw_hse_rtc_clk        (hse_rtc_clk),
+      .raw_rcc_bdcr_byte2_wren(rcc_bdcr_byte2_wren),
+      .raw_rcc_bdcr_byte1_wren(rcc_bdcr_byte1_wren),
+      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren)
       /*AUTOINST*/
   );
 
   rcc_vdd_top u_rcc_vdd_top (
-      .rcc_vdd_wdata(rcc_vdd_wdata),
-      .gen_lsi_clk  (gen_lsi_clk)
+      .rcc_vdd_wdata(rcc_vdd_wdata)
       /*AUTOINST*/
   );
 
@@ -615,7 +618,7 @@ module rcc_top #(
   ) u_rcc_vcore_top (
       .lsi_clk                   (gen_lsi_clk),
       .lse_clk                   (gen_lse_clk),
-      .raw_i2s_clk_in            (i2s_clk_in),
+      .hse_rtc_clk               (hse_rtc_clk),
       .raw_i2s_clk_in            (i2s_clk_in),
       .raw_usb_phy1              (usb_phy1),
       .raw_csi_origin_clk        (csi_origin_clk),

@@ -12,24 +12,24 @@ module rcc_vdd_top (
     input test_clk,
     input scan_mode,
     // rcc_vdd_reg Inputs
-    input rcc_vdd_wdata,         //low to high level, default 0
-    input rcc_c1_rsr_rmvf_wren,  //low to high level, default 0
-    input rcc_c2_rsr_rmvf_wren,  //low to high level, default 0
-    input rcc_csr_lsion_wren,    //low to high level, default 0
-    input nrst_in,               //low to high level, default 0
-    input obl_rst,               //low to high level, default 0
-    input lpwr2_rst,             //low to high level, default 0
-    input lpwr1_rst,             //low to high level, default 0
-    input wwdg1_out_rst,         //low to high level, default 0
-    input wwdg2_out_rst,         //low to high level, default 0
+    input rcc_vdd_wdata,             //low to high level, default 0
+    input raw_rcc_c1_rsr_rmvf_wren,  //low to high level, default 0
+    input raw_rcc_c2_rsr_rmvf_wren,  //low to high level, default 0
+    input raw_rcc_csr_lsion_wren,    //low to high level, default 0
+    input nrst_in,                   //low to high level, default 0
+    input obl_rst,                   //low to high level, default 0
+    input lpwr2_rst,                 //low to high level, default 0
+    input lpwr1_rst,                 //low to high level, default 0
+    input wwdg1_out_rst,             //low to high level, default 0
+    input wwdg2_out_rst,             //low to high level, default 0
     input iwdg1_out_rst,
     input iwdg2_out_rst,
-    input cpu2_sftrst,           //low to high level, default 0
-    input cpu1_sftrst,           //low to high level, default 0
-    input pwr_por_rst,           //low to high level, default 0
-    input pwr_bor_rst,           //low to high level, default 0
-    input d2_rst,                //low to high level, default 0
-    input d1_rst,                //low to high level, default 0
+    input cpu2_sftrst,               //low to high level, default 0
+    input cpu1_sftrst,               //low to high level, default 0
+    input pwr_por_rst,               //low to high level, default 0
+    input pwr_bor_rst,               //low to high level, default 0
+    input d2_rst,                    //low to high level, default 0
+    input d1_rst,                    //low to high level, default 0
     input lsi_clk,
     input testmode,
     input test_rst_n,
@@ -73,17 +73,19 @@ module rcc_vdd_top (
   /*AUTOWIRE*/
   /*AUTO DECLARE*/
 
+  ///================================================================
+  // rcc vdd domain test clock mux 
+  //================================================================
+
+  rcc_vdd_port_clock_mux u_rcc_vdd_port_clock_mux (
+  /*AUTOINST*/
+  );
+
   rcc_vdd_reg u_rcc_vdd_reg (
       .rst_n(~pwr_por_rst)
       /*AUTOINST*/
   );
 
-  test_clk_mux u_lsi_clk_tmux (
-      .test_clk (test_clk),
-      .func_clk (lsi_clk),
-      .scan_mode(scan_mode),
-      .gen_clk  (gen_lsi_clk)
-  );
 
   // level shift
   // level shift should be added in integration
