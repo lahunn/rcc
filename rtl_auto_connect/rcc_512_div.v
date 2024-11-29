@@ -39,9 +39,9 @@ module rcc_512_div (
       .dout (div_ratio_f)
   );
 
-  BB_clk_div_d #(
+  clk_div_d #(
       .RATIO_WID(9)
-  ) u_BB_clk_div_d (
+  ) u_clk_div_d (
       .rst_n (rst_n),
       .i_clk (i_clk),
       .ratio (div_ratio_f),

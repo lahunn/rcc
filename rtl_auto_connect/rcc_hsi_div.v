@@ -16,9 +16,9 @@ module rcc_hsi_div (
   //================================================================
   // syncronize the input ratio and reset
   //================================================================
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
-  ) u_BB_reset_sync (
+  ) u_rcc_reset_sync (
       .src_rst_n (rst_n),
       .clk       (i_clk),
       .testmode  (testmode),
@@ -44,9 +44,9 @@ module rcc_hsi_div (
     endcase
   end
 
-  BB_clk_div_d #(
+  clk_div_d #(
       .RATIO_WID(3)
-  ) u_BB_clk_div_d (
+  ) u_clk_div_d (
       .rst_n (sync_rst_n),
       .i_clk (i_clk),
       .ratio (div_ratio),

@@ -23,29 +23,28 @@ module per_clk_rst_control #(
     parameter DOMAIN = 1,  //DOMAIN = 1,2,3  other values are not allowed
     parameter CLK_ON_AFTER_PER_RST_RELEASE = 2
 ) (
-    input [BUS_CLK_NUM-1:0] bus_clks,
-    input                   rcc_c1_per_en,
-    input                   rcc_c1_per_lpen,
-    input                   rcc_c2_per_en,
-    input                   rcc_c2_per_lpen,
-    input                   rcc_per_amen,
-    input                   c1_sleep,
-    input                   c1_deepsleep,
-    input                   c2_sleep,
-    input                   c2_deepsleep,
-    input                   d3_deepsleep,
-    input                   arcg_on,
+    input  [BUS_CLK_NUM-1:0] bus_clks,
+    input                    rcc_c1_per_en,
+    input                    rcc_c1_per_lpen,
+    input                    rcc_c2_per_en,
+    input                    rcc_c2_per_lpen,
+    input                    rcc_per_amen,
+    input                    c1_sleep,
+    input                    c1_deepsleep,
+    input                    c2_sleep,
+    input                    c2_deepsleep,
+    input                    d3_deepsleep,
+    input                    arcg_on,
     //testmode
-    input                   testmode,
-    input                   test_rst_n,
+    input                    testmode,
+    input                    test_rst_n,
     // sys reset
-    input                   sys_rst_n,
+    input                    sys_rst_n,
     // dx reset
-    input                   d1_rst_n,         //for D1 peripherals
-    input                   d2_rst_n,         //for D2 peripherals
+    input                    d1_rst_n,         //for D1 peripherals
+    input                    d2_rst_n,         //for D2 peripherals
     //software reset
-    input                   sft_rst_n,
-
+    input                    sft_rst_n,
     output [BUS_CLK_NUM-1:0] per_bus_clks,
     output                   per_rst_n
 );

@@ -114,11 +114,11 @@ module rcc_vcore_top #(
   //signal synchronize 
   //==============================================================================
 
-  rcc_signal_sync u_rcc_signal_sync (
+  rcc_port_signal_sync u_rcc_port_signal_sync (
   /*AUTOINST*/
   );
 
-  rcc_rst_sync u_rcc_rst_sync (
+  rcc_port_rst_sync u_rcc_port_rst_sync (
   /*AUTOINST*/
   );
 

@@ -21,8 +21,10 @@ module rcc_port_clock_rst_mux (
     //================================================================
     // scan_mode
     //================================================================
+    input  testmode,
     input  scan_mode,
     input  test_clk,
+    input  test_rst_n,
     output i2s_clk_in,
     output usb_phy1,
     output csi_origin_clk,
@@ -180,27 +182,30 @@ module rcc_port_clock_rst_mux (
   //================================================================
 
   // pwr_d1_wkup test reset mux
+  // pwr_d1_wkup active high
   test_rst_mux u_pwr_d1_wkup_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(~test_rst_n),
       .func_rst_n(raw_pwr_d1_wkup),
       .testmode  (testmode),
       .rst_n     (pwr_d1_wkup)
   );
 
   // pwr_d2_wkup test reset mux
+  // pwr_d2_wkup active high
   test_rst_mux u_pwr_d2_wkup_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(~test_rst_n),
       .func_rst_n(raw_pwr_d2_wkup),
       .testmode  (testmode),
       .rst_n     (pwr_d2_wkup)
   );
 
   // pwr_d3_wkup test reset mux
+  // pwr_d3_wkup active high
   test_rst_mux u_pwr_d3_wkup_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(~test_rst_n),
       .func_rst_n(raw_pwr_d3_wkup),
       .testmode  (testmode),
       .rst_n     (pwr_d3_wkup)
   );
-  
+
 endmodule

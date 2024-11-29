@@ -23,9 +23,9 @@ module rcc_16_div (
     endcase
   end
 
-  BB_clk_div_d #(
+  clk_div_d #(
       .RATIO_WID(4)
-  ) u_BB_clk_div_d (
+  ) u_clk_div_d (
       .rst_n (rst_n),
       .i_clk (i_clk),
       .ratio (div_ratio),

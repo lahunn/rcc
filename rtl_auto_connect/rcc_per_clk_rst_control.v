@@ -1447,6 +1447,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (4'b0),
       .rst_n    ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (qspisel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_qspisel_clk)
@@ -1459,6 +1460,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (4'b0),
       .rst_n    ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (fmcsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_fmcsel_clk)
@@ -1471,6 +1473,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (2'b0),
       .rst_n    ({pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (sdmmcsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_sdmmcsel_clk)
@@ -1479,10 +1482,11 @@ module rcc_per_clk_rst_control #(
   glitch_free_clk_switch #(
       .CLK_NUM(4)
   ) rcc_usbsel_clk_switch (
-      .i_clk    ({hsi48_origin_clk, pll3_q_clk, pll1_q_clk, 1'b0}),
+      .i_clk    ({hsi48_origin_clk, pll3_q_clk, pll1_q_clk, usbsel_clk_0}),
       .clk_fail (4'b0),
-      .rst_n    ({hsi48_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, 1'b0}),
+      .rst_n    ({hsi48_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, usbsel_clk_rst_0}),
       .sel      (usbsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_usbsel_clk)
@@ -1495,6 +1499,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (3'b0),
       .rst_n    ({per_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n}),
       .sel      (adcsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_adcsel_clk)
@@ -1507,6 +1512,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (4'b0),
       .rst_n    ({lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hsi48_sync_sys_rst_n}),
       .sel      (rngsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_rngsel_clk)
@@ -1519,6 +1525,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (usart234578sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_usart234578sel_clk)
@@ -1531,6 +1538,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (3'b0),
       .rst_n    ({csi_ker_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n}),
       .sel      (cecsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_cecsel_clk)
@@ -1543,6 +1551,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (4'b0),
       .rst_n    ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
       .sel      (i2c123sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_i2c123sel_clk)
@@ -1555,6 +1564,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (4'b0),
       .rst_n    ({hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (spdifsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_spdifsel_clk)
@@ -1567,6 +1577,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (spi123sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_spi123sel_clk)
@@ -1579,6 +1590,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
       .sel      (lptim1sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_lptim1sel_clk)
@@ -1591,6 +1603,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (3'b0),
       .rst_n    ({pll2_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hse_sync_sys_rst_n}),
       .sel      (fdcansel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_fdcansel_clk)
@@ -1603,6 +1616,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (2'b0),
       .rst_n    ({hsi_ker_sync_sys_rst_n, sys_rst_n}),
       .sel      (swpmisel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_swpmisel_clk)
@@ -1615,6 +1629,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (sai1sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_sai1sel_clk)
@@ -1627,6 +1642,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (2'b0),
       .rst_n    ({sys_rst_n, sys_rst_n}),
       .sel      (dfsdm1sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_dfsdm1sel_clk)
@@ -1639,6 +1655,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (sai23sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_sai23sel_clk)
@@ -1651,6 +1668,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (spi45sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_spi45sel_clk)
@@ -1663,6 +1681,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (usart16sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_usart16sel_clk)
@@ -1675,6 +1694,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (sai4asel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_sai4asel_clk)
@@ -1687,6 +1707,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
       .sel      (sai4bsel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_sai4bsel_clk)
@@ -1699,6 +1720,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
       .sel      (lptim345sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_lptim345sel_clk)
@@ -1711,6 +1733,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
       .sel      (lptim2sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_lptim2sel_clk)
@@ -1723,6 +1746,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (4'b0),
       .rst_n    ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
       .sel      (i2c4sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_i2c4sel_clk)
@@ -1735,6 +1759,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (spi6sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_spi6sel_clk)
@@ -1747,6 +1772,7 @@ module rcc_per_clk_rst_control #(
       .clk_fail (6'b0),
       .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
       .sel      (lpuart1sel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_lpuart1sel_clk)
@@ -6637,7 +6663,7 @@ module rcc_per_clk_rst_control #(
       .per_rst_n      (rcc_exti_sync_rst_n)
   );
   // csi_ker_clk_122_div
-  BB_clk_div_s #(
+  clk_div_s #(
       .DIV_RATIO(122)
   ) csi_ker_clk_122_divider (
       .i_clk (csi_ker_clk),

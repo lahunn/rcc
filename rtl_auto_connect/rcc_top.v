@@ -21,151 +21,175 @@ module rcc_top #(
 ) (
     // Beginning of automatic inputs (from unused autoinst inputs)
     //clock input from PAD
-    input           i2s_clk_in,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           usb_phy1,                   // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          i2s_clk_in,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          usb_phy1,                // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // bus bridge signals
     //================================================================
-    input           ahb1bridge_d2_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           ahb2bridge_d2_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           ahb3bridge_d1_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           ahb4bridge_d3_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           apb1bridge_d2_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           apb2bridge_d2_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           apb3bridge_d1_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           apb4bridge_d3_busy,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           axibridge_d1_busy,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          ahb1bridge_d2_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          ahb2bridge_d2_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          ahb3bridge_d1_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          ahb4bridge_d3_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          apb1bridge_d2_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          apb2bridge_d2_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          apb3bridge_d1_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          apb4bridge_d3_busy,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          axibridge_d1_busy,       // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // pwr signals
     //================================================================
-    input           d3_deepsleep,               // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           backup_protect,             // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           lpwr1_rst,                  // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           lpwr2_rst,                  // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           pwr_bor_rst,                // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           pwr_d1_ok,                  // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pwr_d1_wkup,                // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pwr_d2_ok,                  // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pwr_d2_wkup,                // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pwr_d3_wkup,                // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pwr_por_rst,                // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           pwr_vcore_ok,               // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pwr_vsw_rst,                // To u_rcc_vsw_top of rcc_vsw_top.v, ...
+    input          d3_deepsleep,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          backup_protect,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          lpwr1_rst,               // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          lpwr2_rst,               // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          pwr_bor_rst,             // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          pwr_d1_ok,               // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pwr_d1_wkup,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pwr_d2_ok,               // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pwr_d2_wkup,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pwr_d3_wkup,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pwr_por_rst,             // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          pwr_vcore_ok,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pwr_vsw_rst,             // To u_rcc_vsw_top of rcc_vsw_top.v, ...
     //================================================================
     // cpu signals
     //================================================================
-    input           c1_deepsleep,               // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           c1_sleep,                   // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           c2_deepsleep,               // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           c2_sleep,                   // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           cpu1_sftrst,                // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           cpu2_sftrst,                // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          c1_deepsleep,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          c1_sleep,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          c2_deepsleep,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          c2_sleep,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          cpu1_sftrst,             // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          cpu2_sftrst,             // To u_rcc_vdd_top of rcc_vdd_top.v, ...
     //================================================================
     // triming signals
     //================================================================
-    input  [   9:0] crs_hsi48_trim,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   9:0] crs_hsi48_trim,          // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // oscilator signals
     //================================================================
     //csi
-    input           csi_origin_clk,             // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           csi_rdy,                    // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          csi_origin_clk,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          csi_rdy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
     //hse
-    input           hse_origin_clk,             // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hse_rdy,                    // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hsecss_fail,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hse_origin_clk,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hse_rdy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hsecss_fail,             // To u_rcc_vcore_top of rcc_vcore_top.v
     //hsi 48
-    input           hsi48_origin_clk,           // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hsi48_rdy,                  // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hsi48_origin_clk,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hsi48_rdy,               // To u_rcc_vcore_top of rcc_vcore_top.v
     //hsi
-    input           hsi_origin_clk,             // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hsi_rdy,                    // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hsi_origin_clk,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hsi_rdy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
     //lse
-    input           lse_clk,                    // To u_rcc_vsw_top of rcc_vsw_top.v, ...
-    input           lse_rdy,                    // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           lsecss_fail,                // To u_rcc_vsw_top of rcc_vsw_top.v, ...
+    input          lse_clk,                 // To u_rcc_vsw_top of rcc_vsw_top.v, ...
+    input          lse_rdy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          lsecss_fail,             // To u_rcc_vsw_top of rcc_vsw_top.v, ...
     //lsi
-    input           lsi_clk,                    // To u_rcc_vsw_top of rcc_vsw_top.v, ...
-    input           lsi_rdy,                    // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          lsi_clk,                 // To u_rcc_vsw_top of rcc_vsw_top.v, ...
+    input          lsi_rdy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
     //eth
-    input           eth_rcc_epis_2,             // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           eth_rcc_fes,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          eth_rcc_epis_2,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          eth_rcc_fes,             // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // falsh signals
     //================================================================
-    input           flash_busy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input  [   7:0] flash_csi_opt,              // To u_rcc_vcore_top of rcc_vcore_top.v
-    input  [  11:0] flash_hsi_opt,              // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           flash_obl_reload,           // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           flash_power_ok,             // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           obl_done,                   // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          flash_busy,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   7:0] flash_csi_opt,           // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [  11:0] flash_hsi_opt,           // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          flash_obl_reload,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          flash_power_ok,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          obl_done,                // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // ahb lite bus
     //================================================================
-    input  [  31:0] haddr,                      // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hmaster,                    // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hready,                     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hsel,                       // To u_rcc_vcore_top of rcc_vcore_top.v
-    input  [   2:0] hsize,                      // To u_rcc_vcore_top of rcc_vcore_top.v
-    input  [   1:0] htrans,                     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input  [DW-1:0] hwdata,                     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           hwrite,                     // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [  31:0] haddr,                   // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hmaster,                 // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hready,                  // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hsel,                    // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] hsize,                   // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   1:0] htrans,                  // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [DW-1:0] hwdata,                  // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          hwrite,                  // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // peripheral signals
     //================================================================
     //ker clk req
-    input           i2c1_ker_clk_req,           // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           i2c2_ker_clk_req,           // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           i2c3_ker_clk_req,           // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           i2c4_ker_clk_req,           // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           lpuart1_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           uart4_ker_clk_req,          // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           uart5_ker_clk_req,          // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           uart7_ker_clk_req,          // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           uart8_ker_clk_req,          // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           usart1_ker_clk_req,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           usart2_ker_clk_req,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           usart3_ker_clk_req,         // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           usart6_ker_clk_req,         // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          i2c1_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          i2c2_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          i2c3_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          i2c4_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          lpuart1_ker_clk_req,     // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          uart4_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          uart5_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          uart7_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          uart8_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          usart1_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          usart2_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          usart3_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          usart6_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
     //iwdg
-    input           iwdg1_out_rst,              // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           iwdg2_out_rst,              // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          iwdg1_out_rst,           // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          iwdg2_out_rst,           // To u_rcc_vdd_top of rcc_vdd_top.v, ...
     //wwdg
-    input           wwdg1_out_rst,              // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           wwdg2_out_rst,              // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           pad_rcc_eth_mii_rx_clk,     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pad_rcc_eth_mii_tx_clk,     // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          wwdg1_out_rst,           // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          wwdg2_out_rst,           // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          pad_rcc_eth_mii_rx_clk,  // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pad_rcc_eth_mii_tx_clk,  // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // NRST PAD
     //================================================================
-    input           nrst_in,                    // To u_rcc_vdd_top of rcc_vdd_top.v, ...
+    input          nrst_in,                 // To u_rcc_vdd_top of rcc_vdd_top.v, ...
     //================================================================
     // PLL signals
     //================================================================
-    input           pll1_p_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll1_q_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll1_rdy,                   // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll2_p_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll2_q_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll2_r_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll2_rdy,                   // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll3_p_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll3_q_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll3_r_clk,                 // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pll3_rdy,                   // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll1_p_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll1_q_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll1_rdy,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll2_p_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll2_q_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll2_r_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll2_rdy,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll3_p_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll3_q_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll3_r_clk,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          pll3_rdy,                // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // ARCG ON
     //================================================================
-    input           rcc_arcg_on,                // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          rcc_arcg_on,             // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // TESTMODE
     //================================================================
-    input           testmode,                   // To u_rcc_vsw_top of rcc_vsw_top.v, ...
-    input           test_rst_n,
-    input           test_clk,
-    input           scan_mode,
-    input           atspeed_mode,
-    input           atspeed_test_clk,
+    input          testmode,                // To u_rcc_vsw_top of rcc_vsw_top.v, ...
+    input          test_rst_n,
+    input          test_clk,
+    input          scan_mode,
+    input          atspeed_mode,
+    input          atspeed_test_clk,
+    // config signals in at_speed mode
+    input [   1:0] test_clkpersel,          // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   3:0] test_d1cpre,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] test_d1ppre,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] test_d2ppre1,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] test_d2ppre2,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] test_d3ppre,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   5:0] test_divm1,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   5:0] test_divm2,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   5:0] test_divm3,              // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_eth_rcc_epis_2,     // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_eth_rcc_fes,        // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   3:0] test_hpre,               // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_hrtimsel,           // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   1:0] test_hsidiv,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   3:0] test_mco1pre,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] test_mco1sel,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   3:0] test_mco2pre,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   2:0] test_mco2sel,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   1:0] test_pllsrc,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   5:0] test_rtcpre,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input [   1:0] test_sw,                 // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_timpre,             // To u_rcc_vcore_top of rcc_vcore_top.v
+
     //================================================================
     // CPU signals
     //================================================================
@@ -595,6 +619,12 @@ module rcc_top #(
     /*AUTOOUTPUT*/
 );
   wire hse_rtc_clk;
+  wire rcc_bdcr_byte0_wren;
+  wire rcc_bdcr_byte1_wren;
+  wire rcc_bdcr_byte2_wren;
+  wire rcc_c1_rsr_rmvf_wren;
+  wire rcc_c2_rsr_rmvf_wren;
+  wire rcc_csr_lsion_wren;
   /*AUTOWIRE*/
   /*AUTO DECLARE*/
 
@@ -605,12 +635,16 @@ module rcc_top #(
       .raw_hse_rtc_clk        (hse_rtc_clk),
       .raw_rcc_bdcr_byte2_wren(rcc_bdcr_byte2_wren),
       .raw_rcc_bdcr_byte1_wren(rcc_bdcr_byte1_wren),
-      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren)
+      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren),
+      .gen_lse_clk            (gen_lse_clk)
       /*AUTOINST*/
   );
 
   rcc_vdd_top u_rcc_vdd_top (
-      .rcc_vdd_wdata(rcc_vdd_wdata)
+      .raw_rcc_c1_rsr_rmvf_wren(rcc_c1_rsr_rmvf_wren),
+      .raw_rcc_c2_rsr_rmvf_wren(rcc_c2_rsr_rmvf_wren),
+      .raw_rcc_csr_lsion_wren  (rcc_csr_lsion_wren),
+      .gen_lsi_clk             (gen_lsi_clk)
       /*AUTOINST*/
   );
 
@@ -634,7 +668,16 @@ module rcc_top #(
       .raw_pll2_r_clk            (pll2_r_clk),
       .raw_pll3_p_clk            (pll3_p_clk),
       .raw_pll3_q_clk            (pll3_q_clk),
-      .raw_pll3_r_clk            (pll3_r_clk)
+      .raw_pll3_r_clk            (pll3_r_clk),
+      .raw_pwr_d1_wkup           (pwr_d1_wkup),
+      .raw_pwr_d2_wkup           (pwr_d2_wkup),
+      .raw_pwr_d3_wkup           (pwr_d3_wkup),
+      .rcc_bdcr_byte0_wren       (rcc_bdcr_byte0_wren),
+      .rcc_bdcr_byte1_wren       (rcc_bdcr_byte1_wren),
+      .rcc_bdcr_byte2_wren       (rcc_bdcr_byte2_wren),
+      .rcc_c1_rsr_rmvf_wren      (rcc_c1_rsr_rmvf_wren),
+      .rcc_c2_rsr_rmvf_wren      (rcc_c2_rsr_rmvf_wren),
+      .rcc_csr_lsion_wren        (rcc_csr_lsion_wren)
       /*AUTOINST*/
   );
 

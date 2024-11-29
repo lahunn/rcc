@@ -23,9 +23,9 @@ module rcc_clk_div_d #(
   // syncronize the input ratio
   //==========================================================================
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
-  ) u_BB_reset_sync (
+  ) u_rcc_reset_sync (
       .src_rst_n (rst_n),
       .clk       (i_clk),
       .testmode  (testmode),
@@ -51,9 +51,9 @@ module rcc_clk_div_d #(
       .gen_clk(div_i_clk)
   );
 
-  BB_clk_div_d #(
+  clk_div_d #(
       .RATIO_WID(RATIO_WID)
-  ) u_BB_clk_div_d (
+  ) u_clk_div_d (
       .rst_n (sync_rst_n),
       .i_clk (div_i_clk),
       .ratio (sync_ratio),

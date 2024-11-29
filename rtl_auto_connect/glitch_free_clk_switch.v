@@ -15,6 +15,7 @@ module glitch_free_clk_switch #(
     input  [        CLK_NUM-1:0] clk_fail,
     input  [$clog2(CLK_NUM)-1:0] sel,
     input  [        CLK_NUM-1:0] rst_n,
+    input                        testmode,
     input                        scan_mode,
     input                        test_clk,
     output                       o_clk

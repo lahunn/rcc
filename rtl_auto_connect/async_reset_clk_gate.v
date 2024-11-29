@@ -28,9 +28,9 @@ module async_reset_clk_gate #(
 
   assign clk_en = arcg_on ? cur_clk_en : 1'b1;
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
-  ) u_BB_reset_sync (
+  ) u_rcc_reset_sync (
       .src_rst_n (src_rst_n),
       .clk       (i_clk),
       .testmode  (testmode),

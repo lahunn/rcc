@@ -163,7 +163,6 @@ module rcc_sys_clk_rst_ctrl #(
     //rtc clocks
     output       hse_rtc_clk,
     //per clock source
-    output       hse_clk,
     output       rcc_obl_clk,
     output       hsi_ker_clk,
     output       csi_ker_clk,
@@ -289,6 +288,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               mco1_pre_clk;
   wire                               mco2_pre_clk;
   wire                               hsi_pre_clk;
+  wire                               hse_clk;
 
   wire [                        4:0] mco1_clk_src;
   wire [                        5:0] mco2_clk_src;
@@ -299,6 +299,7 @@ module rcc_sys_clk_rst_ctrl #(
   wire                               hsi_ker_clk_en;
   wire                               csi_clk_en;
   wire                               csi_ker_clk_en;
+
   // wire                               hse_clk_en;
 
   wire                               sync_flash_power_ok;
@@ -530,7 +531,7 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   assign stby_rst_n_release = hsi_rdy && flash_power_ok;  // stby_rst_n is released when hsi_rdy and flash power ok
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_stby_rst_n_assert_n_sync (
       .src_rst_n(stby_rst_n_assert_n),
@@ -599,7 +600,7 @@ module rcc_sys_clk_rst_ctrl #(
       .rst_n     (sys_rst_n_assert_n)
   );
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_sys_rst_n_assert_n_sync (
       .src_rst_n(sys_rst_n_assert_n),
@@ -672,7 +673,7 @@ module rcc_sys_clk_rst_ctrl #(
       .rst_n     (gen_pwr_d1_ok)
   );
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_pwr_d1_ok_sync (
       .src_rst_n(gen_pwr_d1_ok),
@@ -743,7 +744,7 @@ module rcc_sys_clk_rst_ctrl #(
       .rst_n     (gen_pwr_d2_ok)
   );
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_pwr_d2_ok_sync (
       .src_rst_n(gen_pwr_d2_ok),
@@ -820,7 +821,7 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   // to ensure c1 and c2 reset release after d1 and d2 reset release
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_c1_rst_n_delay (
       .src_rst_n(c1_rst_n),
@@ -829,7 +830,7 @@ module rcc_sys_clk_rst_ctrl #(
       .gen_rst_n(raw_rcc_c1_rst_n)
   );
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_c2_rst_n_delay (
       .src_rst_n(c2_rst_n),
@@ -899,7 +900,7 @@ module rcc_sys_clk_rst_ctrl #(
       .testmode  (testmode),
       .rst_n     (gen_pwr_vsw_rst)
   );
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_vsw_pwr_vsw_rst_sync (
       .src_rst_n(gen_pwr_vsw_rst),
@@ -1202,6 +1203,7 @@ module rcc_sys_clk_rst_ctrl #(
       .clk_fail ({hsecss_fail, 2'b0}),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
       .sel      (clkpersel),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (per_clk)
@@ -1278,6 +1280,7 @@ module rcc_sys_clk_rst_ctrl #(
       .clk_fail ({1'b0, hsecss_fail, 2'b0}),
       .rst_n    ({pll1_p_sync_sys_rst_n, hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
       .sel      (sw),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (pre_sys_clk)
@@ -1321,7 +1324,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   assign rcc_fclk_c1 = rcc_c1_clk;
 
-  BB_clk_div_s #(
+  clk_div_s #(
       .DIV_RATIO(8)
   ) c1_systick_clk_div (
       .i_clk (rcc_c1_clk),
@@ -1416,7 +1419,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   assign rcc_fclk_c2 = rcc_c2_clk;
 
-  BB_clk_div_s #(
+  clk_div_s #(
       .DIV_RATIO(8)
   ) c2_systick_clk_div (
       .i_clk (rcc_c2_clk),

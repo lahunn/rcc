@@ -15,9 +15,9 @@ module rst_as_en_as_clk_gating (
   wire sync_active;
   wire sync_rst_n;
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
-  ) u_BB_reset_sync (
+  ) u_rcc_reset_sync (
       .src_rst_n(rst_n),
       .clk      (raw_clk),
       .testmode (testmode),

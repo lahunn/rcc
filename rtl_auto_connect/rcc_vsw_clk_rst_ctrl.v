@@ -50,7 +50,7 @@ module rcc_vsw_clk_rst_ctrl (
   // vsw_rst_n sync with different clocks
   //================================================================
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_rtc_clk_sync_vsw_rst_n_sync (
       .src_rst_n(vsw_rst_n),
@@ -60,7 +60,7 @@ module rcc_vsw_clk_rst_ctrl (
   );
 
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_hse_rtc_vsw_rst_sync (
       .src_rst_n(vsw_rst_n),
@@ -70,7 +70,7 @@ module rcc_vsw_clk_rst_ctrl (
   );
 
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_lsi_vsw_rst_sync (
       .src_rst_n(vsw_rst_n),
@@ -80,7 +80,7 @@ module rcc_vsw_clk_rst_ctrl (
   );
 
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_lse_vsw_rst_sync (
       .src_rst_n(vsw_rst_n),
@@ -116,6 +116,7 @@ module rcc_vsw_clk_rst_ctrl (
       .clk_fail ({2'b0, lsecss_fail, 1'b1}),
       .sel      (rtcsel),
       .rst_n    ({hse_rtc_sync_vsw_rst_n, lsi_sync_vsw_rst_n, lse_sync_vsw_rst_n, rtcsel_clk_rst_0}),
+      .testmode(testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_rtcsel_clk)

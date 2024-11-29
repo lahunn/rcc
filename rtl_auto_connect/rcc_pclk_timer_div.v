@@ -46,7 +46,7 @@ module rcc_pclk_timer_div (
     endcase
   end
 
-  BB_clk_div_d #(
+  clk_div_d #(
       .RATIO_WID(3)
   ) u_tim_clk_div_d (
       .rst_n (rst_n),

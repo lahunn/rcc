@@ -14,6 +14,10 @@ module rcc_vcore_reg #(
     parameter DW = 32,
     parameter WW = DW / 8
 ) (
+    //================================================================
+    // testmode
+    //================================================================
+    input           testmode,
     // ================================================================================
     // PINS
     // ================================================================================
@@ -3364,7 +3368,7 @@ module rcc_vcore_reg #(
 
   // pllxon_clr_n test reset mux
   test_rst_mux u_pllxon_clr_n_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(rst_n),
       .func_rst_n(raw_pllxon_clr_n),
       .testmode  (testmode),
       .rst_n     (pllxon_clr_n)
@@ -3465,10 +3469,10 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 17:17               hserdy              RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign hseon_clr_n = rst_n & ~(sync_hsecss_fail_rst | rcc_sys_stop);
+  assign raw_hseon_clr_n = rst_n & ~(sync_hsecss_fail_rst | rcc_sys_stop);
   // hseon_clr_n test reset mux
   test_rst_mux u_hseon_clr_n_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(rst_n),
       .func_rst_n(raw_hseon_clr_n),
       .testmode  (testmode),
       .rst_n     (hseon_clr_n)
@@ -3527,10 +3531,10 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 12:12               hsi48on             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign hsi48on_clr_n       = rst_n & ~rcc_sys_stop;
+  assign raw_hsi48on_clr_n       = rst_n & ~rcc_sys_stop;
   // hsi48on_clr_n test reset mux
   test_rst_mux u_hsi48on_clr_n_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(rst_n),
       .func_rst_n(raw_hsi48on_clr_n),
       .testmode  (testmode),
       .rst_n     (hsi48on_clr_n)
@@ -3958,11 +3962,11 @@ module rcc_vcore_reg #(
   // 2:0                 sw                  RW                  0b0                 
   // --------------------------------------------------------------------------------
   //RCC switch logic, sys_clk is set to hsi_clk while sys_rst / hsefail / exit form stop mode and stopwuck is 0  
-  assign sw_clr_n         = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;
+  assign raw_sw_clr_n     = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;
 
   // sw_clr_n test reset mux
   test_rst_mux u_sw_clr_n_mux (
-      .test_rst_n(test_rst_n),
+      .test_rst_n(rst_n),
       .func_rst_n(raw_sw_clr_n),
       .testmode  (testmode),
       .rst_n     (sw_clr_n)

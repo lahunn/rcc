@@ -69,7 +69,7 @@ module rcc_eth_ker_clk_ctrl (
   //================================================================
   //  reset sync
   //================================================================
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_eth_rx_rst_n_sync (
       .src_rst_n(rst_n),
@@ -78,7 +78,7 @@ module rcc_eth_ker_clk_ctrl (
       .gen_rst_n(eth_rx_clk_sync_rst_n)
   );
 
-  BB_reset_sync #(
+  rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_eth_tx_rst_n_sync (
       .src_rst_n(rst_n),
@@ -106,6 +106,7 @@ module rcc_eth_ker_clk_ctrl (
       .clk_fail (2'b0),
       .rst_n    ({eth_rx_clk_sync_rst_n, eth_tx_clk_sync_rst_n}),
       .sel      (eth_rcc_epis_2),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_eth_mii_tx_clk_pre)
@@ -118,12 +119,13 @@ module rcc_eth_ker_clk_ctrl (
       .clk_fail (2'b0),
       .rst_n    ({eth_rx_clk_sync_rst_n, eth_rx_clk_sync_rst_n}),
       .sel      (eth_rcc_epis_2),
+      .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
       .o_clk    (rcc_eth_mii_rx_clk_pre)
   );
 
-  BB_clk_div_s #(
+  clk_div_s #(
       .DIV_RATIO(2)
   ) eth_mii_rx_clk_divider_2 (
       .rst_n (eth_rx_clk_sync_rst_n),
@@ -132,7 +134,7 @@ module rcc_eth_ker_clk_ctrl (
       .div_en()
   );
 
-  BB_clk_div_s #(
+  clk_div_s #(
       .DIV_RATIO(20)
   ) eth_mii_rx_clk_divider_20 (
       .rst_n (eth_rx_clk_sync_rst_n),
