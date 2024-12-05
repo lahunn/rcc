@@ -39,14 +39,14 @@ module rcc_vcore_top #(
     input        raw_pll3_q_clk,
     input        raw_pll3_r_clk,
     //rcc_vsw reg outputs
-    input        cur_rcc_bdcr_bdrst,     // vsw to vcore
-    input        cur_rcc_bdcr_lsebyp,    // vsw to vcore
-    input        cur_rcc_bdcr_lsecssd,   // vsw to vcore
-    input        cur_rcc_bdcr_lsecsson,  // vsw to vcore
-    input  [1:0] cur_rcc_bdcr_lsedrv,    // vsw to vcore
-    input        cur_rcc_bdcr_lseon,     // vsw to vcore
-    input        cur_rcc_bdcr_rtcen,     // vsw to vcore
-    input  [1:0] cur_rcc_bdcr_rtcsel,    // vsw to vcore
+    input        cur_rcc_bdcr_bdrst,          // vsw to vcore
+    input        cur_rcc_bdcr_lsebyp,         // vsw to vcore
+    input        cur_rcc_bdcr_lsecssd,        // vsw to vcore
+    input        cur_rcc_bdcr_lsecsson,       // vsw to vcore
+    input  [1:0] cur_rcc_bdcr_lsedrv,         // vsw to vcore
+    input        cur_rcc_bdcr_lseon,          // vsw to vcore
+    input        cur_rcc_bdcr_rtcen,          // vsw to vcore
+    input  [1:0] cur_rcc_bdcr_rtcsel,         // vsw to vcore
     // rcc_vdd_reg Outputs
     input        cur_rcc_c1_rsr_lpwr2rstf,    //vdd to vcore
     input        cur_rcc_c1_rsr_lpwr1rstf,    //vdd to vcore
@@ -174,8 +174,8 @@ module rcc_vcore_top #(
   //rcc_ahb_lite bus
   //==============================================================================
 
-  BB_ahb2reg #(  /*AUTOINSTPARAM*/
-  ) u_BB_rcc_ahb2reg (
+  rcc_ahb2reg #(  /*AUTOINSTPARAM*/
+  ) u_rcc_ahb2reg (
       .hclk   (rcc_rcc_hclk),
       .hresetn(rcc_rcc_sync_rst_n),
       .mwrite (),

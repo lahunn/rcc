@@ -53,33 +53,8 @@ clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.raw_rcc_timy_ker_clk
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.raw_rcc_apb2bridge_d2_pre_clk"  -testclock -atspeed
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.raw_rcc_apb3bridge_d1_pre_clk"  -testclock -atspeed
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.raw_rcc_apb4bridge_d3_pre_clk"  -testclock -atspeed
-
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_qspisel_clk_switch.u_o_clk_tmux.func_clk"         -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_fmcsel_clk_switch.u_o_clk_tmux.func_clk"          -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_sdmmcsel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_usbsel_clk_switch.u_o_clk_tmux.func_clk"          -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_adcsel_clk_switch.u_o_clk_tmux.func_clk"          -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_rngsel_clk_switch.u_o_clk_tmux.func_clk"          -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_usart234578sel_clk_switch.u_o_clk_tmux.func_clk"  -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_cecsel_clk_switch.u_o_clk_tmux.func_clk"          -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_i2c123sel_clk_switch.u_o_clk_tmux.func_clk"       -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_spdifsel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_spi123sel_clk_switch.u_o_clk_tmux.func_clk"       -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_lptim1sel_clk_switch.u_o_clk_tmux.func_clk"       -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_fdcansel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_swpmisel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_sai1sel_clk_switch.u_o_clk_tmux.func_clk"         -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_dfsdm1sel_clk_switch.u_o_clk_tmux.func_clk"       -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_sai23sel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_spi45sel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_usart16sel_clk_switch.u_o_clk_tmux.func_clk"      -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_sai4asel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_sai4bsel_clk_switch.u_o_clk_tmux.func_clk"        -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_lptim345sel_clk_switch.u_o_clk_tmux.func_clk"     -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_lptim2sel_clk_switch.u_o_clk_tmux.func_clk"       -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_i2c4sel_clk_switch.u_o_clk_tmux.func_clk"         -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_spi6sel_clk_switch.u_o_clk_tmux.func_clk"         -testclock -atspeed
-clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_lpuart1sel_clk_switch.u_o_clk_tmux.func_clk"      -testclock -atspeed
+# peripheral kernal clocks
+clock -name "rcc_top.u_rcc_vcore_top.u_rcc_per_clk_rst_control.rcc_*_switch.u_o_clk_tmux.func_clk"         -testclock -atspeed
 
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.raw_hsi_pre_clk"         -testclock -atspeed
 clock -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.raw_mco1_pre_clk"         -testclock -atspeed
@@ -107,3 +82,8 @@ test_mode -name "scan_mode"    -value 0 -captureATspeed
 test_mode -name "atspeed_mode" -value 0 -scanshift
 test_mode -name "atspeed_mode" -value 0 -capture
 test_mode -name "atspeed_mode" -value 1 -captureATspeed
+
+#================================================================
+# set scan chain
+#================================================================
+# scan_chain -scanin hwdata[0] -scanout hrdata[0] -scanin_clock_pin test_clk

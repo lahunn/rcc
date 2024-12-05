@@ -4,8 +4,7 @@
 // FUNCTION : RCC register in vcore domain
 // ****************************************************************
 // spyglass disable_block Clock_info05c
-//Clock_info05c (56) : Reports unconstrained MUXes which do not receive clocks in all its data inputs
-
+// Clock_info05c (56) : Reports unconstrained MUXes which do not receive clocks in all its data inputs
 module rcc_vcore_reg #(
     // ================================================================================
     // CONFIGURABLE PARAMETERS
@@ -27,7 +26,7 @@ module rcc_vcore_reg #(
     input  [WW-1:0] we,
     input  [AW-1:0] addr,
     input  [DW-1:0] wdata,
-    input           hmaster,
+    input           mmaster,
     output [DW-1:0] rdata,
     output [   1:0] rsp,
     input           sync_pll3_rdy,
@@ -3073,6 +3072,13 @@ module rcc_vcore_reg #(
   wire          pll2_forbidden;
   wire          pll1_forbidden;
 
+  wire          rcc_c1_rsr_rmvf_en;
+  wire          rcc_c2_rsr_rmvf_en;
+  wire          rcc_csr_lsion_en;
+  wire          rcc_bdcr_byte2_en;
+  wire          rcc_bdcr_byte1_en;
+  wire          rcc_bdcr_byte0_en;
+
   // ================================================================================
   // interrupt logic
   // ================================================================================
@@ -3090,7 +3096,7 @@ module rcc_vcore_reg #(
   // ADDRESS DECODER
   // ================================================================================
   // rcc_vcore_reg
-  assign addr_shift = (addr <= RCC_RSR) ? 'b0 : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? 'h18 : 'h30) : 'b0;
+  assign addr_shift = (addr <= RCC_RSR) ? 'b0 : (addr <= RCC_C1_RSR) ? ((mmaster == 0) ? 'h18 : 'h30) : 'b0;
   assign remap_addr = addr + addr_shift;
   assign rcc_cr_sel = (remap_addr == RCC_CR);
   assign rcc_icscr_sel = (remap_addr == RCC_ICSCR);
@@ -3183,8 +3189,8 @@ module rcc_vcore_reg #(
                   || ((remap_addr > RCC_C1_APB4LPENR) && (remap_addr < RCC_C2_RSR))
                   || ((remap_addr > RCC_C2_APB4ENR) && (remap_addr < RCC_C2_AHB3LPENR))
                   || (remap_addr > RCC_C2_APB4LPENR)
-                  || ((remap_addr >= RCC_C1_RSR) && (remap_addr <= RCC_C1_APB4LPENR) && (hmaster == 1))
-                  || ((remap_addr >= RCC_C2_RSR) && (remap_addr <= RCC_C2_APB4LPENR) && (hmaster == 0));//hamster = 0 , cpu1 ; hmaster = 1, cpu2
+                  || ((remap_addr >= RCC_C1_RSR) && (remap_addr <= RCC_C1_APB4LPENR) && (mmaster == 1))
+                  || ((remap_addr >= RCC_C2_RSR) && (remap_addr <= RCC_C2_APB4LPENR) && (mmaster == 0));//mmaster = 0 , cpu1 ; mmaster = 1, cpu2
 
   assign rsv_acs_err = rsv_reg_sel && req;
   assign rsp = {1'b0, rsv_acs_err};
@@ -6226,23 +6232,56 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // rcc_bdcr read data
   // --------------------------------------------------------------------------------
-  assign rcc_bdcr_read              = {{15{1'b0}}, cur_rcc_bdcr_bdrst, cur_rcc_bdcr_rtcen, {5{1'b0}}, cur_rcc_bdcr_rtcsel, {1{1'b0}}, cur_rcc_bdcr_lsecssd, cur_rcc_bdcr_lsecsson, cur_rcc_bdcr_lsedrv, cur_rcc_bdcr_lsebyp, cur_rcc_bdcr_lserdy, cur_rcc_bdcr_lseon};
+  assign rcc_bdcr_read         = {{15{1'b0}}, cur_rcc_bdcr_bdrst, cur_rcc_bdcr_rtcen, {5{1'b0}}, cur_rcc_bdcr_rtcsel, {1{1'b0}}, cur_rcc_bdcr_lsecssd, cur_rcc_bdcr_lsecsson, cur_rcc_bdcr_lsedrv, cur_rcc_bdcr_lsebyp, cur_rcc_bdcr_lserdy, cur_rcc_bdcr_lseon};
 
-  assign nxt_rcc_bdcr_bdrst         = wdata[16:16];
-  assign nxt_rcc_bdcr_rtcen         = wdata[15:15];
-  assign nxt_rcc_bdcr_rtcsel        = wdata[9:8];
-  assign nxt_rcc_bdcr_lsecsson      = wdata[5:5];
-  assign nxt_rcc_bdcr_lsedrv        = wdata[4:3];
-  assign nxt_rcc_bdcr_lsebyp        = wdata[2:2];
-  assign nxt_rcc_bdcr_lseon         = wdata[0:0];
+  assign nxt_rcc_bdcr_bdrst    = wdata[16:16];
+  assign nxt_rcc_bdcr_rtcen    = wdata[15:15];
+  assign nxt_rcc_bdcr_rtcsel   = wdata[9:8];
+  assign nxt_rcc_bdcr_lsecsson = wdata[5:5];
+  assign nxt_rcc_bdcr_lsedrv   = wdata[4:3];
+  assign nxt_rcc_bdcr_lsebyp   = wdata[2:2];
+  assign nxt_rcc_bdcr_lseon    = wdata[0:0];
 
 
   // --------------------------------------------------------------------------------
   // 16:16               bdrst               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_bdcr_byte2_wren        = (wr_req[2] & rcc_bdcr_sel & backup_protect);  // RCC_BDCR can be write only when backup_protect == 1
-  assign rcc_bdcr_byte1_wren        = (wr_req[1] & rcc_bdcr_sel & backup_protect);
-  assign rcc_bdcr_byte0_wren        = (wr_req[0] & rcc_bdcr_sel & backup_protect);
+  assign rcc_bdcr_byte2_en   = (wr_req[2] & rcc_bdcr_sel & backup_protect);  // RCC_BDCR can be write only when backup_protect == 1
+  assign rcc_bdcr_byte1_en   = (wr_req[1] & rcc_bdcr_sel & backup_protect);
+  assign rcc_bdcr_byte0_en   = (wr_req[0] & rcc_bdcr_sel & backup_protect);
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_rcc_bdcr_byte2_en_sync (
+      .src_signal(rcc_bdcr_byte2_en),
+      .rst_n     (rst_n),
+      .clk       (clk),
+      .gen_signal(rcc_bdcr_byte2_wren)
+  );
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_rcc_bdcr_byte1_en_sync (
+      .src_signal(rcc_bdcr_byte1_en),
+      .rst_n     (rst_n),
+      .clk       (clk),
+      .gen_signal(rcc_bdcr_byte1_wren)
+  );
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_rcc_bdcr_byte0_en_sync (
+      .src_signal(rcc_bdcr_byte0_en),
+      .rst_n     (rst_n),
+      .clk       (clk),
+      .gen_signal(rcc_bdcr_byte0_wren)
+  );
 
 
 
@@ -17126,7 +17165,19 @@ module rcc_vcore_reg #(
     cur_rcc_c1_rsr_rmvf,
     {16{1'b0}}
   };
-  assign rcc_c1_rsr_rmvf_wren = (wr_req[2] & rcc_c1_rsr_sel);
+  assign rcc_c1_rsr_rmvf_en = (wr_req[2] & rcc_c1_rsr_sel);
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_rcc_c1_rsr_rmvf_en_sync (
+      .src_signal(rcc_c1_rsr_rmvf_en),
+      .rst_n     (rst_n),
+      .clk       (clk),
+      .gen_signal(rcc_c1_rsr_rmvf_wren)
+  );
+
   // --------------------------------------------------------------------------------
   // rcc_c2_rsr read data
   // --------------------------------------------------------------------------------
@@ -17149,12 +17200,34 @@ module rcc_vcore_reg #(
     cur_rcc_c2_rsr_rmvf,
     {16{1'b0}}
   };
-  assign rcc_c2_rsr_rmvf_wren = (wr_req[2] & rcc_c2_rsr_sel);
+  assign rcc_c2_rsr_rmvf_en = (wr_req[2] & rcc_c2_rsr_sel);
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_rcc_c2_rsr_rmvf_en_sync (
+      .src_signal(rcc_c2_rsr_rmvf_en),
+      .rst_n     (rst_n),
+      .clk       (clk),
+      .gen_signal(rcc_c2_rsr_rmvf_wren)
+  );
   // --------------------------------------------------------------------------------
   // rcc_csr read data
   // --------------------------------------------------------------------------------
-  assign rcc_csr_read = {{30{1'b0}}, cur_rcc_csr_lsirdy, cur_rcc_csr_lsion};
-  assign rcc_csr_lsion_wren = (wr_req[0] & rcc_csr_sel);
+  assign rcc_csr_read       = {{30{1'b0}}, cur_rcc_csr_lsirdy, cur_rcc_csr_lsion};
+  assign rcc_csr_lsion_en = (wr_req[0] & rcc_csr_sel);
+
+  BB_signal_sync #(
+      .STAGE_NUM(2),
+      .DW       (1),
+      .RST_VAL  ('b0)
+  ) u_rcc_csr_lsion_en_sync (
+      .src_signal(rcc_csr_lsion_en),
+      .rst_n     (rst_n),
+      .clk       (clk),
+      .gen_signal(rcc_csr_lsion_wren)
+  );
 
   assign rcc_vdd_wdata = (rcc_c1_rsr_sel | rcc_c2_rsr_sel) ? wdata[17] : wdata[0];
 
