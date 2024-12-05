@@ -5,30 +5,32 @@
 // ****************************************************************
 // spyglass disable_block Reset_sync02
 module rcc_vdd_reg (
-    input  rcc_vdd_wdata,
-    input  rst_n,
-    input  rcc_c1_rsr_rmvf_wren,
-    input  rcc_c2_rsr_rmvf_wren,
-    input  rcc_csr_lsion_wren,
+    input rcc_vdd_wdata,
+    input rst_n,
+    input rcc_c1_rsr_rmvf_wren,
+    input rcc_c2_rsr_rmvf_wren,
+    input rcc_csr_lsion_wren,
     //
-    input  nrst_in,
-    input  obl_rst,
-    input  lpwr2_rst,
-    input  lpwr1_rst,
-    input  wwdg1_out_rst,
-    input  wwdg2_out_rst,
-    input  iwdg1_out_rst,
-    input  iwdg2_out_rst,
-    input  cpu2_sftrst,
-    input  cpu1_sftrst,
-    input  pwr_por_rst,
-    input  pwr_bor_rst,
-    input  d2_rst,
-    input  d1_rst,
+    input nrst_in,
+    input obl_rst,
+    input lpwr2_rst,
+    input lpwr1_rst,
+    input wwdg1_out_rst,
+    input wwdg2_out_rst,
+    input iwdg1_out_rst,
+    input iwdg2_out_rst,
+    input cpu2_sftrst,
+    input cpu1_sftrst,
+    input pwr_por_rst,
+    input pwr_bor_rst,
+    input d2_rst,
+    input d1_rst,
     //
-    input  testmode,
-    input  test_rst_n,
+    input testmode,
+    input test_rst_n,
     // input lsi_rdy,
+
+    output lsion,
     // rcc_c1_rsr 
     output cur_rcc_c1_rsr_lpwr2rstf,
     output cur_rcc_c1_rsr_lpwr1rstf,
@@ -630,6 +632,7 @@ module rcc_vdd_reg (
   // 0:0                 lsion               RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign nxt_rcc_csr_lsion = rcc_vdd_wdata;
+  assign lsion             = cur_rcc_csr_lsion;
 
   BB_dffr #(
       .DW     (1),

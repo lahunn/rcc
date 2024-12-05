@@ -5,6 +5,9 @@
 // when ratio equals to 1, the output clock is the same as the input clock
 // when ratio equals to 0, the output clock is 2^(RATIO_WID) times slower than the input clock
 // ****************************************************************
+// spyglass disable_block STARC05-1.4.3.4
+// STARC05-1.4.3.4 (28) : Flip-flop clock signals must not be used as non-clock signals
+
 module clk_div_d #(
     parameter RATIO_WID = 8
 ) (
@@ -32,18 +35,19 @@ module clk_div_d #(
   wire                 nxt_o_clk;
   wire                 o_clk_wren;
   wire                 zero_ratio;
-
+  wire                 no_div;
 
   assign minus_one_ratio      = zero_ratio ? {RATIO_WID{1'b1}} : (ratio - 'b1);
   assign minus_one_half_ratio = half_ratio - 'b1;
   //half of the ratio
   assign zero_ratio           = (ratio == 'b0);
+  assign no_div               = (ratio == 'b1);
   assign half_ratio           = zero_ratio ? {1'b1, {(RATIO_WID - 1) {1'b0}}} : {1'b0, ratio[RATIO_WID-1:1]};
   //================================================================
   // counter for the division
   //================================================================
 
-  assign nxt_cnt              = (cur_cnt >= minus_one_ratio) ? cur_cnt + 'b1 : 'b0;
+  assign nxt_cnt              = (cur_cnt >= minus_one_ratio) ? 'b0 : cur_cnt + 'b1;
   BB_dffr #(
       .DW     (RATIO_WID),
       .RST_VAL('b0)
@@ -57,12 +61,12 @@ module clk_div_d #(
   //================================================================
   // clock generate
   //================================================================
-  assign nxt_o_clk  = ~o_clk;
+  assign nxt_o_clk  = ~cur_o_clk;
   assign o_clk_wren = (cur_cnt == minus_one_half_ratio) || (cur_cnt == minus_one_ratio);
   BB_mux_cell u_o_clk_mux (
-      .ina(cur_o_clk),   //0
-      .inb(i_clk),       //1
-      .sel(zero_ratio),
+      .ina(cur_o_clk),  //0
+      .inb(i_clk),      //1
+      .sel(no_div),
       .out(o_clk)
   );
 
@@ -77,4 +81,11 @@ module clk_div_d #(
       .dout (cur_o_clk)
   );
 
+  //================================================================
+  // div enable
+  //================================================================
+  assign div_en = (cur_cnt == minus_one_ratio);
+
 endmodule
+
+// spyglass enable_block STARC05-1.4.3.4

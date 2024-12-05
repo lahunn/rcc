@@ -13,6 +13,7 @@ module rcc_hsi_div (
   wire       sync_rst_n;
   wire [1:0] sync_div_sel;
   reg  [2:0] div_ratio;
+  wire [2:0] d1_div_ratio;
   //================================================================
   // syncronize the input ratio and reset
   //================================================================
@@ -44,12 +45,24 @@ module rcc_hsi_div (
     endcase
   end
 
+  // to avoid reconverge of signals from the same domain , need a flop to stop the propagation route
+  BB_dffr #(
+      .DW     (3),
+      .RST_VAL(3'b001)
+  ) u_BB_dffr (
+      .clk  (i_clk),
+      .rst_n(rst_n),
+      .din  (div_ratio),
+      .dout (d1_div_ratio)
+  );
+
+
   clk_div_d #(
       .RATIO_WID(3)
   ) u_clk_div_d (
       .rst_n (sync_rst_n),
       .i_clk (i_clk),
-      .ratio (div_ratio),
+      .ratio (d1_div_ratio),
       .o_clk (o_clk),
       .div_en()
   );

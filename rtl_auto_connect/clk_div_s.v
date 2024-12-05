@@ -9,8 +9,8 @@ module clk_div_s #(
   //=========================================================================================
   //FIXED PARAMETERS
   //=========================================================================================
-  localparam CNT_WID = (DIV_RATIO % 2 == 0) ? $clog2(DIV_RATIO / 2) : $clog2(DIV_RATIO);
-  localparam RATIO_WID = CNT_WID;
+  localparam CNT_WID    = (DIV_RATIO % 2 == 0) ? $clog2(DIV_RATIO / 2) : $clog2(DIV_RATIO);
+  localparam RATIO_WID  = CNT_WID;
   localparam HALF_RATIO = DIV_RATIO / 2;
 
   //=========================================================================================
@@ -28,7 +28,7 @@ module clk_div_s #(
       // counter for the division
       //================================================================
 
-      assign nxt_cnt = (cur_cnt >= HALF_RATIO - 1) ? cur_cnt + 'b1 : 'b0;
+      assign nxt_cnt = (cur_cnt >= HALF_RATIO - 1) ? 'b0 : cur_cnt + 'b1;
       BB_dffr #(
           .DW     (RATIO_WID),
           .RST_VAL('b0)
@@ -56,12 +56,16 @@ module clk_div_s #(
           .din  (nxt_o_clk),
           .dout (cur_o_clk)
       );
+      //================================================================
+      // div enable
+      //================================================================
+      assign div_en = (cur_cnt == HALF_RATIO - 1) && (cur_o_clk == 1'b1);
     end else begin : odd_divider
       //================================================================
       // counter for the division
       //================================================================
 
-      assign nxt_cnt = (cur_cnt >= RATIO_WID - 1) ? cur_cnt + 'b1 : 'b0;
+      assign nxt_cnt = (cur_cnt >= RATIO_WID - 1) ? 'b0 : cur_cnt + 'b1;
       BB_dffr #(
           .DW     (RATIO_WID),
           .RST_VAL('b0)
@@ -89,6 +93,11 @@ module clk_div_s #(
           .din  (nxt_o_clk),
           .dout (cur_o_clk)
       );
+
+      //================================================================
+      // div en
+      //================================================================
+      assign div_en = (cur_cnt == RATIO_WID - 1);
     end
   endgenerate
 

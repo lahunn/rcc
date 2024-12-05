@@ -6665,7 +6665,7 @@ module rcc_per_clk_rst_control #(
   // csi_ker_clk_122_div
   clk_div_s #(
       .DIV_RATIO(122)
-  ) csi_ker_clk_122_divider (
+  ) u_csi_ker_clk_122_divider (
       .i_clk (csi_ker_clk),
       .rst_n (csi_ker_sync_sys_rst_n),
       .o_clk (raw_csi_ker_clk_122_div),

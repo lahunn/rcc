@@ -18,9 +18,9 @@ module rcc_vcore_reg #(
     // testmode
     //================================================================
     input           testmode,
-    // ================================================================================
+    // ===============================================================
     // PINS
-    // ================================================================================
+    // ===============================================================
     input           clk,
     input           rst_n,
     input           req,
@@ -913,6 +913,8 @@ module rcc_vcore_reg #(
   wire          cur_rcc_cfgr_stopwuck;
   wire          nxt_rcc_cfgr_stopwuck;
   wire          rcc_cfgr_stopwuck_en;
+  wire [   2:0] nxt_rcc_cfgr_sws;
+  wire          rcc_cfgr_sws_en;
   wire [   2:0] cur_rcc_cfgr_sws;
   wire [   2:0] cur_rcc_cfgr_sw;
   wire [   2:0] nxt_rcc_cfgr_sw;
@@ -3021,7 +3023,8 @@ module rcc_vcore_reg #(
   wire          rcc_eff_hsidiv_en;
   wire          csion_clr_n;
   wire          csion_set_n;
-  wire          hsion_set_n;
+  wire          hsion_rst_n;
+  wire          raw_hsion_rst_n;
   wire          raw_sw_clr_n;
   wire          sw_clr_n;
   wire          sw_set_n;
@@ -3038,6 +3041,7 @@ module rcc_vcore_reg #(
   wire          d1_clk_rdy;
   wire          d2_clk_rdy;
   wire          sys_clk_rdy;
+  wire          tg_sys_clk_rdy;
   wire [   3:0] sys_rdy_candidate;
   //interrupt signals
   wire          lsecssie;
@@ -3063,6 +3067,7 @@ module rcc_vcore_reg #(
   wire          rcc_lsirdyf;
   //addr remap
   wire [AW-1:0] remap_addr;
+  wire [AW-1:0] addr_shift;
   //PLL forbidden
   wire          pll3_forbidden;
   wire          pll2_forbidden;
@@ -3085,7 +3090,8 @@ module rcc_vcore_reg #(
   // ADDRESS DECODER
   // ================================================================================
   // rcc_vcore_reg
-  assign remap_addr = (addr <= RCC_RSR) ? addr : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? addr + 'h18 : addr + 'h30) : addr;
+  assign addr_shift = (addr <= RCC_RSR) ? 'b0 : (addr <= RCC_C1_RSR) ? ((hmaster == 0) ? 'h18 : 'h30) : 'b0;
+  assign remap_addr = addr + addr_shift;
   assign rcc_cr_sel = (remap_addr == RCC_CR);
   assign rcc_icscr_sel = (remap_addr == RCC_ICSCR);
   assign rcc_crrcr_sel = (remap_addr == RCC_CRRCR);
@@ -3531,7 +3537,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 12:12               hsi48on             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign raw_hsi48on_clr_n       = rst_n & ~rcc_sys_stop;
+  assign raw_hsi48on_clr_n   = rst_n & ~rcc_sys_stop;
   // hsi48on_clr_n test reset mux
   test_rst_mux u_hsi48on_clr_n_mux (
       .test_rst_n(rst_n),
@@ -3615,7 +3621,7 @@ module rcc_vcore_reg #(
       .din  (nxt_rcc_cr_hsidivf),
       .dout (cur_rcc_cr_hsidivf)
   );
-
+  // when hsi is selected as the pll source clock , and one of the pllx is on , hsi divide ratio can't be changed
   assign rcc_eff_hsidiv_en = ~(cur_rcc_pllclkselr_pllsrc == 2'b00 & (pll1on | pll2on | pll3on));
 
   BB_dfflr #(
@@ -3673,17 +3679,23 @@ module rcc_vcore_reg #(
   // 0:0                 hsion               RW                  0b1                 
   // --------------------------------------------------------------------------------
   ////hsi on value doesn't change when system stop
-  assign hsion_set_n      = ~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | sync_hsecss_fail_rst);
+  assign raw_hsion_rst_n = (~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | sync_hsecss_fail_rst)) && rst_n;
+  // hsion_rst_n test reset mux
+  test_rst_mux u_hsion_rst_n_mux (
+      .test_rst_n(rst_n),
+      .func_rst_n(raw_hsion_rst_n),
+      .testmode  (testmode),
+      .rst_n     (hsion_rst_n)
+  );
   assign rcc_cr_hsion_en  = (~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hsion = wdata[0:0];
   assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion;
-  BB_dfflrs #(
+  BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
   ) U_rcc_cr_hsion (
       .clk  (clk),
-      .rst_n(rst_n),
-      .set_n(hsion_set_n),
+      .rst_n(hsion_rst_n),
       .en   (rcc_cr_hsion_en),
       .din  (nxt_rcc_cr_hsion),
       .dout (cur_rcc_cr_hsion)
@@ -3956,13 +3968,34 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 5:3                 sws                 RO                  0b0                 
   // --------------------------------------------------------------------------------
-  assign cur_rcc_cfgr_sws = cur_rcc_cfgr_sw;
+  mux_n_to_1 #(
+      .N(4),
+      .m(2)
+  ) u_mux_tg_sys_clk_rdy (
+      .inp (sys_rdy_candidate),
+      .sel (cur_rcc_cfgr_sw[1:0]),
+      .mout(tg_sys_clk_rdy)
+  );
+
+  assign nxt_rcc_cfgr_sws = cur_rcc_cfgr_sw;
+  assign rcc_cfgr_sws_en  = tg_sys_clk_rdy;
+  assign sw               = cur_rcc_cfgr_sws[1:0];  //the MSB is not used
+
+  BB_dfflrs #(
+      .DW(3)
+  ) U_rcc_cfgr_sws (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_cfgr_sws_en),
+      .din  (nxt_rcc_cfgr_sws),
+      .dout (cur_rcc_cfgr_sws)
+  );
 
   // --------------------------------------------------------------------------------
   // 2:0                 sw                  RW                  0b0                 
   // --------------------------------------------------------------------------------
   //RCC switch logic, sys_clk is set to hsi_clk while sys_rst / hsefail / exit form stop mode and stopwuck is 0  
-  assign raw_sw_clr_n     = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;
+  assign raw_sw_clr_n = ~(sync_hsecss_fail_rst | (rcc_exit_sys_stop & cur_rcc_cfgr_stopwuck == 0)) & rst_n;
 
   // sw_clr_n test reset mux
   test_rst_mux u_sw_clr_n_mux (
@@ -3976,7 +4009,6 @@ module rcc_vcore_reg #(
 
   assign rcc_cfgr_sw_en  = (|wr_req & rcc_cfgr_sel);
   assign nxt_rcc_cfgr_sw = wdata[2:0];
-  assign sw              = cur_rcc_cfgr_sw[1:0];  //the MSB is not used
 
   BB_dfflrs #(
       .DW     (3),

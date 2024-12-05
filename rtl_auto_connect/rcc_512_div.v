@@ -12,7 +12,7 @@ module rcc_512_div (
 );
 
   reg  [8:0] div_ratio;
-  wire [8:0] div_ratio_f;
+  wire [8:0] d1_div_ratio;
 
   always @(*) begin
     case (div_sel)
@@ -36,7 +36,7 @@ module rcc_512_div (
       .clk  (i_clk),
       .rst_n(rst_n),
       .din  (div_ratio),
-      .dout (div_ratio_f)
+      .dout (d1_div_ratio)
   );
 
   clk_div_d #(
@@ -44,7 +44,7 @@ module rcc_512_div (
   ) u_clk_div_d (
       .rst_n (rst_n),
       .i_clk (i_clk),
-      .ratio (div_ratio_f),
+      .ratio (d1_div_ratio),
       .o_clk (o_clk),
       .div_en(div_en)
   );

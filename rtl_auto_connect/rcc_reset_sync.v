@@ -1,3 +1,5 @@
+// spyglass disable_block Atspeed_09
+// Atspeed_09 (99) : Data pin of scan flip-flop must be fully controllable.
 module rcc_reset_sync #(
     parameter STAGE_NUM = 2  //no less than 2
 ) (
@@ -20,7 +22,6 @@ module rcc_reset_sync #(
       .dout (cur_sync)
   );
 
-
   assign nxt_sync      = {cur_sync[STAGE_NUM-2:0], 1'b1};
   assign raw_gen_rst_n = cur_sync[STAGE_NUM-1];
 
@@ -33,3 +34,4 @@ module rcc_reset_sync #(
   );
 
 endmodule
+// spyglass enable_block Atspeed_09

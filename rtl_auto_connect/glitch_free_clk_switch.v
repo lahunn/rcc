@@ -8,6 +8,9 @@
 // spyglass disable_block Clock_info05b
 // Clock_info05b (46) : Reports clock signals converging at a combinational gate other than a MUX
 // spyglass disable_block Clock_glitch05
+// spyglass disable_block Diagnose_02
+// Diagnose_02 (1) : At-speed paths must not be blocked by testmode signals
+// spyglass disable_block Diagnose_04
 module glitch_free_clk_switch #(
     parameter CLK_NUM = 4
 ) (
@@ -130,3 +133,5 @@ module glitch_free_clk_switch #(
 endmodule
 // spyglass enable_block Clock_info05b
 // spyglass enable_block Clock_glitch05
+// spyglass enable_block Diagnose_02
+// spyglass enable_block Diagnose_04

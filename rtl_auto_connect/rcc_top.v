@@ -215,6 +215,7 @@ module rcc_top #(
     output          lsecsson,                   // From u_rcc_vsw_top of rcc_vsw_top.v
     output [   1:0] lsedrv,                     // From u_rcc_vsw_top of rcc_vsw_top.v
     output          lseon,                      // From u_rcc_vsw_top of rcc_vsw_top.v
+    output          lsion,
     //triming signals
     output [   7:0] rcc_csi_triming,            // From u_rcc_vcore_top of rcc_vcore_top.v
     output [  11:0] rcc_hsi_triming,            // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -631,30 +632,29 @@ module rcc_top #(
   //INSTANTCE
 
   rcc_vsw_top u_rcc_vsw_top (
-      .lsi_clk                (gen_lsi_clk),
       .raw_hse_rtc_clk        (hse_rtc_clk),
+      .raw_lsi_clk            (lsi_clk),
+      .raw_lse_clk            (lse_clk),
       .raw_rcc_bdcr_byte2_wren(rcc_bdcr_byte2_wren),
       .raw_rcc_bdcr_byte1_wren(rcc_bdcr_byte1_wren),
-      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren),
-      .gen_lse_clk            (gen_lse_clk)
+      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren)
       /*AUTOINST*/
   );
 
   rcc_vdd_top u_rcc_vdd_top (
       .raw_rcc_c1_rsr_rmvf_wren(rcc_c1_rsr_rmvf_wren),
       .raw_rcc_c2_rsr_rmvf_wren(rcc_c2_rsr_rmvf_wren),
-      .raw_rcc_csr_lsion_wren  (rcc_csr_lsion_wren),
-      .gen_lsi_clk             (gen_lsi_clk)
+      .raw_rcc_csr_lsion_wren  (rcc_csr_lsion_wren)
       /*AUTOINST*/
   );
 
   rcc_vcore_top #(  /*AUTOINSTPARAM*/
   ) u_rcc_vcore_top (
-      .lsi_clk                   (gen_lsi_clk),
-      .lse_clk                   (gen_lse_clk),
       .hse_rtc_clk               (hse_rtc_clk),
       .raw_i2s_clk_in            (i2s_clk_in),
       .raw_usb_phy1              (usb_phy1),
+      .raw_lsi_clk               (lsi_clk),
+      .raw_lse_clk               (lse_clk),
       .raw_csi_origin_clk        (csi_origin_clk),
       .raw_hse_origin_clk        (hse_origin_clk),
       .raw_hsi48_origin_clk      (hsi48_origin_clk),

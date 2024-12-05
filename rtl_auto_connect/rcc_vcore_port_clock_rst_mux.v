@@ -1,4 +1,4 @@
-module rcc_port_clock_rst_mux (
+module rcc_vcore_port_clock_rst_mux (
     input  raw_i2s_clk_in,
     input  raw_usb_phy1,
     input  raw_csi_origin_clk,
@@ -15,16 +15,22 @@ module rcc_port_clock_rst_mux (
     input  raw_pll3_p_clk,
     input  raw_pll3_q_clk,
     input  raw_pll3_r_clk,
+    input  raw_lsi_clk,
+    input  raw_lse_clk,
+    //rst
     input  raw_pwr_d1_wkup,
     input  raw_pwr_d2_wkup,
     input  raw_pwr_d3_wkup,
     //================================================================
-    // scan_mode
+    // test_mode signals
     //================================================================
     input  testmode,
     input  scan_mode,
     input  test_clk,
     input  test_rst_n,
+    //================================================================
+    // output
+    //================================================================
     output i2s_clk_in,
     output usb_phy1,
     output csi_origin_clk,
@@ -41,6 +47,9 @@ module rcc_port_clock_rst_mux (
     output pll3_p_clk,
     output pll3_q_clk,
     output pll3_r_clk,
+    output lsi_clk,
+    output lse_clk,
+    //rst
     output pwr_d1_wkup,
     output pwr_d2_wkup,
     output pwr_d3_wkup
@@ -175,6 +184,22 @@ module rcc_port_clock_rst_mux (
       .func_clk (raw_pll3_r_clk),
       .scan_mode(scan_mode),
       .gen_clk  (pll3_r_clk)
+  );
+
+  // lsi_clk test clock mux
+  test_clk_mux u_lsi_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_lsi_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (lsi_clk)
+  );
+
+  // lse_clk test clock mux
+  test_clk_mux u_lse_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_lse_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (lse_clk)
   );
 
   //================================================================
