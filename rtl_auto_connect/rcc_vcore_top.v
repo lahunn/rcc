@@ -96,7 +96,6 @@ module rcc_vcore_top #(
   wire          mreq;
   wire [AW-1:0] maddr;
   wire [WW-1:0] mwstrb;
-  wire [DW-1:0] mdata;
   wire          sync_lsecss_fail;
   wire          sync_hsecss_fail;
   wire          sync_hsecss_fail_rst;  //async reset sync release
@@ -184,10 +183,20 @@ module rcc_vcore_top #(
       .sdata  (rdata),
       .mreq   (mreq),
       .mwstrb (mwstrb),
-      .maddr  (maddr),
-      .mdata  (mdata)
+      .maddr  (maddr)
       /*AUTOINST*/
   );
+  //================================================================
+  //================================================================
+  // DFT logic
+  //================================================================
+  //================================================================
+  //scan_chain logic to increase the scan coverage
+  rcc_vcore_scan_inc #(  /*AUTOINSTPARAM*/
+  ) u_rcc_vcore_scan_inc (
+  /*AUTOINST*/
+  );
+
   //================================================================
   // rcc port clock mux 
   //================================================================
@@ -287,6 +296,8 @@ module rcc_vcore_top #(
       .gen_cur_rcc_c2_rsr_rmvf     (gen_cur_rcc_c2_rsr_rmvf),
       .gen_cur_rcc_csr_lsion       (gen_cur_rcc_csr_lsion)
   );
+
+
   //==============================================================================
   //signal synchronize 
   //==============================================================================
@@ -345,7 +356,6 @@ module rcc_vcore_top #(
       .req                     (mreq),
       .we                      (mwstrb),
       .addr                    (maddr),
-      .wdata                   (mdata),
       .rdata                   (rdata),
       .rsp                     (rsp),
       .cur_rcc_csr_lsirdy      (sync_lsi_rdy),

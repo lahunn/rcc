@@ -3593,9 +3593,9 @@ module rcc_vcore_reg #(
   //csi on value doesn't change when system stop
   assign csion_clr_n       = rst_n;
   //when 
-  assign csion_set_n       = rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 1 | cur_rcc_cfgr_stopkerwuck == 1);
+  assign csion_set_n       = ~(rcc_exit_sys_stop && (cur_rcc_cfgr_stopwuck == 1 || cur_rcc_cfgr_stopkerwuck == 1));
 
-  assign rcc_cr_csion_en   = (~((cur_rcc_cfgr_sws == 3'b001) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01))) && (|wr_req && rcc_cr_sel);
+  assign rcc_cr_csion_en   = (~((cur_rcc_cfgr_sws == 3'b001) || (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_csion  = wdata[7:7];
   assign csion             = rcc_sys_stop ? csikeron : cur_rcc_cr_csion;
   BB_dfflrs #(
@@ -3685,7 +3685,7 @@ module rcc_vcore_reg #(
   // 0:0                 hsion               RW                  0b1                 
   // --------------------------------------------------------------------------------
   ////hsi on value doesn't change when system stop
-  assign raw_hsion_rst_n = (~((rcc_exit_sys_stop & (cur_rcc_cfgr_stopwuck == 0 | cur_rcc_cfgr_stopkerwuck == 0)) | sync_hsecss_fail_rst)) && rst_n;
+  assign raw_hsion_rst_n = (~((rcc_exit_sys_stop && (cur_rcc_cfgr_stopwuck == 0 || cur_rcc_cfgr_stopkerwuck == 0)) || sync_hsecss_fail_rst)) && rst_n;
   // hsion_rst_n test reset mux
   test_rst_mux u_hsion_rst_n_mux (
       .test_rst_n(rst_n),
@@ -3693,7 +3693,7 @@ module rcc_vcore_reg #(
       .testmode  (testmode),
       .rst_n     (hsion_rst_n)
   );
-  assign rcc_cr_hsion_en  = (~((cur_rcc_cfgr_sws == 3'b000) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00))) && (|wr_req && rcc_cr_sel);
+  assign rcc_cr_hsion_en  = (~((cur_rcc_cfgr_sws == 3'b000) || (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00))) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hsion = wdata[0:0];
   assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion;
   BB_dfflr #(
@@ -3987,7 +3987,7 @@ module rcc_vcore_reg #(
   assign rcc_cfgr_sws_en  = tg_sys_clk_rdy;
   assign sw               = cur_rcc_cfgr_sws[1:0];  //the MSB is not used
 
-  BB_dfflrs #(
+  BB_dfflr #(
       .DW(3)
   ) U_rcc_cfgr_sws (
       .clk  (clk),

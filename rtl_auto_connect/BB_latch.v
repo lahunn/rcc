@@ -21,6 +21,6 @@ module BB_latch #(
     end
   end
 
-  assign Q = raw_Q;
+  assign Q = raw_Q || (GN && testmode);
 endmodule
 //spyglass enable_block InferLatch

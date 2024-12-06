@@ -842,6 +842,32 @@ module rcc_per_clk_rst_control #(
     input  [1:0] i2c4sel,
     input  [2:0] spi6sel,
     input  [2:0] lpuart1sel,
+    output       qspisel_scan_inc,
+    output       fmcsel_scan_inc,
+    output       sdmmcsel_scan_inc,
+    output       usbsel_scan_inc,
+    output       adcsel_scan_inc,
+    output       rngsel_scan_inc,
+    output       usart234578sel_scan_inc,
+    output       cecsel_scan_inc,
+    output       i2c123sel_scan_inc,
+    output       spdifsel_scan_inc,
+    output       spi123sel_scan_inc,
+    output       lptim1sel_scan_inc,
+    output       fdcansel_scan_inc,
+    output       swpmisel_scan_inc,
+    output       sai1sel_scan_inc,
+    output       dfsdm1sel_scan_inc,
+    output       sai23sel_scan_inc,
+    output       spi45sel_scan_inc,
+    output       usart16sel_scan_inc,
+    output       sai4asel_scan_inc,
+    output       sai4bsel_scan_inc,
+    output       lptim345sel_scan_inc,
+    output       lptim2sel_scan_inc,
+    output       i2c4sel_scan_inc,
+    output       spi6sel_scan_inc,
+    output       lpuart1sel_scan_inc,
     output       rcc_flash_sync_rst_n,
     input        qspirst,
     output       rcc_qspi_sync_rst_n,
@@ -1450,6 +1476,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (qspisel_scan_inc),
       .o_clk    (rcc_qspisel_clk)
   );
   // fmcsel ker clock select logic
@@ -1463,6 +1490,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (fmcsel_scan_inc),
       .o_clk    (rcc_fmcsel_clk)
   );
   // sdmmcsel ker clock select logic
@@ -1476,6 +1504,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (sdmmcsel_scan_inc),
       .o_clk    (rcc_sdmmcsel_clk)
   );
   // usbsel ker clock select logic
@@ -1489,6 +1518,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (usbsel_scan_inc),
       .o_clk    (rcc_usbsel_clk)
   );
   // adcsel ker clock select logic
@@ -1502,6 +1532,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (adcsel_scan_inc),
       .o_clk    (rcc_adcsel_clk)
   );
   // rngsel ker clock select logic
@@ -1515,6 +1546,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (rngsel_scan_inc),
       .o_clk    (rcc_rngsel_clk)
   );
   // usart234578sel ker clock select logic
@@ -1528,6 +1560,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (usart234578sel_scan_inc),
       .o_clk    (rcc_usart234578sel_clk)
   );
   // cecsel ker clock select logic
@@ -1541,6 +1574,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (cecsel_scan_inc),
       .o_clk    (rcc_cecsel_clk)
   );
   // i2c123sel ker clock select logic
@@ -1554,6 +1588,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (i2c123sel_scan_inc),
       .o_clk    (rcc_i2c123sel_clk)
   );
   // spdifsel ker clock select logic
@@ -1567,6 +1602,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (spdifsel_scan_inc),
       .o_clk    (rcc_spdifsel_clk)
   );
   // spi123sel ker clock select logic
@@ -1580,6 +1616,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (spi123sel_scan_inc),
       .o_clk    (rcc_spi123sel_clk)
   );
   // lptim1sel ker clock select logic
@@ -1593,6 +1630,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (lptim1sel_scan_inc),
       .o_clk    (rcc_lptim1sel_clk)
   );
   // fdcansel ker clock select logic
@@ -1606,6 +1644,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (fdcansel_scan_inc),
       .o_clk    (rcc_fdcansel_clk)
   );
   // swpmisel ker clock select logic
@@ -1619,6 +1658,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (swpmisel_scan_inc),
       .o_clk    (rcc_swpmisel_clk)
   );
   // sai1sel ker clock select logic
@@ -1632,6 +1672,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (sai1sel_scan_inc),
       .o_clk    (rcc_sai1sel_clk)
   );
   // dfsdm1sel ker clock select logic
@@ -1645,6 +1686,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (dfsdm1sel_scan_inc),
       .o_clk    (rcc_dfsdm1sel_clk)
   );
   // sai23sel ker clock select logic
@@ -1658,6 +1700,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (sai23sel_scan_inc),
       .o_clk    (rcc_sai23sel_clk)
   );
   // spi45sel ker clock select logic
@@ -1671,6 +1714,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (spi45sel_scan_inc),
       .o_clk    (rcc_spi45sel_clk)
   );
   // usart16sel ker clock select logic
@@ -1684,6 +1728,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (usart16sel_scan_inc),
       .o_clk    (rcc_usart16sel_clk)
   );
   // sai4asel ker clock select logic
@@ -1697,6 +1742,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (sai4asel_scan_inc),
       .o_clk    (rcc_sai4asel_clk)
   );
   // sai4bsel ker clock select logic
@@ -1710,6 +1756,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (sai4bsel_scan_inc),
       .o_clk    (rcc_sai4bsel_clk)
   );
   // lptim345sel ker clock select logic
@@ -1723,6 +1770,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (lptim345sel_scan_inc),
       .o_clk    (rcc_lptim345sel_clk)
   );
   // lptim2sel ker clock select logic
@@ -1736,6 +1784,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (lptim2sel_scan_inc),
       .o_clk    (rcc_lptim2sel_clk)
   );
   // i2c4sel ker clock select logic
@@ -1749,6 +1798,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (i2c4sel_scan_inc),
       .o_clk    (rcc_i2c4sel_clk)
   );
   // spi6sel ker clock select logic
@@ -1762,6 +1812,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (spi6sel_scan_inc),
       .o_clk    (rcc_spi6sel_clk)
   );
   // lpuart1sel ker clock select logic
@@ -1775,6 +1826,7 @@ module rcc_per_clk_rst_control #(
       .testmode (testmode),
       .scan_mode(scan_mode),
       .test_clk (test_clk),
+      .scan_inc (lpuart1sel_scan_inc),
       .o_clk    (rcc_lpuart1sel_clk)
   );
   // flash clock and reset control

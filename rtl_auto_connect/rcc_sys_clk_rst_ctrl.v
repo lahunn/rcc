@@ -209,8 +209,14 @@ module rcc_sys_clk_rst_ctrl #(
     output pll2_src_clk,
     output pll3_src_clk,
     //system state
-    output rcc_exit_sys_stop
-
+    output rcc_exit_sys_stop,
+    //==============================================================================================
+    //testmode signal to increase scan coverage
+    //==============================================================================================
+    output nrst_out_scan_inc,
+    output mco1_scan_inc,
+    output mco2_scan_inc,
+    output pll_src_clk_scan_inc
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
@@ -651,7 +657,8 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //nrst_out
   //==============================================================================================
-  assign raw_nrst_out = obl_rst || pwr_por_rst || pwr_bor_rst || lpwr1_rst || lpwr2_rst || (wwdg1_out_rst && ww1rsc) || (wwdg2_out_rst && ww2rsc) || iwdg1_out_rst || iwdg2_out_rst || cpu2_sftrst || cpu1_sftrst;
+  assign raw_nrst_out      = obl_rst || pwr_por_rst || pwr_bor_rst || lpwr1_rst || lpwr2_rst || (wwdg1_out_rst && ww1rsc) || (wwdg2_out_rst && ww2rsc) || iwdg1_out_rst || iwdg2_out_rst || cpu2_sftrst || cpu1_sftrst;
+  assign nrst_out_scan_inc = scan_mode && raw_nrst_out;
   test_rst_mux u_nrst_out_mux (
       .test_rst_n(test_rst_n),
       .func_rst_n(raw_nrst_out),
@@ -1115,7 +1122,9 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
   // MCO clock out
   //====================================================================
+  //MCO1
   assign mco1_clk_src   = {hsi48_clk, pll1_q_clk, hse_clk, lse_clk, hsi_clk};
+  assign mco1_scan_inc  = scan_mode && raw_mco1_pre_clk;
 
   mux_n_to_1 #(
       .N(5),
@@ -1144,8 +1153,9 @@ module rcc_sys_clk_rst_ctrl #(
       .o_clk   (mco1),
       .div_en  ()
   );
-
-  assign mco2_clk_src = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
+  //MCO2
+  assign mco2_clk_src  = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
+  assign mco2_scan_inc = scan_mode && raw_mco2_pre_clk;
   mux_n_to_1 #(
       .N(6),
       .m(3)
@@ -1213,7 +1223,8 @@ module rcc_sys_clk_rst_ctrl #(
   //pll source clock generate
   //====================================================================
 
-  assign pll_clk_src = {hse_clk, csi_clk, hsi_clk};
+  assign pll_clk_src          = {hse_clk, csi_clk, hsi_clk};
+  assign pll_src_clk_scan_inc = scan_mode && raw_pll_src_clk;
 
   mux_n_to_1 #(
       .N(3),
