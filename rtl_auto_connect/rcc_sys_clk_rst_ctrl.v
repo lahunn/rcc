@@ -213,10 +213,7 @@ module rcc_sys_clk_rst_ctrl #(
     //==============================================================================================
     //testmode signal to increase scan coverage
     //==============================================================================================
-    output nrst_out_scan_inc,
-    output mco1_scan_inc,
-    output mco2_scan_inc,
-    output pll_src_clk_scan_inc
+    output nrst_out_scan_inc
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
@@ -1124,7 +1121,7 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
   //MCO1
   assign mco1_clk_src   = {hsi48_clk, pll1_q_clk, hse_clk, lse_clk, hsi_clk};
-  assign mco1_scan_inc  = scan_mode && raw_mco1_pre_clk;
+  // assign mco1_scan_inc  = scan_mode && raw_mco1_pre_clk;
 
   mux_n_to_1 #(
       .N(5),
@@ -1155,7 +1152,7 @@ module rcc_sys_clk_rst_ctrl #(
   );
   //MCO2
   assign mco2_clk_src  = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
-  assign mco2_scan_inc = scan_mode && raw_mco2_pre_clk;
+  // assign mco2_scan_inc = scan_mode && raw_mco2_pre_clk;
   mux_n_to_1 #(
       .N(6),
       .m(3)
@@ -1224,7 +1221,7 @@ module rcc_sys_clk_rst_ctrl #(
   //====================================================================
 
   assign pll_clk_src          = {hse_clk, csi_clk, hsi_clk};
-  assign pll_src_clk_scan_inc = scan_mode && raw_pll_src_clk;
+  // assign pll_src_clk_scan_inc = scan_mode && raw_pll_src_clk;
 
   mux_n_to_1 #(
       .N(3),

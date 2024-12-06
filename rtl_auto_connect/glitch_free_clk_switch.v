@@ -21,7 +21,6 @@ module glitch_free_clk_switch #(
     input                        testmode,
     input                        scan_mode,
     input                        test_clk,
-    output                       scan_inc,
     output                       o_clk
 );
   wire [        CLK_NUM-1:0] onehot_sel;
@@ -122,8 +121,6 @@ module glitch_free_clk_switch #(
   // o_clk is OR of clk_pre_out
   //================================================================
   assign raw_o_clk = |clk_pre_out;
-
-  assign scan_inc = raw_o_clk && scan_mode;
 
   // o_clk test clock mux
   test_clk_mux u_o_clk_tmux (
