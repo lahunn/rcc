@@ -71,7 +71,7 @@ module glitch_free_clk_switch #(
   generate
     genvar j;
     for (j = 1; j < CLK_NUM - 1; j = j + 1) begin : clk_sel_gen
-      assign clk_sel[j] = onehot_sel[j] && (&clk_sel_ff_n[j-1:0]) && (&clk_sel_ff_n[CLK_NUM-1:j]);
+      assign clk_sel[j] = onehot_sel[j] && (&clk_sel_ff_n[j-1:0]) && (&clk_sel_ff_n[CLK_NUM-1:j+1]);
     end
   endgenerate
   assign clk_sel[CLK_NUM-1] = onehot_sel[CLK_NUM-1] && (&clk_sel_ff_n[CLK_NUM-2:0]);

@@ -16,14 +16,11 @@ module rcc_vcore_scan_inc #(
   // wire [31:0] group3;
   // wire [31:0] group4;
 
-  assign group0 = {
-    nrst_out_scan_inc,
-    31'b0
-  };
+  assign group0 = {nrst_out_scan_inc, 31'b0};
 
   generate
     if (DW == 32) begin : dw32
-      assign wdata = mdata || group0;
+      assign wdata = mdata | group0;
     end
   endgenerate
 endmodule  //rcc_scan_inc

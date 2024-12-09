@@ -41,18 +41,16 @@ module rcc_vcore_reg #(
     output          hseon,
     input           sync_hsi48_rdy,
     output          hsi48on,
-    output          csikeron,
     input           sync_csi_rdy,
     output          csion,
     output [   1:0] hsidiv,
     input           sync_hsi_rdy,
-    output          hsikeron,
     output          hsion,
     input           sync_lse_rdy,
     input           sync_lsi_rdy,
-    output [   7:0] rcc_csi_triming,
+    output [   7:0] csi_trim,
     input  [   7:0] flash_csi_opt,
-    output [  11:0] rcc_hsi_triming,
+    output [  11:0] hsi_trim,
     input  [  11:0] flash_hsi_opt,
     input  [   9:0] crs_hsi48_trim,
     output [   2:0] mco2sel,
@@ -3027,6 +3025,9 @@ module rcc_vcore_reg #(
   wire          raw_sw_clr_n;
   wire          sw_clr_n;
   wire          sw_set_n;
+
+  wire          hsikeron;
+  wire          csikeron;
   // rcc_csr
   wire [  31:0] rcc_csr_read;
   wire          rcc_csr_sel;
@@ -3746,7 +3747,7 @@ module rcc_vcore_reg #(
   // 25:18               csical              RO                  flash_csi_opt       
   // --------------------------------------------------------------------------------
   assign cur_rcc_icscr_csical  = flash_csi_opt + {3'b0, csitrim};
-  assign rcc_csi_triming       = cur_rcc_icscr_csical;
+  assign csi_trim       = cur_rcc_icscr_csical;
 
   // --------------------------------------------------------------------------------
   // 17:12               hsitrim             RW                  0b100000            
@@ -3769,7 +3770,7 @@ module rcc_vcore_reg #(
   // 11:0                hsical              RO                  flash_hsi_opt       
   // --------------------------------------------------------------------------------
   assign cur_rcc_icscr_hsical   = flash_hsi_opt + {6'b0, hsitrim};
-  assign rcc_hsi_triming        = cur_rcc_icscr_hsical;
+  assign hsi_trim        = cur_rcc_icscr_hsical;
 
 
   // --------------------------------------------------------------------------------
@@ -6246,10 +6247,10 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 16:16               bdrst               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_bdcr_byte2_en   = (wr_req[2] & rcc_bdcr_sel & backup_protect);  // RCC_BDCR can be write only when backup_protect == 1
-  assign rcc_bdcr_byte1_en   = (wr_req[1] & rcc_bdcr_sel & backup_protect);
-  assign rcc_bdcr_byte0_en   = (wr_req[0] & rcc_bdcr_sel & backup_protect);
-
+  assign rcc_bdcr_byte2_en     = (wr_req[2] & rcc_bdcr_sel & backup_protect);  // RCC_BDCR can be write only when backup_protect == 1
+  assign rcc_bdcr_byte1_en     = (wr_req[1] & rcc_bdcr_sel & backup_protect);
+  assign rcc_bdcr_byte0_en     = (wr_req[0] & rcc_bdcr_sel & backup_protect);
+  // a signal sync to avoid glitch in wren signal , since the signal is used as clock in another domain
   BB_signal_sync #(
       .STAGE_NUM(2),
       .DW       (1),
@@ -17215,7 +17216,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // rcc_csr read data
   // --------------------------------------------------------------------------------
-  assign rcc_csr_read       = {{30{1'b0}}, cur_rcc_csr_lsirdy, cur_rcc_csr_lsion};
+  assign rcc_csr_read     = {{30{1'b0}}, cur_rcc_csr_lsirdy, cur_rcc_csr_lsion};
   assign rcc_csr_lsion_en = (wr_req[0] & rcc_csr_sel);
 
   BB_signal_sync #(

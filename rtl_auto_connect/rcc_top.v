@@ -217,8 +217,8 @@ module rcc_top #(
     output          lseon,                      // From u_rcc_vsw_top of rcc_vsw_top.v
     output          lsion,
     //triming signals
-    output [   7:0] rcc_csi_triming,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output [  11:0] rcc_hsi_triming,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output [   7:0] csi_trim,                   // From u_rcc_vcore_top of rcc_vcore_top.v
+    output [  11:0] hsi_trim,                   // From u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // BUS bridge signals
     //================================================================
