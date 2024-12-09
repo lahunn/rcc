@@ -3,8 +3,11 @@
 // AUTHOR : yunbai@zju.edu.cn
 // FUNCTION : RCC peripherals clock and reset control
 // ****************************************************************
+
+// spyglass disable_block W240
+// regret not read input bug
 // spyglass disable_block W287b
-//neglect not used output bug
+// neglect not used output bug
 module rcc_per_clk_rst_control #(
     parameter CLK_ON_AFTER_PER_RST_RELEASE = 8
 ) (
@@ -1100,7 +1103,6 @@ module rcc_per_clk_rst_control #(
   wire       rcc_spi6sel_clk;
   // lpuart1sel ker clock source select
   wire       rcc_lpuart1sel_clk;
-  wire       raw_csi_ker_clk_122_div;
   wire       csi_ker_clk_122_div;
   wire [1:0] flash_src_bus_clks;
   wire [1:0] flash_bus_clks;
@@ -1415,34 +1417,13 @@ module rcc_per_clk_rst_control #(
   wire [0:0] iwdg1_bus_clks;
   wire [0:0] exti_src_bus_clks;
   wire [0:0] exti_bus_clks;
-
+  wire       raw_csi_ker_clk_122_div;
   wire       usbsel_clk_0;
   wire       usbsel_clk_rst_0;
-
-  //================================================================
-  // clock mux and rst mux for test mode
-  //================================================================
-
-  // usbsel_clk_0 test clock mux
-  test_clk_mux u_usbsel_clk_0_tmux (
-      .test_clk (test_clk),
-      .func_clk (1'b0),
-      .scan_mode(scan_mode),
-      .gen_clk  (usbsel_clk_0)
-  );
-
-  // usbsel_clk_rst_0 test reset mux
-  test_rst_mux u_usbsel_clk_rst_0_mux (
-      .test_rst_n(test_rst_n),
-      .func_rst_n(1'b0),
-      .testmode  (testmode),
-      .rst_n     (usbsel_clk_rst_0)
-  );
-
   // qspisel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_qspisel_clk_switch (
+  ) u_qspisel_clk_switch (
       .i_clk    ({per_clk, pll2_r_clk, pll1_q_clk, rcc_ahb3bridge_d1_clk}),
       .clk_fail (4'b0),
       .rst_n    ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
@@ -1455,7 +1436,7 @@ module rcc_per_clk_rst_control #(
   // fmcsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_fmcsel_clk_switch (
+  ) u_fmcsel_clk_switch (
       .i_clk    ({per_clk, pll2_r_clk, pll1_q_clk, rcc_ahb3bridge_d1_clk}),
       .clk_fail (4'b0),
       .rst_n    ({per_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n, sys_rst_n}),
@@ -1468,7 +1449,7 @@ module rcc_per_clk_rst_control #(
   // sdmmcsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(2)
-  ) rcc_sdmmcsel_clk_switch (
+  ) u_sdmmcsel_clk_switch (
       .i_clk    ({pll2_r_clk, pll1_q_clk}),
       .clk_fail (2'b0),
       .rst_n    ({pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1481,7 +1462,7 @@ module rcc_per_clk_rst_control #(
   // usbsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_usbsel_clk_switch (
+  ) u_usbsel_clk_switch (
       .i_clk    ({hsi48_origin_clk, pll3_q_clk, pll1_q_clk, usbsel_clk_0}),
       .clk_fail (4'b0),
       .rst_n    ({hsi48_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, usbsel_clk_rst_0}),
@@ -1494,7 +1475,7 @@ module rcc_per_clk_rst_control #(
   // adcsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(3)
-  ) rcc_adcsel_clk_switch (
+  ) u_adcsel_clk_switch (
       .i_clk    ({per_clk, pll3_r_clk, pll2_p_clk}),
       .clk_fail (3'b0),
       .rst_n    ({per_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n}),
@@ -1507,7 +1488,7 @@ module rcc_per_clk_rst_control #(
   // rngsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_rngsel_clk_switch (
+  ) u_rngsel_clk_switch (
       .i_clk    ({lsi_clk, lse_clk, pll1_q_clk, hsi48_origin_clk}),
       .clk_fail (4'b0),
       .rst_n    ({lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hsi48_sync_sys_rst_n}),
@@ -1520,7 +1501,7 @@ module rcc_per_clk_rst_control #(
   // usart234578sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_usart234578sel_clk_switch (
+  ) u_usart234578sel_clk_switch (
       .i_clk    ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb1bridge_d2_clk}),
       .clk_fail (6'b0),
       .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
@@ -1533,7 +1514,7 @@ module rcc_per_clk_rst_control #(
   // cecsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(3)
-  ) rcc_cecsel_clk_switch (
+  ) u_cecsel_clk_switch (
       .i_clk    ({csi_ker_clk_122_div, lsi_clk, lse_clk}),
       .clk_fail (3'b0),
       .rst_n    ({csi_ker_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n}),
@@ -1546,7 +1527,7 @@ module rcc_per_clk_rst_control #(
   // i2c123sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_i2c123sel_clk_switch (
+  ) u_i2c123sel_clk_switch (
       .i_clk    ({csi_ker_clk, hsi_ker_clk, pll3_r_clk, rcc_apb1bridge_d2_clk}),
       .clk_fail (4'b0),
       .rst_n    ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
@@ -1559,7 +1540,7 @@ module rcc_per_clk_rst_control #(
   // spdifsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_spdifsel_clk_switch (
+  ) u_spdifsel_clk_switch (
       .i_clk    ({hsi_ker_clk, pll3_r_clk, pll2_r_clk, pll1_q_clk}),
       .clk_fail (4'b0),
       .rst_n    ({hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_r_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1572,7 +1553,7 @@ module rcc_per_clk_rst_control #(
   // spi123sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
-  ) rcc_spi123sel_clk_switch (
+  ) u_spi123sel_clk_switch (
       .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1585,7 +1566,7 @@ module rcc_per_clk_rst_control #(
   // lptim1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_lptim1sel_clk_switch (
+  ) u_lptim1sel_clk_switch (
       .i_clk    ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb1bridge_d2_clk}),
       .clk_fail (6'b0),
       .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
@@ -1598,7 +1579,7 @@ module rcc_per_clk_rst_control #(
   // fdcansel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(3)
-  ) rcc_fdcansel_clk_switch (
+  ) u_fdcansel_clk_switch (
       .i_clk    ({pll2_q_clk, pll1_q_clk, hse_origin_clk}),
       .clk_fail (3'b0),
       .rst_n    ({pll2_q_sync_sys_rst_n, pll1_q_sync_sys_rst_n, hse_sync_sys_rst_n}),
@@ -1611,7 +1592,7 @@ module rcc_per_clk_rst_control #(
   // swpmisel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(2)
-  ) rcc_swpmisel_clk_switch (
+  ) u_swpmisel_clk_switch (
       .i_clk    ({hsi_ker_clk, rcc_apb1bridge_d2_clk}),
       .clk_fail (2'b0),
       .rst_n    ({hsi_ker_sync_sys_rst_n, sys_rst_n}),
@@ -1624,7 +1605,7 @@ module rcc_per_clk_rst_control #(
   // sai1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
-  ) rcc_sai1sel_clk_switch (
+  ) u_sai1sel_clk_switch (
       .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1637,7 +1618,7 @@ module rcc_per_clk_rst_control #(
   // dfsdm1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(2)
-  ) rcc_dfsdm1sel_clk_switch (
+  ) u_dfsdm1sel_clk_switch (
       .i_clk    ({sys_clk, rcc_apb2bridge_d2_clk}),
       .clk_fail (2'b0),
       .rst_n    ({sys_rst_n, sys_rst_n}),
@@ -1650,7 +1631,7 @@ module rcc_per_clk_rst_control #(
   // sai23sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
-  ) rcc_sai23sel_clk_switch (
+  ) u_sai23sel_clk_switch (
       .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1663,7 +1644,7 @@ module rcc_per_clk_rst_control #(
   // spi45sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_spi45sel_clk_switch (
+  ) u_spi45sel_clk_switch (
       .i_clk    ({hse_origin_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
       .clk_fail (6'b0),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
@@ -1676,7 +1657,7 @@ module rcc_per_clk_rst_control #(
   // usart16sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_usart16sel_clk_switch (
+  ) u_usart16sel_clk_switch (
       .i_clk    ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb2bridge_d2_clk}),
       .clk_fail (6'b0),
       .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
@@ -1689,7 +1670,7 @@ module rcc_per_clk_rst_control #(
   // sai4asel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
-  ) rcc_sai4asel_clk_switch (
+  ) u_sai4asel_clk_switch (
       .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1702,7 +1683,7 @@ module rcc_per_clk_rst_control #(
   // sai4bsel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(5)
-  ) rcc_sai4bsel_clk_switch (
+  ) u_sai4bsel_clk_switch (
       .i_clk    ({per_clk, i2s_clk_in, pll3_p_clk, pll2_p_clk, pll1_q_clk}),
       .clk_fail (5'b0),
       .rst_n    ({per_sync_sys_rst_n, i2s_clk_in_sync_sys_rst_n, pll3_p_sync_sys_rst_n, pll2_p_sync_sys_rst_n, pll1_q_sync_sys_rst_n}),
@@ -1715,7 +1696,7 @@ module rcc_per_clk_rst_control #(
   // lptim345sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_lptim345sel_clk_switch (
+  ) u_lptim345sel_clk_switch (
       .i_clk    ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb4bridge_d3_clk}),
       .clk_fail (6'b0),
       .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
@@ -1728,7 +1709,7 @@ module rcc_per_clk_rst_control #(
   // lptim2sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_lptim2sel_clk_switch (
+  ) u_lptim2sel_clk_switch (
       .i_clk    ({per_clk, lsi_clk, lse_clk, pll3_r_clk, pll2_p_clk, rcc_apb4bridge_d3_clk}),
       .clk_fail (6'b0),
       .rst_n    ({per_sync_sys_rst_n, lsi_sync_sys_rst_n, lse_sync_sys_rst_n, pll3_r_sync_sys_rst_n, pll2_p_sync_sys_rst_n, sys_rst_n}),
@@ -1741,7 +1722,7 @@ module rcc_per_clk_rst_control #(
   // i2c4sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(4)
-  ) rcc_i2c4sel_clk_switch (
+  ) u_i2c4sel_clk_switch (
       .i_clk    ({csi_ker_clk, hsi_ker_clk, pll3_r_clk, rcc_apb4bridge_d3_clk}),
       .clk_fail (4'b0),
       .rst_n    ({csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_r_sync_sys_rst_n, sys_rst_n}),
@@ -1754,7 +1735,7 @@ module rcc_per_clk_rst_control #(
   // spi6sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_spi6sel_clk_switch (
+  ) u_spi6sel_clk_switch (
       .i_clk    ({hse_origin_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
       .clk_fail (6'b0),
       .rst_n    ({hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
@@ -1767,7 +1748,7 @@ module rcc_per_clk_rst_control #(
   // lpuart1sel ker clock select logic
   glitch_free_clk_switch #(
       .CLK_NUM(6)
-  ) rcc_lpuart1sel_clk_switch (
+  ) u_lpuart1sel_clk_switch (
       .i_clk    ({lse_clk, csi_ker_clk, hsi_ker_clk, pll3_q_clk, pll2_q_clk, rcc_apb4bridge_d3_clk}),
       .clk_fail (6'b0),
       .rst_n    ({lse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, pll3_q_sync_sys_rst_n, pll2_q_sync_sys_rst_n, sys_rst_n}),
@@ -6662,6 +6643,24 @@ module rcc_per_clk_rst_control #(
       .per_bus_clks   (exti_bus_clks),
       .per_rst_n      (rcc_exti_sync_rst_n)
   );
+  //================================================================
+  // clock mux and rst mux for test mode
+  //================================================================
+
+  // usbsel_clk_0 test clock mux
+  test_clk_mux u_usbsel_clk_0_tmux (
+      .test_clk (test_clk),
+      .func_clk (1'b0),
+      .scan_mode(scan_mode),
+      .gen_clk  (usbsel_clk_0)
+  );
+  // usbsel_clk_rst_0 test reset mux
+  test_rst_mux u_usbsel_clk_rst_0_mux (
+      .test_rst_n(test_rst_n),
+      .func_rst_n(1'b0),
+      .testmode  (testmode),
+      .rst_n     (usbsel_clk_rst_0)
+  );
   // csi_ker_clk_122_div
   clk_div_s #(
       .DIV_RATIO(122)
@@ -6671,7 +6670,6 @@ module rcc_per_clk_rst_control #(
       .o_clk (raw_csi_ker_clk_122_div),
       .div_en()
   );
-
   // csi_ker_clk_122_div test clock mux
   test_clk_mux u_csi_ker_clk_122_div_tmux (
       .test_clk (test_clk),
@@ -6679,8 +6677,6 @@ module rcc_per_clk_rst_control #(
       .scan_mode(scan_mode),
       .gen_clk  (csi_ker_clk_122_div)
   );
-
-
   // generate c2_per_alloc_d1 and c1_per_alloc_d2
   assign c2_per_alloc_d1 =  rcc_c1_qspi_en || rcc_c1_fmc_en || rcc_c1_dma2d_en || rcc_c1_mdma_en || rcc_c1_ltdc_en || rcc_c1_jpgdec_en || rcc_c1_sdmmc1_en || rcc_c1_wwdg1_en || rcc_c1_usb2ulpi_en || rcc_c1_usb2otg_en || rcc_c1_usb1ulpi_en || rcc_c1_usb1otg_en || rcc_c1_eth1rx_en || rcc_c1_eth1tx_en || rcc_c1_eth1mac_en || rcc_c1_adc12_en || rcc_c1_dma2_en || rcc_c1_dma1_en || rcc_c1_sram3_en || rcc_c1_sram2_en || rcc_c1_sram1_en || rcc_c1_sdmmc2_en || rcc_c1_rng_en || rcc_c1_hash_en || rcc_c1_crypt_en || rcc_c1_dcmi_en || rcc_c1_uart8_en || rcc_c1_uart7_en || rcc_c1_dac12_en || rcc_c1_hdmicec_en || rcc_c1_i2c3_en || rcc_c1_i2c2_en || rcc_c1_i2c1_en || rcc_c1_uart5_en || rcc_c1_uart4_en || rcc_c1_usart3_en || rcc_c1_usart2_en || rcc_c1_spdifrx_en || rcc_c1_spi3_en || rcc_c1_spi2_en || rcc_c1_wwdg2_en || rcc_c1_lptim1_en || rcc_c1_tim14_en || rcc_c1_tim13_en || rcc_c1_tim12_en || rcc_c1_tim7_en || rcc_c1_tim6_en || rcc_c1_tim5_en || rcc_c1_tim4_en || rcc_c1_tim3_en || rcc_c1_tim2_en || rcc_c1_fdcan_en || rcc_c1_mdios_en || rcc_c1_opamp_en || rcc_c1_swpmi_en || rcc_c1_crs_en || rcc_c1_hrtim_en || rcc_c1_dfsdm1_en || rcc_c1_sai3_en || rcc_c1_sai2_en || rcc_c1_sai1_en || rcc_c1_spi5_en || rcc_c1_tim17_en || rcc_c1_tim16_en || rcc_c1_tim15_en || rcc_c1_spi4_en || rcc_c1_spi1_en || rcc_c1_usart6_en || rcc_c1_usart1_en || rcc_c1_tim8_en || rcc_c1_tim1_en || rcc_c1_bkpram_en || rcc_c1_hsem_en || rcc_c1_adc3_en || rcc_c1_bdma_en || rcc_c1_crc_en || rcc_c1_gpiok_en || rcc_c1_gpioj_en || rcc_c1_gpioi_en || rcc_c1_gpioh_en || rcc_c1_gpiog_en || rcc_c1_gpiof_en || rcc_c1_gpioe_en || rcc_c1_gpiod_en || rcc_c1_gpioc_en || rcc_c1_gpiob_en || rcc_c1_gpioa_en || rcc_c1_sai4_en || rcc_c1_rtc_en || rcc_c1_vref_en || rcc_c1_comp12_en || rcc_c1_lptim5_en || rcc_c1_lptim4_en || rcc_c1_lptim3_en || rcc_c1_lptim2_en || rcc_c1_i2c4_en || rcc_c1_spi6_en || rcc_c1_lpuart1_en || rcc_c1_syscfg_en ;
   assign c1_per_alloc_d2 =  rcc_c2_flash_en || rcc_c2_qspi_en || rcc_c2_axisram_en || rcc_c2_fmc_en || rcc_c2_dma2d_en || rcc_c2_mdma_en || rcc_c2_ltdc_en || rcc_c2_itcm_en || rcc_c2_dtcm2_en || rcc_c2_dtcm1_en || rcc_c2_jpgdec_en || rcc_c2_sdmmc1_en || rcc_c2_wwdg1_en || rcc_c2_usb2ulpi_en || rcc_c2_usb2otg_en || rcc_c2_usb1ulpi_en || rcc_c2_usb1otg_en || rcc_c2_eth1rx_en || rcc_c2_eth1tx_en || rcc_c2_eth1mac_en || rcc_c2_adc12_en || rcc_c2_dma2_en || rcc_c2_dma1_en || rcc_c2_sdmmc2_en || rcc_c2_rng_en || rcc_c2_hash_en || rcc_c2_crypt_en || rcc_c2_dcmi_en || rcc_c2_uart8_en || rcc_c2_uart7_en || rcc_c2_dac12_en || rcc_c2_hdmicec_en || rcc_c2_i2c3_en || rcc_c2_i2c2_en || rcc_c2_i2c1_en || rcc_c2_uart5_en || rcc_c2_uart4_en || rcc_c2_usart3_en || rcc_c2_usart2_en || rcc_c2_spdifrx_en || rcc_c2_spi3_en || rcc_c2_spi2_en || rcc_c2_wwdg2_en || rcc_c2_lptim1_en || rcc_c2_tim14_en || rcc_c2_tim13_en || rcc_c2_tim12_en || rcc_c2_tim7_en || rcc_c2_tim6_en || rcc_c2_tim5_en || rcc_c2_tim4_en || rcc_c2_tim3_en || rcc_c2_tim2_en || rcc_c2_fdcan_en || rcc_c2_mdios_en || rcc_c2_opamp_en || rcc_c2_swpmi_en || rcc_c2_crs_en || rcc_c2_hrtim_en || rcc_c2_dfsdm1_en || rcc_c2_sai3_en || rcc_c2_sai2_en || rcc_c2_sai1_en || rcc_c2_spi5_en || rcc_c2_tim17_en || rcc_c2_tim16_en || rcc_c2_tim15_en || rcc_c2_spi4_en || rcc_c2_spi1_en || rcc_c2_usart6_en || rcc_c2_usart1_en || rcc_c2_tim8_en || rcc_c2_tim1_en || rcc_c2_bkpram_en || rcc_c2_hsem_en || rcc_c2_adc3_en || rcc_c2_bdma_en || rcc_c2_crc_en || rcc_c2_gpiok_en || rcc_c2_gpioj_en || rcc_c2_gpioi_en || rcc_c2_gpioh_en || rcc_c2_gpiog_en || rcc_c2_gpiof_en || rcc_c2_gpioe_en || rcc_c2_gpiod_en || rcc_c2_gpioc_en || rcc_c2_gpiob_en || rcc_c2_gpioa_en || rcc_c2_sai4_en || rcc_c2_rtc_en || rcc_c2_vref_en || rcc_c2_comp12_en || rcc_c2_lptim5_en || rcc_c2_lptim4_en || rcc_c2_lptim3_en || rcc_c2_lptim2_en || rcc_c2_i2c4_en || rcc_c2_spi6_en || rcc_c2_lpuart1_en || rcc_c2_syscfg_en ;
@@ -6703,4 +6699,5 @@ module rcc_per_clk_rst_control #(
 
 
 endmodule
+// spyglass enable_block W240
 // spyglass enable_block W287b
