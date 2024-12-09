@@ -3079,6 +3079,10 @@ module rcc_vcore_reg #(
   wire          rcc_bdcr_byte2_en;
   wire          rcc_bdcr_byte1_en;
   wire          rcc_bdcr_byte0_en;
+  //hseon 
+  wire          rcc_cr_hsecsson_en_en;
+  wire          nxt_rcc_cr_hsecsson_en;
+  wire          cur_rcc_cr_hsecsson_en;
 
   // ================================================================================
   // interrupt logic
@@ -3448,9 +3452,12 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 19:19               hsecsson            W1S                 0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cr_hsecsson_en  = (|wr_req & rcc_cr_sel);
-  assign nxt_rcc_cr_hsecsson = wdata[19:19];
-  assign hsecsson            = cur_rcc_cr_hsecsson;
+  assign rcc_cr_hsecsson_en_en  = (|wr_req & rcc_cr_sel);
+  assign rcc_cr_hsecsson_en     = rcc_cr_hsecsson_en_en && (cur_rcc_cr_hsecsson_en || sync_hsecss_fail);
+  assign nxt_rcc_cr_hsecsson    = wdata[19:19];
+  assign nxt_rcc_cr_hsecsson_en = (nxt_rcc_cr_hsecsson == 1'b0) && (cur_rcc_cr_hsecsson == 1'b0);
+  assign hsecsson               = cur_rcc_cr_hsecsson;
+
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -3460,6 +3467,17 @@ module rcc_vcore_reg #(
       .en   (rcc_cr_hsecsson_en),
       .din  (nxt_rcc_cr_hsecsson),
       .dout (cur_rcc_cr_hsecsson)
+  );
+
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_cr_hsecsson_en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_cr_hsecsson_en_en),
+      .din  (nxt_rcc_cr_hsecsson_en),  //when hsecsson is set to 1, it can not be cleared until hsecss_fail
+      .dout (cur_rcc_cr_hsecsson_en)
   );
 
   // --------------------------------------------------------------------------------
@@ -3747,7 +3765,7 @@ module rcc_vcore_reg #(
   // 25:18               csical              RO                  flash_csi_opt       
   // --------------------------------------------------------------------------------
   assign cur_rcc_icscr_csical  = flash_csi_opt + {3'b0, csitrim};
-  assign csi_trim       = cur_rcc_icscr_csical;
+  assign csi_trim              = cur_rcc_icscr_csical;
 
   // --------------------------------------------------------------------------------
   // 17:12               hsitrim             RW                  0b100000            
@@ -3770,7 +3788,7 @@ module rcc_vcore_reg #(
   // 11:0                hsical              RO                  flash_hsi_opt       
   // --------------------------------------------------------------------------------
   assign cur_rcc_icscr_hsical   = flash_hsi_opt + {6'b0, hsitrim};
-  assign hsi_trim        = cur_rcc_icscr_hsical;
+  assign hsi_trim               = cur_rcc_icscr_hsical;
 
 
   // --------------------------------------------------------------------------------
