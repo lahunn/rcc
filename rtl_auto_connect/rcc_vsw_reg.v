@@ -8,7 +8,7 @@ module rcc_vsw_reg (
     //================================================================
     // testmode
     //================================================================
-    input       testmode,
+    input        testmode,
     //--------------------------------------------------------------------------------
     //register signals
     //--------------------------------------------------------------------------------
@@ -137,10 +137,10 @@ module rcc_vsw_reg (
   assign lsecssd              = cur_rcc_bdcr_lsecssd;
 
   BB_latch u_BB_rcc_bdcr_lsecssd_latch (
-      .D (~rcc_bdcr_lsecssd_clr),
-      .GN(rcc_bdcr_lsecssd_set || rcc_bdcr_lsecssd_clr),
+      .D       (~rcc_bdcr_lsecssd_clr),
+      .GN      (rcc_bdcr_lsecssd_set || rcc_bdcr_lsecssd_clr),
       .testmode(testmode),
-      .Q (cur_rcc_bdcr_lsecssd)
+      .Q       (cur_rcc_bdcr_lsecssd)
   );
 
 
