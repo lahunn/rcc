@@ -2271,7 +2271,7 @@ module rcc_vcore_reg #(
 
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
+      .RST_VAL('h1)
   ) U_rcc_cr_hsecsson_en (
       .clk  (clk),
       .rst_n(rst_n),

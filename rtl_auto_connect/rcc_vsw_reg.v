@@ -153,7 +153,7 @@ module rcc_vsw_reg (
 
   BB_dffr #(
       .DW     (1),
-      .RST_VAL('h0)
+      .RST_VAL('h1)
   ) U_rcc_bdcr_lsecsson_wren (
       .clk  (rcc_bdcr_byte0_wren),
       .rst_n(rst_n),
