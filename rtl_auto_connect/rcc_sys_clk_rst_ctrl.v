@@ -1151,7 +1151,7 @@ module rcc_sys_clk_rst_ctrl #(
       .div_en  ()
   );
   //MCO2
-  assign mco2_clk_src  = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
+  assign mco2_clk_src = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
   // assign mco2_scan_inc = scan_mode && raw_mco2_pre_clk;
   mux_n_to_1 #(
       .N(6),
@@ -1220,7 +1220,7 @@ module rcc_sys_clk_rst_ctrl #(
   //pll source clock generate
   //====================================================================
 
-  assign pll_clk_src          = {hse_clk, csi_clk, hsi_clk};
+  assign pll_clk_src = {hse_clk, csi_clk, hsi_clk};
   // assign pll_src_clk_scan_inc = scan_mode && raw_pll_src_clk;
 
   mux_n_to_1 #(
@@ -1279,7 +1279,7 @@ module rcc_sys_clk_rst_ctrl #(
   // system clock generate
   //====================================================================
 
-  assign sys_clk_src = {pll1_p_clk, hse_clk, csi_clk, hsi_clk};
+  assign sys_clk_src = {pll1_p_clk, hsi_clk, csi_clk, hse_clk};
 
   sys_clk_switch #(
       .CLK_NUM(4)
