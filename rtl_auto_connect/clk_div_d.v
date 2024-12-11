@@ -61,7 +61,10 @@ module clk_div_d #(
   //================================================================
   // clock generate
   //================================================================
-  assign nxt_o_clk  = ~cur_o_clk;
+  clk_inv u_clk_inv (
+      .clk    (cur_o_clk),
+      .inv_clk(nxt_o_clk)
+  );
   assign o_clk_wren = (cur_cnt == minus_one_half_ratio) || (cur_cnt == minus_one_ratio);
   BB_mux_cell u_o_clk_mux (
       .ina(cur_o_clk),  //0

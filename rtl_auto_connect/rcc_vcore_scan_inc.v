@@ -5,9 +5,6 @@ module rcc_vcore_scan_inc #(
 ) (
     input  [DW-1:0] mdata,
     input           nrst_out_scan_inc,
-    input           mco1_scan_inc,
-    input           mco2_scan_inc,
-    input           pll_src_clk_scan_inc,
     output [DW-1:0] wdata
 );
   wire [31:0] group0;

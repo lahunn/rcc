@@ -329,9 +329,13 @@ module rcc_vcore_top #(
 
   //rcc_eth_ker_clk_ctrl
   rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (
-      .rst_n         (sys_rst_n),
-      .eth_rcc_fes   (gen_eth_rcc_fes),
-      .eth_rcc_epis_2(gen_eth_rcc_epis_2)
+      .rst_n             (sys_rst_n),
+      .eth_rcc_fes       (gen_eth_rcc_fes),
+      .eth_rcc_epis_2    (gen_eth_rcc_epis_2),
+      .rcc_c1_eth1rx_en  (rcc_c1_mac_en),
+      .rcc_c1_eth1rx_lpen(rcc_c1_mac_lpen),
+      .rcc_c1_eth1tx_en  (rcc_c1_mac_en),
+      .rcc_c1_eth1tx_lpen(rcc_c1_mac_lpen)
       /*AUTOINST*/
   );
 
@@ -418,7 +422,34 @@ module rcc_vcore_top #(
       .cur_rcc_c2_rsr_d1rstf   (gen_cur_rcc_c2_rsr_d1rstf),
       .cur_rcc_c2_rsr_oblrstf  (gen_cur_rcc_c2_rsr_oblrstf),
       .cur_rcc_c2_rsr_rmvf     (gen_cur_rcc_c2_rsr_rmvf),
-      .cur_rcc_csr_lsion       (gen_cur_rcc_csr_lsion)
+      .cur_rcc_csr_lsion       (gen_cur_rcc_csr_lsion),
+      .rngsel                  (),
+      .rtcsel                  (),
+      .sai1sel                 (),
+      .sai23sel                (),
+      .sai4asel                (),
+      .sai4bsel                (),
+      .sdmmcsel                (),
+      .spdifsel                (),
+      .spi123sel               (),
+      .spi45sel                (),
+      .spi6sel                 (),
+      .swpmisel                (),
+      .usart16sel              (),
+      .usart234578sel          (),
+      .usbsel                  (),
+      .adcsel                  (),
+      .cecsel                  (),
+      .dfsdm1sel               (),
+      .fdcansel                (),
+      .fmcsel                  (),
+      .i2c123sel               (),
+      .i2c4sel                 (),
+      .lptim1sel               (),
+      .lptim2sel               (),
+      .lptim345sel             (),
+      .lpuart1sel              (),
+      .qspisel                 ()
       /*AUTOINST*/
   );
 

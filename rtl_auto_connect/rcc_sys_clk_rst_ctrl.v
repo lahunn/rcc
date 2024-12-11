@@ -198,6 +198,10 @@ module rcc_sys_clk_rst_ctrl #(
     output rcc_apb2bridge_d2_clk,
     output rcc_ahb4bridge_d3_clk,
     output rcc_apb4bridge_d3_clk,
+    output rcc_ahb1bridge_d3_clk,
+    output rcc_apb1bridge_d3_clk,
+    output rcc_apb2bridge_d3_clk,
+    output rcc_apb3bridge_d3_clk,
     //bus clock div en
     output c1_to_axi_div_en,
     output d1_h2b_div_en,
@@ -1594,5 +1598,10 @@ module rcc_sys_clk_rst_ctrl #(
       .rst_n  (sys_rst_n),
       .gen_clk(rcc_apb4bridge_d3_clk)
   );
+
+  assign rcc_ahb1bridge_d3_clk = rcc_ahb4bridge_d3_clk;
+  assign rcc_apb1bridge_d3_clk = rcc_apb4bridge_d3_clk;
+  assign rcc_apb2bridge_d3_clk = rcc_apb4bridge_d3_clk;
+  assign rcc_apb3bridge_d3_clk = rcc_apb4bridge_d3_clk;
 
 endmodule

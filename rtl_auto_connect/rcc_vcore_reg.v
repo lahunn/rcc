@@ -131,8 +131,6 @@ module rcc_vcore_reg #(
     output [   2:0] lptim2sel,
     output [   1:0] i2c4sel,
     output [   2:0] lpuart1sel,
-    output          bdrst,
-    output          rtcen,
     output [   1:0] rtcsel,
     output          lsecsson,
     output [   1:0] lsedrv,
@@ -191,7 +189,7 @@ module rcc_vcore_reg #(
     output          can4rst,
     output          can5rst,
     output          can6rst,
-    output          mppt_scrrst,
+    output          mpptrst,
     output          gpio4rst,
     output          gpio5rst,
     output          sysctlrst,
@@ -203,7 +201,6 @@ module rcc_vcore_reg #(
     output          gpio7rst,
     output          gpio8rst,
     output          iwdtrst,
-    output          pwrrst,
     output          rtcrst,
     output          ww2rsc,
     output          ww1rsc,
@@ -257,7 +254,7 @@ module rcc_vcore_reg #(
     output          rcc_can4_amen,
     output          rcc_can5_amen,
     output          rcc_can6_amen,
-    output          rcc_mppt_scr_amen,
+    output          rcc_mppt_amen,
     output          rcc_gpio4_amen,
     output          rcc_gpio5_amen,
     output          rcc_sysctl_amen,
@@ -269,10 +266,7 @@ module rcc_vcore_reg #(
     output          rcc_gpio7_amen,
     output          rcc_gpio8_amen,
     output          rcc_iwdt_amen,
-    output          rcc_rcc_amen,
-    output          rcc_pwr_amen,
     output          rcc_rtc_amen,
-    output          rmvf,
     output          rcc_c1_rom_en,
     output          rcc_c1_tsms_en,
     output          rcc_c1_sms_en,
@@ -323,7 +317,7 @@ module rcc_vcore_reg #(
     output          rcc_c1_can4_en,
     output          rcc_c1_can5_en,
     output          rcc_c1_can6_en,
-    output          rcc_c1_mppt_scr_en,
+    output          rcc_c1_mppt_en,
     output          rcc_c1_gpio4_en,
     output          rcc_c1_gpio5_en,
     output          rcc_c1_sysctl_en,
@@ -334,10 +328,6 @@ module rcc_vcore_reg #(
     output          rcc_c1_gpio6_en,
     output          rcc_c1_gpio7_en,
     output          rcc_c1_gpio8_en,
-    output          rcc_c1_iwdt_en,
-    output          rcc_c1_rcc_en,
-    output          rcc_c1_pwr_en,
-    output          rcc_c1_rtc_en,
     output          rcc_c1_rom_lpen,
     output          rcc_c1_tsms_lpen,
     output          rcc_c1_sms_lpen,
@@ -388,7 +378,7 @@ module rcc_vcore_reg #(
     output          rcc_c1_can4_lpen,
     output          rcc_c1_can5_lpen,
     output          rcc_c1_can6_lpen,
-    output          rcc_c1_mppt_scr_lpen,
+    output          rcc_c1_mppt_lpen,
     output          rcc_c1_gpio4_lpen,
     output          rcc_c1_gpio5_lpen,
     output          rcc_c1_sysctl_lpen,
@@ -399,10 +389,6 @@ module rcc_vcore_reg #(
     output          rcc_c1_gpio6_lpen,
     output          rcc_c1_gpio7_lpen,
     output          rcc_c1_gpio8_lpen,
-    output          rcc_c1_iwdt_lpen,
-    output          rcc_c1_rcc_lpen,
-    output          rcc_c1_pwr_lpen,
-    output          rcc_c1_rtc_lpen,
     output          rcc_c2_adcc_en,
     output          rcc_c2_adcc_lpen,
     output          rcc_c2_can1_en,
@@ -651,6 +637,15 @@ module rcc_vcore_reg #(
   localparam RCC_C1_APB1LPENR = (RCC_REG + 'h148) >> 2;
   localparam RCC_C1_APB2LPENR = (RCC_REG + 'h14C) >> 2;
   localparam RCC_C1_APB3LPENR = (RCC_REG + 'h150) >> 2;
+  localparam RCC_C2_RSR = (RCC_REG + 'h190) >> 2;
+  localparam RCC_C2_AHB1ENR = (RCC_REG + 'h194) >> 2;
+  localparam RCC_C2_APB1ENR = (RCC_REG + 'h198) >> 2;
+  localparam RCC_C2_APB2ENR = (RCC_REG + 'h19C) >> 2;
+  localparam RCC_C2_APB3ENR = (RCC_REG + 'h1A0) >> 2;
+  localparam RCC_C2_AHB1LPENR = (RCC_REG + 'h1A4) >> 2;
+  localparam RCC_C2_APB1LPENR = (RCC_REG + 'h1A8) >> 2;
+  localparam RCC_C2_APB2LPENR = (RCC_REG + 'h1AC) >> 2;
+  localparam RCC_C2_APB3LPENR = (RCC_REG + 'h1B0) >> 2;
   // other paramters
 
   // ================================================================================
@@ -1334,9 +1329,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb2rstr_can6rst;
   wire          nxt_rcc_apb2rstr_can6rst;
   wire          rcc_apb2rstr_can6rst_en;
-  wire          cur_rcc_apb2rstr_mppt_scrrst;
-  wire          nxt_rcc_apb2rstr_mppt_scrrst;
-  wire          rcc_apb2rstr_mppt_scrrst_en;
+  wire          cur_rcc_apb2rstr_mpptrst;
+  wire          nxt_rcc_apb2rstr_mpptrst;
+  wire          rcc_apb2rstr_mpptrst_en;
   wire          cur_rcc_apb2rstr_gpio4rst;
   wire          nxt_rcc_apb2rstr_gpio4rst;
   wire          rcc_apb2rstr_gpio4rst_en;
@@ -1373,9 +1368,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb3rstr_iwdtrst;
   wire          nxt_rcc_apb3rstr_iwdtrst;
   wire          rcc_apb3rstr_iwdtrst_en;
-  wire          cur_rcc_apb3rstr_pwrrst;
-  wire          nxt_rcc_apb3rstr_pwrrst;
-  wire          rcc_apb3rstr_pwrrst_en;
   wire          cur_rcc_apb3rstr_rtcrst;
   wire          nxt_rcc_apb3rstr_rtcrst;
   wire          rcc_apb3rstr_rtcrst_en;
@@ -1547,9 +1539,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb2d3amr_can6amen;
   wire          nxt_rcc_apb2d3amr_can6amen;
   wire          rcc_apb2d3amr_can6amen_en;
-  wire          cur_rcc_apb2d3amr_mppt_scramen;
-  wire          nxt_rcc_apb2d3amr_mppt_scramen;
-  wire          rcc_apb2d3amr_mppt_scramen_en;
+  wire          cur_rcc_apb2d3amr_mpptamen;
+  wire          nxt_rcc_apb2d3amr_mpptamen;
+  wire          rcc_apb2d3amr_mpptamen_en;
   wire          cur_rcc_apb2d3amr_gpio4amen;
   wire          nxt_rcc_apb2d3amr_gpio4amen;
   wire          rcc_apb2d3amr_gpio4amen_en;
@@ -1586,12 +1578,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb3d3amr_iwdtamen;
   wire          nxt_rcc_apb3d3amr_iwdtamen;
   wire          rcc_apb3d3amr_iwdtamen_en;
-  wire          cur_rcc_apb3d3amr_rccamen;
-  wire          nxt_rcc_apb3d3amr_rccamen;
-  wire          rcc_apb3d3amr_rccamen_en;
-  wire          cur_rcc_apb3d3amr_pwramen;
-  wire          nxt_rcc_apb3d3amr_pwramen;
-  wire          rcc_apb3d3amr_pwramen_en;
   wire          cur_rcc_apb3d3amr_rtcamen;
   wire          nxt_rcc_apb3d3amr_rtcamen;
   wire          rcc_apb3d3amr_rtcamen_en;
@@ -1755,9 +1741,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb2enr_can6en;
   wire          nxt_rcc_c1_apb2enr_can6en;
   wire          rcc_c1_apb2enr_can6en_en;
-  wire          cur_rcc_c1_apb2enr_mppt_scren;
-  wire          nxt_rcc_c1_apb2enr_mppt_scren;
-  wire          rcc_c1_apb2enr_mppt_scren_en;
+  wire          cur_rcc_c1_apb2enr_mppten;
+  wire          nxt_rcc_c1_apb2enr_mppten;
+  wire          rcc_c1_apb2enr_mppten_en;
   wire          cur_rcc_c1_apb2enr_gpio4en;
   wire          nxt_rcc_c1_apb2enr_gpio4en;
   wire          rcc_c1_apb2enr_gpio4en_en;
@@ -1791,18 +1777,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3enr_gpio8en;
   wire          nxt_rcc_c1_apb3enr_gpio8en;
   wire          rcc_c1_apb3enr_gpio8en_en;
-  wire          cur_rcc_c1_apb3enr_iwdten;
-  wire          nxt_rcc_c1_apb3enr_iwdten;
-  wire          rcc_c1_apb3enr_iwdten_en;
-  wire          cur_rcc_c1_apb3enr_rccen;
-  wire          nxt_rcc_c1_apb3enr_rccen;
-  wire          rcc_c1_apb3enr_rccen_en;
-  wire          cur_rcc_c1_apb3enr_pwren;
-  wire          nxt_rcc_c1_apb3enr_pwren;
-  wire          rcc_c1_apb3enr_pwren_en;
-  wire          cur_rcc_c1_apb3enr_rtcen;
-  wire          nxt_rcc_c1_apb3enr_rtcen;
-  wire          rcc_c1_apb3enr_rtcen_en;
   // rcc_c1_ahb1lpenr
   wire [  31:0] rcc_c1_ahb1lpenr_read;
   wire          rcc_c1_ahb1lpenr_sel;
@@ -1962,9 +1936,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb2lpenr_can6lpen;
   wire          nxt_rcc_c1_apb2lpenr_can6lpen;
   wire          rcc_c1_apb2lpenr_can6lpen_en;
-  wire          cur_rcc_c1_apb2lpenr_mppt_scrlpen;
-  wire          nxt_rcc_c1_apb2lpenr_mppt_scrlpen;
-  wire          rcc_c1_apb2lpenr_mppt_scrlpen_en;
+  wire          cur_rcc_c1_apb2lpenr_mpptlpen;
+  wire          nxt_rcc_c1_apb2lpenr_mpptlpen;
+  wire          rcc_c1_apb2lpenr_mpptlpen_en;
   wire          cur_rcc_c1_apb2lpenr_gpio4lpen;
   wire          nxt_rcc_c1_apb2lpenr_gpio4lpen;
   wire          rcc_c1_apb2lpenr_gpio4lpen_en;
@@ -1998,18 +1972,398 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3lpenr_gpio8lpen;
   wire          nxt_rcc_c1_apb3lpenr_gpio8lpen;
   wire          rcc_c1_apb3lpenr_gpio8lpen_en;
-  wire          cur_rcc_c1_apb3lpenr_iwdtlpen;
-  wire          nxt_rcc_c1_apb3lpenr_iwdtlpen;
-  wire          rcc_c1_apb3lpenr_iwdtlpen_en;
-  wire          cur_rcc_c1_apb3lpenr_rcclpen;
-  wire          nxt_rcc_c1_apb3lpenr_rcclpen;
-  wire          rcc_c1_apb3lpenr_rcclpen_en;
-  wire          cur_rcc_c1_apb3lpenr_pwrlpen;
-  wire          nxt_rcc_c1_apb3lpenr_pwrlpen;
-  wire          rcc_c1_apb3lpenr_pwrlpen_en;
-  wire          cur_rcc_c1_apb3lpenr_rtclpen;
-  wire          nxt_rcc_c1_apb3lpenr_rtclpen;
-  wire          rcc_c1_apb3lpenr_rtclpen_en;
+
+
+  // rcc_c2_ahb1enr
+  wire [  31:0] rcc_c2_ahb1enr_read;
+  wire          rcc_c2_ahb1enr_sel;
+  wire          cur_rcc_c2_ahb1enr_romen;
+  wire          nxt_rcc_c2_ahb1enr_romen;
+  wire          rcc_c2_ahb1enr_romen_en;
+  wire          cur_rcc_c2_ahb1enr_tsmsen;
+  wire          nxt_rcc_c2_ahb1enr_tsmsen;
+  wire          rcc_c2_ahb1enr_tsmsen_en;
+  wire          cur_rcc_c2_ahb1enr_smsen;
+  wire          nxt_rcc_c2_ahb1enr_smsen;
+  wire          rcc_c2_ahb1enr_smsen_en;
+  wire          cur_rcc_c2_ahb1enr_xflashen;
+  wire          nxt_rcc_c2_ahb1enr_xflashen;
+  wire          rcc_c2_ahb1enr_xflashen_en;
+  wire          cur_rcc_c2_ahb1enr_fften;
+  wire          nxt_rcc_c2_ahb1enr_fften;
+  wire          rcc_c2_ahb1enr_fften_en;
+  wire          cur_rcc_c2_ahb1enr_npuen;
+  wire          nxt_rcc_c2_ahb1enr_npuen;
+  wire          rcc_c2_ahb1enr_npuen_en;
+  wire          cur_rcc_c2_ahb1enr_dma1en;
+  wire          nxt_rcc_c2_ahb1enr_dma1en;
+  wire          rcc_c2_ahb1enr_dma1en_en;
+  wire          cur_rcc_c2_ahb1enr_dma2en;
+  wire          nxt_rcc_c2_ahb1enr_dma2en;
+  wire          rcc_c2_ahb1enr_dma2en_en;
+  wire          cur_rcc_c2_ahb1enr_dmaschen;
+  wire          nxt_rcc_c2_ahb1enr_dmaschen;
+  wire          rcc_c2_ahb1enr_dmaschen_en;
+  wire          cur_rcc_c2_ahb1enr_qspi1en;
+  wire          nxt_rcc_c2_ahb1enr_qspi1en;
+  wire          rcc_c2_ahb1enr_qspi1en_en;
+  wire          cur_rcc_c2_ahb1enr_qspi2en;
+  wire          nxt_rcc_c2_ahb1enr_qspi2en;
+  wire          rcc_c2_ahb1enr_qspi2en_en;
+  wire          cur_rcc_c2_ahb1enr_qspi3en;
+  wire          nxt_rcc_c2_ahb1enr_qspi3en;
+  wire          rcc_c2_ahb1enr_qspi3en_en;
+  wire          cur_rcc_c2_ahb1enr_qspi4en;
+  wire          nxt_rcc_c2_ahb1enr_qspi4en;
+  wire          rcc_c2_ahb1enr_qspi4en_en;
+  wire          cur_rcc_c2_ahb1enr_xspien;
+  wire          nxt_rcc_c2_ahb1enr_xspien;
+  wire          rcc_c2_ahb1enr_xspien_en;
+  wire          cur_rcc_c2_ahb1enr_mspien;
+  wire          nxt_rcc_c2_ahb1enr_mspien;
+  wire          rcc_c2_ahb1enr_mspien_en;
+  wire          cur_rcc_c2_ahb1enr_hacif_l1en;
+  wire          nxt_rcc_c2_ahb1enr_hacif_l1en;
+  wire          rcc_c2_ahb1enr_hacif_l1en_en;
+  wire          cur_rcc_c2_ahb1enr_hacif_f1en;
+  wire          nxt_rcc_c2_ahb1enr_hacif_f1en;
+  wire          rcc_c2_ahb1enr_hacif_f1en_en;
+  wire          cur_rcc_c2_ahb1enr_macen;
+  wire          nxt_rcc_c2_ahb1enr_macen;
+  wire          rcc_c2_ahb1enr_macen_en;
+  wire          cur_rcc_c2_ahb1enr_lzen;
+  wire          nxt_rcc_c2_ahb1enr_lzen;
+  wire          rcc_c2_ahb1enr_lzen_en;
+  // rcc_c2_apb1enr
+  wire [  31:0] rcc_c2_apb1enr_read;
+  wire          rcc_c2_apb1enr_sel;
+  wire          cur_rcc_c2_apb1enr_gtim1en;
+  wire          nxt_rcc_c2_apb1enr_gtim1en;
+  wire          rcc_c2_apb1enr_gtim1en_en;
+  wire          cur_rcc_c2_apb1enr_gtim2en;
+  wire          nxt_rcc_c2_apb1enr_gtim2en;
+  wire          rcc_c2_apb1enr_gtim2en_en;
+  wire          cur_rcc_c2_apb1enr_gtim3en;
+  wire          nxt_rcc_c2_apb1enr_gtim3en;
+  wire          rcc_c2_apb1enr_gtim3en_en;
+  wire          cur_rcc_c2_apb1enr_gtim4en;
+  wire          nxt_rcc_c2_apb1enr_gtim4en;
+  wire          rcc_c2_apb1enr_gtim4en_en;
+  wire          cur_rcc_c2_apb1enr_spi1en;
+  wire          nxt_rcc_c2_apb1enr_spi1en;
+  wire          rcc_c2_apb1enr_spi1en_en;
+  wire          cur_rcc_c2_apb1enr_spi2en;
+  wire          nxt_rcc_c2_apb1enr_spi2en;
+  wire          rcc_c2_apb1enr_spi2en_en;
+  wire          cur_rcc_c2_apb1enr_spi3en;
+  wire          nxt_rcc_c2_apb1enr_spi3en;
+  wire          rcc_c2_apb1enr_spi3en_en;
+  wire          cur_rcc_c2_apb1enr_uart1en;
+  wire          nxt_rcc_c2_apb1enr_uart1en;
+  wire          rcc_c2_apb1enr_uart1en_en;
+  wire          cur_rcc_c2_apb1enr_uart2en;
+  wire          nxt_rcc_c2_apb1enr_uart2en;
+  wire          rcc_c2_apb1enr_uart2en_en;
+  wire          cur_rcc_c2_apb1enr_uart3en;
+  wire          nxt_rcc_c2_apb1enr_uart3en;
+  wire          rcc_c2_apb1enr_uart3en_en;
+  wire          cur_rcc_c2_apb1enr_uart4en;
+  wire          nxt_rcc_c2_apb1enr_uart4en;
+  wire          rcc_c2_apb1enr_uart4en_en;
+  wire          cur_rcc_c2_apb1enr_i2c2en;
+  wire          nxt_rcc_c2_apb1enr_i2c2en;
+  wire          rcc_c2_apb1enr_i2c2en_en;
+  wire          cur_rcc_c2_apb1enr_gpio1en;
+  wire          nxt_rcc_c2_apb1enr_gpio1en;
+  wire          rcc_c2_apb1enr_gpio1en_en;
+  wire          cur_rcc_c2_apb1enr_gpio2en;
+  wire          nxt_rcc_c2_apb1enr_gpio2en;
+  wire          rcc_c2_apb1enr_gpio2en_en;
+  wire          cur_rcc_c2_apb1enr_gpio3en;
+  wire          nxt_rcc_c2_apb1enr_gpio3en;
+  wire          rcc_c2_apb1enr_gpio3en_en;
+  wire          cur_rcc_c2_apb1enr_can1en;
+  wire          nxt_rcc_c2_apb1enr_can1en;
+  wire          rcc_c2_apb1enr_can1en_en;
+  wire          cur_rcc_c2_apb1enr_can2en;
+  wire          nxt_rcc_c2_apb1enr_can2en;
+  wire          rcc_c2_apb1enr_can2en_en;
+  wire          cur_rcc_c2_apb1enr_can3en;
+  wire          nxt_rcc_c2_apb1enr_can3en;
+  wire          rcc_c2_apb1enr_can3en_en;
+  // rcc_c2_apb2enr
+  wire [  31:0] rcc_c2_apb2enr_read;
+  wire          rcc_c2_apb2enr_sel;
+  wire          cur_rcc_c2_apb2enr_gtim5en;
+  wire          nxt_rcc_c2_apb2enr_gtim5en;
+  wire          rcc_c2_apb2enr_gtim5en_en;
+  wire          cur_rcc_c2_apb2enr_gtim6en;
+  wire          nxt_rcc_c2_apb2enr_gtim6en;
+  wire          rcc_c2_apb2enr_gtim6en_en;
+  wire          cur_rcc_c2_apb2enr_spi4en;
+  wire          nxt_rcc_c2_apb2enr_spi4en;
+  wire          rcc_c2_apb2enr_spi4en_en;
+  wire          cur_rcc_c2_apb2enr_spi5en;
+  wire          nxt_rcc_c2_apb2enr_spi5en;
+  wire          rcc_c2_apb2enr_spi5en_en;
+  wire          cur_rcc_c2_apb2enr_uart5en;
+  wire          nxt_rcc_c2_apb2enr_uart5en;
+  wire          rcc_c2_apb2enr_uart5en_en;
+  wire          cur_rcc_c2_apb2enr_uart6en;
+  wire          nxt_rcc_c2_apb2enr_uart6en;
+  wire          rcc_c2_apb2enr_uart6en_en;
+  wire          cur_rcc_c2_apb2enr_uart7en;
+  wire          nxt_rcc_c2_apb2enr_uart7en;
+  wire          rcc_c2_apb2enr_uart7en_en;
+  wire          cur_rcc_c2_apb2enr_uart8en;
+  wire          nxt_rcc_c2_apb2enr_uart8en;
+  wire          rcc_c2_apb2enr_uart8en_en;
+  wire          cur_rcc_c2_apb2enr_i2c2en;
+  wire          nxt_rcc_c2_apb2enr_i2c2en;
+  wire          rcc_c2_apb2enr_i2c2en_en;
+  wire          cur_rcc_c2_apb2enr_i2c3en;
+  wire          nxt_rcc_c2_apb2enr_i2c3en;
+  wire          rcc_c2_apb2enr_i2c3en_en;
+  wire          cur_rcc_c2_apb2enr_can4en;
+  wire          nxt_rcc_c2_apb2enr_can4en;
+  wire          rcc_c2_apb2enr_can4en_en;
+  wire          cur_rcc_c2_apb2enr_can5en;
+  wire          nxt_rcc_c2_apb2enr_can5en;
+  wire          rcc_c2_apb2enr_can5en_en;
+  wire          cur_rcc_c2_apb2enr_can6en;
+  wire          nxt_rcc_c2_apb2enr_can6en;
+  wire          rcc_c2_apb2enr_can6en_en;
+  wire          cur_rcc_c2_apb2enr_mppten;
+  wire          nxt_rcc_c2_apb2enr_mppten;
+  wire          rcc_c2_apb2enr_mppten_en;
+  wire          cur_rcc_c2_apb2enr_gpio4en;
+  wire          nxt_rcc_c2_apb2enr_gpio4en;
+  wire          rcc_c2_apb2enr_gpio4en_en;
+  wire          cur_rcc_c2_apb2enr_gpio5en;
+  wire          nxt_rcc_c2_apb2enr_gpio5en;
+  wire          rcc_c2_apb2enr_gpio5en_en;
+  // rcc_c2_apb3enr
+  wire [  31:0] rcc_c2_apb3enr_read;
+  wire          rcc_c2_apb3enr_sel;
+  wire          cur_rcc_c2_apb3enr_sysctlen;
+  wire          nxt_rcc_c2_apb3enr_sysctlen;
+  wire          rcc_c2_apb3enr_sysctlen_en;
+  wire          cur_rcc_c2_apb3enr_wwdten;
+  wire          nxt_rcc_c2_apb3enr_wwdten;
+  wire          rcc_c2_apb3enr_wwdten_en;
+  wire          cur_rcc_c2_apb3enr_tim1en;
+  wire          nxt_rcc_c2_apb3enr_tim1en;
+  wire          rcc_c2_apb3enr_tim1en_en;
+  wire          cur_rcc_c2_apb3enr_tim2en;
+  wire          nxt_rcc_c2_apb3enr_tim2en;
+  wire          rcc_c2_apb3enr_tim2en_en;
+  wire          cur_rcc_c2_apb3enr_adccen;
+  wire          nxt_rcc_c2_apb3enr_adccen;
+  wire          rcc_c2_apb3enr_adccen_en;
+  wire          cur_rcc_c2_apb3enr_gpio6en;
+  wire          nxt_rcc_c2_apb3enr_gpio6en;
+  wire          rcc_c2_apb3enr_gpio6en_en;
+  wire          cur_rcc_c2_apb3enr_gpio7en;
+  wire          nxt_rcc_c2_apb3enr_gpio7en;
+  wire          rcc_c2_apb3enr_gpio7en_en;
+  wire          cur_rcc_c2_apb3enr_gpio8en;
+  wire          nxt_rcc_c2_apb3enr_gpio8en;
+  wire          rcc_c2_apb3enr_gpio8en_en;
+  // rcc_c2_ahb1lpenr
+  wire [  31:0] rcc_c2_ahb1lpenr_read;
+  wire          rcc_c2_ahb1lpenr_sel;
+  wire          cur_rcc_c2_ahb1lpenr_romlpen;
+  wire          nxt_rcc_c2_ahb1lpenr_romlpen;
+  wire          rcc_c2_ahb1lpenr_romlpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_tsmslpen;
+  wire          nxt_rcc_c2_ahb1lpenr_tsmslpen;
+  wire          rcc_c2_ahb1lpenr_tsmslpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_smslpen;
+  wire          nxt_rcc_c2_ahb1lpenr_smslpen;
+  wire          rcc_c2_ahb1lpenr_smslpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_xflashlpen;
+  wire          nxt_rcc_c2_ahb1lpenr_xflashlpen;
+  wire          rcc_c2_ahb1lpenr_xflashlpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_fftlpen;
+  wire          nxt_rcc_c2_ahb1lpenr_fftlpen;
+  wire          rcc_c2_ahb1lpenr_fftlpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_npulpen;
+  wire          nxt_rcc_c2_ahb1lpenr_npulpen;
+  wire          rcc_c2_ahb1lpenr_npulpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_dma1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_dma1lpen;
+  wire          rcc_c2_ahb1lpenr_dma1lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_dma2lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_dma2lpen;
+  wire          rcc_c2_ahb1lpenr_dma2lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_dmaschlpen;
+  wire          nxt_rcc_c2_ahb1lpenr_dmaschlpen;
+  wire          rcc_c2_ahb1lpenr_dmaschlpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_qspi1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_qspi1lpen;
+  wire          rcc_c2_ahb1lpenr_qspi1lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_qspi2lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_qspi2lpen;
+  wire          rcc_c2_ahb1lpenr_qspi2lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_qspi3lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_qspi3lpen;
+  wire          rcc_c2_ahb1lpenr_qspi3lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_qspi4lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_qspi4lpen;
+  wire          rcc_c2_ahb1lpenr_qspi4lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_xspilpen;
+  wire          nxt_rcc_c2_ahb1lpenr_xspilpen;
+  wire          rcc_c2_ahb1lpenr_xspilpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_mspilpen;
+  wire          nxt_rcc_c2_ahb1lpenr_mspilpen;
+  wire          rcc_c2_ahb1lpenr_mspilpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_hacif_l1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_hacif_l1lpen;
+  wire          rcc_c2_ahb1lpenr_hacif_l1lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_hacif_f1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_hacif_f1lpen;
+  wire          rcc_c2_ahb1lpenr_hacif_f1lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_maclpen;
+  wire          nxt_rcc_c2_ahb1lpenr_maclpen;
+  wire          rcc_c2_ahb1lpenr_maclpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_lzlpen;
+  wire          nxt_rcc_c2_ahb1lpenr_lzlpen;
+  wire          rcc_c2_ahb1lpenr_lzlpen_en;
+  // rcc_c2_apb1lpenr
+  wire [  31:0] rcc_c2_apb1lpenr_read;
+  wire          rcc_c2_apb1lpenr_sel;
+  wire          cur_rcc_c2_apb1lpenr_gtim1lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gtim1lpen;
+  wire          rcc_c2_apb1lpenr_gtim1lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_gtim2lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gtim2lpen;
+  wire          rcc_c2_apb1lpenr_gtim2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_gtim3lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gtim3lpen;
+  wire          rcc_c2_apb1lpenr_gtim3lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_gtim4lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gtim4lpen;
+  wire          rcc_c2_apb1lpenr_gtim4lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_spi1lpen;
+  wire          nxt_rcc_c2_apb1lpenr_spi1lpen;
+  wire          rcc_c2_apb1lpenr_spi1lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_spi2lpen;
+  wire          nxt_rcc_c2_apb1lpenr_spi2lpen;
+  wire          rcc_c2_apb1lpenr_spi2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_spi3lpen;
+  wire          nxt_rcc_c2_apb1lpenr_spi3lpen;
+  wire          rcc_c2_apb1lpenr_spi3lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_uart1lpen;
+  wire          nxt_rcc_c2_apb1lpenr_uart1lpen;
+  wire          rcc_c2_apb1lpenr_uart1lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_uart2lpen;
+  wire          nxt_rcc_c2_apb1lpenr_uart2lpen;
+  wire          rcc_c2_apb1lpenr_uart2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_uart3lpen;
+  wire          nxt_rcc_c2_apb1lpenr_uart3lpen;
+  wire          rcc_c2_apb1lpenr_uart3lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_uart4lpen;
+  wire          nxt_rcc_c2_apb1lpenr_uart4lpen;
+  wire          rcc_c2_apb1lpenr_uart4lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_i2c2lpen;
+  wire          nxt_rcc_c2_apb1lpenr_i2c2lpen;
+  wire          rcc_c2_apb1lpenr_i2c2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_gpio1lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gpio1lpen;
+  wire          rcc_c2_apb1lpenr_gpio1lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_gpio2lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gpio2lpen;
+  wire          rcc_c2_apb1lpenr_gpio2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_gpio3lpen;
+  wire          nxt_rcc_c2_apb1lpenr_gpio3lpen;
+  wire          rcc_c2_apb1lpenr_gpio3lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_can1lpen;
+  wire          nxt_rcc_c2_apb1lpenr_can1lpen;
+  wire          rcc_c2_apb1lpenr_can1lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_can2lpen;
+  wire          nxt_rcc_c2_apb1lpenr_can2lpen;
+  wire          rcc_c2_apb1lpenr_can2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_can3lpen;
+  wire          nxt_rcc_c2_apb1lpenr_can3lpen;
+  wire          rcc_c2_apb1lpenr_can3lpen_en;
+  // rcc_c2_apb2lpenr
+  wire [  31:0] rcc_c2_apb2lpenr_read;
+  wire          rcc_c2_apb2lpenr_sel;
+  wire          cur_rcc_c2_apb2lpenr_gtim5lpen;
+  wire          nxt_rcc_c2_apb2lpenr_gtim5lpen;
+  wire          rcc_c2_apb2lpenr_gtim5lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_gtim6lpen;
+  wire          nxt_rcc_c2_apb2lpenr_gtim6lpen;
+  wire          rcc_c2_apb2lpenr_gtim6lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_spi4lpen;
+  wire          nxt_rcc_c2_apb2lpenr_spi4lpen;
+  wire          rcc_c2_apb2lpenr_spi4lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_spi5lpen;
+  wire          nxt_rcc_c2_apb2lpenr_spi5lpen;
+  wire          rcc_c2_apb2lpenr_spi5lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_uart5lpen;
+  wire          nxt_rcc_c2_apb2lpenr_uart5lpen;
+  wire          rcc_c2_apb2lpenr_uart5lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_uart6lpen;
+  wire          nxt_rcc_c2_apb2lpenr_uart6lpen;
+  wire          rcc_c2_apb2lpenr_uart6lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_uart7lpen;
+  wire          nxt_rcc_c2_apb2lpenr_uart7lpen;
+  wire          rcc_c2_apb2lpenr_uart7lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_uart8lpen;
+  wire          nxt_rcc_c2_apb2lpenr_uart8lpen;
+  wire          rcc_c2_apb2lpenr_uart8lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_i2c2lpen;
+  wire          nxt_rcc_c2_apb2lpenr_i2c2lpen;
+  wire          rcc_c2_apb2lpenr_i2c2lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_i2c3lpen;
+  wire          nxt_rcc_c2_apb2lpenr_i2c3lpen;
+  wire          rcc_c2_apb2lpenr_i2c3lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_can4lpen;
+  wire          nxt_rcc_c2_apb2lpenr_can4lpen;
+  wire          rcc_c2_apb2lpenr_can4lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_can5lpen;
+  wire          nxt_rcc_c2_apb2lpenr_can5lpen;
+  wire          rcc_c2_apb2lpenr_can5lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_can6lpen;
+  wire          nxt_rcc_c2_apb2lpenr_can6lpen;
+  wire          rcc_c2_apb2lpenr_can6lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_mpptlpen;
+  wire          nxt_rcc_c2_apb2lpenr_mpptlpen;
+  wire          rcc_c2_apb2lpenr_mpptlpen_en;
+  wire          cur_rcc_c2_apb2lpenr_gpio4lpen;
+  wire          nxt_rcc_c2_apb2lpenr_gpio4lpen;
+  wire          rcc_c2_apb2lpenr_gpio4lpen_en;
+  wire          cur_rcc_c2_apb2lpenr_gpio5lpen;
+  wire          nxt_rcc_c2_apb2lpenr_gpio5lpen;
+  wire          rcc_c2_apb2lpenr_gpio5lpen_en;
+  // rcc_c2_apb3lpenr
+  wire [  31:0] rcc_c2_apb3lpenr_read;
+  wire          rcc_c2_apb3lpenr_sel;
+  wire          cur_rcc_c2_apb3lpenr_sysctllpen;
+  wire          nxt_rcc_c2_apb3lpenr_sysctllpen;
+  wire          rcc_c2_apb3lpenr_sysctllpen_en;
+  wire          cur_rcc_c2_apb3lpenr_wwdtlpen;
+  wire          nxt_rcc_c2_apb3lpenr_wwdtlpen;
+  wire          rcc_c2_apb3lpenr_wwdtlpen_en;
+  wire          cur_rcc_c2_apb3lpenr_tim1lpen;
+  wire          nxt_rcc_c2_apb3lpenr_tim1lpen;
+  wire          rcc_c2_apb3lpenr_tim1lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_tim2lpen;
+  wire          nxt_rcc_c2_apb3lpenr_tim2lpen;
+  wire          rcc_c2_apb3lpenr_tim2lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_adcclpen;
+  wire          nxt_rcc_c2_apb3lpenr_adcclpen;
+  wire          rcc_c2_apb3lpenr_adcclpen_en;
+  wire          cur_rcc_c2_apb3lpenr_gpio6lpen;
+  wire          nxt_rcc_c2_apb3lpenr_gpio6lpen;
+  wire          rcc_c2_apb3lpenr_gpio6lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_gpio7lpen;
+  wire          nxt_rcc_c2_apb3lpenr_gpio7lpen;
+  wire          rcc_c2_apb3lpenr_gpio7lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_gpio8lpen;
+  wire          nxt_rcc_c2_apb3lpenr_gpio8lpen;
+  wire          rcc_c2_apb3lpenr_gpio8lpen_en;
 
   //register async set or reset
   wire          raw_pllxon_clr_n;
@@ -2139,6 +2493,15 @@ module rcc_vcore_reg #(
   assign rcc_c1_apb1lpenr_sel = (remap_addr == RCC_C1_APB1LPENR);
   assign rcc_c1_apb2lpenr_sel = (remap_addr == RCC_C1_APB2LPENR);
   assign rcc_c1_apb3lpenr_sel = (remap_addr == RCC_C1_APB3LPENR);
+  assign rcc_c2_rsr_sel = (remap_addr == RCC_C2_RSR);
+  assign rcc_c2_ahb1enr_sel = (remap_addr == RCC_C2_AHB1ENR);
+  assign rcc_c2_apb1enr_sel = (remap_addr == RCC_C2_APB1ENR);
+  assign rcc_c2_apb2enr_sel = (remap_addr == RCC_C2_APB2ENR);
+  assign rcc_c2_apb3enr_sel = (remap_addr == RCC_C2_APB3ENR);
+  assign rcc_c2_ahb1lpenr_sel = (remap_addr == RCC_C2_AHB1LPENR);
+  assign rcc_c2_apb1lpenr_sel = (remap_addr == RCC_C2_APB1LPENR);
+  assign rcc_c2_apb2lpenr_sel = (remap_addr == RCC_C2_APB2LPENR);
+  assign rcc_c2_apb3lpenr_sel = (remap_addr == RCC_C2_APB3LPENR);
 
   // ================================================================================
   // REG ACCESS ERROR
@@ -2152,7 +2515,8 @@ module rcc_vcore_reg #(
                   || ((remap_addr > RCC_CICR) && (remap_addr < RCC_BDCR))
                   || ((remap_addr > RCC_CSR) && (remap_addr < RCC_AHB1RSTR))
                   || ((remap_addr > RCC_GCR) && (remap_addr < RCC_AHB1D3AMR))
-                  || (remap_addr > RCC_C1_APB3LPENR);
+                  || ((remap_addr > RCC_C1_APB3LPENR) && (remap_addr < RCC_C2_RSR))
+                  || (remap_addr > RCC_C2_APB3LPENR);
 
   assign rsv_acs_err = rsv_reg_sel && req;
   assign rsp = {1'b0, rsv_acs_err};
@@ -2201,7 +2565,16 @@ module rcc_vcore_reg #(
                  | ({DW{rcc_c1_ahb1lpenr_sel}} & rcc_c1_ahb1lpenr_read)
                  | ({DW{rcc_c1_apb1lpenr_sel}} & rcc_c1_apb1lpenr_read)
                  | ({DW{rcc_c1_apb2lpenr_sel}} & rcc_c1_apb2lpenr_read)
-                 | ({DW{rcc_c1_apb3lpenr_sel}} & rcc_c1_apb3lpenr_read);
+                 | ({DW{rcc_c1_apb3lpenr_sel}} & rcc_c1_apb3lpenr_read)
+                 | ({DW{rcc_c2_rsr_sel}} & rcc_c2_rsr_read)
+                 | ({DW{rcc_c2_ahb1enr_sel}} & rcc_c2_ahb1enr_read)
+                 | ({DW{rcc_c2_apb1enr_sel}} & rcc_c2_apb1enr_read)
+                 | ({DW{rcc_c2_apb2enr_sel}} & rcc_c2_apb2enr_read)
+                 | ({DW{rcc_c2_apb3enr_sel}} & rcc_c2_apb3enr_read)
+                 | ({DW{rcc_c2_ahb1lpenr_sel}} & rcc_c2_ahb1lpenr_read)
+                 | ({DW{rcc_c2_apb1lpenr_sel}} & rcc_c2_apb1lpenr_read)
+                 | ({DW{rcc_c2_apb2lpenr_sel}} & rcc_c2_apb2lpenr_read)
+                 | ({DW{rcc_c2_apb3lpenr_sel}} & rcc_c2_apb3lpenr_read);
 
   BB_dfflr #(
       .DW     (DW),
@@ -6024,7 +6397,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 can6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scrrst        RW                  0b0                 
+  // 2:2                 mpptrst        RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 1:1                 gpio4rst           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -6049,7 +6422,7 @@ module rcc_vcore_reg #(
     cur_rcc_apb2rstr_can4rst,
     cur_rcc_apb2rstr_can5rst,
     cur_rcc_apb2rstr_can6rst,
-    cur_rcc_apb2rstr_mppt_scrrst,
+    cur_rcc_apb2rstr_mpptrst,
     cur_rcc_apb2rstr_gpio4rst,
     cur_rcc_apb2rstr_gpio5rst
   };
@@ -6276,20 +6649,20 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scrrst        RW                  0b0                 
+  // 2:2                 mpptrst        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_apb2rstr_mppt_scrrst_en  = (|wr_req & rcc_apb2rstr_sel);
-  assign nxt_rcc_apb2rstr_mppt_scrrst = wdata[2:2];
-  assign mppt_scrrst                  = cur_rcc_apb2rstr_mppt_scrrst;
+  assign rcc_apb2rstr_mpptrst_en  = (|wr_req & rcc_apb2rstr_sel);
+  assign nxt_rcc_apb2rstr_mpptrst = wdata[2:2];
+  assign mpptrst                  = cur_rcc_apb2rstr_mpptrst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_apb2rstr_mppt_scrrst (
+  ) U_rcc_apb2rstr_mpptrst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_apb2rstr_mppt_scrrst_en),
-      .din  (nxt_rcc_apb2rstr_mppt_scrrst),
-      .dout (cur_rcc_apb2rstr_mppt_scrrst)
+      .en   (rcc_apb2rstr_mpptrst_en),
+      .din  (nxt_rcc_apb2rstr_mpptrst),
+      .dout (cur_rcc_apb2rstr_mpptrst)
   );
 
   // --------------------------------------------------------------------------------
@@ -6348,8 +6721,6 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 iwdtrst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 pwrrst             RW                  0b0                 
-  // --------------------------------------------------------------------------------
   // 0:0                 rtcrst             RW                  0b0                 
   // --------------------------------------------------------------------------------
 
@@ -6357,19 +6728,7 @@ module rcc_vcore_reg #(
   // rcc_apb3rstr read data
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_read = {
-    {20{1'b0}},
-    cur_rcc_apb3rstr_sysctlrst,
-    cur_rcc_apb3rstr_wwdtrst,
-    cur_rcc_apb3rstr_tim1rst,
-    cur_rcc_apb3rstr_tim2rst,
-    cur_rcc_apb3rstr_adccrst,
-    cur_rcc_apb3rstr_gpio6rst,
-    cur_rcc_apb3rstr_gpio7rst,
-    cur_rcc_apb3rstr_gpio8rst,
-    cur_rcc_apb3rstr_iwdtrst,
-    {1{1'b0}},
-    cur_rcc_apb3rstr_pwrrst,
-    cur_rcc_apb3rstr_rtcrst
+    {20{1'b0}}, cur_rcc_apb3rstr_sysctlrst, cur_rcc_apb3rstr_wwdtrst, cur_rcc_apb3rstr_tim1rst, cur_rcc_apb3rstr_tim2rst, cur_rcc_apb3rstr_adccrst, cur_rcc_apb3rstr_gpio6rst, cur_rcc_apb3rstr_gpio7rst, cur_rcc_apb3rstr_gpio8rst, cur_rcc_apb3rstr_iwdtrst, {2{1'b0}}, cur_rcc_apb3rstr_rtcrst
   };
 
   // --------------------------------------------------------------------------------
@@ -6523,23 +6882,6 @@ module rcc_vcore_reg #(
       .en   (rcc_apb3rstr_iwdtrst_en),
       .din  (nxt_rcc_apb3rstr_iwdtrst),
       .dout (cur_rcc_apb3rstr_iwdtrst)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 1:1                 pwrrst             RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_apb3rstr_pwrrst_en  = (|wr_req & rcc_apb3rstr_sel);
-  assign nxt_rcc_apb3rstr_pwrrst = wdata[1:1];
-  assign pwrrst                  = cur_rcc_apb3rstr_pwrrst;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_apb3rstr_pwrrst (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_apb3rstr_pwrrst_en),
-      .din  (nxt_rcc_apb3rstr_pwrrst),
-      .dout (cur_rcc_apb3rstr_pwrrst)
   );
 
   // --------------------------------------------------------------------------------
@@ -7402,7 +7744,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 can6amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scramen        RW                  0b0                 
+  // 2:2                 mpptamen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 1:1                 gpio4amen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -7427,7 +7769,7 @@ module rcc_vcore_reg #(
     cur_rcc_apb2d3amr_can4amen,
     cur_rcc_apb2d3amr_can5amen,
     cur_rcc_apb2d3amr_can6amen,
-    cur_rcc_apb2d3amr_mppt_scramen,
+    cur_rcc_apb2d3amr_mpptamen,
     cur_rcc_apb2d3amr_gpio4amen,
     cur_rcc_apb2d3amr_gpio5amen
   };
@@ -7654,20 +7996,20 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scramen        RW                  0b0                 
+  // 2:2                 mpptamen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_apb2d3amr_mppt_scramen_en  = (|wr_req & rcc_apb2d3amr_sel);
-  assign nxt_rcc_apb2d3amr_mppt_scramen = wdata[2:2];
-  assign rcc_mppt_scr_amen              = cur_rcc_apb2d3amr_mppt_scramen;
+  assign rcc_apb2d3amr_mpptamen_en  = (|wr_req & rcc_apb2d3amr_sel);
+  assign nxt_rcc_apb2d3amr_mpptamen = wdata[2:2];
+  assign rcc_mppt_amen              = cur_rcc_apb2d3amr_mpptamen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_apb2d3amr_mppt_scramen (
+  ) U_rcc_apb2d3amr_mpptamen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_apb2d3amr_mppt_scramen_en),
-      .din  (nxt_rcc_apb2d3amr_mppt_scramen),
-      .dout (cur_rcc_apb2d3amr_mppt_scramen)
+      .en   (rcc_apb2d3amr_mpptamen_en),
+      .din  (nxt_rcc_apb2d3amr_mpptamen),
+      .dout (cur_rcc_apb2d3amr_mpptamen)
   );
 
   // --------------------------------------------------------------------------------
@@ -7726,10 +8068,6 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 iwdtamen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 rccamen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 1:1                 pwramen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
   // 0:0                 rtcamen             RW                  0b0                 
   // --------------------------------------------------------------------------------
 
@@ -7747,8 +8085,7 @@ module rcc_vcore_reg #(
     cur_rcc_apb3d3amr_gpio7amen,
     cur_rcc_apb3d3amr_gpio8amen,
     cur_rcc_apb3d3amr_iwdtamen,
-    cur_rcc_apb3d3amr_rccamen,
-    cur_rcc_apb3d3amr_pwramen,
+    {2{1'b0}},
     cur_rcc_apb3d3amr_rtcamen
   };
 
@@ -7903,40 +8240,6 @@ module rcc_vcore_reg #(
       .en   (rcc_apb3d3amr_iwdtamen_en),
       .din  (nxt_rcc_apb3d3amr_iwdtamen),
       .dout (cur_rcc_apb3d3amr_iwdtamen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 2:2                 rccamen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_apb3d3amr_rccamen_en  = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_rccamen = wdata[2:2];
-  assign rcc_rcc_amen              = cur_rcc_apb3d3amr_rccamen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_apb3d3amr_rccamen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_apb3d3amr_rccamen_en),
-      .din  (nxt_rcc_apb3d3amr_rccamen),
-      .dout (cur_rcc_apb3d3amr_rccamen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 1:1                 pwramen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_apb3d3amr_pwramen_en  = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_pwramen = wdata[1:1];
-  assign rcc_pwr_amen              = cur_rcc_apb3d3amr_pwramen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_apb3d3amr_pwramen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_apb3d3amr_pwramen_en),
-      .din  (nxt_rcc_apb3d3amr_pwramen),
-      .dout (cur_rcc_apb3d3amr_pwramen)
   );
 
   // --------------------------------------------------------------------------------
@@ -8753,7 +9056,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 can6en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scren          RW                  0b0                 
+  // 2:2                 mppten          RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 1:1                 gpio4en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -8778,7 +9081,7 @@ module rcc_vcore_reg #(
     cur_rcc_c1_apb2enr_can4en,
     cur_rcc_c1_apb2enr_can5en,
     cur_rcc_c1_apb2enr_can6en,
-    cur_rcc_c1_apb2enr_mppt_scren,
+    cur_rcc_c1_apb2enr_mppten,
     cur_rcc_c1_apb2enr_gpio4en,
     cur_rcc_c1_apb2enr_gpio5en
   };
@@ -9005,20 +9308,20 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scren          RW                  0b0                 
+  // 2:2                 mppten          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb2enr_mppt_scren_en  = (|wr_req & rcc_c1_apb2enr_sel);
-  assign nxt_rcc_c1_apb2enr_mppt_scren = wdata[2:2];
-  assign rcc_c1_mppt_scr_en            = cur_rcc_c1_apb2enr_mppt_scren;
+  assign rcc_c1_apb2enr_mppten_en  = (|wr_req & rcc_c1_apb2enr_sel);
+  assign nxt_rcc_c1_apb2enr_mppten = wdata[2:2];
+  assign rcc_c1_mppt_en            = cur_rcc_c1_apb2enr_mppten;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_apb2enr_mppt_scren (
+  ) U_rcc_c1_apb2enr_mppten (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_apb2enr_mppt_scren_en),
-      .din  (nxt_rcc_c1_apb2enr_mppt_scren),
-      .dout (cur_rcc_c1_apb2enr_mppt_scren)
+      .en   (rcc_c1_apb2enr_mppten_en),
+      .din  (nxt_rcc_c1_apb2enr_mppten),
+      .dout (cur_rcc_c1_apb2enr_mppten)
   );
 
   // --------------------------------------------------------------------------------
@@ -9075,40 +9378,18 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 gpio8en             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 iwdten              RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 2:2                 rccen               RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 1:1                 pwren               RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 0:0                 rtcen               RW                  0b0                 
-  // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_c1_apb3enr read data
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_read = {
-    {20{1'b0}},
-    cur_rcc_c1_apb3enr_sysctlen,
-    cur_rcc_c1_apb3enr_wwdten,
-    cur_rcc_c1_apb3enr_tim1en,
-    cur_rcc_c1_apb3enr_tim2en,
-    cur_rcc_c1_apb3enr_adccen,
-    cur_rcc_c1_apb3enr_gpio6en,
-    cur_rcc_c1_apb3enr_gpio7en,
-    cur_rcc_c1_apb3enr_gpio8en,
-    cur_rcc_c1_apb3enr_iwdten,
-    cur_rcc_c1_apb3enr_rccen,
-    cur_rcc_c1_apb3enr_pwren,
-    cur_rcc_c1_apb3enr_rtcen
-  };
+  assign rcc_c1_apb3enr_read         = {{20{1'b0}}, cur_rcc_c1_apb3enr_sysctlen, cur_rcc_c1_apb3enr_wwdten, cur_rcc_c1_apb3enr_tim1en, cur_rcc_c1_apb3enr_tim2en, cur_rcc_c1_apb3enr_adccen, cur_rcc_c1_apb3enr_gpio6en, cur_rcc_c1_apb3enr_gpio7en, cur_rcc_c1_apb3enr_gpio8en, {4{1'b0}}};
 
   // --------------------------------------------------------------------------------
   // 11:11               sysctlen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_sysctlen_en = (|wr_req & rcc_c1_apb3enr_sel);
+  assign rcc_c1_apb3enr_sysctlen_en  = (|wr_req & rcc_c1_apb3enr_sel);
   assign nxt_rcc_c1_apb3enr_sysctlen = wdata[11:11];
-  assign rcc_c1_sysctl_en = cur_rcc_c1_apb3enr_sysctlen;
+  assign rcc_c1_sysctl_en            = cur_rcc_c1_apb3enr_sysctlen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -9237,74 +9518,6 @@ module rcc_vcore_reg #(
       .en   (rcc_c1_apb3enr_gpio8en_en),
       .din  (nxt_rcc_c1_apb3enr_gpio8en),
       .dout (cur_rcc_c1_apb3enr_gpio8en)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 3:3                 iwdten              RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_iwdten_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_iwdten = wdata[3:3];
-  assign rcc_c1_iwdt_en            = cur_rcc_c1_apb3enr_iwdten;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3enr_iwdten (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_apb3enr_iwdten_en),
-      .din  (nxt_rcc_c1_apb3enr_iwdten),
-      .dout (cur_rcc_c1_apb3enr_iwdten)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 2:2                 rccen               RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_rccen_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_rccen = wdata[2:2];
-  assign rcc_c1_rcc_en            = cur_rcc_c1_apb3enr_rccen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3enr_rccen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_apb3enr_rccen_en),
-      .din  (nxt_rcc_c1_apb3enr_rccen),
-      .dout (cur_rcc_c1_apb3enr_rccen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 1:1                 pwren               RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_pwren_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_pwren = wdata[1:1];
-  assign rcc_c1_pwr_en            = cur_rcc_c1_apb3enr_pwren;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3enr_pwren (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_apb3enr_pwren_en),
-      .din  (nxt_rcc_c1_apb3enr_pwren),
-      .dout (cur_rcc_c1_apb3enr_pwren)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 0:0                 rtcen               RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_rtcen_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_rtcen = wdata[0:0];
-  assign rcc_c1_rtc_en            = cur_rcc_c1_apb3enr_rtcen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3enr_rtcen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_apb3enr_rtcen_en),
-      .din  (nxt_rcc_c1_apb3enr_rtcen),
-      .dout (cur_rcc_c1_apb3enr_rtcen)
   );
 
 
@@ -10101,7 +10314,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 3:3                 can6lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scrlpen        RW                  0b0                 
+  // 2:2                 mpptlpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 1:1                 gpio4lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -10126,7 +10339,7 @@ module rcc_vcore_reg #(
     cur_rcc_c1_apb2lpenr_can4lpen,
     cur_rcc_c1_apb2lpenr_can5lpen,
     cur_rcc_c1_apb2lpenr_can6lpen,
-    cur_rcc_c1_apb2lpenr_mppt_scrlpen,
+    cur_rcc_c1_apb2lpenr_mpptlpen,
     cur_rcc_c1_apb2lpenr_gpio4lpen,
     cur_rcc_c1_apb2lpenr_gpio5lpen
   };
@@ -10353,20 +10566,20 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 mppt_scrlpen        RW                  0b0                 
+  // 2:2                 mpptlpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb2lpenr_mppt_scrlpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
-  assign nxt_rcc_c1_apb2lpenr_mppt_scrlpen = wdata[2:2];
-  assign rcc_c1_mppt_scr_lpen              = cur_rcc_c1_apb2lpenr_mppt_scrlpen;
+  assign rcc_c1_apb2lpenr_mpptlpen_en  = (|wr_req & rcc_c1_apb2lpenr_sel);
+  assign nxt_rcc_c1_apb2lpenr_mpptlpen = wdata[2:2];
+  assign rcc_c1_mppt_lpen              = cur_rcc_c1_apb2lpenr_mpptlpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_apb2lpenr_mppt_scrlpen (
+  ) U_rcc_c1_apb2lpenr_mpptlpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_apb2lpenr_mppt_scrlpen_en),
-      .din  (nxt_rcc_c1_apb2lpenr_mppt_scrlpen),
-      .dout (cur_rcc_c1_apb2lpenr_mppt_scrlpen)
+      .en   (rcc_c1_apb2lpenr_mpptlpen_en),
+      .din  (nxt_rcc_c1_apb2lpenr_mpptlpen),
+      .dout (cur_rcc_c1_apb2lpenr_mpptlpen)
   );
 
   // --------------------------------------------------------------------------------
@@ -10423,32 +10636,12 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 gpio8lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 iwdtlpen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 2:2                 rcclpen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 1:1                 pwrlpen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  // 0:0                 rtclpen             RW                  0b0                 
-  // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_c1_apb3lpenr read data
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3lpenr_read = {
-    {20{1'b0}},
-    cur_rcc_c1_apb3lpenr_sysctllpen,
-    cur_rcc_c1_apb3lpenr_wwdtlpen,
-    cur_rcc_c1_apb3lpenr_tim1lpen,
-    cur_rcc_c1_apb3lpenr_tim2lpen,
-    cur_rcc_c1_apb3lpenr_adcclpen,
-    cur_rcc_c1_apb3lpenr_gpio6lpen,
-    cur_rcc_c1_apb3lpenr_gpio7lpen,
-    cur_rcc_c1_apb3lpenr_gpio8lpen,
-    cur_rcc_c1_apb3lpenr_iwdtlpen,
-    cur_rcc_c1_apb3lpenr_rcclpen,
-    cur_rcc_c1_apb3lpenr_pwrlpen,
-    cur_rcc_c1_apb3lpenr_rtclpen
+    {20{1'b0}}, cur_rcc_c1_apb3lpenr_sysctllpen, cur_rcc_c1_apb3lpenr_wwdtlpen, cur_rcc_c1_apb3lpenr_tim1lpen, cur_rcc_c1_apb3lpenr_tim2lpen, cur_rcc_c1_apb3lpenr_adcclpen, cur_rcc_c1_apb3lpenr_gpio6lpen, cur_rcc_c1_apb3lpenr_gpio7lpen, cur_rcc_c1_apb3lpenr_gpio8lpen, {4{1'b0}}
   };
 
   // --------------------------------------------------------------------------------
@@ -10588,72 +10781,2524 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 iwdtlpen            RW                  0b0                 
+  // rcc_c2_ahb1enr                          0xbc                                    
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3lpenr_iwdtlpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_iwdtlpen = wdata[3:3];
-  assign rcc_c1_iwdt_lpen              = cur_rcc_c1_apb3lpenr_iwdtlpen;
+  // 18:18               romen               RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  // 17:17               tsmsen              RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  // 16:16               smsen               RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 15:15               xflashen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 14:14               fften               RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 13:13               npuen               RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 12:12               dma1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 11:11               dma2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               dmaschen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 qspi1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 qspi2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 qspi3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 qspi4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 xspien              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 mspien              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 hacif_l1en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 hacif_f1en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 macen               RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 lzen                RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_ahb1enr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_read = {
+    {13{1'b0}},
+    cur_rcc_c2_ahb1enr_romen,
+    cur_rcc_c2_ahb1enr_tsmsen,
+    cur_rcc_c2_ahb1enr_smsen,
+    cur_rcc_c2_ahb1enr_xflashen,
+    cur_rcc_c2_ahb1enr_fften,
+    cur_rcc_c2_ahb1enr_npuen,
+    cur_rcc_c2_ahb1enr_dma1en,
+    cur_rcc_c2_ahb1enr_dma2en,
+    cur_rcc_c2_ahb1enr_dmaschen,
+    cur_rcc_c2_ahb1enr_qspi1en,
+    cur_rcc_c2_ahb1enr_qspi2en,
+    cur_rcc_c2_ahb1enr_qspi3en,
+    cur_rcc_c2_ahb1enr_qspi4en,
+    cur_rcc_c2_ahb1enr_xspien,
+    cur_rcc_c2_ahb1enr_mspien,
+    cur_rcc_c2_ahb1enr_hacif_l1en,
+    cur_rcc_c2_ahb1enr_hacif_f1en,
+    cur_rcc_c2_ahb1enr_macen,
+    cur_rcc_c2_ahb1enr_lzen
+  };
+
+  // --------------------------------------------------------------------------------
+  // 18:18               romen               RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_romen_en = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_romen = wdata[18:18];
+  assign rcc_c2_rom_en = cur_rcc_c2_ahb1enr_romen;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3lpenr_iwdtlpen (
+      .RST_VAL('h1)
+  ) U_rcc_c2_ahb1enr_romen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_apb3lpenr_iwdtlpen_en),
-      .din  (nxt_rcc_c1_apb3lpenr_iwdtlpen),
-      .dout (cur_rcc_c1_apb3lpenr_iwdtlpen)
+      .en   (rcc_c2_ahb1enr_romen_en),
+      .din  (nxt_rcc_c2_ahb1enr_romen),
+      .dout (cur_rcc_c2_ahb1enr_romen)
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 rcclpen             RW                  0b0                 
+  // 17:17               tsmsen              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3lpenr_rcclpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_rcclpen = wdata[2:2];
-  assign rcc_c1_rcc_lpen              = cur_rcc_c1_apb3lpenr_rcclpen;
+  assign rcc_c2_ahb1enr_tsmsen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_tsmsen = wdata[17:17];
+  assign rcc_c2_tsms_en            = cur_rcc_c2_ahb1enr_tsmsen;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3lpenr_rcclpen (
+      .RST_VAL('h1)
+  ) U_rcc_c2_ahb1enr_tsmsen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_apb3lpenr_rcclpen_en),
-      .din  (nxt_rcc_c1_apb3lpenr_rcclpen),
-      .dout (cur_rcc_c1_apb3lpenr_rcclpen)
+      .en   (rcc_c2_ahb1enr_tsmsen_en),
+      .din  (nxt_rcc_c2_ahb1enr_tsmsen),
+      .dout (cur_rcc_c2_ahb1enr_tsmsen)
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 pwrlpen             RW                  0b0                 
+  // 16:16               smsen               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3lpenr_pwrlpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_pwrlpen = wdata[1:1];
-  assign rcc_c1_pwr_lpen              = cur_rcc_c1_apb3lpenr_pwrlpen;
+  assign rcc_c2_ahb1enr_smsen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_smsen = wdata[16:16];
+  assign rcc_c2_sms_en            = cur_rcc_c2_ahb1enr_smsen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_apb3lpenr_pwrlpen (
+  ) U_rcc_c2_ahb1enr_smsen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_apb3lpenr_pwrlpen_en),
-      .din  (nxt_rcc_c1_apb3lpenr_pwrlpen),
-      .dout (cur_rcc_c1_apb3lpenr_pwrlpen)
+      .en   (rcc_c2_ahb1enr_smsen_en),
+      .din  (nxt_rcc_c2_ahb1enr_smsen),
+      .dout (cur_rcc_c2_ahb1enr_smsen)
   );
 
   // --------------------------------------------------------------------------------
-  // 0:0                 rtclpen             RW                  0b0                 
+  // 15:15               xflashen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3lpenr_rtclpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_rtclpen = wdata[0:0];
-  assign rcc_c1_rtc_lpen              = cur_rcc_c1_apb3lpenr_rtclpen;
+  assign rcc_c2_ahb1enr_xflashen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_xflashen = wdata[15:15];
+  assign rcc_c2_xflash_en            = cur_rcc_c2_ahb1enr_xflashen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_apb3lpenr_rtclpen (
+  ) U_rcc_c2_ahb1enr_xflashen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_apb3lpenr_rtclpen_en),
-      .din  (nxt_rcc_c1_apb3lpenr_rtclpen),
-      .dout (cur_rcc_c1_apb3lpenr_rtclpen)
+      .en   (rcc_c2_ahb1enr_xflashen_en),
+      .din  (nxt_rcc_c2_ahb1enr_xflashen),
+      .dout (cur_rcc_c2_ahb1enr_xflashen)
   );
+
+  // --------------------------------------------------------------------------------
+  // 14:14               fften               RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_fften_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_fften = wdata[14:14];
+  assign rcc_c2_fft_en            = cur_rcc_c2_ahb1enr_fften;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_fften (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_fften_en),
+      .din  (nxt_rcc_c2_ahb1enr_fften),
+      .dout (cur_rcc_c2_ahb1enr_fften)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               npuen               RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_npuen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_npuen = wdata[13:13];
+  assign rcc_c2_npu_en            = cur_rcc_c2_ahb1enr_npuen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_npuen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_npuen_en),
+      .din  (nxt_rcc_c2_ahb1enr_npuen),
+      .dout (cur_rcc_c2_ahb1enr_npuen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               dma1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_dma1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_dma1en = wdata[12:12];
+  assign rcc_c2_dma1_en            = cur_rcc_c2_ahb1enr_dma1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_dma1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_dma1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_dma1en),
+      .dout (cur_rcc_c2_ahb1enr_dma1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               dma2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_dma2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_dma2en = wdata[11:11];
+  assign rcc_c2_dma2_en            = cur_rcc_c2_ahb1enr_dma2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_dma2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_dma2en_en),
+      .din  (nxt_rcc_c2_ahb1enr_dma2en),
+      .dout (cur_rcc_c2_ahb1enr_dma2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               dmaschen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_dmaschen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_dmaschen = wdata[10:10];
+  assign rcc_c2_dmasch_en            = cur_rcc_c2_ahb1enr_dmaschen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_dmaschen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_dmaschen_en),
+      .din  (nxt_rcc_c2_ahb1enr_dmaschen),
+      .dout (cur_rcc_c2_ahb1enr_dmaschen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 qspi1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_qspi1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_qspi1en = wdata[9:9];
+  assign rcc_c2_qspi1_en            = cur_rcc_c2_ahb1enr_qspi1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_qspi1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_qspi1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_qspi1en),
+      .dout (cur_rcc_c2_ahb1enr_qspi1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 qspi2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_qspi2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_qspi2en = wdata[8:8];
+  assign rcc_c2_qspi2_en            = cur_rcc_c2_ahb1enr_qspi2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_qspi2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_qspi2en_en),
+      .din  (nxt_rcc_c2_ahb1enr_qspi2en),
+      .dout (cur_rcc_c2_ahb1enr_qspi2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 qspi3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_qspi3en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_qspi3en = wdata[7:7];
+  assign rcc_c2_qspi3_en            = cur_rcc_c2_ahb1enr_qspi3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_qspi3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_qspi3en_en),
+      .din  (nxt_rcc_c2_ahb1enr_qspi3en),
+      .dout (cur_rcc_c2_ahb1enr_qspi3en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 qspi4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_qspi4en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_qspi4en = wdata[6:6];
+  assign rcc_c2_qspi4_en            = cur_rcc_c2_ahb1enr_qspi4en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_qspi4en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_qspi4en_en),
+      .din  (nxt_rcc_c2_ahb1enr_qspi4en),
+      .dout (cur_rcc_c2_ahb1enr_qspi4en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 xspien              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_xspien_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_xspien = wdata[5:5];
+  assign rcc_c2_xspi_en            = cur_rcc_c2_ahb1enr_xspien;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_xspien (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_xspien_en),
+      .din  (nxt_rcc_c2_ahb1enr_xspien),
+      .dout (cur_rcc_c2_ahb1enr_xspien)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 mspien              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_mspien_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_mspien = wdata[4:4];
+  assign rcc_c2_mspi_en            = cur_rcc_c2_ahb1enr_mspien;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_mspien (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_mspien_en),
+      .din  (nxt_rcc_c2_ahb1enr_mspien),
+      .dout (cur_rcc_c2_ahb1enr_mspien)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 hacif_l1en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_hacif_l1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_hacif_l1en = wdata[3:3];
+  assign rcc_c2_hacif_l1_en            = cur_rcc_c2_ahb1enr_hacif_l1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_hacif_l1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_hacif_l1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_hacif_l1en),
+      .dout (cur_rcc_c2_ahb1enr_hacif_l1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 hacif_f1en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_hacif_f1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_hacif_f1en = wdata[2:2];
+  assign rcc_c2_hacif_f1_en            = cur_rcc_c2_ahb1enr_hacif_f1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_hacif_f1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_hacif_f1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_hacif_f1en),
+      .dout (cur_rcc_c2_ahb1enr_hacif_f1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 macen               RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_macen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_macen = wdata[1:1];
+  assign rcc_c2_mac_en            = cur_rcc_c2_ahb1enr_macen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h1)
+  ) U_rcc_c2_ahb1enr_macen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_macen_en),
+      .din  (nxt_rcc_c2_ahb1enr_macen),
+      .dout (cur_rcc_c2_ahb1enr_macen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 lzen                RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_lzen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_lzen = wdata[0:0];
+  assign rcc_c2_lz_en            = cur_rcc_c2_ahb1enr_lzen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_lzen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_lzen_en),
+      .din  (nxt_rcc_c2_ahb1enr_lzen),
+      .dout (cur_rcc_c2_ahb1enr_lzen)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb1enr                          0xc0                                    
+  // --------------------------------------------------------------------------------
+  // 17:17               gtim1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 16:16               gtim2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 13:13               spi1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 12:12               spi2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 11:11               spi3en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               uart1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 uart4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 gpio3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 can1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 can2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 can3en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb1enr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_read = {
+    {14{1'b0}},
+    cur_rcc_c2_apb1enr_gtim1en,
+    cur_rcc_c2_apb1enr_gtim2en,
+    cur_rcc_c2_apb1enr_gtim3en,
+    cur_rcc_c2_apb1enr_gtim4en,
+    cur_rcc_c2_apb1enr_spi1en,
+    cur_rcc_c2_apb1enr_spi2en,
+    cur_rcc_c2_apb1enr_spi3en,
+    cur_rcc_c2_apb1enr_uart1en,
+    cur_rcc_c2_apb1enr_uart2en,
+    cur_rcc_c2_apb1enr_uart3en,
+    cur_rcc_c2_apb1enr_uart4en,
+    cur_rcc_c2_apb1enr_i2c2en,
+    cur_rcc_c2_apb1enr_gpio1en,
+    cur_rcc_c2_apb1enr_gpio2en,
+    cur_rcc_c2_apb1enr_gpio3en,
+    cur_rcc_c2_apb1enr_can1en,
+    cur_rcc_c2_apb1enr_can2en,
+    cur_rcc_c2_apb1enr_can3en
+  };
+
+  // --------------------------------------------------------------------------------
+  // 17:17               gtim1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gtim1en_en = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gtim1en = wdata[17:17];
+  assign rcc_c2_gtim1_en = cur_rcc_c2_apb1enr_gtim1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gtim1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gtim1en_en),
+      .din  (nxt_rcc_c2_apb1enr_gtim1en),
+      .dout (cur_rcc_c2_apb1enr_gtim1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 16:16               gtim2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gtim2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gtim2en = wdata[16:16];
+  assign rcc_c2_gtim2_en            = cur_rcc_c2_apb1enr_gtim2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gtim2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gtim2en_en),
+      .din  (nxt_rcc_c2_apb1enr_gtim2en),
+      .dout (cur_rcc_c2_apb1enr_gtim2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gtim3en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gtim3en = wdata[15:15];
+  assign rcc_c2_gtim3_en            = cur_rcc_c2_apb1enr_gtim3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gtim3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gtim3en_en),
+      .din  (nxt_rcc_c2_apb1enr_gtim3en),
+      .dout (cur_rcc_c2_apb1enr_gtim3en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gtim4en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gtim4en = wdata[14:14];
+  assign rcc_c2_gtim4_en            = cur_rcc_c2_apb1enr_gtim4en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gtim4en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gtim4en_en),
+      .din  (nxt_rcc_c2_apb1enr_gtim4en),
+      .dout (cur_rcc_c2_apb1enr_gtim4en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spi1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_spi1en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_spi1en = wdata[13:13];
+  assign rcc_c2_spi1_en            = cur_rcc_c2_apb1enr_spi1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_spi1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_spi1en_en),
+      .din  (nxt_rcc_c2_apb1enr_spi1en),
+      .dout (cur_rcc_c2_apb1enr_spi1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               spi2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_spi2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_spi2en = wdata[12:12];
+  assign rcc_c2_spi2_en            = cur_rcc_c2_apb1enr_spi2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_spi2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_spi2en_en),
+      .din  (nxt_rcc_c2_apb1enr_spi2en),
+      .dout (cur_rcc_c2_apb1enr_spi2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               spi3en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_spi3en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_spi3en = wdata[11:11];
+  assign rcc_c2_spi3_en            = cur_rcc_c2_apb1enr_spi3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_spi3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_spi3en_en),
+      .din  (nxt_rcc_c2_apb1enr_spi3en),
+      .dout (cur_rcc_c2_apb1enr_spi3en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               uart1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_uart1en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_uart1en = wdata[10:10];
+  assign rcc_c2_uart1_en            = cur_rcc_c2_apb1enr_uart1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_uart1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_uart1en_en),
+      .din  (nxt_rcc_c2_apb1enr_uart1en),
+      .dout (cur_rcc_c2_apb1enr_uart1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_uart2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_uart2en = wdata[9:9];
+  assign rcc_c2_uart2_en            = cur_rcc_c2_apb1enr_uart2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_uart2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_uart2en_en),
+      .din  (nxt_rcc_c2_apb1enr_uart2en),
+      .dout (cur_rcc_c2_apb1enr_uart2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_uart3en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_uart3en = wdata[8:8];
+  assign rcc_c2_uart3_en            = cur_rcc_c2_apb1enr_uart3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_uart3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_uart3en_en),
+      .din  (nxt_rcc_c2_apb1enr_uart3en),
+      .dout (cur_rcc_c2_apb1enr_uart3en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 uart4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_uart4en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_uart4en = wdata[7:7];
+  assign rcc_c2_uart4_en            = cur_rcc_c2_apb1enr_uart4en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_uart4en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_uart4en_en),
+      .din  (nxt_rcc_c2_apb1enr_uart4en),
+      .dout (cur_rcc_c2_apb1enr_uart4en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_i2c2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_i2c2en = wdata[6:6];
+  assign rcc_c2_i2c2_en            = cur_rcc_c2_apb1enr_i2c2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_i2c2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_i2c2en_en),
+      .din  (nxt_rcc_c2_apb1enr_i2c2en),
+      .dout (cur_rcc_c2_apb1enr_i2c2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio1en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gpio1en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gpio1en = wdata[5:5];
+  assign rcc_c2_gpio1_en            = cur_rcc_c2_apb1enr_gpio1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gpio1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gpio1en_en),
+      .din  (nxt_rcc_c2_apb1enr_gpio1en),
+      .dout (cur_rcc_c2_apb1enr_gpio1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio2en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gpio2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gpio2en = wdata[4:4];
+  assign rcc_c2_gpio2_en            = cur_rcc_c2_apb1enr_gpio2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gpio2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gpio2en_en),
+      .din  (nxt_rcc_c2_apb1enr_gpio2en),
+      .dout (cur_rcc_c2_apb1enr_gpio2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 gpio3en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_gpio3en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_gpio3en = wdata[3:3];
+  assign rcc_c2_gpio3_en            = cur_rcc_c2_apb1enr_gpio3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_gpio3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_gpio3en_en),
+      .din  (nxt_rcc_c2_apb1enr_gpio3en),
+      .dout (cur_rcc_c2_apb1enr_gpio3en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 can1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_can1en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_can1en = wdata[2:2];
+  assign rcc_c2_can1_en            = cur_rcc_c2_apb1enr_can1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_can1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_can1en_en),
+      .din  (nxt_rcc_c2_apb1enr_can1en),
+      .dout (cur_rcc_c2_apb1enr_can1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 can2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_can2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_can2en = wdata[1:1];
+  assign rcc_c2_can2_en            = cur_rcc_c2_apb1enr_can2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_can2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_can2en_en),
+      .din  (nxt_rcc_c2_apb1enr_can2en),
+      .dout (cur_rcc_c2_apb1enr_can2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 can3en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1enr_can3en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_can3en = wdata[0:0];
+  assign rcc_c2_can3_en            = cur_rcc_c2_apb1enr_can3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1enr_can3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1enr_can3en_en),
+      .din  (nxt_rcc_c2_apb1enr_can3en),
+      .dout (cur_rcc_c2_apb1enr_can3en)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb2enr                          0xc4                                    
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim5en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim6en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 13:13               spi4en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 12:12               spi5en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 11:11               uart5en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               uart6en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart7en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart8en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 i2c2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c3en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 can4en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 can5en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 can6en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mppten          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 gpio4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 gpio5en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb2enr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_read = {
+    {16{1'b0}},
+    cur_rcc_c2_apb2enr_gtim5en,
+    cur_rcc_c2_apb2enr_gtim6en,
+    cur_rcc_c2_apb2enr_spi4en,
+    cur_rcc_c2_apb2enr_spi5en,
+    cur_rcc_c2_apb2enr_uart5en,
+    cur_rcc_c2_apb2enr_uart6en,
+    cur_rcc_c2_apb2enr_uart7en,
+    cur_rcc_c2_apb2enr_uart8en,
+    cur_rcc_c2_apb2enr_i2c2en,
+    cur_rcc_c2_apb2enr_i2c3en,
+    cur_rcc_c2_apb2enr_can4en,
+    cur_rcc_c2_apb2enr_can5en,
+    cur_rcc_c2_apb2enr_can6en,
+    cur_rcc_c2_apb2enr_mppten,
+    cur_rcc_c2_apb2enr_gpio4en,
+    cur_rcc_c2_apb2enr_gpio5en
+  };
+
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim5en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_gtim5en_en = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_gtim5en = wdata[15:15];
+  assign rcc_c2_gtim5_en = cur_rcc_c2_apb2enr_gtim5en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_gtim5en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_gtim5en_en),
+      .din  (nxt_rcc_c2_apb2enr_gtim5en),
+      .dout (cur_rcc_c2_apb2enr_gtim5en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim6en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_gtim6en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_gtim6en = wdata[14:14];
+  assign rcc_c2_gtim6_en            = cur_rcc_c2_apb2enr_gtim6en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_gtim6en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_gtim6en_en),
+      .din  (nxt_rcc_c2_apb2enr_gtim6en),
+      .dout (cur_rcc_c2_apb2enr_gtim6en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spi4en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_spi4en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_spi4en = wdata[13:13];
+  assign rcc_c2_spi4_en            = cur_rcc_c2_apb2enr_spi4en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_spi4en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_spi4en_en),
+      .din  (nxt_rcc_c2_apb2enr_spi4en),
+      .dout (cur_rcc_c2_apb2enr_spi4en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               spi5en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_spi5en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_spi5en = wdata[12:12];
+  assign rcc_c2_spi5_en            = cur_rcc_c2_apb2enr_spi5en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_spi5en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_spi5en_en),
+      .din  (nxt_rcc_c2_apb2enr_spi5en),
+      .dout (cur_rcc_c2_apb2enr_spi5en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               uart5en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_uart5en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_uart5en = wdata[11:11];
+  assign rcc_c2_uart5_en            = cur_rcc_c2_apb2enr_uart5en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_uart5en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_uart5en_en),
+      .din  (nxt_rcc_c2_apb2enr_uart5en),
+      .dout (cur_rcc_c2_apb2enr_uart5en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               uart6en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_uart6en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_uart6en = wdata[10:10];
+  assign rcc_c2_uart6_en            = cur_rcc_c2_apb2enr_uart6en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_uart6en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_uart6en_en),
+      .din  (nxt_rcc_c2_apb2enr_uart6en),
+      .dout (cur_rcc_c2_apb2enr_uart6en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart7en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_uart7en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_uart7en = wdata[9:9];
+  assign rcc_c2_uart7_en            = cur_rcc_c2_apb2enr_uart7en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_uart7en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_uart7en_en),
+      .din  (nxt_rcc_c2_apb2enr_uart7en),
+      .dout (cur_rcc_c2_apb2enr_uart7en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart8en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_uart8en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_uart8en = wdata[8:8];
+  assign rcc_c2_uart8_en            = cur_rcc_c2_apb2enr_uart8en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_uart8en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_uart8en_en),
+      .din  (nxt_rcc_c2_apb2enr_uart8en),
+      .dout (cur_rcc_c2_apb2enr_uart8en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 i2c2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_i2c2en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_i2c2en = wdata[7:7];
+  assign rcc_c2_i2c2_en            = cur_rcc_c2_apb2enr_i2c2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_i2c2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_i2c2en_en),
+      .din  (nxt_rcc_c2_apb2enr_i2c2en),
+      .dout (cur_rcc_c2_apb2enr_i2c2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c3en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_i2c3en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_i2c3en = wdata[6:6];
+  assign rcc_c2_i2c3_en            = cur_rcc_c2_apb2enr_i2c3en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_i2c3en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_i2c3en_en),
+      .din  (nxt_rcc_c2_apb2enr_i2c3en),
+      .dout (cur_rcc_c2_apb2enr_i2c3en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 can4en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_can4en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_can4en = wdata[5:5];
+  assign rcc_c2_can4_en            = cur_rcc_c2_apb2enr_can4en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_can4en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_can4en_en),
+      .din  (nxt_rcc_c2_apb2enr_can4en),
+      .dout (cur_rcc_c2_apb2enr_can4en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 can5en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_can5en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_can5en = wdata[4:4];
+  assign rcc_c2_can5_en            = cur_rcc_c2_apb2enr_can5en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_can5en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_can5en_en),
+      .din  (nxt_rcc_c2_apb2enr_can5en),
+      .dout (cur_rcc_c2_apb2enr_can5en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 can6en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_can6en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_can6en = wdata[3:3];
+  assign rcc_c2_can6_en            = cur_rcc_c2_apb2enr_can6en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_can6en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_can6en_en),
+      .din  (nxt_rcc_c2_apb2enr_can6en),
+      .dout (cur_rcc_c2_apb2enr_can6en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mppten          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_mppten_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_mppten = wdata[2:2];
+  assign rcc_c2_mppt_en            = cur_rcc_c2_apb2enr_mppten;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_mppten (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_mppten_en),
+      .din  (nxt_rcc_c2_apb2enr_mppten),
+      .dout (cur_rcc_c2_apb2enr_mppten)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 gpio4en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_gpio4en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_gpio4en = wdata[1:1];
+  assign rcc_c2_gpio4_en            = cur_rcc_c2_apb2enr_gpio4en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_gpio4en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_gpio4en_en),
+      .din  (nxt_rcc_c2_apb2enr_gpio4en),
+      .dout (cur_rcc_c2_apb2enr_gpio4en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 gpio5en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2enr_gpio5en_en  = (|wr_req & rcc_c2_apb2enr_sel);
+  assign nxt_rcc_c2_apb2enr_gpio5en = wdata[0:0];
+  assign rcc_c2_gpio5_en            = cur_rcc_c2_apb2enr_gpio5en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2enr_gpio5en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2enr_gpio5en_en),
+      .din  (nxt_rcc_c2_apb2enr_gpio5en),
+      .dout (cur_rcc_c2_apb2enr_gpio5en)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb3enr                          0xc8                                    
+  // --------------------------------------------------------------------------------
+  // 11:11               sysctlen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               wwdten              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 tim1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 adccen              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 gpio6en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio7en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio8en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb3enr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_read         = {{20{1'b0}}, cur_rcc_c2_apb3enr_sysctlen, cur_rcc_c2_apb3enr_wwdten, cur_rcc_c2_apb3enr_tim1en, cur_rcc_c2_apb3enr_tim2en, cur_rcc_c2_apb3enr_adccen, cur_rcc_c2_apb3enr_gpio6en, cur_rcc_c2_apb3enr_gpio7en, cur_rcc_c2_apb3enr_gpio8en, {4{1'b0}}};
+
+  // --------------------------------------------------------------------------------
+  // 11:11               sysctlen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_sysctlen_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_sysctlen = wdata[11:11];
+  assign rcc_c2_sysctl_en            = cur_rcc_c2_apb3enr_sysctlen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_sysctlen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_sysctlen_en),
+      .din  (nxt_rcc_c2_apb3enr_sysctlen),
+      .dout (cur_rcc_c2_apb3enr_sysctlen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               wwdten              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_wwdten_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_wwdten = wdata[10:10];
+  assign rcc_c2_wwdt_en            = cur_rcc_c2_apb3enr_wwdten;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_wwdten (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_wwdten_en),
+      .din  (nxt_rcc_c2_apb3enr_wwdten),
+      .dout (cur_rcc_c2_apb3enr_wwdten)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 tim1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_tim1en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_tim1en = wdata[9:9];
+  assign rcc_c2_tim1_en            = cur_rcc_c2_apb3enr_tim1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_tim1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_tim1en_en),
+      .din  (nxt_rcc_c2_apb3enr_tim1en),
+      .dout (cur_rcc_c2_apb3enr_tim1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_tim2en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_tim2en = wdata[8:8];
+  assign rcc_c2_tim2_en            = cur_rcc_c2_apb3enr_tim2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_tim2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_tim2en_en),
+      .din  (nxt_rcc_c2_apb3enr_tim2en),
+      .dout (cur_rcc_c2_apb3enr_tim2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 adccen              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_adccen_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_adccen = wdata[7:7];
+  assign rcc_c2_adcc_en            = cur_rcc_c2_apb3enr_adccen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_adccen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_adccen_en),
+      .din  (nxt_rcc_c2_apb3enr_adccen),
+      .dout (cur_rcc_c2_apb3enr_adccen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 gpio6en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_gpio6en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_gpio6en = wdata[6:6];
+  assign rcc_c2_gpio6_en            = cur_rcc_c2_apb3enr_gpio6en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_gpio6en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_gpio6en_en),
+      .din  (nxt_rcc_c2_apb3enr_gpio6en),
+      .dout (cur_rcc_c2_apb3enr_gpio6en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio7en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_gpio7en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_gpio7en = wdata[5:5];
+  assign rcc_c2_gpio7_en            = cur_rcc_c2_apb3enr_gpio7en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_gpio7en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_gpio7en_en),
+      .din  (nxt_rcc_c2_apb3enr_gpio7en),
+      .dout (cur_rcc_c2_apb3enr_gpio7en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio8en             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_gpio8en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_gpio8en = wdata[4:4];
+  assign rcc_c2_gpio8_en            = cur_rcc_c2_apb3enr_gpio8en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_gpio8en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_gpio8en_en),
+      .din  (nxt_rcc_c2_apb3enr_gpio8en),
+      .dout (cur_rcc_c2_apb3enr_gpio8en)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_ahb1lpenr                        0xcc                                    
+  // --------------------------------------------------------------------------------
+  // 18:18               romlpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 17:17               tsmslpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 16:16               smslpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 15:15               xflashlpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 14:14               fftlpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 13:13               npulpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 12:12               dma1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 11:11               dma2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               dmaschlpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 qspi1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 qspi2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 qspi3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 qspi4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 xspilpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 mspilpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 hacif_l1lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 hacif_f1lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 maclpen             RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 lzlpen              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_ahb1lpenr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_read = {
+    {13{1'b0}},
+    cur_rcc_c2_ahb1lpenr_romlpen,
+    cur_rcc_c2_ahb1lpenr_tsmslpen,
+    cur_rcc_c2_ahb1lpenr_smslpen,
+    cur_rcc_c2_ahb1lpenr_xflashlpen,
+    cur_rcc_c2_ahb1lpenr_fftlpen,
+    cur_rcc_c2_ahb1lpenr_npulpen,
+    cur_rcc_c2_ahb1lpenr_dma1lpen,
+    cur_rcc_c2_ahb1lpenr_dma2lpen,
+    cur_rcc_c2_ahb1lpenr_dmaschlpen,
+    cur_rcc_c2_ahb1lpenr_qspi1lpen,
+    cur_rcc_c2_ahb1lpenr_qspi2lpen,
+    cur_rcc_c2_ahb1lpenr_qspi3lpen,
+    cur_rcc_c2_ahb1lpenr_qspi4lpen,
+    cur_rcc_c2_ahb1lpenr_xspilpen,
+    cur_rcc_c2_ahb1lpenr_mspilpen,
+    cur_rcc_c2_ahb1lpenr_hacif_l1lpen,
+    cur_rcc_c2_ahb1lpenr_hacif_f1lpen,
+    cur_rcc_c2_ahb1lpenr_maclpen,
+    cur_rcc_c2_ahb1lpenr_lzlpen
+  };
+
+  // --------------------------------------------------------------------------------
+  // 18:18               romlpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_romlpen_en = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_romlpen = wdata[18:18];
+  assign rcc_c2_rom_lpen = cur_rcc_c2_ahb1lpenr_romlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_romlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_romlpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_romlpen),
+      .dout (cur_rcc_c2_ahb1lpenr_romlpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 17:17               tsmslpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_tsmslpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_tsmslpen = wdata[17:17];
+  assign rcc_c2_tsms_lpen              = cur_rcc_c2_ahb1lpenr_tsmslpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_tsmslpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_tsmslpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_tsmslpen),
+      .dout (cur_rcc_c2_ahb1lpenr_tsmslpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 16:16               smslpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_smslpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_smslpen = wdata[16:16];
+  assign rcc_c2_sms_lpen              = cur_rcc_c2_ahb1lpenr_smslpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_smslpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_smslpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_smslpen),
+      .dout (cur_rcc_c2_ahb1lpenr_smslpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 15:15               xflashlpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_xflashlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_xflashlpen = wdata[15:15];
+  assign rcc_c2_xflash_lpen              = cur_rcc_c2_ahb1lpenr_xflashlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_xflashlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_xflashlpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_xflashlpen),
+      .dout (cur_rcc_c2_ahb1lpenr_xflashlpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 14:14               fftlpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_fftlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_fftlpen = wdata[14:14];
+  assign rcc_c2_fft_lpen              = cur_rcc_c2_ahb1lpenr_fftlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_fftlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_fftlpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_fftlpen),
+      .dout (cur_rcc_c2_ahb1lpenr_fftlpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               npulpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_npulpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_npulpen = wdata[13:13];
+  assign rcc_c2_npu_lpen              = cur_rcc_c2_ahb1lpenr_npulpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_npulpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_npulpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_npulpen),
+      .dout (cur_rcc_c2_ahb1lpenr_npulpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               dma1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_dma1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_dma1lpen = wdata[12:12];
+  assign rcc_c2_dma1_lpen              = cur_rcc_c2_ahb1lpenr_dma1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_dma1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_dma1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_dma1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_dma1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               dma2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_dma2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_dma2lpen = wdata[11:11];
+  assign rcc_c2_dma2_lpen              = cur_rcc_c2_ahb1lpenr_dma2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_dma2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_dma2lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_dma2lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_dma2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               dmaschlpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_dmaschlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_dmaschlpen = wdata[10:10];
+  assign rcc_c2_dmasch_lpen              = cur_rcc_c2_ahb1lpenr_dmaschlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_dmaschlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_dmaschlpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_dmaschlpen),
+      .dout (cur_rcc_c2_ahb1lpenr_dmaschlpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 qspi1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_qspi1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_qspi1lpen = wdata[9:9];
+  assign rcc_c2_qspi1_lpen              = cur_rcc_c2_ahb1lpenr_qspi1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_qspi1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_qspi1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_qspi1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_qspi1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 qspi2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_qspi2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_qspi2lpen = wdata[8:8];
+  assign rcc_c2_qspi2_lpen              = cur_rcc_c2_ahb1lpenr_qspi2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_qspi2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_qspi2lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_qspi2lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_qspi2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 qspi3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_qspi3lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_qspi3lpen = wdata[7:7];
+  assign rcc_c2_qspi3_lpen              = cur_rcc_c2_ahb1lpenr_qspi3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_qspi3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_qspi3lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_qspi3lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_qspi3lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 qspi4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_qspi4lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_qspi4lpen = wdata[6:6];
+  assign rcc_c2_qspi4_lpen              = cur_rcc_c2_ahb1lpenr_qspi4lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_qspi4lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_qspi4lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_qspi4lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_qspi4lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 xspilpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_xspilpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_xspilpen = wdata[5:5];
+  assign rcc_c2_xspi_lpen              = cur_rcc_c2_ahb1lpenr_xspilpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_xspilpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_xspilpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_xspilpen),
+      .dout (cur_rcc_c2_ahb1lpenr_xspilpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 mspilpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_mspilpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_mspilpen = wdata[4:4];
+  assign rcc_c2_mspi_lpen              = cur_rcc_c2_ahb1lpenr_mspilpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_mspilpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_mspilpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_mspilpen),
+      .dout (cur_rcc_c2_ahb1lpenr_mspilpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 hacif_l1lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_hacif_l1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_hacif_l1lpen = wdata[3:3];
+  assign rcc_c2_hacif_l1_lpen              = cur_rcc_c2_ahb1lpenr_hacif_l1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_hacif_l1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_hacif_l1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_hacif_l1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_hacif_l1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 hacif_f1lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_hacif_f1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_hacif_f1lpen = wdata[2:2];
+  assign rcc_c2_hacif_f1_lpen              = cur_rcc_c2_ahb1lpenr_hacif_f1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_hacif_f1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_hacif_f1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_hacif_f1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_hacif_f1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 maclpen             RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_maclpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_maclpen = wdata[1:1];
+  assign rcc_c2_mac_lpen              = cur_rcc_c2_ahb1lpenr_maclpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h1)
+  ) U_rcc_c2_ahb1lpenr_maclpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_maclpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_maclpen),
+      .dout (cur_rcc_c2_ahb1lpenr_maclpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 lzlpen              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_lzlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_lzlpen = wdata[0:0];
+  assign rcc_c2_lz_lpen              = cur_rcc_c2_ahb1lpenr_lzlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_lzlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_lzlpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_lzlpen),
+      .dout (cur_rcc_c2_ahb1lpenr_lzlpen)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb1lpenr                        0xd0                                    
+  // --------------------------------------------------------------------------------
+  // 17:17               gtim1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 16:16               gtim2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 13:13               spi1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 12:12               spi2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 11:11               spi3lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               uart1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 uart4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 gpio3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 can1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 can2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 can3lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb1lpenr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_read = {
+    {14{1'b0}},
+    cur_rcc_c2_apb1lpenr_gtim1lpen,
+    cur_rcc_c2_apb1lpenr_gtim2lpen,
+    cur_rcc_c2_apb1lpenr_gtim3lpen,
+    cur_rcc_c2_apb1lpenr_gtim4lpen,
+    cur_rcc_c2_apb1lpenr_spi1lpen,
+    cur_rcc_c2_apb1lpenr_spi2lpen,
+    cur_rcc_c2_apb1lpenr_spi3lpen,
+    cur_rcc_c2_apb1lpenr_uart1lpen,
+    cur_rcc_c2_apb1lpenr_uart2lpen,
+    cur_rcc_c2_apb1lpenr_uart3lpen,
+    cur_rcc_c2_apb1lpenr_uart4lpen,
+    cur_rcc_c2_apb1lpenr_i2c2lpen,
+    cur_rcc_c2_apb1lpenr_gpio1lpen,
+    cur_rcc_c2_apb1lpenr_gpio2lpen,
+    cur_rcc_c2_apb1lpenr_gpio3lpen,
+    cur_rcc_c2_apb1lpenr_can1lpen,
+    cur_rcc_c2_apb1lpenr_can2lpen,
+    cur_rcc_c2_apb1lpenr_can3lpen
+  };
+
+  // --------------------------------------------------------------------------------
+  // 17:17               gtim1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gtim1lpen_en = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gtim1lpen = wdata[17:17];
+  assign rcc_c2_gtim1_lpen = cur_rcc_c2_apb1lpenr_gtim1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gtim1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gtim1lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gtim1lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gtim1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 16:16               gtim2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gtim2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gtim2lpen = wdata[16:16];
+  assign rcc_c2_gtim2_lpen              = cur_rcc_c2_apb1lpenr_gtim2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gtim2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gtim2lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gtim2lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gtim2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gtim3lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gtim3lpen = wdata[15:15];
+  assign rcc_c2_gtim3_lpen              = cur_rcc_c2_apb1lpenr_gtim3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gtim3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gtim3lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gtim3lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gtim3lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gtim4lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gtim4lpen = wdata[14:14];
+  assign rcc_c2_gtim4_lpen              = cur_rcc_c2_apb1lpenr_gtim4lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gtim4lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gtim4lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gtim4lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gtim4lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spi1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_spi1lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_spi1lpen = wdata[13:13];
+  assign rcc_c2_spi1_lpen              = cur_rcc_c2_apb1lpenr_spi1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_spi1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_spi1lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_spi1lpen),
+      .dout (cur_rcc_c2_apb1lpenr_spi1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               spi2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_spi2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_spi2lpen = wdata[12:12];
+  assign rcc_c2_spi2_lpen              = cur_rcc_c2_apb1lpenr_spi2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_spi2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_spi2lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_spi2lpen),
+      .dout (cur_rcc_c2_apb1lpenr_spi2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               spi3lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_spi3lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_spi3lpen = wdata[11:11];
+  assign rcc_c2_spi3_lpen              = cur_rcc_c2_apb1lpenr_spi3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_spi3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_spi3lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_spi3lpen),
+      .dout (cur_rcc_c2_apb1lpenr_spi3lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               uart1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_uart1lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_uart1lpen = wdata[10:10];
+  assign rcc_c2_uart1_lpen              = cur_rcc_c2_apb1lpenr_uart1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_uart1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_uart1lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_uart1lpen),
+      .dout (cur_rcc_c2_apb1lpenr_uart1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_uart2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_uart2lpen = wdata[9:9];
+  assign rcc_c2_uart2_lpen              = cur_rcc_c2_apb1lpenr_uart2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_uart2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_uart2lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_uart2lpen),
+      .dout (cur_rcc_c2_apb1lpenr_uart2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_uart3lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_uart3lpen = wdata[8:8];
+  assign rcc_c2_uart3_lpen              = cur_rcc_c2_apb1lpenr_uart3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_uart3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_uart3lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_uart3lpen),
+      .dout (cur_rcc_c2_apb1lpenr_uart3lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 uart4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_uart4lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_uart4lpen = wdata[7:7];
+  assign rcc_c2_uart4_lpen              = cur_rcc_c2_apb1lpenr_uart4lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_uart4lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_uart4lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_uart4lpen),
+      .dout (cur_rcc_c2_apb1lpenr_uart4lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_i2c2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_i2c2lpen = wdata[6:6];
+  assign rcc_c2_i2c2_lpen              = cur_rcc_c2_apb1lpenr_i2c2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_i2c2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_i2c2lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_i2c2lpen),
+      .dout (cur_rcc_c2_apb1lpenr_i2c2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio1lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gpio1lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gpio1lpen = wdata[5:5];
+  assign rcc_c2_gpio1_lpen              = cur_rcc_c2_apb1lpenr_gpio1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gpio1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gpio1lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gpio1lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gpio1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio2lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gpio2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gpio2lpen = wdata[4:4];
+  assign rcc_c2_gpio2_lpen              = cur_rcc_c2_apb1lpenr_gpio2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gpio2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gpio2lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gpio2lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gpio2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 gpio3lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_gpio3lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_gpio3lpen = wdata[3:3];
+  assign rcc_c2_gpio3_lpen              = cur_rcc_c2_apb1lpenr_gpio3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_gpio3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_gpio3lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_gpio3lpen),
+      .dout (cur_rcc_c2_apb1lpenr_gpio3lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 can1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_can1lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_can1lpen = wdata[2:2];
+  assign rcc_c2_can1_lpen              = cur_rcc_c2_apb1lpenr_can1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_can1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_can1lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_can1lpen),
+      .dout (cur_rcc_c2_apb1lpenr_can1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 can2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_can2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_can2lpen = wdata[1:1];
+  assign rcc_c2_can2_lpen              = cur_rcc_c2_apb1lpenr_can2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_can2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_can2lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_can2lpen),
+      .dout (cur_rcc_c2_apb1lpenr_can2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 can3lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb1lpenr_can3lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_can3lpen = wdata[0:0];
+  assign rcc_c2_can3_lpen              = cur_rcc_c2_apb1lpenr_can3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb1lpenr_can3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb1lpenr_can3lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_can3lpen),
+      .dout (cur_rcc_c2_apb1lpenr_can3lpen)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb2lpenr                        0xd4                                    
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim5lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim6lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 13:13               spi4lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 12:12               spi5lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 11:11               uart5lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               uart6lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart7lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart8lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 i2c2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c3lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 can4lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 can5lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 can6lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mpptlpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 gpio4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 gpio5lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb2lpenr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_read = {
+    {16{1'b0}},
+    cur_rcc_c2_apb2lpenr_gtim5lpen,
+    cur_rcc_c2_apb2lpenr_gtim6lpen,
+    cur_rcc_c2_apb2lpenr_spi4lpen,
+    cur_rcc_c2_apb2lpenr_spi5lpen,
+    cur_rcc_c2_apb2lpenr_uart5lpen,
+    cur_rcc_c2_apb2lpenr_uart6lpen,
+    cur_rcc_c2_apb2lpenr_uart7lpen,
+    cur_rcc_c2_apb2lpenr_uart8lpen,
+    cur_rcc_c2_apb2lpenr_i2c2lpen,
+    cur_rcc_c2_apb2lpenr_i2c3lpen,
+    cur_rcc_c2_apb2lpenr_can4lpen,
+    cur_rcc_c2_apb2lpenr_can5lpen,
+    cur_rcc_c2_apb2lpenr_can6lpen,
+    cur_rcc_c2_apb2lpenr_mpptlpen,
+    cur_rcc_c2_apb2lpenr_gpio4lpen,
+    cur_rcc_c2_apb2lpenr_gpio5lpen
+  };
+
+  // --------------------------------------------------------------------------------
+  // 15:15               gtim5lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_gtim5lpen_en = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_gtim5lpen = wdata[15:15];
+  assign rcc_c2_gtim5_lpen = cur_rcc_c2_apb2lpenr_gtim5lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_gtim5lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_gtim5lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_gtim5lpen),
+      .dout (cur_rcc_c2_apb2lpenr_gtim5lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 14:14               gtim6lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_gtim6lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_gtim6lpen = wdata[14:14];
+  assign rcc_c2_gtim6_lpen              = cur_rcc_c2_apb2lpenr_gtim6lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_gtim6lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_gtim6lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_gtim6lpen),
+      .dout (cur_rcc_c2_apb2lpenr_gtim6lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spi4lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_spi4lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_spi4lpen = wdata[13:13];
+  assign rcc_c2_spi4_lpen              = cur_rcc_c2_apb2lpenr_spi4lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_spi4lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_spi4lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_spi4lpen),
+      .dout (cur_rcc_c2_apb2lpenr_spi4lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               spi5lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_spi5lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_spi5lpen = wdata[12:12];
+  assign rcc_c2_spi5_lpen              = cur_rcc_c2_apb2lpenr_spi5lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_spi5lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_spi5lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_spi5lpen),
+      .dout (cur_rcc_c2_apb2lpenr_spi5lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               uart5lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_uart5lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_uart5lpen = wdata[11:11];
+  assign rcc_c2_uart5_lpen              = cur_rcc_c2_apb2lpenr_uart5lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_uart5lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_uart5lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_uart5lpen),
+      .dout (cur_rcc_c2_apb2lpenr_uart5lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               uart6lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_uart6lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_uart6lpen = wdata[10:10];
+  assign rcc_c2_uart6_lpen              = cur_rcc_c2_apb2lpenr_uart6lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_uart6lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_uart6lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_uart6lpen),
+      .dout (cur_rcc_c2_apb2lpenr_uart6lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 uart7lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_uart7lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_uart7lpen = wdata[9:9];
+  assign rcc_c2_uart7_lpen              = cur_rcc_c2_apb2lpenr_uart7lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_uart7lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_uart7lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_uart7lpen),
+      .dout (cur_rcc_c2_apb2lpenr_uart7lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 uart8lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_uart8lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_uart8lpen = wdata[8:8];
+  assign rcc_c2_uart8_lpen              = cur_rcc_c2_apb2lpenr_uart8lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_uart8lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_uart8lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_uart8lpen),
+      .dout (cur_rcc_c2_apb2lpenr_uart8lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 i2c2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_i2c2lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_i2c2lpen = wdata[7:7];
+  assign rcc_c2_i2c2_lpen              = cur_rcc_c2_apb2lpenr_i2c2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_i2c2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_i2c2lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_i2c2lpen),
+      .dout (cur_rcc_c2_apb2lpenr_i2c2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 i2c3lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_i2c3lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_i2c3lpen = wdata[6:6];
+  assign rcc_c2_i2c3_lpen              = cur_rcc_c2_apb2lpenr_i2c3lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_i2c3lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_i2c3lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_i2c3lpen),
+      .dout (cur_rcc_c2_apb2lpenr_i2c3lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 can4lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_can4lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_can4lpen = wdata[5:5];
+  assign rcc_c2_can4_lpen              = cur_rcc_c2_apb2lpenr_can4lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_can4lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_can4lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_can4lpen),
+      .dout (cur_rcc_c2_apb2lpenr_can4lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 can5lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_can5lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_can5lpen = wdata[4:4];
+  assign rcc_c2_can5_lpen              = cur_rcc_c2_apb2lpenr_can5lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_can5lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_can5lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_can5lpen),
+      .dout (cur_rcc_c2_apb2lpenr_can5lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 can6lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_can6lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_can6lpen = wdata[3:3];
+  assign rcc_c2_can6_lpen              = cur_rcc_c2_apb2lpenr_can6lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_can6lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_can6lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_can6lpen),
+      .dout (cur_rcc_c2_apb2lpenr_can6lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mpptlpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_mpptlpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_mpptlpen = wdata[2:2];
+  assign rcc_c2_mppt_lpen              = cur_rcc_c2_apb2lpenr_mpptlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_mpptlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_mpptlpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_mpptlpen),
+      .dout (cur_rcc_c2_apb2lpenr_mpptlpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 gpio4lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_gpio4lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_gpio4lpen = wdata[1:1];
+  assign rcc_c2_gpio4_lpen              = cur_rcc_c2_apb2lpenr_gpio4lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_gpio4lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_gpio4lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_gpio4lpen),
+      .dout (cur_rcc_c2_apb2lpenr_gpio4lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 gpio5lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb2lpenr_gpio5lpen_en  = (|wr_req & rcc_c2_apb2lpenr_sel);
+  assign nxt_rcc_c2_apb2lpenr_gpio5lpen = wdata[0:0];
+  assign rcc_c2_gpio5_lpen              = cur_rcc_c2_apb2lpenr_gpio5lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb2lpenr_gpio5lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb2lpenr_gpio5lpen_en),
+      .din  (nxt_rcc_c2_apb2lpenr_gpio5lpen),
+      .dout (cur_rcc_c2_apb2lpenr_gpio5lpen)
+  );
+
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb3lpenr                        0xd8                                    
+  // --------------------------------------------------------------------------------
+  // 11:11               sysctllpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 10:10               wwdtlpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 tim1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 adcclpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 6:6                 gpio6lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio7lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio8lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+
+  // --------------------------------------------------------------------------------
+  // rcc_c2_apb3lpenr read data
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_read = {
+    {20{1'b0}}, cur_rcc_c2_apb3lpenr_sysctllpen, cur_rcc_c2_apb3lpenr_wwdtlpen, cur_rcc_c2_apb3lpenr_tim1lpen, cur_rcc_c2_apb3lpenr_tim2lpen, cur_rcc_c2_apb3lpenr_adcclpen, cur_rcc_c2_apb3lpenr_gpio6lpen, cur_rcc_c2_apb3lpenr_gpio7lpen, cur_rcc_c2_apb3lpenr_gpio8lpen, {4{1'b0}}
+  };
+
+  // --------------------------------------------------------------------------------
+  // 11:11               sysctllpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_sysctllpen_en = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_sysctllpen = wdata[11:11];
+  assign rcc_c2_sysctl_lpen = cur_rcc_c2_apb3lpenr_sysctllpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_sysctllpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_sysctllpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_sysctllpen),
+      .dout (cur_rcc_c2_apb3lpenr_sysctllpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               wwdtlpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_wwdtlpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_wwdtlpen = wdata[10:10];
+  assign rcc_c2_wwdt_lpen              = cur_rcc_c2_apb3lpenr_wwdtlpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_wwdtlpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_wwdtlpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_wwdtlpen),
+      .dout (cur_rcc_c2_apb3lpenr_wwdtlpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 9:9                 tim1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_tim1lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_tim1lpen = wdata[9:9];
+  assign rcc_c2_tim1_lpen              = cur_rcc_c2_apb3lpenr_tim1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_tim1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_tim1lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_tim1lpen),
+      .dout (cur_rcc_c2_apb3lpenr_tim1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_tim2lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_tim2lpen = wdata[8:8];
+  assign rcc_c2_tim2_lpen              = cur_rcc_c2_apb3lpenr_tim2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_tim2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_tim2lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_tim2lpen),
+      .dout (cur_rcc_c2_apb3lpenr_tim2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 7:7                 adcclpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_adcclpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_adcclpen = wdata[7:7];
+  assign rcc_c2_adcc_lpen              = cur_rcc_c2_apb3lpenr_adcclpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_adcclpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_adcclpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_adcclpen),
+      .dout (cur_rcc_c2_apb3lpenr_adcclpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 6:6                 gpio6lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_gpio6lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_gpio6lpen = wdata[6:6];
+  assign rcc_c2_gpio6_lpen              = cur_rcc_c2_apb3lpenr_gpio6lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_gpio6lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_gpio6lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_gpio6lpen),
+      .dout (cur_rcc_c2_apb3lpenr_gpio6lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 5:5                 gpio7lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_gpio7lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_gpio7lpen = wdata[5:5];
+  assign rcc_c2_gpio7_lpen              = cur_rcc_c2_apb3lpenr_gpio7lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_gpio7lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_gpio7lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_gpio7lpen),
+      .dout (cur_rcc_c2_apb3lpenr_gpio7lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio8lpen           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_gpio8lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_gpio8lpen = wdata[4:4];
+  assign rcc_c2_gpio8_lpen              = cur_rcc_c2_apb3lpenr_gpio8lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_gpio8lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_gpio8lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_gpio8lpen),
+      .dout (cur_rcc_c2_apb3lpenr_gpio8lpen)
+  );
+
+
+
 
 
   // --------------------------------------------------------------------------------
@@ -10742,136 +13387,7 @@ module rcc_vcore_reg #(
       .gen_signal(rcc_csr_lsion_wren)
   );
 
-  assign rcc_vdd_wdata        = (rcc_c1_rsr_sel | rcc_c2_rsr_sel) ? wdata[17] : wdata[0];
-
-  //unused c2 signals
-  assign rcc_c2_adcc_en       = 1'b0;
-  assign rcc_c2_can1_en       = 1'b0;
-  assign rcc_c2_can2_en       = 1'b0;
-  assign rcc_c2_can3_en       = 1'b0;
-  assign rcc_c2_can4_en       = 1'b0;
-  assign rcc_c2_can5_en       = 1'b0;
-  assign rcc_c2_can6_en       = 1'b0;
-  assign rcc_c2_dma1_en       = 1'b0;
-  assign rcc_c2_dma2_en       = 1'b0;
-  assign rcc_c2_dmasch_en     = 1'b0;
-  assign rcc_c2_eth1rx_en     = 1'b0;
-  assign rcc_c2_eth1tx_en     = 1'b0;
-  assign rcc_c2_fft_en        = 1'b0;
-  assign rcc_c2_gpio1_en      = 1'b0;
-  assign rcc_c2_gpio2_en      = 1'b0;
-  assign rcc_c2_gpio3_en      = 1'b0;
-  assign rcc_c2_gpio4_en      = 1'b0;
-  assign rcc_c2_gpio5_en      = 1'b0;
-  assign rcc_c2_gpio6_en      = 1'b0;
-  assign rcc_c2_gpio7_en      = 1'b0;
-  assign rcc_c2_gpio8_en      = 1'b0;
-  assign rcc_c2_gtim1_en      = 1'b0;
-  assign rcc_c2_gtim2_en      = 1'b0;
-  assign rcc_c2_gtim3_en      = 1'b0;
-  assign rcc_c2_gtim4_en      = 1'b0;
-  assign rcc_c2_gtim5_en      = 1'b0;
-  assign rcc_c2_gtim6_en      = 1'b0;
-  assign rcc_c2_hacif_f1_en   = 1'b0;
-  assign rcc_c2_hacif_l1_en   = 1'b0;
-  assign rcc_c2_i2c1_en       = 1'b0;
-  assign rcc_c2_i2c2_en       = 1'b0;
-  assign rcc_c2_i2c3_en       = 1'b0;
-  assign rcc_c2_lz_en         = 1'b0;
-  assign rcc_c2_mac_en        = 1'b0;
-  assign rcc_c2_mppt_en       = 1'b0;
-  assign rcc_c2_mspi_en       = 1'b0;
-  assign rcc_c2_npu_en        = 1'b0;
-  assign rcc_c2_qspi1_en      = 1'b0;
-  assign rcc_c2_qspi2_en      = 1'b0;
-  assign rcc_c2_qspi3_en      = 1'b0;
-  assign rcc_c2_qspi4_en      = 1'b0;
-  assign rcc_c2_rom_en        = 1'b0;
-  assign rcc_c2_sms_en        = 1'b0;
-  assign rcc_c2_spi1_en       = 1'b0;
-  assign rcc_c2_spi2_en       = 1'b0;
-  assign rcc_c2_spi3_en       = 1'b0;
-  assign rcc_c2_spi4_en       = 1'b0;
-  assign rcc_c2_spi5_en       = 1'b0;
-  assign rcc_c2_sysctl_en     = 1'b0;
-  assign rcc_c2_tim1_en       = 1'b0;
-  assign rcc_c2_tim2_en       = 1'b0;
-  assign rcc_c2_tsms_en       = 1'b0;
-  assign rcc_c2_uart1_en      = 1'b0;
-  assign rcc_c2_uart2_en      = 1'b0;
-  assign rcc_c2_uart3_en      = 1'b0;
-  assign rcc_c2_uart4_en      = 1'b0;
-  assign rcc_c2_uart5_en      = 1'b0;
-  assign rcc_c2_uart6_en      = 1'b0;
-  assign rcc_c2_uart7_en      = 1'b0;
-  assign rcc_c2_uart8_en      = 1'b0;
-  assign rcc_c2_wwdt_en       = 1'b0;
-  assign rcc_c2_xflash_en     = 1'b0;
-  assign rcc_c2_xspi_en       = 1'b0;
-
-  assign rcc_c2_adcc_lpen     = 1'b0;
-  assign rcc_c2_can1_lpen     = 1'b0;
-  assign rcc_c2_can2_lpen     = 1'b0;
-  assign rcc_c2_can3_lpen     = 1'b0;
-  assign rcc_c2_can4_lpen     = 1'b0;
-  assign rcc_c2_can5_lpen     = 1'b0;
-  assign rcc_c2_can6_lpen     = 1'b0;
-  assign rcc_c2_dma1_lpen     = 1'b0;
-  assign rcc_c2_dma2_lpen     = 1'b0;
-  assign rcc_c2_dmasch_lpen   = 1'b0;
-  assign rcc_c2_eth1rx_lpen   = 1'b0;
-  assign rcc_c2_eth1tx_lpen   = 1'b0;
-  assign rcc_c2_fft_lpen      = 1'b0;
-  assign rcc_c2_gpio1_lpen    = 1'b0;
-  assign rcc_c2_gpio2_lpen    = 1'b0;
-  assign rcc_c2_gpio3_lpen    = 1'b0;
-  assign rcc_c2_gpio4_lpen    = 1'b0;
-  assign rcc_c2_gpio5_lpen    = 1'b0;
-  assign rcc_c2_gpio6_lpen    = 1'b0;
-  assign rcc_c2_gpio7_lpen    = 1'b0;
-  assign rcc_c2_gpio8_lpen    = 1'b0;
-  assign rcc_c2_gtim1_lpen    = 1'b0;
-  assign rcc_c2_gtim2_lpen    = 1'b0;
-  assign rcc_c2_gtim3_lpen    = 1'b0;
-  assign rcc_c2_gtim4_lpen    = 1'b0;
-  assign rcc_c2_gtim5_lpen    = 1'b0;
-  assign rcc_c2_gtim6_lpen    = 1'b0;
-  assign rcc_c2_hacif_f1_lpen = 1'b0;
-  assign rcc_c2_hacif_l1_lpen = 1'b0;
-  assign rcc_c2_i2c1_lpen     = 1'b0;
-  assign rcc_c2_i2c2_lpen     = 1'b0;
-  assign rcc_c2_i2c3_lpen     = 1'b0;
-  assign rcc_c2_lz_lpen       = 1'b0;
-  assign rcc_c2_mac_lpen      = 1'b0;
-  assign rcc_c2_mppt_lpen     = 1'b0;
-  assign rcc_c2_mspi_lpen     = 1'b0;
-  assign rcc_c2_npu_lpen      = 1'b0;
-  assign rcc_c2_qspi1_lpen    = 1'b0;
-  assign rcc_c2_qspi2_lpen    = 1'b0;
-  assign rcc_c2_qspi3_lpen    = 1'b0;
-  assign rcc_c2_qspi4_lpen    = 1'b0;
-  assign rcc_c2_rom_lpen      = 1'b0;
-  assign rcc_c2_sms_lpen      = 1'b0;
-  assign rcc_c2_spi1_lpen     = 1'b0;
-  assign rcc_c2_spi2_lpen     = 1'b0;
-  assign rcc_c2_spi3_lpen     = 1'b0;
-  assign rcc_c2_spi4_lpen     = 1'b0;
-  assign rcc_c2_spi5_lpen     = 1'b0;
-  assign rcc_c2_sysctl_lpen   = 1'b0;
-  assign rcc_c2_tim1_lpen     = 1'b0;
-  assign rcc_c2_tim2_lpen     = 1'b0;
-  assign rcc_c2_tsms_lpen     = 1'b0;
-  assign rcc_c2_uart1_lpen    = 1'b0;
-  assign rcc_c2_uart2_lpen    = 1'b0;
-  assign rcc_c2_uart3_lpen    = 1'b0;
-  assign rcc_c2_uart4_lpen    = 1'b0;
-  assign rcc_c2_uart5_lpen    = 1'b0;
-  assign rcc_c2_uart6_lpen    = 1'b0;
-  assign rcc_c2_uart7_lpen    = 1'b0;
-  assign rcc_c2_uart8_lpen    = 1'b0;
-  assign rcc_c2_wwdt_lpen     = 1'b0;
-  assign rcc_c2_xflash_lpen   = 1'b0;
-  assign rcc_c2_xspi_lpen     = 1'b0;
+  assign rcc_vdd_wdata = (rcc_c1_rsr_sel | rcc_c2_rsr_sel) ? wdata[17] : wdata[0];
 
 endmodule
 // spyglass enable_block Clock_info05c

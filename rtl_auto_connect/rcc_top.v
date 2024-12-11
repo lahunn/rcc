@@ -199,6 +199,8 @@ module rcc_top #(
     output          rcc_c1_systick_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_c2_clk,                 // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_c2_systick_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_fclk_c1,                // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_fclk_c2,                // From u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // Oscillator signals
     //================================================================
@@ -309,313 +311,153 @@ module rcc_top #(
     output          rcc_lsecss_it,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_it,                     // From u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
+    // PWR signals
+    //================================================================
+    output          rcc_pwr_d1_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_pwr_d2_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_pwr_d3_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    //================================================================
     // peripheral clock and reset
     //================================================================
-    output          rcc_adc12_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_adc12_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_adc12_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_adc3_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_adc3_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_adc3_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_axisram_aclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_axisram_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_bdma_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_bdma_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_bkpram_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_bkpram_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_comp12_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_comp12_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_crc_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_crc_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_crs_pclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_crs_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_crypt_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_crypt_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dac12_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dac12_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dcmi_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dcmi_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output [   1:0] rcc_dfsdm1_ker_clks,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dfsdm1_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dfsdm1_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcc_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcc_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can3_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can3_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can4_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can4_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can5_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can5_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can6_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_can6_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma1_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma2_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dma2d_aclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dma2d_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dma2d_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dtcm1_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dtcm1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dtcm2_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_dtcm2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth1mac_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth1mac_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth1rx_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth1rx_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth1tx_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth1tx_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_dmasch_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_dmasch_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_eth_mii_rx_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_eth_mii_tx_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_eth_rmii_ref_clk,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_exti_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_exti_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fclk_c1,                // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fclk_c2,                // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fdcan_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fdcan_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fdcan_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_flash_aclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_flash_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_flash_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fmc_aclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fmc_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fmc_ker_clk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_fmc_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioa_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioa_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiob_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiob_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioc_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioc_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiod_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiod_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioe_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioe_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiof_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiof_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiog_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiog_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioh_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioh_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioi_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioi_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioj_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpioj_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiok_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpiok_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpv_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_gpv_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hash_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hash_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hdmicec_ker_clk,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hdmicec_pclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hdmicec_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hrtim_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hrtim_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hrtim_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_fft_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_fft_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio2_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio3_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio3_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio4_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio4_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio5_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio5_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio6_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio6_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio7_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio7_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio8_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gpio8_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim2_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim3_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim3_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim4_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim4_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim5_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim5_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim6_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_gtim6_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_hacif_f1_hclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_hacif_f1_sync_rst_n,    // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_hacif_l1_hclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_hacif_l1_pclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_hacif_l1_sync_rst_n,    // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_hrtimer_prescalar_clk,  // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hsem_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_hsem_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_i2c1_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_i2c1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_i2c1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_i2c2_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_i2c2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_i2c2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_i2c3_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_i2c3_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_i2c3_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_i2c4_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_i2c4_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_i2c4_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_itcm_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_itcm_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_iwdg1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_iwdg1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_iwdg2_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_iwdg2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_jpgdec_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_jpgdec_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim1_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim1_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim1_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim2_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim2_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim2_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim3_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim3_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim3_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim4_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim4_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim4_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim5_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim5_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lptim5_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lpuart1_ker_clk,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lpuart1_pclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_lpuart1_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ltdc_aclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ltdc_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ltdc_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ltdc_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mdios_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mdios_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mdma_aclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mdma_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mdma_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_iwdt_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_iwdt_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_iwdt_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_lz_hclk,                // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_lz_sync_rst_n,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mac_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mac_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mppt_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mppt_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mppt_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mspi_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mspi_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_npu_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_npu_pclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_npu_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_obl_clk,                // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_obl_rst_n,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_opamp_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_opamp_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_pwr_d1_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_pwr_d2_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_pwr_d3_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_pwr_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_pwr_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi_aclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ramecc1_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ramecc1_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ramecc2_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ramecc2_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ramecc3_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ramecc3_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_rng_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_rng_ker_clk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_rng_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_rtc_ker_clk,            // From u_rcc_vsw_top of rcc_vsw_top.v
+    output          rcc_qspi1_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi2_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi3_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi3_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi4_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_qspi4_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_rom_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_rom_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_rtc_ker_clk,            // From u_rcc_vsw_top of rcc_vsw_top.v, ...
     output          rcc_rtc_pclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rtc_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai1_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai2_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai3_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai3_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai3_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output [   1:0] rcc_sai4_ker_clks,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai4_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sai4_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sdmmc1_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sdmmc1_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sdmmc1_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sdmmc2_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sdmmc2_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sdmmc2_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spdifrx_ker_clk,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spdifrx_pclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spdifrx_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi1_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_sms_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_sms_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi2_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi3_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi3_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi3_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi4_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi4_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi4_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi5_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi5_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi5_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi6_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi6_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_spi6_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram1_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram2_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram3_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram3_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram4_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sram4_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_swpmi_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_swpmi_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_swpmi_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_syscfg_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_syscfg_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim12_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim12_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim12_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim13_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim13_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim13_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim14_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim14_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim14_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim15_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim15_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim15_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim16_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim16_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim16_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim17_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim17_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim17_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim1_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_sysctl_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_sysctl_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_tim1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_tim1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim2_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_tim2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_tim2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim3_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim3_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim3_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim4_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim4_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim4_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim5_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim5_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim5_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim6_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim6_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim6_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim7_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim7_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim7_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim8_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim8_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tim8_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_timx_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_timy_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_uart4_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_tsms_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_tsms_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart2_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart3_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart3_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart4_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart4_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_uart5_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart5_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart5_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_uart7_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart6_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_uart6_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart7_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart7_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_uart8_ker_clk,          // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart8_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart8_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart1_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart1_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart1_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart2_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart2_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart2_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart3_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart3_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart3_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart6_ker_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart6_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usart6_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb1otg_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb1otg_ker_clk,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb1otg_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb1ulpi_hclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb1ulpi_ker_clk,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb1ulpi_sync_rst_n,    // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb2otg_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb2otg_ker_clk,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb2otg_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb2ulpi_hclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_usb2ulpi_sync_rst_n,    // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_vref_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_vref_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_wwdg1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_wwdg1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_wwdg2_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_wwdg2_sync_rst_n        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_wwdt_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_wwdt_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_xflash_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_xflash_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_xspi_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_xspi_sync_rst_n         // From u_rcc_vcore_top of rcc_vcore_top.v
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );

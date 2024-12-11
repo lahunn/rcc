@@ -53,15 +53,10 @@ module rcc_per_clk_rst_control #(
     output hsi_ker_clk_req,
     output csi_ker_clk_req,
     // bus clocks
-    input  rcc_axibridge_d3_clk,
-    input  rcc_ahb3bridge_d3_clk,
     input  rcc_apb3bridge_d3_clk,
     input  rcc_ahb1bridge_d3_clk,
-    input  rcc_ahb2bridge_d3_clk,
     input  rcc_apb1bridge_d3_clk,
     input  rcc_apb2bridge_d3_clk,
-    input  rcc_ahb4bridge_d3_clk,
-    input  rcc_apb4bridge_d3_clk,
     // kernel clock sources
     input  pll1_p_clk,
     input  pll1_q_clk,
@@ -522,7 +517,6 @@ module rcc_per_clk_rst_control #(
     output rcc_iwdt_pclk,
     output rcc_iwdt_ker_clk,
     // rcc control signals
-    input  rcc_rcc_amen,
     output rcc_rcc_hclk,
     // rtc control signals
     input  rcc_rtc_amen,
@@ -2942,7 +2936,7 @@ module rcc_per_clk_rst_control #(
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (0),
-      .SUPPORT_AMEN                (1),
+      .SUPPORT_AMEN                (0),
       .D3_DEFAULT_NO_CLK           (0),
       .ASSIGNED_TO_CPU1            (1),
       .ASSIGNED_TO_CPU2            (1),
@@ -2955,7 +2949,7 @@ module rcc_per_clk_rst_control #(
       .rcc_c2_per_en  (1'b1),
       .rcc_c1_per_lpen(1'b1),
       .rcc_c2_per_lpen(1'b1),
-      .rcc_per_amen   (rcc_rcc_amen),
+      .rcc_per_amen   (1'b1),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),

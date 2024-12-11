@@ -12,16 +12,12 @@ module rcc_eth_ker_clk_ctrl (
     // reset signal
     input rst_n,
 
-    //output
-    output rcc_eth_mii_tx_clk,
-    output rcc_eth_mii_rx_clk,
-    output rcc_eth_rmii_ref_clk,
-
     // control signals
     input c1_sleep,
     input c1_deepsleep,
     input c2_sleep,
     input c2_deepsleep,
+    input d3_deepsleep,
     //test mode
     input testmode,
     input scan_mode,
@@ -29,15 +25,22 @@ module rcc_eth_ker_clk_ctrl (
 
     //register signals
     // eth1rx control signals
-    input rcc_c1_eth1rx_en,
-    input rcc_c2_eth1rx_en,
-    input rcc_c1_eth1rx_lpen,
-    input rcc_c2_eth1rx_lpen,
+    input  rcc_c1_eth1rx_en,
+    input  rcc_c2_eth1rx_en,
+    input  rcc_c1_eth1rx_lpen,
+    input  rcc_c2_eth1rx_lpen,
+    input  rcc_mac_amen,
     // eth1tx control signals
-    input rcc_c1_eth1tx_en,
-    input rcc_c2_eth1tx_en,
-    input rcc_c1_eth1tx_lpen,
-    input rcc_c2_eth1tx_lpen
+    input  rcc_c1_eth1tx_en,
+    input  rcc_c2_eth1tx_en,
+    input  rcc_c1_eth1tx_lpen,
+    input  rcc_c2_eth1tx_lpen,
+    //output clocks
+    output rcc_eth_mii_tx_clk,
+    output rcc_eth_mii_rx_clk,
+    output rcc_eth_mii_tx_180_clk,
+    output rcc_eth_mii_rx_180_clk,
+    output rcc_eth_rmii_ref_clk
 );
   wire rcc_eth_mii_tx_clk_pre;
   wire rcc_eth_mii_rx_clk_pre;
@@ -155,8 +158,8 @@ module rcc_eth_ker_clk_ctrl (
 
   // gates
 
-  assign rcc_eth1rx_clk_en       = (rcc_c1_eth1rx_en && (~c1_sleep || rcc_c1_eth1rx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1rx_en && (~c2_sleep || rcc_c2_eth1rx_lpen) && ~c2_deepsleep);
-  assign rcc_eth1tx_clk_en       = (rcc_c1_eth1tx_en && (~c1_sleep || rcc_c1_eth1tx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1tx_en && (~c2_sleep || rcc_c2_eth1tx_lpen) && ~c2_deepsleep);
+  assign rcc_eth1rx_clk_en       = (rcc_c1_eth1rx_en && (~c1_sleep || rcc_c1_eth1rx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1rx_en && (~c2_sleep || rcc_c2_eth1rx_lpen) && ~c2_deepsleep) || (rcc_mac_amen && ~d3_deepsleep);
+  assign rcc_eth1tx_clk_en       = (rcc_c1_eth1tx_en && (~c1_sleep || rcc_c1_eth1tx_lpen) && ~c1_deepsleep) || (rcc_c2_eth1tx_en && (~c2_sleep || rcc_c2_eth1tx_lpen) && ~c2_deepsleep) || (rcc_mac_amen && ~d3_deepsleep);
   assign rcc_eth_rmii_ref_clk_en = rcc_eth1rx_clk_en || rcc_eth1tx_clk_en;
 
   rst_as_en_as_clk_gating u_eth_mii_tx_clk_gating (
@@ -167,12 +170,22 @@ module rcc_eth_ker_clk_ctrl (
       .gen_clk (rcc_eth_mii_tx_clk)
   );
 
+  clk_inv u_rcc_eth_mii_tx_clk_inv (
+      .clk    (rcc_eth_mii_tx_clk),
+      .inv_clk(rcc_eth_mii_tx_180_clk)
+  );
+
   en_as_clk_gating u_eth_mii_rx_clk_gating (
       .raw_clk(rcc_eth_mii_rx_clk_pre),
       .active (rcc_eth1rx_clk_en),
       .bypass (testmode),
       .rst_n  (eth_rx_clk_sync_rst_n),
       .gen_clk(rcc_eth_mii_rx_clk)
+  );
+
+  clk_inv u_rcc_eth_mii_rx_clk_inv (
+      .clk    (rcc_eth_mii_rx_clk),
+      .inv_clk(rcc_eth_mii_rx_180_clk)
   );
 
   en_as_clk_gating u_eth_rmii_ref_clk_gating (
