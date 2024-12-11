@@ -9,8 +9,8 @@ module clk_div_s #(
   //=========================================================================================
   //FIXED PARAMETERS
   //=========================================================================================
-  localparam CNT_WID    = (DIV_RATIO % 2 == 0) ? $clog2(DIV_RATIO / 2) : $clog2(DIV_RATIO);
-  localparam RATIO_WID  = CNT_WID;
+  localparam CNT_WID = (DIV_RATIO % 2 == 0) ? $clog2(DIV_RATIO / 2) : $clog2(DIV_RATIO);
+  localparam RATIO_WID = CNT_WID;
   localparam HALF_RATIO = DIV_RATIO / 2;
 
   //=========================================================================================
@@ -79,7 +79,10 @@ module clk_div_s #(
       //================================================================
       // clock generate
       //================================================================
-      assign nxt_o_clk  = ~o_clk;
+      clk_inv u_clk_inv (
+          .clk    (cur_o_clk),
+          .inv_clk(nxt_o_clk)
+      );
       assign o_clk_wren = (cur_cnt == HALF_RATIO - 1) || (cur_cnt == RATIO_WID - 1);
       assign o_clk      = cur_o_clk;
 
