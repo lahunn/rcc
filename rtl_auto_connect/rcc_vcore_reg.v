@@ -3435,7 +3435,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 24:24               pll1on              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cr_pll1on_en   = (|wr_req & rcc_cr_sel);
+  assign rcc_cr_pll1on_en   = (|wr_req && rcc_cr_sel) && (~(cur_rcc_cfgr_sws == 3'b011 && nxt_rcc_cr_pll1on == 0));
   assign nxt_rcc_cr_pll1on  = wdata[24:24];
   assign pll1on             = cur_rcc_cr_pll1on;
   BB_dfflr #(
