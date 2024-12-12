@@ -2734,7 +2734,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 24:24               pll1on              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cr_pll1on_en   = (|wr_req && rcc_cr_sel) && (~(cur_rcc_cfgr_sws == 3'b011 && nxt_rcc_cr_pll1on == 0));
+  assign rcc_cr_pll1on_en   = (|wr_req && rcc_cr_sel) && (~(cur_rcc_cfgr_sws == 3'b011 && nxt_rcc_cr_pll1on == 1'b0));
   assign nxt_rcc_cr_pll1on  = wdata[24:24];
   assign pll1on             = cur_rcc_cr_pll1on;
   BB_dfflr #(
@@ -2812,7 +2812,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 16:16               hseon               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_cr_hseon_en   = (~((cur_rcc_cfgr_sws == 3'b010) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b10))) && (|wr_req && rcc_cr_sel);
+  assign rcc_cr_hseon_en   = (~(((cur_rcc_cfgr_sws == 3'b010) | (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b10)) && nxt_rcc_cr_hseon == 1'b0)) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hseon  = wdata[16:16];
   assign hseon             = cur_rcc_cr_hseon;
   BB_dfflr #(
@@ -2912,8 +2912,8 @@ module rcc_vcore_reg #(
   assign csion_clr_n       = rst_n;
   //when 
   assign csion_set_n       = ~(rcc_exit_sys_stop && (cur_rcc_cfgr_stopwuck == 1 || cur_rcc_cfgr_stopkerwuck == 1));
-
-  assign rcc_cr_csion_en   = (~((cur_rcc_cfgr_sws == 3'b001) || (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01))) && (|wr_req && rcc_cr_sel);
+  // csion can't be changed if csi is selected as sys_clk source or pll clock source
+  assign rcc_cr_csion_en   = (~(((cur_rcc_cfgr_sws == 3'b001) || (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b01)) && nxt_rcc_cr_csion == 1'b0)) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_csion  = wdata[7:7];
   assign csion             = rcc_sys_stop ? csikeron : cur_rcc_cr_csion;
   BB_dfflrs #(
@@ -3011,7 +3011,7 @@ module rcc_vcore_reg #(
       .testmode  (testmode),
       .rst_n     (hsion_rst_n)
   );
-  assign rcc_cr_hsion_en  = (~((cur_rcc_cfgr_sws == 3'b000) || (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00))) && (|wr_req && rcc_cr_sel);
+  assign rcc_cr_hsion_en  = (~(((cur_rcc_cfgr_sws == 3'b000) || (cur_rcc_cr_pll1on && cur_rcc_pllclkselr_pllsrc == 2'b00)) && nxt_rcc_cr_hsion == 1'b0)) && (|wr_req && rcc_cr_sel);
   assign nxt_rcc_cr_hsion = wdata[0:0];
   assign hsion            = rcc_sys_stop ? hsikeron : cur_rcc_cr_hsion;
   BB_dfflr #(
