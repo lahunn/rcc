@@ -342,6 +342,8 @@ module rcc_top #(
     output          rcc_eth_mii_rx_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_eth_mii_tx_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_eth_rmii_ref_clk,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_eth_mii_rx_180_clk,     // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_eth_mii_tx_180_clk,     // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_fft_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_fft_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_gpio1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
