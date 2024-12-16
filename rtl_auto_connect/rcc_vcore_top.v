@@ -20,8 +20,6 @@ module rcc_vcore_top #(
     parameter WW = 4
 ) (
     /*AUTOINPUT*/
-    input        raw_i2s_clk_in,
-    input        raw_usb_phy1,
     input        raw_lsi_clk,
     input        raw_lse_clk,
     input        raw_csi_origin_clk,
@@ -123,8 +121,10 @@ module rcc_vcore_top #(
   wire [   2:0] raw_d3ppre;
   wire          raw_timpre;
 
-  wire          gen_eth_rcc_fes;
-  wire          gen_eth_rcc_epis_2;
+  wire          gen_mac1_rcc_fes;
+  wire          gen_mac1_rcc_epis_2;
+  wire          gen_mac2_rcc_fes;
+  wire          gen_mac2_rcc_epis_2;
 
   // rcc_vcore_dft_sig_loopback Outputs
   wire          gen_cur_rcc_bdcr_bdrst;
@@ -328,14 +328,49 @@ module rcc_vcore_top #(
   );
 
   //rcc_eth_ker_clk_ctrl
-  rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (
-      .rst_n             (sys_rst_n),
-      .eth_rcc_fes       (gen_eth_rcc_fes),
-      .eth_rcc_epis_2    (gen_eth_rcc_epis_2),
-      .rcc_c1_eth1rx_en  (rcc_c1_mac_en),
-      .rcc_c1_eth1rx_lpen(rcc_c1_mac_lpen),
-      .rcc_c1_eth1tx_en  (rcc_c1_mac_en),
-      .rcc_c1_eth1tx_lpen(rcc_c1_mac_lpen)
+  rcc_eth_ker_clk_ctrl u_rcc_mac1_ker_clk_ctrl (
+      .pad_rcc_eth_mii_tx_clk(pad_rcc_mac1_mii_tx_clk),
+      .pad_rcc_eth_mii_rx_clk(pad_rcc_mac1_mii_rx_clk),
+      .eth_rcc_fes           (gen_mac1_rcc_fes),
+      .eth_rcc_epis_2        (gen_mac1_rcc_epis_2),
+      .rst_n                 (sys_rst_n),
+      .rcc_mac_amen          (rcc_mac1_amen),
+      .rcc_c1_eth1rx_en      (rcc_c1_mac1_en),
+      .rcc_c1_eth1rx_lpen    (rcc_c1_mac1_lpen),
+      .rcc_c1_eth1tx_en      (rcc_c1_mac1_en),
+      .rcc_c1_eth1tx_lpen    (rcc_c1_mac1_lpen),
+      .rcc_c2_eth1rx_en      (rcc_c2_mac1_en),
+      .rcc_c2_eth1rx_lpen    (rcc_c2_mac1_lpen),
+      .rcc_c2_eth1tx_en      (rcc_c2_mac1_en),
+      .rcc_c2_eth1tx_lpen    (rcc_c2_mac1_lpen),
+      .rcc_eth_mii_tx_clk    (rcc_mac1_mii_tx_clk),
+      .rcc_eth_mii_rx_clk    (rcc_mac1_mii_rx_clk),
+      .rcc_eth_mii_tx_180_clk(rcc_mac1_mii_tx_180_clk),
+      .rcc_eth_mii_rx_180_clk(rcc_mac1_mii_rx_180_clk),
+      .rcc_eth_rmii_ref_clk  (rcc_mac1_rmii_ref_clk)
+      /*AUTOINST*/
+  );
+
+  rcc_eth_ker_clk_ctrl u_rcc_mac2_ker_clk_ctrl (
+      .pad_rcc_eth_mii_tx_clk(pad_rcc_mac2_mii_tx_clk),
+      .pad_rcc_eth_mii_rx_clk(pad_rcc_mac2_mii_rx_clk),
+      .eth_rcc_fes           (gen_mac2_rcc_fes),
+      .eth_rcc_epis_2        (gen_mac2_rcc_epis_2),
+      .rst_n                 (sys_rst_n),
+      .rcc_mac_amen          (rcc_mac2_amen),
+      .rcc_c1_eth1rx_en      (rcc_c1_mac2_en),
+      .rcc_c1_eth1rx_lpen    (rcc_c1_mac2_lpen),
+      .rcc_c1_eth1tx_en      (rcc_c1_mac2_en),
+      .rcc_c1_eth1tx_lpen    (rcc_c1_mac2_lpen),
+      .rcc_c2_eth1rx_en      (rcc_c2_mac2_en),
+      .rcc_c2_eth1rx_lpen    (rcc_c2_mac2_lpen),
+      .rcc_c2_eth1tx_en      (rcc_c2_mac2_en),
+      .rcc_c2_eth1tx_lpen    (rcc_c2_mac2_lpen),
+      .rcc_eth_mii_tx_clk    (rcc_mac2_mii_tx_clk),
+      .rcc_eth_mii_rx_clk    (rcc_mac2_mii_rx_clk),
+      .rcc_eth_mii_tx_180_clk(rcc_mac2_mii_tx_180_clk),
+      .rcc_eth_mii_rx_180_clk(rcc_mac2_mii_rx_180_clk),
+      .rcc_eth_rmii_ref_clk  (rcc_mac2_rmii_ref_clk)
       /*AUTOINST*/
   );
 
@@ -343,8 +378,10 @@ module rcc_vcore_top #(
   // rcc config mux for atspeed test
   //================================================================
   rcc_config_mux u_rcc_config_mux (
-      .gen_eth_rcc_fes   (gen_eth_rcc_fes),
-      .gen_eth_rcc_epis_2(gen_eth_rcc_epis_2)
+      .gen_mac1_rcc_fes   (gen_mac1_rcc_fes),
+      .gen_mac1_rcc_epis_2(gen_mac1_rcc_epis_2),
+      .gen_mac2_rcc_fes   (gen_mac2_rcc_fes),
+      .gen_mac2_rcc_epis_2(gen_mac2_rcc_epis_2)
       /*AUTOINST*/
   );
 

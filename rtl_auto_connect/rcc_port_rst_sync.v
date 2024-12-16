@@ -21,14 +21,13 @@ module rcc_port_rst_sync (
     input  lse_clk,
     input  lsi_clk,
     input  per_clk,
-    input  i2s_clk_in,
     //input resets
     input  hsecss_fail,
     input  sys_rst_n,
     input  test_rst_n,
     input  testmode,
     //output resets
-    output sync_hsecss_fail_rst,      //async reset sync release
+    output sync_hsecss_fail_rst,    //async reset sync release
     output pll1_p_sync_sys_rst_n,
     output pll1_q_sync_sys_rst_n,
     output pll2_p_sync_sys_rst_n,
@@ -43,8 +42,7 @@ module rcc_port_rst_sync (
     output hsi48_sync_sys_rst_n,
     output lse_sync_sys_rst_n,
     output lsi_sync_sys_rst_n,
-    output per_sync_sys_rst_n,
-    output i2s_clk_in_sync_sys_rst_n
+    output per_sync_sys_rst_n
 
 );
 
@@ -224,16 +222,6 @@ module rcc_port_rst_sync (
       .clk      (per_clk),
       .testmode (testmode),
       .gen_rst_n(per_sync_sys_rst_n)
-  );
-
-
-  rcc_reset_sync #(
-      .STAGE_NUM(2)
-  ) u_i2s_clk_in_rst_sync (
-      .src_rst_n(sys_rst_n),
-      .clk      (i2s_clk_in),
-      .testmode (testmode),
-      .gen_rst_n(i2s_clk_in_sync_sys_rst_n)
   );
 
 endmodule

@@ -19,10 +19,6 @@ module rcc_top #(
     parameter DW = 32,
     parameter WW = DW / 8
 ) (
-    // Beginning of automatic inputs (from unused autoinst inputs)
-    //clock input from PAD
-    input          i2s_clk_in,              // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          usb_phy1,                // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // bus bridge signals
     //================================================================
@@ -113,20 +109,6 @@ module rcc_top #(
     //================================================================
     // peripheral signals
     //================================================================
-    //ker clk req
-    input          i2c1_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          i2c2_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          i2c3_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          i2c4_ker_clk_req,        // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          lpuart1_ker_clk_req,     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          uart4_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          uart5_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          uart7_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          uart8_ker_clk_req,       // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          usart1_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          usart2_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          usart3_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          usart6_ker_clk_req,      // To u_rcc_vcore_top of rcc_vcore_top.v
     //iwdg
     input          iwdg1_out_rst,           // To u_rcc_vdd_top of rcc_vdd_top.v, ...
     input          iwdg2_out_rst,           // To u_rcc_vdd_top of rcc_vdd_top.v, ...
@@ -176,8 +158,6 @@ module rcc_top #(
     input [   5:0] test_divm1,              // To u_rcc_vcore_top of rcc_vcore_top.v
     input [   5:0] test_divm2,              // To u_rcc_vcore_top of rcc_vcore_top.v
     input [   5:0] test_divm3,              // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          test_eth_rcc_epis_2,     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          test_eth_rcc_fes,        // To u_rcc_vcore_top of rcc_vcore_top.v
     input [   3:0] test_hpre,               // To u_rcc_vcore_top of rcc_vcore_top.v
     input          test_hrtimsel,           // To u_rcc_vcore_top of rcc_vcore_top.v
     input [   1:0] test_hsidiv,             // To u_rcc_vcore_top of rcc_vcore_top.v
@@ -189,6 +169,10 @@ module rcc_top #(
     input [   5:0] test_rtcpre,             // To u_rcc_vcore_top of rcc_vcore_top.v
     input [   1:0] test_sw,                 // To u_rcc_vcore_top of rcc_vcore_top.v
     input          test_timpre,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_mac1_rcc_epis_2,    // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_mac1_rcc_fes,       // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_mac2_rcc_epis_2,    // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          test_mac2_rcc_fes,       // To u_rcc_vcore_top of rcc_vcore_top.v
 
     //================================================================
     // CPU signals
@@ -495,8 +479,6 @@ module rcc_top #(
   rcc_vcore_top #(  /*AUTOINSTPARAM*/
   ) u_rcc_vcore_top (
       .hse_rtc_clk               (hse_rtc_clk),
-      .raw_i2s_clk_in            (i2s_clk_in),
-      .raw_usb_phy1              (usb_phy1),
       .raw_lsi_clk               (lsi_clk),
       .raw_lse_clk               (lse_clk),
       .raw_csi_origin_clk        (csi_origin_clk),

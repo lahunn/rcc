@@ -33,7 +33,6 @@ module rcc_per_clk_rst_control #(
     input  lse_sync_sys_rst_n,
     input  lsi_sync_sys_rst_n,
     input  per_sync_sys_rst_n,
-    input  i2s_clk_in_sync_sys_rst_n,
     // peripheral allocate signals
     output c2_per_alloc_d1,
     output c1_per_alloc_d2,
@@ -53,10 +52,10 @@ module rcc_per_clk_rst_control #(
     output hsi_ker_clk_req,
     output csi_ker_clk_req,
     // bus clocks
-    input  rcc_apb3bridge_d3_clk,
     input  rcc_ahb1bridge_d3_clk,
     input  rcc_apb1bridge_d3_clk,
     input  rcc_apb2bridge_d3_clk,
+    input  rcc_apb3bridge_d3_clk,
     // kernel clock sources
     input  pll1_p_clk,
     input  pll1_q_clk,
@@ -74,8 +73,6 @@ module rcc_per_clk_rst_control #(
     input  lse_clk,
     input  lsi_clk,
     input  per_clk,
-    input  i2s_clk_in,
-    input  usb_phy1,
     // control signals
     input  c1_sleep,
     input  c1_deepsleep,
@@ -89,20 +86,20 @@ module rcc_per_clk_rst_control #(
     input  rcc_c2_rom_lpen,
     input  rcc_rom_amen,
     output rcc_rom_hclk,
-    // tsms control signals
-    input  rcc_c1_tsms_en,
-    input  rcc_c2_tsms_en,
-    input  rcc_c1_tsms_lpen,
-    input  rcc_c2_tsms_lpen,
-    input  rcc_tsms_amen,
-    output rcc_tsms_hclk,
-    // sms control signals
-    input  rcc_c1_sms_en,
-    input  rcc_c2_sms_en,
-    input  rcc_c1_sms_lpen,
-    input  rcc_c2_sms_lpen,
-    input  rcc_sms_amen,
-    output rcc_sms_hclk,
+    // smc1 control signals
+    input  rcc_c1_smc1_en,
+    input  rcc_c2_smc1_en,
+    input  rcc_c1_smc1_lpen,
+    input  rcc_c2_smc1_lpen,
+    input  rcc_smc1_amen,
+    output rcc_smc1_hclk,
+    // smc2 control signals
+    input  rcc_c1_smc2_en,
+    input  rcc_c2_smc2_en,
+    input  rcc_c1_smc2_lpen,
+    input  rcc_c2_smc2_lpen,
+    input  rcc_smc2_amen,
+    output rcc_smc2_hclk,
     // xflash control signals
     input  rcc_c1_xflash_en,
     input  rcc_c2_xflash_en,
@@ -153,34 +150,27 @@ module rcc_per_clk_rst_control #(
     input  rcc_c2_qspi1_lpen,
     input  rcc_qspi1_amen,
     output rcc_qspi1_hclk,
-    // qspi2 control signals
-    input  rcc_c1_qspi2_en,
-    input  rcc_c2_qspi2_en,
-    input  rcc_c1_qspi2_lpen,
-    input  rcc_c2_qspi2_lpen,
-    input  rcc_qspi2_amen,
-    output rcc_qspi2_hclk,
-    // qspi3 control signals
-    input  rcc_c1_qspi3_en,
-    input  rcc_c2_qspi3_en,
-    input  rcc_c1_qspi3_lpen,
-    input  rcc_c2_qspi3_lpen,
-    input  rcc_qspi3_amen,
-    output rcc_qspi3_hclk,
-    // qspi4 control signals
-    input  rcc_c1_qspi4_en,
-    input  rcc_c2_qspi4_en,
-    input  rcc_c1_qspi4_lpen,
-    input  rcc_c2_qspi4_lpen,
-    input  rcc_qspi4_amen,
-    output rcc_qspi4_hclk,
-    // xspi control signals
-    input  rcc_c1_xspi_en,
-    input  rcc_c2_xspi_en,
-    input  rcc_c1_xspi_lpen,
-    input  rcc_c2_xspi_lpen,
-    input  rcc_xspi_amen,
-    output rcc_xspi_hclk,
+    // adcspi1 control signals
+    input  rcc_c1_adcspi1_en,
+    input  rcc_c2_adcspi1_en,
+    input  rcc_c1_adcspi1_lpen,
+    input  rcc_c2_adcspi1_lpen,
+    input  rcc_adcspi1_amen,
+    output rcc_adcspi1_hclk,
+    // adcspi2 control signals
+    input  rcc_c1_adcspi2_en,
+    input  rcc_c2_adcspi2_en,
+    input  rcc_c1_adcspi2_lpen,
+    input  rcc_c2_adcspi2_lpen,
+    input  rcc_adcspi2_amen,
+    output rcc_adcspi2_hclk,
+    // adcspi3 control signals
+    input  rcc_c1_adcspi3_en,
+    input  rcc_c2_adcspi3_en,
+    input  rcc_c1_adcspi3_lpen,
+    input  rcc_c2_adcspi3_lpen,
+    input  rcc_adcspi3_amen,
+    output rcc_adcspi3_hclk,
     // mspi control signals
     input  rcc_c1_mspi_en,
     input  rcc_c2_mspi_en,
@@ -203,13 +193,35 @@ module rcc_per_clk_rst_control #(
     input  rcc_c2_hacif_f1_lpen,
     input  rcc_hacif_f1_amen,
     output rcc_hacif_f1_hclk,
-    // mac control signals
-    input  rcc_c1_mac_en,
-    input  rcc_c2_mac_en,
-    input  rcc_c1_mac_lpen,
-    input  rcc_c2_mac_lpen,
-    input  rcc_mac_amen,
-    output rcc_mac_hclk,
+    // cspi_l control signals
+    input  rcc_c1_cspi_l_en,
+    input  rcc_c2_cspi_l_en,
+    input  rcc_c1_cspi_l_lpen,
+    input  rcc_c2_cspi_l_lpen,
+    input  rcc_cspi_l_amen,
+    output rcc_cspi_l_hclk,
+    output rcc_cspi_l_pclk,
+    // cspi_f control signals
+    input  rcc_c1_cspi_f_en,
+    input  rcc_c2_cspi_f_en,
+    input  rcc_c1_cspi_f_lpen,
+    input  rcc_c2_cspi_f_lpen,
+    input  rcc_cspi_f_amen,
+    output rcc_cspi_f_hclk,
+    // mac1 control signals
+    input  rcc_c1_mac1_en,
+    input  rcc_c2_mac1_en,
+    input  rcc_c1_mac1_lpen,
+    input  rcc_c2_mac1_lpen,
+    input  rcc_mac1_amen,
+    output rcc_mac1_hclk,
+    // mac2 control signals
+    input  rcc_c1_mac2_en,
+    input  rcc_c2_mac2_en,
+    input  rcc_c1_mac2_lpen,
+    input  rcc_c2_mac2_lpen,
+    input  rcc_mac2_amen,
+    output rcc_mac2_hclk,
     // lz control signals
     input  rcc_c1_lz_en,
     input  rcc_c2_lz_en,
@@ -484,13 +496,6 @@ module rcc_per_clk_rst_control #(
     input  rcc_c2_tim2_lpen,
     input  rcc_tim2_amen,
     output rcc_tim2_pclk,
-    // adcc control signals
-    input  rcc_c1_adcc_en,
-    input  rcc_c2_adcc_en,
-    input  rcc_c1_adcc_lpen,
-    input  rcc_c2_adcc_lpen,
-    input  rcc_adcc_amen,
-    output rcc_adcc_pclk,
     // gpio6 control signals
     input  rcc_c1_gpio6_en,
     input  rcc_c2_gpio6_en,
@@ -512,6 +517,34 @@ module rcc_per_clk_rst_control #(
     input  rcc_c2_gpio8_lpen,
     input  rcc_gpio8_amen,
     output rcc_gpio8_pclk,
+    // mailbox1 control signals
+    input  rcc_c1_mailbox1_en,
+    input  rcc_c2_mailbox1_en,
+    input  rcc_c1_mailbox1_lpen,
+    input  rcc_c2_mailbox1_lpen,
+    input  rcc_mailbox1_amen,
+    output rcc_mailbox1_pclk,
+    // mailbox2 control signals
+    input  rcc_c1_mailbox2_en,
+    input  rcc_c2_mailbox2_en,
+    input  rcc_c1_mailbox2_lpen,
+    input  rcc_c2_mailbox2_lpen,
+    input  rcc_mailbox2_amen,
+    output rcc_mailbox2_pclk,
+    // spl1 control signals
+    input  rcc_c1_spl1_en,
+    input  rcc_c2_spl1_en,
+    input  rcc_c1_spl1_lpen,
+    input  rcc_c2_spl1_lpen,
+    input  rcc_spl1_amen,
+    output rcc_spl1_pclk,
+    // spl2 control signals
+    input  rcc_c1_spl2_en,
+    input  rcc_c2_spl2_en,
+    input  rcc_c1_spl2_lpen,
+    input  rcc_c2_spl2_lpen,
+    input  rcc_spl2_amen,
+    output rcc_spl2_pclk,
     // iwdt control signals
     input  rcc_iwdt_amen,
     output rcc_iwdt_pclk,
@@ -525,10 +558,10 @@ module rcc_per_clk_rst_control #(
     // ker clk control bits
     input  romrst,
     output rcc_rom_sync_rst_n,
-    input  tsmsrst,
-    output rcc_tsms_sync_rst_n,
-    input  smsrst,
-    output rcc_sms_sync_rst_n,
+    input  smc1rst,
+    output rcc_smc1_sync_rst_n,
+    input  smc2rst,
+    output rcc_smc2_sync_rst_n,
     input  xflashrst,
     output rcc_xflash_sync_rst_n,
     input  fftrst,
@@ -543,22 +576,26 @@ module rcc_per_clk_rst_control #(
     output rcc_dmasch_sync_rst_n,
     input  qspi1rst,
     output rcc_qspi1_sync_rst_n,
-    input  qspi2rst,
-    output rcc_qspi2_sync_rst_n,
-    input  qspi3rst,
-    output rcc_qspi3_sync_rst_n,
-    input  qspi4rst,
-    output rcc_qspi4_sync_rst_n,
-    input  xspirst,
-    output rcc_xspi_sync_rst_n,
+    input  adcspi1rst,
+    output rcc_adcspi1_sync_rst_n,
+    input  adcspi2rst,
+    output rcc_adcspi2_sync_rst_n,
+    input  adcspi3rst,
+    output rcc_adcspi3_sync_rst_n,
     input  mspirst,
     output rcc_mspi_sync_rst_n,
     input  hacif_l1rst,
     output rcc_hacif_l1_sync_rst_n,
     input  hacif_f1rst,
     output rcc_hacif_f1_sync_rst_n,
-    input  macrst,
-    output rcc_mac_sync_rst_n,
+    input  cspi_lrst,
+    output rcc_cspi_l_sync_rst_n,
+    input  cspi_frst,
+    output rcc_cspi_f_sync_rst_n,
+    input  mac1rst,
+    output rcc_mac1_sync_rst_n,
+    input  mac2rst,
+    output rcc_mac2_sync_rst_n,
     input  lzrst,
     output rcc_lz_sync_rst_n,
     input  gtim1rst,
@@ -637,14 +674,20 @@ module rcc_per_clk_rst_control #(
     output rcc_tim1_sync_rst_n,
     input  tim2rst,
     output rcc_tim2_sync_rst_n,
-    input  adccrst,
-    output rcc_adcc_sync_rst_n,
     input  gpio6rst,
     output rcc_gpio6_sync_rst_n,
     input  gpio7rst,
     output rcc_gpio7_sync_rst_n,
     input  gpio8rst,
     output rcc_gpio8_sync_rst_n,
+    input  mailbox1rst,
+    output rcc_mailbox1_sync_rst_n,
+    input  mailbox2rst,
+    output rcc_mailbox2_sync_rst_n,
+    input  spl1rst,
+    output rcc_spl1_sync_rst_n,
+    input  spl2rst,
+    output rcc_spl2_sync_rst_n,
     input  iwdtrst,
     output rcc_iwdt_sync_rst_n,
     output rcc_rcc_sync_rst_n,
@@ -657,10 +700,10 @@ module rcc_per_clk_rst_control #(
 
   wire [0:0] rom_src_bus_clks;
   wire [0:0] rom_bus_clks;
-  wire [0:0] tsms_src_bus_clks;
-  wire [0:0] tsms_bus_clks;
-  wire [0:0] sms_src_bus_clks;
-  wire [0:0] sms_bus_clks;
+  wire [0:0] smc1_src_bus_clks;
+  wire [0:0] smc1_bus_clks;
+  wire [0:0] smc2_src_bus_clks;
+  wire [0:0] smc2_bus_clks;
   wire [0:0] xflash_src_bus_clks;
   wire [0:0] xflash_bus_clks;
   wire [0:0] fft_src_bus_clks;
@@ -675,22 +718,26 @@ module rcc_per_clk_rst_control #(
   wire [0:0] dmasch_bus_clks;
   wire [0:0] qspi1_src_bus_clks;
   wire [0:0] qspi1_bus_clks;
-  wire [0:0] qspi2_src_bus_clks;
-  wire [0:0] qspi2_bus_clks;
-  wire [0:0] qspi3_src_bus_clks;
-  wire [0:0] qspi3_bus_clks;
-  wire [0:0] qspi4_src_bus_clks;
-  wire [0:0] qspi4_bus_clks;
-  wire [0:0] xspi_src_bus_clks;
-  wire [0:0] xspi_bus_clks;
+  wire [0:0] adcspi1_src_bus_clks;
+  wire [0:0] adcspi1_bus_clks;
+  wire [0:0] adcspi2_src_bus_clks;
+  wire [0:0] adcspi2_bus_clks;
+  wire [0:0] adcspi3_src_bus_clks;
+  wire [0:0] adcspi3_bus_clks;
   wire [0:0] mspi_src_bus_clks;
   wire [0:0] mspi_bus_clks;
   wire [1:0] hacif_l1_src_bus_clks;
   wire [1:0] hacif_l1_bus_clks;
   wire [0:0] hacif_f1_src_bus_clks;
   wire [0:0] hacif_f1_bus_clks;
-  wire [0:0] mac_src_bus_clks;
-  wire [0:0] mac_bus_clks;
+  wire [0:0] cspi_l_src_bus_clks;
+  wire [0:0] cspi_l_bus_clks;
+  wire [0:0] cspi_f_src_bus_clks;
+  wire [0:0] cspi_f_bus_clks;
+  wire [0:0] mac1_src_bus_clks;
+  wire [0:0] mac1_bus_clks;
+  wire [0:0] mac2_src_bus_clks;
+  wire [0:0] mac2_bus_clks;
   wire [0:0] lz_src_bus_clks;
   wire [0:0] lz_bus_clks;
   wire [0:0] gtim1_src_bus_clks;
@@ -770,14 +817,20 @@ module rcc_per_clk_rst_control #(
   wire [0:0] tim1_bus_clks;
   wire [0:0] tim2_src_bus_clks;
   wire [0:0] tim2_bus_clks;
-  wire [0:0] adcc_src_bus_clks;
-  wire [0:0] adcc_bus_clks;
   wire [0:0] gpio6_src_bus_clks;
   wire [0:0] gpio6_bus_clks;
   wire [0:0] gpio7_src_bus_clks;
   wire [0:0] gpio7_bus_clks;
   wire [0:0] gpio8_src_bus_clks;
   wire [0:0] gpio8_bus_clks;
+  wire [0:0] mailbox1_src_bus_clks;
+  wire [0:0] mailbox1_bus_clks;
+  wire [0:0] mailbox2_src_bus_clks;
+  wire [0:0] mailbox2_bus_clks;
+  wire [0:0] spl1_src_bus_clks;
+  wire [0:0] spl1_bus_clks;
+  wire [0:0] spl2_src_bus_clks;
+  wire [0:0] spl2_bus_clks;
   wire [0:0] iwdt_src_bus_clks;
   wire [0:0] iwdt_src_ker_clks;
   wire [0:0] iwdt_bus_clks;
@@ -820,9 +873,9 @@ module rcc_per_clk_rst_control #(
       .per_bus_clks   (rom_bus_clks),
       .per_rst_n      (rcc_rom_sync_rst_n)
   );
-  // tsms clock and reset control
-  assign rcc_tsms_hclk     = tsms_bus_clks[0];
-  assign tsms_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  // smc1 clock and reset control
+  assign rcc_smc1_hclk     = smc1_bus_clks[0];
+  assign smc1_src_bus_clks = {rcc_ahb1bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),
@@ -832,14 +885,14 @@ module rcc_per_clk_rst_control #(
       .ASSIGNED_TO_CPU2            (0),
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_tsms_per_clk_rst_control (
+  ) u_smc1_per_clk_rst_control (
       .test_rst_n     (test_rst_n),
-      .bus_clks       (tsms_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_tsms_en),
-      .rcc_c2_per_en  (rcc_c2_tsms_en),
-      .rcc_c1_per_lpen(rcc_c1_tsms_lpen),
-      .rcc_c2_per_lpen(rcc_c2_tsms_lpen),
-      .rcc_per_amen   (rcc_tsms_amen),
+      .bus_clks       (smc1_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_smc1_en),
+      .rcc_c2_per_en  (rcc_c2_smc1_en),
+      .rcc_c1_per_lpen(rcc_c1_smc1_lpen),
+      .rcc_c2_per_lpen(rcc_c2_smc1_lpen),
+      .rcc_per_amen   (rcc_smc1_amen),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),
@@ -850,13 +903,13 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!tsmsrst),
-      .per_bus_clks   (tsms_bus_clks),
-      .per_rst_n      (rcc_tsms_sync_rst_n)
+      .sft_rst_n      (!smc1rst),
+      .per_bus_clks   (smc1_bus_clks),
+      .per_rst_n      (rcc_smc1_sync_rst_n)
   );
-  // sms clock and reset control
-  assign rcc_sms_hclk     = sms_bus_clks[0];
-  assign sms_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  // smc2 clock and reset control
+  assign rcc_smc2_hclk     = smc2_bus_clks[0];
+  assign smc2_src_bus_clks = {rcc_ahb1bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),
@@ -866,14 +919,14 @@ module rcc_per_clk_rst_control #(
       .ASSIGNED_TO_CPU2            (0),
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_sms_per_clk_rst_control (
+  ) u_smc2_per_clk_rst_control (
       .test_rst_n     (test_rst_n),
-      .bus_clks       (sms_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_sms_en),
-      .rcc_c2_per_en  (rcc_c2_sms_en),
-      .rcc_c1_per_lpen(rcc_c1_sms_lpen),
-      .rcc_c2_per_lpen(rcc_c2_sms_lpen),
-      .rcc_per_amen   (rcc_sms_amen),
+      .bus_clks       (smc2_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_smc2_en),
+      .rcc_c2_per_en  (rcc_c2_smc2_en),
+      .rcc_c1_per_lpen(rcc_c1_smc2_lpen),
+      .rcc_c2_per_lpen(rcc_c2_smc2_lpen),
+      .rcc_per_amen   (rcc_smc2_amen),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),
@@ -884,9 +937,9 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!smsrst),
-      .per_bus_clks   (sms_bus_clks),
-      .per_rst_n      (rcc_sms_sync_rst_n)
+      .sft_rst_n      (!smc2rst),
+      .per_bus_clks   (smc2_bus_clks),
+      .per_rst_n      (rcc_smc2_sync_rst_n)
   );
   // xflash clock and reset control
   assign rcc_xflash_hclk     = xflash_bus_clks[0];
@@ -957,9 +1010,9 @@ module rcc_per_clk_rst_control #(
       .per_rst_n      (rcc_fft_sync_rst_n)
   );
   // npu clock and reset control
-  assign rcc_npu_pclk     = npu_bus_clks[0];
-  assign rcc_npu_hclk     = npu_bus_clks[1];
-  assign npu_src_bus_clks = {rcc_apb3bridge_d3_clk, rcc_ahb1bridge_d3_clk};
+  assign rcc_npu_hclk     = npu_bus_clks[0];
+  assign rcc_npu_pclk     = npu_bus_clks[1];
+  assign npu_src_bus_clks = {rcc_ahb1bridge_d3_clk, rcc_apb3bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (2),
       .SUPPORT_LPEN                (1),
@@ -1127,9 +1180,9 @@ module rcc_per_clk_rst_control #(
       .per_bus_clks   (qspi1_bus_clks),
       .per_rst_n      (rcc_qspi1_sync_rst_n)
   );
-  // qspi2 clock and reset control
-  assign rcc_qspi2_hclk     = qspi2_bus_clks[0];
-  assign qspi2_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  // adcspi1 clock and reset control
+  assign rcc_adcspi1_hclk     = adcspi1_bus_clks[0];
+  assign adcspi1_src_bus_clks = {rcc_ahb1bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),
@@ -1139,14 +1192,14 @@ module rcc_per_clk_rst_control #(
       .ASSIGNED_TO_CPU2            (0),
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_qspi2_per_clk_rst_control (
+  ) u_adcspi1_per_clk_rst_control (
       .test_rst_n     (test_rst_n),
-      .bus_clks       (qspi2_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_qspi2_en),
-      .rcc_c2_per_en  (rcc_c2_qspi2_en),
-      .rcc_c1_per_lpen(rcc_c1_qspi2_lpen),
-      .rcc_c2_per_lpen(rcc_c2_qspi2_lpen),
-      .rcc_per_amen   (rcc_qspi2_amen),
+      .bus_clks       (adcspi1_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_adcspi1_en),
+      .rcc_c2_per_en  (rcc_c2_adcspi1_en),
+      .rcc_c1_per_lpen(rcc_c1_adcspi1_lpen),
+      .rcc_c2_per_lpen(rcc_c2_adcspi1_lpen),
+      .rcc_per_amen   (rcc_adcspi1_amen),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),
@@ -1157,13 +1210,13 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!qspi2rst),
-      .per_bus_clks   (qspi2_bus_clks),
-      .per_rst_n      (rcc_qspi2_sync_rst_n)
+      .sft_rst_n      (!adcspi1rst),
+      .per_bus_clks   (adcspi1_bus_clks),
+      .per_rst_n      (rcc_adcspi1_sync_rst_n)
   );
-  // qspi3 clock and reset control
-  assign rcc_qspi3_hclk     = qspi3_bus_clks[0];
-  assign qspi3_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  // adcspi2 clock and reset control
+  assign rcc_adcspi2_hclk     = adcspi2_bus_clks[0];
+  assign adcspi2_src_bus_clks = {rcc_ahb1bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),
@@ -1173,14 +1226,14 @@ module rcc_per_clk_rst_control #(
       .ASSIGNED_TO_CPU2            (0),
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_qspi3_per_clk_rst_control (
+  ) u_adcspi2_per_clk_rst_control (
       .test_rst_n     (test_rst_n),
-      .bus_clks       (qspi3_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_qspi3_en),
-      .rcc_c2_per_en  (rcc_c2_qspi3_en),
-      .rcc_c1_per_lpen(rcc_c1_qspi3_lpen),
-      .rcc_c2_per_lpen(rcc_c2_qspi3_lpen),
-      .rcc_per_amen   (rcc_qspi3_amen),
+      .bus_clks       (adcspi2_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_adcspi2_en),
+      .rcc_c2_per_en  (rcc_c2_adcspi2_en),
+      .rcc_c1_per_lpen(rcc_c1_adcspi2_lpen),
+      .rcc_c2_per_lpen(rcc_c2_adcspi2_lpen),
+      .rcc_per_amen   (rcc_adcspi2_amen),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),
@@ -1191,13 +1244,13 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!qspi3rst),
-      .per_bus_clks   (qspi3_bus_clks),
-      .per_rst_n      (rcc_qspi3_sync_rst_n)
+      .sft_rst_n      (!adcspi2rst),
+      .per_bus_clks   (adcspi2_bus_clks),
+      .per_rst_n      (rcc_adcspi2_sync_rst_n)
   );
-  // qspi4 clock and reset control
-  assign rcc_qspi4_hclk     = qspi4_bus_clks[0];
-  assign qspi4_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  // adcspi3 clock and reset control
+  assign rcc_adcspi3_hclk     = adcspi3_bus_clks[0];
+  assign adcspi3_src_bus_clks = {rcc_ahb1bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),
@@ -1207,14 +1260,14 @@ module rcc_per_clk_rst_control #(
       .ASSIGNED_TO_CPU2            (0),
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_qspi4_per_clk_rst_control (
+  ) u_adcspi3_per_clk_rst_control (
       .test_rst_n     (test_rst_n),
-      .bus_clks       (qspi4_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_qspi4_en),
-      .rcc_c2_per_en  (rcc_c2_qspi4_en),
-      .rcc_c1_per_lpen(rcc_c1_qspi4_lpen),
-      .rcc_c2_per_lpen(rcc_c2_qspi4_lpen),
-      .rcc_per_amen   (rcc_qspi4_amen),
+      .bus_clks       (adcspi3_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_adcspi3_en),
+      .rcc_c2_per_en  (rcc_c2_adcspi3_en),
+      .rcc_c1_per_lpen(rcc_c1_adcspi3_lpen),
+      .rcc_c2_per_lpen(rcc_c2_adcspi3_lpen),
+      .rcc_per_amen   (rcc_adcspi3_amen),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),
@@ -1225,43 +1278,9 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!qspi4rst),
-      .per_bus_clks   (qspi4_bus_clks),
-      .per_rst_n      (rcc_qspi4_sync_rst_n)
-  );
-  // xspi clock and reset control
-  assign rcc_xspi_hclk     = xspi_bus_clks[0];
-  assign xspi_src_bus_clks = {rcc_ahb1bridge_d3_clk};
-  per_clk_rst_control #(
-      .BUS_CLK_NUM                 (1),
-      .SUPPORT_LPEN                (1),
-      .SUPPORT_AMEN                (1),
-      .D3_DEFAULT_NO_CLK           (0),
-      .ASSIGNED_TO_CPU1            (0),
-      .ASSIGNED_TO_CPU2            (0),
-      .DOMAIN                      (3),
-      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_xspi_per_clk_rst_control (
-      .test_rst_n     (test_rst_n),
-      .bus_clks       (xspi_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_xspi_en),
-      .rcc_c2_per_en  (rcc_c2_xspi_en),
-      .rcc_c1_per_lpen(rcc_c1_xspi_lpen),
-      .rcc_c2_per_lpen(rcc_c2_xspi_lpen),
-      .rcc_per_amen   (rcc_xspi_amen),
-      .c1_sleep       (c1_sleep),
-      .c1_deepsleep   (c1_deepsleep),
-      .c2_sleep       (c2_sleep),
-      .c2_deepsleep   (c2_deepsleep),
-      .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (rcc_arcg_on),
-      .testmode       (testmode),
-      .sys_rst_n      (sys_rst_n),
-      .d1_rst_n       (d1_rst_n),
-      .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!xspirst),
-      .per_bus_clks   (xspi_bus_clks),
-      .per_rst_n      (rcc_xspi_sync_rst_n)
+      .sft_rst_n      (!adcspi3rst),
+      .per_bus_clks   (adcspi3_bus_clks),
+      .per_rst_n      (rcc_adcspi3_sync_rst_n)
   );
   // mspi clock and reset control
   assign rcc_mspi_hclk     = mspi_bus_clks[0];
@@ -1298,9 +1317,9 @@ module rcc_per_clk_rst_control #(
       .per_rst_n      (rcc_mspi_sync_rst_n)
   );
   // hacif_l1 clock and reset control
-  assign rcc_hacif_l1_pclk     = hacif_l1_bus_clks[0];
-  assign rcc_hacif_l1_hclk     = hacif_l1_bus_clks[1];
-  assign hacif_l1_src_bus_clks = {rcc_apb3bridge_d3_clk, rcc_ahb1bridge_d3_clk};
+  assign rcc_hacif_l1_hclk     = hacif_l1_bus_clks[0];
+  assign rcc_hacif_l1_pclk     = hacif_l1_bus_clks[1];
+  assign hacif_l1_src_bus_clks = {rcc_ahb1bridge_d3_clk, rcc_apb3bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (2),
       .SUPPORT_LPEN                (1),
@@ -1366,9 +1385,9 @@ module rcc_per_clk_rst_control #(
       .per_bus_clks   (hacif_f1_bus_clks),
       .per_rst_n      (rcc_hacif_f1_sync_rst_n)
   );
-  // mac clock and reset control
-  assign rcc_mac_hclk     = mac_bus_clks[0];
-  assign mac_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  // cspi_l clock and reset control
+  assign rcc_cspi_l_hclk     = cspi_l_bus_clks[0];
+  assign cspi_l_src_bus_clks = {rcc_ahb1bridge_d3_clk};
   per_clk_rst_control #(
       .BUS_CLK_NUM                 (1),
       .SUPPORT_LPEN                (1),
@@ -1378,14 +1397,14 @@ module rcc_per_clk_rst_control #(
       .ASSIGNED_TO_CPU2            (0),
       .DOMAIN                      (3),
       .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_mac_per_clk_rst_control (
+  ) u_cspi_l_per_clk_rst_control (
       .test_rst_n     (test_rst_n),
-      .bus_clks       (mac_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_mac_en),
-      .rcc_c2_per_en  (rcc_c2_mac_en),
-      .rcc_c1_per_lpen(rcc_c1_mac_lpen),
-      .rcc_c2_per_lpen(rcc_c2_mac_lpen),
-      .rcc_per_amen   (rcc_mac_amen),
+      .bus_clks       (cspi_l_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_cspi_l_en),
+      .rcc_c2_per_en  (rcc_c2_cspi_l_en),
+      .rcc_c1_per_lpen(rcc_c1_cspi_l_lpen),
+      .rcc_c2_per_lpen(rcc_c2_cspi_l_lpen),
+      .rcc_per_amen   (rcc_cspi_l_amen),
       .c1_sleep       (c1_sleep),
       .c1_deepsleep   (c1_deepsleep),
       .c2_sleep       (c2_sleep),
@@ -1396,9 +1415,111 @@ module rcc_per_clk_rst_control #(
       .sys_rst_n      (sys_rst_n),
       .d1_rst_n       (d1_rst_n),
       .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!macrst),
-      .per_bus_clks   (mac_bus_clks),
-      .per_rst_n      (rcc_mac_sync_rst_n)
+      .sft_rst_n      (!cspi_lrst),
+      .per_bus_clks   (cspi_l_bus_clks),
+      .per_rst_n      (rcc_cspi_l_sync_rst_n)
+  );
+  // cspi_f clock and reset control
+  assign rcc_cspi_f_hclk     = cspi_f_bus_clks[0];
+  assign cspi_f_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_cspi_f_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (cspi_f_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_cspi_f_en),
+      .rcc_c2_per_en  (rcc_c2_cspi_f_en),
+      .rcc_c1_per_lpen(rcc_c1_cspi_f_lpen),
+      .rcc_c2_per_lpen(rcc_c2_cspi_f_lpen),
+      .rcc_per_amen   (rcc_cspi_f_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!cspi_frst),
+      .per_bus_clks   (cspi_f_bus_clks),
+      .per_rst_n      (rcc_cspi_f_sync_rst_n)
+  );
+  // mac1 clock and reset control
+  assign rcc_mac1_hclk     = mac1_bus_clks[0];
+  assign mac1_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_mac1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (mac1_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_mac1_en),
+      .rcc_c2_per_en  (rcc_c2_mac1_en),
+      .rcc_c1_per_lpen(rcc_c1_mac1_lpen),
+      .rcc_c2_per_lpen(rcc_c2_mac1_lpen),
+      .rcc_per_amen   (rcc_mac1_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!mac1rst),
+      .per_bus_clks   (mac1_bus_clks),
+      .per_rst_n      (rcc_mac1_sync_rst_n)
+  );
+  // mac2 clock and reset control
+  assign rcc_mac2_hclk     = mac2_bus_clks[0];
+  assign mac2_src_bus_clks = {rcc_ahb1bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_mac2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (mac2_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_mac2_en),
+      .rcc_c2_per_en  (rcc_c2_mac2_en),
+      .rcc_c1_per_lpen(rcc_c1_mac2_lpen),
+      .rcc_c2_per_lpen(rcc_c2_mac2_lpen),
+      .rcc_per_amen   (rcc_mac2_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!mac2rst),
+      .per_bus_clks   (mac2_bus_clks),
+      .per_rst_n      (rcc_mac2_sync_rst_n)
   );
   // lz clock and reset control
   assign rcc_lz_hclk     = lz_bus_clks[0];
@@ -2743,40 +2864,6 @@ module rcc_per_clk_rst_control #(
       .per_bus_clks   (tim2_bus_clks),
       .per_rst_n      (rcc_tim2_sync_rst_n)
   );
-  // adcc clock and reset control
-  assign rcc_adcc_pclk     = adcc_bus_clks[0];
-  assign adcc_src_bus_clks = {rcc_apb3bridge_d3_clk};
-  per_clk_rst_control #(
-      .BUS_CLK_NUM                 (1),
-      .SUPPORT_LPEN                (1),
-      .SUPPORT_AMEN                (1),
-      .D3_DEFAULT_NO_CLK           (0),
-      .ASSIGNED_TO_CPU1            (0),
-      .ASSIGNED_TO_CPU2            (0),
-      .DOMAIN                      (3),
-      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
-  ) u_adcc_per_clk_rst_control (
-      .test_rst_n     (test_rst_n),
-      .bus_clks       (adcc_src_bus_clks),
-      .rcc_c1_per_en  (rcc_c1_adcc_en),
-      .rcc_c2_per_en  (rcc_c2_adcc_en),
-      .rcc_c1_per_lpen(rcc_c1_adcc_lpen),
-      .rcc_c2_per_lpen(rcc_c2_adcc_lpen),
-      .rcc_per_amen   (rcc_adcc_amen),
-      .c1_sleep       (c1_sleep),
-      .c1_deepsleep   (c1_deepsleep),
-      .c2_sleep       (c2_sleep),
-      .c2_deepsleep   (c2_deepsleep),
-      .d3_deepsleep   (d3_deepsleep),
-      .arcg_on        (rcc_arcg_on),
-      .testmode       (testmode),
-      .sys_rst_n      (sys_rst_n),
-      .d1_rst_n       (d1_rst_n),
-      .d2_rst_n       (d2_rst_n),
-      .sft_rst_n      (!adccrst),
-      .per_bus_clks   (adcc_bus_clks),
-      .per_rst_n      (rcc_adcc_sync_rst_n)
-  );
   // gpio6 clock and reset control
   assign rcc_gpio6_pclk     = gpio6_bus_clks[0];
   assign gpio6_src_bus_clks = {rcc_apb3bridge_d3_clk};
@@ -2878,6 +2965,142 @@ module rcc_per_clk_rst_control #(
       .sft_rst_n      (!gpio8rst),
       .per_bus_clks   (gpio8_bus_clks),
       .per_rst_n      (rcc_gpio8_sync_rst_n)
+  );
+  // mailbox1 clock and reset control
+  assign rcc_mailbox1_pclk     = mailbox1_bus_clks[0];
+  assign mailbox1_src_bus_clks = {rcc_apb3bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_mailbox1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (mailbox1_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_mailbox1_en),
+      .rcc_c2_per_en  (rcc_c2_mailbox1_en),
+      .rcc_c1_per_lpen(rcc_c1_mailbox1_lpen),
+      .rcc_c2_per_lpen(rcc_c2_mailbox1_lpen),
+      .rcc_per_amen   (rcc_mailbox1_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!mailbox1rst),
+      .per_bus_clks   (mailbox1_bus_clks),
+      .per_rst_n      (rcc_mailbox1_sync_rst_n)
+  );
+  // mailbox2 clock and reset control
+  assign rcc_mailbox2_pclk     = mailbox2_bus_clks[0];
+  assign mailbox2_src_bus_clks = {rcc_apb3bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_mailbox2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (mailbox2_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_mailbox2_en),
+      .rcc_c2_per_en  (rcc_c2_mailbox2_en),
+      .rcc_c1_per_lpen(rcc_c1_mailbox2_lpen),
+      .rcc_c2_per_lpen(rcc_c2_mailbox2_lpen),
+      .rcc_per_amen   (rcc_mailbox2_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!mailbox2rst),
+      .per_bus_clks   (mailbox2_bus_clks),
+      .per_rst_n      (rcc_mailbox2_sync_rst_n)
+  );
+  // spl1 clock and reset control
+  assign rcc_spl1_pclk     = spl1_bus_clks[0];
+  assign spl1_src_bus_clks = {rcc_apb3bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_spl1_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (spl1_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_spl1_en),
+      .rcc_c2_per_en  (rcc_c2_spl1_en),
+      .rcc_c1_per_lpen(rcc_c1_spl1_lpen),
+      .rcc_c2_per_lpen(rcc_c2_spl1_lpen),
+      .rcc_per_amen   (rcc_spl1_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!spl1rst),
+      .per_bus_clks   (spl1_bus_clks),
+      .per_rst_n      (rcc_spl1_sync_rst_n)
+  );
+  // spl2 clock and reset control
+  assign rcc_spl2_pclk     = spl2_bus_clks[0];
+  assign spl2_src_bus_clks = {rcc_apb3bridge_d3_clk};
+  per_clk_rst_control #(
+      .BUS_CLK_NUM                 (1),
+      .SUPPORT_LPEN                (1),
+      .SUPPORT_AMEN                (1),
+      .D3_DEFAULT_NO_CLK           (0),
+      .ASSIGNED_TO_CPU1            (0),
+      .ASSIGNED_TO_CPU2            (0),
+      .DOMAIN                      (3),
+      .CLK_ON_AFTER_PER_RST_RELEASE(CLK_ON_AFTER_PER_RST_RELEASE)
+  ) u_spl2_per_clk_rst_control (
+      .test_rst_n     (test_rst_n),
+      .bus_clks       (spl2_src_bus_clks),
+      .rcc_c1_per_en  (rcc_c1_spl2_en),
+      .rcc_c2_per_en  (rcc_c2_spl2_en),
+      .rcc_c1_per_lpen(rcc_c1_spl2_lpen),
+      .rcc_c2_per_lpen(rcc_c2_spl2_lpen),
+      .rcc_per_amen   (rcc_spl2_amen),
+      .c1_sleep       (c1_sleep),
+      .c1_deepsleep   (c1_deepsleep),
+      .c2_sleep       (c2_sleep),
+      .c2_deepsleep   (c2_deepsleep),
+      .d3_deepsleep   (d3_deepsleep),
+      .arcg_on        (rcc_arcg_on),
+      .testmode       (testmode),
+      .sys_rst_n      (sys_rst_n),
+      .d1_rst_n       (d1_rst_n),
+      .d2_rst_n       (d2_rst_n),
+      .sft_rst_n      (!spl2rst),
+      .per_bus_clks   (spl2_bus_clks),
+      .per_rst_n      (rcc_spl2_sync_rst_n)
   );
   // iwdt clock and reset control
   assign rcc_iwdt_pclk     = iwdt_bus_clks[0];
@@ -3017,16 +3240,16 @@ module rcc_per_clk_rst_control #(
   );
 
   // generate c2_per_alloc_d1 and c1_per_alloc_d2
-  assign c2_per_alloc_d1 =  rcc_c1_rom_en || rcc_c1_tsms_en || rcc_c1_sms_en || rcc_c1_xflash_en || rcc_c1_fft_en || rcc_c1_npu_en || rcc_c1_dma1_en || rcc_c1_dma2_en || rcc_c1_dmasch_en || rcc_c1_qspi1_en || rcc_c1_qspi2_en || rcc_c1_qspi3_en || rcc_c1_qspi4_en || rcc_c1_xspi_en || rcc_c1_mspi_en || rcc_c1_hacif_l1_en || rcc_c1_hacif_f1_en || rcc_c1_mac_en || rcc_c1_lz_en || rcc_c1_gtim1_en || rcc_c1_gtim2_en || rcc_c1_gtim3_en || rcc_c1_gtim4_en || rcc_c1_spi1_en || rcc_c1_spi2_en || rcc_c1_spi3_en || rcc_c1_uart1_en || rcc_c1_uart2_en || rcc_c1_uart3_en || rcc_c1_uart4_en || rcc_c1_i2c1_en || rcc_c1_gpio1_en || rcc_c1_gpio2_en || rcc_c1_gpio3_en || rcc_c1_can1_en || rcc_c1_can2_en || rcc_c1_can3_en || rcc_c1_gtim5_en || rcc_c1_gtim6_en || rcc_c1_spi4_en || rcc_c1_spi5_en || rcc_c1_uart5_en || rcc_c1_uart6_en || rcc_c1_uart7_en || rcc_c1_uart8_en || rcc_c1_i2c2_en || rcc_c1_i2c3_en || rcc_c1_can4_en || rcc_c1_can5_en || rcc_c1_can6_en || rcc_c1_mppt_en || rcc_c1_gpio4_en || rcc_c1_gpio5_en || rcc_c1_sysctl_en || rcc_c1_wwdt_en || rcc_c1_tim1_en || rcc_c1_tim2_en || rcc_c1_adcc_en || rcc_c1_gpio6_en || rcc_c1_gpio7_en || rcc_c1_gpio8_en ;
-  assign c1_per_alloc_d2 =  rcc_c2_rom_en || rcc_c2_tsms_en || rcc_c2_sms_en || rcc_c2_xflash_en || rcc_c2_fft_en || rcc_c2_npu_en || rcc_c2_dma1_en || rcc_c2_dma2_en || rcc_c2_dmasch_en || rcc_c2_qspi1_en || rcc_c2_qspi2_en || rcc_c2_qspi3_en || rcc_c2_qspi4_en || rcc_c2_xspi_en || rcc_c2_mspi_en || rcc_c2_hacif_l1_en || rcc_c2_hacif_f1_en || rcc_c2_mac_en || rcc_c2_lz_en || rcc_c2_gtim1_en || rcc_c2_gtim2_en || rcc_c2_gtim3_en || rcc_c2_gtim4_en || rcc_c2_spi1_en || rcc_c2_spi2_en || rcc_c2_spi3_en || rcc_c2_uart1_en || rcc_c2_uart2_en || rcc_c2_uart3_en || rcc_c2_uart4_en || rcc_c2_i2c1_en || rcc_c2_gpio1_en || rcc_c2_gpio2_en || rcc_c2_gpio3_en || rcc_c2_can1_en || rcc_c2_can2_en || rcc_c2_can3_en || rcc_c2_gtim5_en || rcc_c2_gtim6_en || rcc_c2_spi4_en || rcc_c2_spi5_en || rcc_c2_uart5_en || rcc_c2_uart6_en || rcc_c2_uart7_en || rcc_c2_uart8_en || rcc_c2_i2c2_en || rcc_c2_i2c3_en || rcc_c2_can4_en || rcc_c2_can5_en || rcc_c2_can6_en || rcc_c2_mppt_en || rcc_c2_gpio4_en || rcc_c2_gpio5_en || rcc_c2_sysctl_en || rcc_c2_wwdt_en || rcc_c2_tim1_en || rcc_c2_tim2_en || rcc_c2_adcc_en || rcc_c2_gpio6_en || rcc_c2_gpio7_en || rcc_c2_gpio8_en ;
+  assign c2_per_alloc_d1 =  rcc_c1_rom_en || rcc_c1_smc1_en || rcc_c1_smc2_en || rcc_c1_xflash_en || rcc_c1_fft_en || rcc_c1_npu_en || rcc_c1_dma1_en || rcc_c1_dma2_en || rcc_c1_dmasch_en || rcc_c1_qspi1_en || rcc_c1_adcspi1_en || rcc_c1_adcspi2_en || rcc_c1_adcspi3_en || rcc_c1_mspi_en || rcc_c1_hacif_l1_en || rcc_c1_hacif_f1_en || rcc_c1_cspi_l_en || rcc_c1_cspi_f_en || rcc_c1_mac1_en || rcc_c1_mac2_en || rcc_c1_lz_en || rcc_c1_gtim1_en || rcc_c1_gtim2_en || rcc_c1_gtim3_en || rcc_c1_gtim4_en || rcc_c1_spi1_en || rcc_c1_spi2_en || rcc_c1_spi3_en || rcc_c1_uart1_en || rcc_c1_uart2_en || rcc_c1_uart3_en || rcc_c1_uart4_en || rcc_c1_i2c1_en || rcc_c1_gpio1_en || rcc_c1_gpio2_en || rcc_c1_gpio3_en || rcc_c1_can1_en || rcc_c1_can2_en || rcc_c1_can3_en || rcc_c1_gtim5_en || rcc_c1_gtim6_en || rcc_c1_spi4_en || rcc_c1_spi5_en || rcc_c1_uart5_en || rcc_c1_uart6_en || rcc_c1_uart7_en || rcc_c1_uart8_en || rcc_c1_i2c2_en || rcc_c1_i2c3_en || rcc_c1_can4_en || rcc_c1_can5_en || rcc_c1_can6_en || rcc_c1_mppt_en || rcc_c1_gpio4_en || rcc_c1_gpio5_en || rcc_c1_sysctl_en || rcc_c1_wwdt_en || rcc_c1_tim1_en || rcc_c1_tim2_en || rcc_c1_gpio6_en || rcc_c1_gpio7_en || rcc_c1_gpio8_en || rcc_c1_mailbox1_en || rcc_c1_mailbox2_en || rcc_c1_spl1_en || rcc_c1_spl2_en ;
+  assign c1_per_alloc_d2 =  rcc_c2_rom_en || rcc_c2_smc1_en || rcc_c2_smc2_en || rcc_c2_xflash_en || rcc_c2_fft_en || rcc_c2_npu_en || rcc_c2_dma1_en || rcc_c2_dma2_en || rcc_c2_dmasch_en || rcc_c2_qspi1_en || rcc_c2_adcspi1_en || rcc_c2_adcspi2_en || rcc_c2_adcspi3_en || rcc_c2_mspi_en || rcc_c2_hacif_l1_en || rcc_c2_hacif_f1_en || rcc_c2_cspi_l_en || rcc_c2_cspi_f_en || rcc_c2_mac1_en || rcc_c2_mac2_en || rcc_c2_lz_en || rcc_c2_gtim1_en || rcc_c2_gtim2_en || rcc_c2_gtim3_en || rcc_c2_gtim4_en || rcc_c2_spi1_en || rcc_c2_spi2_en || rcc_c2_spi3_en || rcc_c2_uart1_en || rcc_c2_uart2_en || rcc_c2_uart3_en || rcc_c2_uart4_en || rcc_c2_i2c1_en || rcc_c2_gpio1_en || rcc_c2_gpio2_en || rcc_c2_gpio3_en || rcc_c2_can1_en || rcc_c2_can2_en || rcc_c2_can3_en || rcc_c2_gtim5_en || rcc_c2_gtim6_en || rcc_c2_spi4_en || rcc_c2_spi5_en || rcc_c2_uart5_en || rcc_c2_uart6_en || rcc_c2_uart7_en || rcc_c2_uart8_en || rcc_c2_i2c2_en || rcc_c2_i2c3_en || rcc_c2_can4_en || rcc_c2_can5_en || rcc_c2_can6_en || rcc_c2_mppt_en || rcc_c2_gpio4_en || rcc_c2_gpio5_en || rcc_c2_sysctl_en || rcc_c2_wwdt_en || rcc_c2_tim1_en || rcc_c2_tim2_en || rcc_c2_gpio6_en || rcc_c2_gpio7_en || rcc_c2_gpio8_en || rcc_c2_mailbox1_en || rcc_c2_mailbox2_en || rcc_c2_spl1_en || rcc_c2_spl2_en ;
   assign c1_per_alloc_apb1 =  (rcc_c1_gtim1_en && rcc_c1_gtim1_lpen) || (rcc_c1_gtim2_en && rcc_c1_gtim2_lpen) || (rcc_c1_gtim3_en && rcc_c1_gtim3_lpen) || (rcc_c1_gtim4_en && rcc_c1_gtim4_lpen) || (rcc_c1_spi1_en && rcc_c1_spi1_lpen) || (rcc_c1_spi2_en && rcc_c1_spi2_lpen) || (rcc_c1_spi3_en && rcc_c1_spi3_lpen) || (rcc_c1_uart1_en && rcc_c1_uart1_lpen) || (rcc_c1_uart2_en && rcc_c1_uart2_lpen) || (rcc_c1_uart3_en && rcc_c1_uart3_lpen) || (rcc_c1_uart4_en && rcc_c1_uart4_lpen) || (rcc_c1_i2c1_en && rcc_c1_i2c1_lpen) || (rcc_c1_gpio1_en && rcc_c1_gpio1_lpen) || (rcc_c1_gpio2_en && rcc_c1_gpio2_lpen) || (rcc_c1_gpio3_en && rcc_c1_gpio3_lpen) || (rcc_c1_can1_en && rcc_c1_can1_lpen) || (rcc_c1_can2_en && rcc_c1_can2_lpen) || (rcc_c1_can3_en && rcc_c1_can3_lpen) ;
   assign c2_per_alloc_apb1 =  (rcc_c2_gtim1_en && rcc_c2_gtim1_lpen) || (rcc_c2_gtim2_en && rcc_c2_gtim2_lpen) || (rcc_c2_gtim3_en && rcc_c2_gtim3_lpen) || (rcc_c2_gtim4_en && rcc_c2_gtim4_lpen) || (rcc_c2_spi1_en && rcc_c2_spi1_lpen) || (rcc_c2_spi2_en && rcc_c2_spi2_lpen) || (rcc_c2_spi3_en && rcc_c2_spi3_lpen) || (rcc_c2_uart1_en && rcc_c2_uart1_lpen) || (rcc_c2_uart2_en && rcc_c2_uart2_lpen) || (rcc_c2_uart3_en && rcc_c2_uart3_lpen) || (rcc_c2_uart4_en && rcc_c2_uart4_lpen) || (rcc_c2_i2c1_en && rcc_c2_i2c1_lpen) || (rcc_c2_gpio1_en && rcc_c2_gpio1_lpen) || (rcc_c2_gpio2_en && rcc_c2_gpio2_lpen) || (rcc_c2_gpio3_en && rcc_c2_gpio3_lpen) || (rcc_c2_can1_en && rcc_c2_can1_lpen) || (rcc_c2_can2_en && rcc_c2_can2_lpen) || (rcc_c2_can3_en && rcc_c2_can3_lpen) ;
   assign c1_per_alloc_apb2 =  (rcc_c1_gtim5_en && rcc_c1_gtim5_lpen) || (rcc_c1_gtim6_en && rcc_c1_gtim6_lpen) || (rcc_c1_spi4_en && rcc_c1_spi4_lpen) || (rcc_c1_spi5_en && rcc_c1_spi5_lpen) || (rcc_c1_uart5_en && rcc_c1_uart5_lpen) || (rcc_c1_uart6_en && rcc_c1_uart6_lpen) || (rcc_c1_uart7_en && rcc_c1_uart7_lpen) || (rcc_c1_uart8_en && rcc_c1_uart8_lpen) || (rcc_c1_i2c2_en && rcc_c1_i2c2_lpen) || (rcc_c1_i2c3_en && rcc_c1_i2c3_lpen) || (rcc_c1_can4_en && rcc_c1_can4_lpen) || (rcc_c1_can5_en && rcc_c1_can5_lpen) || (rcc_c1_can6_en && rcc_c1_can6_lpen) || (rcc_c1_mppt_en && rcc_c1_mppt_lpen) || (rcc_c1_gpio4_en && rcc_c1_gpio4_lpen) || (rcc_c1_gpio5_en && rcc_c1_gpio5_lpen) ;
   assign c2_per_alloc_apb2 =  (rcc_c2_gtim5_en && rcc_c2_gtim5_lpen) || (rcc_c2_gtim6_en && rcc_c2_gtim6_lpen) || (rcc_c2_spi4_en && rcc_c2_spi4_lpen) || (rcc_c2_spi5_en && rcc_c2_spi5_lpen) || (rcc_c2_uart5_en && rcc_c2_uart5_lpen) || (rcc_c2_uart6_en && rcc_c2_uart6_lpen) || (rcc_c2_uart7_en && rcc_c2_uart7_lpen) || (rcc_c2_uart8_en && rcc_c2_uart8_lpen) || (rcc_c2_i2c2_en && rcc_c2_i2c2_lpen) || (rcc_c2_i2c3_en && rcc_c2_i2c3_lpen) || (rcc_c2_can4_en && rcc_c2_can4_lpen) || (rcc_c2_can5_en && rcc_c2_can5_lpen) || (rcc_c2_can6_en && rcc_c2_can6_lpen) || (rcc_c2_mppt_en && rcc_c2_mppt_lpen) || (rcc_c2_gpio4_en && rcc_c2_gpio4_lpen) || (rcc_c2_gpio5_en && rcc_c2_gpio5_lpen) ;
-  assign c1_per_alloc_apb3 =  (rcc_c1_npu_en && rcc_c1_npu_lpen) || (rcc_c1_hacif_l1_en && rcc_c1_hacif_l1_lpen) || (rcc_c1_sysctl_en && rcc_c1_sysctl_lpen) || (rcc_c1_wwdt_en && rcc_c1_wwdt_lpen) || (rcc_c1_tim1_en && rcc_c1_tim1_lpen) || (rcc_c1_tim2_en && rcc_c1_tim2_lpen) || (rcc_c1_adcc_en && rcc_c1_adcc_lpen) || (rcc_c1_gpio6_en && rcc_c1_gpio6_lpen) || (rcc_c1_gpio7_en && rcc_c1_gpio7_lpen) || (rcc_c1_gpio8_en && rcc_c1_gpio8_lpen) ;
-  assign c2_per_alloc_apb3 =  (rcc_c2_npu_en && rcc_c2_npu_lpen) || (rcc_c2_hacif_l1_en && rcc_c2_hacif_l1_lpen) || (rcc_c2_sysctl_en && rcc_c2_sysctl_lpen) || (rcc_c2_wwdt_en && rcc_c2_wwdt_lpen) || (rcc_c2_tim1_en && rcc_c2_tim1_lpen) || (rcc_c2_tim2_en && rcc_c2_tim2_lpen) || (rcc_c2_adcc_en && rcc_c2_adcc_lpen) || (rcc_c2_gpio6_en && rcc_c2_gpio6_lpen) || (rcc_c2_gpio7_en && rcc_c2_gpio7_lpen) || (rcc_c2_gpio8_en && rcc_c2_gpio8_lpen) ;
-  assign c1_per_alloc_ahb1 =  (rcc_c1_rom_en && rcc_c1_rom_lpen) || (rcc_c1_tsms_en && rcc_c1_tsms_lpen) || (rcc_c1_sms_en && rcc_c1_sms_lpen) || (rcc_c1_xflash_en && rcc_c1_xflash_lpen) || (rcc_c1_fft_en && rcc_c1_fft_lpen) || (rcc_c1_npu_en && rcc_c1_npu_lpen) || (rcc_c1_dma1_en && rcc_c1_dma1_lpen) || (rcc_c1_dma2_en && rcc_c1_dma2_lpen) || (rcc_c1_dmasch_en && rcc_c1_dmasch_lpen) || (rcc_c1_qspi1_en && rcc_c1_qspi1_lpen) || (rcc_c1_qspi2_en && rcc_c1_qspi2_lpen) || (rcc_c1_qspi3_en && rcc_c1_qspi3_lpen) || (rcc_c1_qspi4_en && rcc_c1_qspi4_lpen) || (rcc_c1_xspi_en && rcc_c1_xspi_lpen) || (rcc_c1_mspi_en && rcc_c1_mspi_lpen) || (rcc_c1_hacif_l1_en && rcc_c1_hacif_l1_lpen) || (rcc_c1_hacif_f1_en && rcc_c1_hacif_f1_lpen) || (rcc_c1_mac_en && rcc_c1_mac_lpen) || (rcc_c1_lz_en && rcc_c1_lz_lpen) ;
-  assign c2_per_alloc_ahb1 =  (rcc_c2_rom_en && rcc_c2_rom_lpen) || (rcc_c2_tsms_en && rcc_c2_tsms_lpen) || (rcc_c2_sms_en && rcc_c2_sms_lpen) || (rcc_c2_xflash_en && rcc_c2_xflash_lpen) || (rcc_c2_fft_en && rcc_c2_fft_lpen) || (rcc_c2_npu_en && rcc_c2_npu_lpen) || (rcc_c2_dma1_en && rcc_c2_dma1_lpen) || (rcc_c2_dma2_en && rcc_c2_dma2_lpen) || (rcc_c2_dmasch_en && rcc_c2_dmasch_lpen) || (rcc_c2_qspi1_en && rcc_c2_qspi1_lpen) || (rcc_c2_qspi2_en && rcc_c2_qspi2_lpen) || (rcc_c2_qspi3_en && rcc_c2_qspi3_lpen) || (rcc_c2_qspi4_en && rcc_c2_qspi4_lpen) || (rcc_c2_xspi_en && rcc_c2_xspi_lpen) || (rcc_c2_mspi_en && rcc_c2_mspi_lpen) || (rcc_c2_hacif_l1_en && rcc_c2_hacif_l1_lpen) || (rcc_c2_hacif_f1_en && rcc_c2_hacif_f1_lpen) || (rcc_c2_mac_en && rcc_c2_mac_lpen) || (rcc_c2_lz_en && rcc_c2_lz_lpen) ;
+  assign c1_per_alloc_apb3 =  (rcc_c1_npu_en && rcc_c1_npu_lpen) || (rcc_c1_hacif_l1_en && rcc_c1_hacif_l1_lpen) || (rcc_c1_sysctl_en && rcc_c1_sysctl_lpen) || (rcc_c1_wwdt_en && rcc_c1_wwdt_lpen) || (rcc_c1_tim1_en && rcc_c1_tim1_lpen) || (rcc_c1_tim2_en && rcc_c1_tim2_lpen) || (rcc_c1_gpio6_en && rcc_c1_gpio6_lpen) || (rcc_c1_gpio7_en && rcc_c1_gpio7_lpen) || (rcc_c1_gpio8_en && rcc_c1_gpio8_lpen) || (rcc_c1_mailbox1_en && rcc_c1_mailbox1_lpen) || (rcc_c1_mailbox2_en && rcc_c1_mailbox2_lpen) || (rcc_c1_spl1_en && rcc_c1_spl1_lpen) || (rcc_c1_spl2_en && rcc_c1_spl2_lpen) ;
+  assign c2_per_alloc_apb3 =  (rcc_c2_npu_en && rcc_c2_npu_lpen) || (rcc_c2_hacif_l1_en && rcc_c2_hacif_l1_lpen) || (rcc_c2_sysctl_en && rcc_c2_sysctl_lpen) || (rcc_c2_wwdt_en && rcc_c2_wwdt_lpen) || (rcc_c2_tim1_en && rcc_c2_tim1_lpen) || (rcc_c2_tim2_en && rcc_c2_tim2_lpen) || (rcc_c2_gpio6_en && rcc_c2_gpio6_lpen) || (rcc_c2_gpio7_en && rcc_c2_gpio7_lpen) || (rcc_c2_gpio8_en && rcc_c2_gpio8_lpen) || (rcc_c2_mailbox1_en && rcc_c2_mailbox1_lpen) || (rcc_c2_mailbox2_en && rcc_c2_mailbox2_lpen) || (rcc_c2_spl1_en && rcc_c2_spl1_lpen) || (rcc_c2_spl2_en && rcc_c2_spl2_lpen) ;
+  assign c1_per_alloc_ahb1 =  (rcc_c1_rom_en && rcc_c1_rom_lpen) || (rcc_c1_smc1_en && rcc_c1_smc1_lpen) || (rcc_c1_smc2_en && rcc_c1_smc2_lpen) || (rcc_c1_xflash_en && rcc_c1_xflash_lpen) || (rcc_c1_fft_en && rcc_c1_fft_lpen) || (rcc_c1_npu_en && rcc_c1_npu_lpen) || (rcc_c1_dma1_en && rcc_c1_dma1_lpen) || (rcc_c1_dma2_en && rcc_c1_dma2_lpen) || (rcc_c1_dmasch_en && rcc_c1_dmasch_lpen) || (rcc_c1_qspi1_en && rcc_c1_qspi1_lpen) || (rcc_c1_adcspi1_en && rcc_c1_adcspi1_lpen) || (rcc_c1_adcspi2_en && rcc_c1_adcspi2_lpen) || (rcc_c1_adcspi3_en && rcc_c1_adcspi3_lpen) || (rcc_c1_mspi_en && rcc_c1_mspi_lpen) || (rcc_c1_hacif_l1_en && rcc_c1_hacif_l1_lpen) || (rcc_c1_hacif_f1_en && rcc_c1_hacif_f1_lpen) || (rcc_c1_cspi_l_en && rcc_c1_cspi_l_lpen) || (rcc_c1_cspi_f_en && rcc_c1_cspi_f_lpen) || (rcc_c1_mac1_en && rcc_c1_mac1_lpen) || (rcc_c1_mac2_en && rcc_c1_mac2_lpen) || (rcc_c1_lz_en && rcc_c1_lz_lpen) ;
+  assign c2_per_alloc_ahb1 =  (rcc_c2_rom_en && rcc_c2_rom_lpen) || (rcc_c2_smc1_en && rcc_c2_smc1_lpen) || (rcc_c2_smc2_en && rcc_c2_smc2_lpen) || (rcc_c2_xflash_en && rcc_c2_xflash_lpen) || (rcc_c2_fft_en && rcc_c2_fft_lpen) || (rcc_c2_npu_en && rcc_c2_npu_lpen) || (rcc_c2_dma1_en && rcc_c2_dma1_lpen) || (rcc_c2_dma2_en && rcc_c2_dma2_lpen) || (rcc_c2_dmasch_en && rcc_c2_dmasch_lpen) || (rcc_c2_qspi1_en && rcc_c2_qspi1_lpen) || (rcc_c2_adcspi1_en && rcc_c2_adcspi1_lpen) || (rcc_c2_adcspi2_en && rcc_c2_adcspi2_lpen) || (rcc_c2_adcspi3_en && rcc_c2_adcspi3_lpen) || (rcc_c2_mspi_en && rcc_c2_mspi_lpen) || (rcc_c2_hacif_l1_en && rcc_c2_hacif_l1_lpen) || (rcc_c2_hacif_f1_en && rcc_c2_hacif_f1_lpen) || (rcc_c2_cspi_l_en && rcc_c2_cspi_l_lpen) || (rcc_c2_cspi_f_en && rcc_c2_cspi_f_lpen) || (rcc_c2_mac1_en && rcc_c2_mac1_lpen) || (rcc_c2_mac2_en && rcc_c2_mac2_lpen) || (rcc_c2_lz_en && rcc_c2_lz_lpen) ;
   assign c1_per_alloc_ahb2 = 1'b0;
   assign c2_per_alloc_ahb2 = 1'b0;
   assign c1_per_alloc_ahb3 = 1'b0;
@@ -3034,6 +3257,7 @@ module rcc_per_clk_rst_control #(
   // generate hsi_ker_clk_req and csi_ker_clk_req
   assign hsi_ker_clk_req = 1'b0;
   assign csi_ker_clk_req = 1'b0;
+
 
 
 endmodule

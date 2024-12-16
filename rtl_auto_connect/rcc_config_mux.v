@@ -24,8 +24,10 @@ module rcc_config_mux (
     input  [2:0] raw_d2ppre2,
     input  [2:0] raw_d3ppre,
     input        raw_timpre,
-    input        eth_rcc_fes,
-    input        eth_rcc_epis_2,
+    input        mac1_rcc_fes,
+    input        mac1_rcc_epis_2,
+    input        mac2_rcc_fes,
+    input        mac2_rcc_epis_2,
     //================================================================
     // test mode signals
     //================================================================
@@ -53,8 +55,10 @@ module rcc_config_mux (
     input  [2:0] test_d2ppre2,
     input  [2:0] test_d3ppre,
     input        test_timpre,
-    input        test_eth_rcc_fes,
-    input        test_eth_rcc_epis_2,
+    input        test_mac1_rcc_fes,
+    input        test_mac1_rcc_epis_2,
+    input        test_mac2_rcc_fes,
+    input        test_mac2_rcc_epis_2,
     //================================================================
     // output signals
     //================================================================
@@ -80,8 +84,10 @@ module rcc_config_mux (
     output [2:0] d2ppre2,
     output [2:0] d3ppre,
     output       timpre,
-    output       gen_eth_rcc_fes,
-    output       gen_eth_rcc_epis_2
+    output       gen_mac1_rcc_fes,
+    output       gen_mac1_rcc_epis_2,
+    output       gen_mac2_rcc_fes,
+    output       gen_mac2_rcc_epis_2
 );
 
   nbit_mux #(
@@ -266,20 +272,38 @@ module rcc_config_mux (
 
   nbit_mux #(
       .WIDTH(1)
-  ) u_eth_rcc_fes_mux (
-      .in0(eth_rcc_fes),
-      .in1(test_eth_rcc_fes),
+  ) u_mac1_rcc_fes_mux (
+      .in0(mac1_rcc_fes),
+      .in1(test_mac1_rcc_fes),
       .sel(atspeed_mode),
-      .out(gen_eth_rcc_fes)
+      .out(gen_mac1_rcc_fes)
   );
 
   nbit_mux #(
       .WIDTH(1)
-  ) u_eth_rcc_epis_2_mux (
-      .in0(eth_rcc_epis_2),
-      .in1(test_eth_rcc_epis_2),
+  ) u_mac1_rcc_epis_2_mux (
+      .in0(mac1_rcc_epis_2),
+      .in1(test_mac1_rcc_epis_2),
       .sel(atspeed_mode),
-      .out(gen_eth_rcc_epis_2)
+      .out(gen_mac1_rcc_epis_2)
+  );
+
+  nbit_mux #(
+      .WIDTH(1)
+  ) u_mac2_rcc_fes_mux (
+      .in0(mac2_rcc_fes),
+      .in1(test_mac2_rcc_fes),
+      .sel(atspeed_mode),
+      .out(gen_mac2_rcc_fes)
+  );
+
+  nbit_mux #(
+      .WIDTH(1)
+  ) u_mac2_rcc_epis_2_mux (
+      .in0(mac2_rcc_epis_2),
+      .in1(test_mac2_rcc_epis_2),
+      .sel(atspeed_mode),
+      .out(gen_mac2_rcc_epis_2)
   );
 
 

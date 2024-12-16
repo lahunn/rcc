@@ -140,8 +140,8 @@ module rcc_vcore_reg #(
     input           lsi_rdy,
     output          lsion,
     output          romrst,
-    output          tsmsrst,
-    output          smsrst,
+    output          smc2rst,
+    output          smc1rst,
     output          xflashrst,
     output          fftrst,
     output          npurst,
@@ -149,14 +149,16 @@ module rcc_vcore_reg #(
     output          dma2rst,
     output          dmaschrst,
     output          qspi1rst,
-    output          qspi2rst,
-    output          qspi3rst,
-    output          qspi4rst,
-    output          xspirst,
+    output          adcspi3rst,
+    output          adcspi2rst,
+    output          adcspi1rst,
     output          mspirst,
     output          hacif_l1rst,
     output          hacif_f1rst,
-    output          macrst,
+    output          cspi_lrst,
+    output          cspi_frst,
+    output          mac2rst,
+    output          mac1rst,
     output          lzrst,
     output          gtim1rst,
     output          gtim2rst,
@@ -192,11 +194,14 @@ module rcc_vcore_reg #(
     output          mpptrst,
     output          gpio4rst,
     output          gpio5rst,
+    output          spl2rst,
+    output          spl1rst,
+    output          mailbox2rst,
+    output          mailbox1rst,
     output          sysctlrst,
     output          wwdtrst,
     output          tim1rst,
     output          tim2rst,
-    output          adccrst,
     output          gpio6rst,
     output          gpio7rst,
     output          gpio8rst,
@@ -205,8 +210,8 @@ module rcc_vcore_reg #(
     output          ww2rsc,
     output          ww1rsc,
     output          rcc_rom_amen,
-    output          rcc_tsms_amen,
-    output          rcc_sms_amen,
+    output          rcc_smc2_amen,
+    output          rcc_smc1_amen,
     output          rcc_xflash_amen,
     output          rcc_fft_amen,
     output          rcc_npu_amen,
@@ -214,14 +219,16 @@ module rcc_vcore_reg #(
     output          rcc_dma2_amen,
     output          rcc_dmasch_amen,
     output          rcc_qspi1_amen,
-    output          rcc_qspi2_amen,
-    output          rcc_qspi3_amen,
-    output          rcc_qspi4_amen,
-    output          rcc_xspi_amen,
+    output          rcc_adcspi3_amen,
+    output          rcc_adcspi2_amen,
+    output          rcc_adcspi1_amen,
     output          rcc_mspi_amen,
     output          rcc_hacif_l1_amen,
     output          rcc_hacif_f1_amen,
-    output          rcc_mac_amen,
+    output          rcc_cspi_l_amen,
+    output          rcc_cspi_f_amen,
+    output          rcc_mac2_amen,
+    output          rcc_mac1_amen,
     output          rcc_lz_amen,
     output          rcc_gtim1_amen,
     output          rcc_gtim2_amen,
@@ -257,19 +264,22 @@ module rcc_vcore_reg #(
     output          rcc_mppt_amen,
     output          rcc_gpio4_amen,
     output          rcc_gpio5_amen,
+    output          rcc_spl2_amen,
+    output          rcc_spl1_amen,
+    output          rcc_mailbox2_amen,
+    output          rcc_mailbox1_amen,
     output          rcc_sysctl_amen,
     output          rcc_wwdt_amen,
     output          rcc_tim1_amen,
     output          rcc_tim2_amen,
-    output          rcc_adcc_amen,
     output          rcc_gpio6_amen,
     output          rcc_gpio7_amen,
     output          rcc_gpio8_amen,
     output          rcc_iwdt_amen,
     output          rcc_rtc_amen,
     output          rcc_c1_rom_en,
-    output          rcc_c1_tsms_en,
-    output          rcc_c1_sms_en,
+    output          rcc_c1_smc2_en,
+    output          rcc_c1_smc1_en,
     output          rcc_c1_xflash_en,
     output          rcc_c1_fft_en,
     output          rcc_c1_npu_en,
@@ -277,14 +287,16 @@ module rcc_vcore_reg #(
     output          rcc_c1_dma2_en,
     output          rcc_c1_dmasch_en,
     output          rcc_c1_qspi1_en,
-    output          rcc_c1_qspi2_en,
-    output          rcc_c1_qspi3_en,
-    output          rcc_c1_qspi4_en,
-    output          rcc_c1_xspi_en,
+    output          rcc_c1_adcspi3_en,
+    output          rcc_c1_adcspi2_en,
+    output          rcc_c1_adcspi1_en,
     output          rcc_c1_mspi_en,
     output          rcc_c1_hacif_l1_en,
     output          rcc_c1_hacif_f1_en,
-    output          rcc_c1_mac_en,
+    output          rcc_c1_cspi_l_en,
+    output          rcc_c1_cspi_f_en,
+    output          rcc_c1_mac2_en,
+    output          rcc_c1_mac1_en,
     output          rcc_c1_lz_en,
     output          rcc_c1_gtim1_en,
     output          rcc_c1_gtim2_en,
@@ -320,17 +332,20 @@ module rcc_vcore_reg #(
     output          rcc_c1_mppt_en,
     output          rcc_c1_gpio4_en,
     output          rcc_c1_gpio5_en,
+    output          rcc_c1_spl2_en,
+    output          rcc_c1_spl1_en,
+    output          rcc_c1_mailbox2_en,
+    output          rcc_c1_mailbox1_en,
     output          rcc_c1_sysctl_en,
     output          rcc_c1_wwdt_en,
     output          rcc_c1_tim1_en,
     output          rcc_c1_tim2_en,
-    output          rcc_c1_adcc_en,
     output          rcc_c1_gpio6_en,
     output          rcc_c1_gpio7_en,
     output          rcc_c1_gpio8_en,
     output          rcc_c1_rom_lpen,
-    output          rcc_c1_tsms_lpen,
-    output          rcc_c1_sms_lpen,
+    output          rcc_c1_smc2_lpen,
+    output          rcc_c1_smc1_lpen,
     output          rcc_c1_xflash_lpen,
     output          rcc_c1_fft_lpen,
     output          rcc_c1_npu_lpen,
@@ -338,14 +353,16 @@ module rcc_vcore_reg #(
     output          rcc_c1_dma2_lpen,
     output          rcc_c1_dmasch_lpen,
     output          rcc_c1_qspi1_lpen,
-    output          rcc_c1_qspi2_lpen,
-    output          rcc_c1_qspi3_lpen,
-    output          rcc_c1_qspi4_lpen,
-    output          rcc_c1_xspi_lpen,
+    output          rcc_c1_adcspi3_lpen,
+    output          rcc_c1_adcspi2_lpen,
+    output          rcc_c1_adcspi1_lpen,
     output          rcc_c1_mspi_lpen,
     output          rcc_c1_hacif_l1_lpen,
     output          rcc_c1_hacif_f1_lpen,
-    output          rcc_c1_mac_lpen,
+    output          rcc_c1_cspi_l_lpen,
+    output          rcc_c1_cspi_f_lpen,
+    output          rcc_c1_mac2_lpen,
+    output          rcc_c1_mac1_lpen,
     output          rcc_c1_lz_lpen,
     output          rcc_c1_gtim1_lpen,
     output          rcc_c1_gtim2_lpen,
@@ -381,140 +398,149 @@ module rcc_vcore_reg #(
     output          rcc_c1_mppt_lpen,
     output          rcc_c1_gpio4_lpen,
     output          rcc_c1_gpio5_lpen,
+    output          rcc_c1_spl2_lpen,
+    output          rcc_c1_spl1_lpen,
+    output          rcc_c1_mailbox2_lpen,
+    output          rcc_c1_mailbox1_lpen,
     output          rcc_c1_sysctl_lpen,
     output          rcc_c1_wwdt_lpen,
     output          rcc_c1_tim1_lpen,
     output          rcc_c1_tim2_lpen,
-    output          rcc_c1_adcc_lpen,
     output          rcc_c1_gpio6_lpen,
     output          rcc_c1_gpio7_lpen,
     output          rcc_c1_gpio8_lpen,
-    output          rcc_c2_adcc_en,
-    output          rcc_c2_adcc_lpen,
-    output          rcc_c2_can1_en,
-    output          rcc_c2_can1_lpen,
-    output          rcc_c2_can2_en,
-    output          rcc_c2_can2_lpen,
-    output          rcc_c2_can3_en,
-    output          rcc_c2_can3_lpen,
-    output          rcc_c2_can4_en,
-    output          rcc_c2_can4_lpen,
-    output          rcc_c2_can5_en,
-    output          rcc_c2_can5_lpen,
-    output          rcc_c2_can6_en,
-    output          rcc_c2_can6_lpen,
-    output          rcc_c2_dma1_en,
-    output          rcc_c2_dma1_lpen,
-    output          rcc_c2_dma2_en,
-    output          rcc_c2_dma2_lpen,
-    output          rcc_c2_dmasch_en,
-    output          rcc_c2_dmasch_lpen,
-    output          rcc_c2_eth1rx_en,
-    output          rcc_c2_eth1rx_lpen,
-    output          rcc_c2_eth1tx_en,
-    output          rcc_c2_eth1tx_lpen,
-    output          rcc_c2_fft_en,
-    output          rcc_c2_fft_lpen,
-    output          rcc_c2_gpio1_en,
-    output          rcc_c2_gpio1_lpen,
-    output          rcc_c2_gpio2_en,
-    output          rcc_c2_gpio2_lpen,
-    output          rcc_c2_gpio3_en,
-    output          rcc_c2_gpio3_lpen,
-    output          rcc_c2_gpio4_en,
-    output          rcc_c2_gpio4_lpen,
-    output          rcc_c2_gpio5_en,
-    output          rcc_c2_gpio5_lpen,
-    output          rcc_c2_gpio6_en,
-    output          rcc_c2_gpio6_lpen,
-    output          rcc_c2_gpio7_en,
-    output          rcc_c2_gpio7_lpen,
-    output          rcc_c2_gpio8_en,
-    output          rcc_c2_gpio8_lpen,
-    output          rcc_c2_gtim1_en,
-    output          rcc_c2_gtim1_lpen,
-    output          rcc_c2_gtim2_en,
-    output          rcc_c2_gtim2_lpen,
-    output          rcc_c2_gtim3_en,
-    output          rcc_c2_gtim3_lpen,
-    output          rcc_c2_gtim4_en,
-    output          rcc_c2_gtim4_lpen,
-    output          rcc_c2_gtim5_en,
-    output          rcc_c2_gtim5_lpen,
-    output          rcc_c2_gtim6_en,
-    output          rcc_c2_gtim6_lpen,
-    output          rcc_c2_hacif_f1_en,
-    output          rcc_c2_hacif_f1_lpen,
-    output          rcc_c2_hacif_l1_en,
-    output          rcc_c2_hacif_l1_lpen,
-    output          rcc_c2_i2c1_en,
-    output          rcc_c2_i2c1_lpen,
-    output          rcc_c2_i2c2_en,
-    output          rcc_c2_i2c2_lpen,
-    output          rcc_c2_i2c3_en,
-    output          rcc_c2_i2c3_lpen,
-    output          rcc_c2_lz_en,
-    output          rcc_c2_lz_lpen,
-    output          rcc_c2_mac_en,
-    output          rcc_c2_mac_lpen,
-    output          rcc_c2_mppt_en,
-    output          rcc_c2_mppt_lpen,
-    output          rcc_c2_mspi_en,
-    output          rcc_c2_mspi_lpen,
-    output          rcc_c2_npu_en,
-    output          rcc_c2_npu_lpen,
-    output          rcc_c2_qspi1_en,
-    output          rcc_c2_qspi1_lpen,
-    output          rcc_c2_qspi2_en,
-    output          rcc_c2_qspi2_lpen,
-    output          rcc_c2_qspi3_en,
-    output          rcc_c2_qspi3_lpen,
-    output          rcc_c2_qspi4_en,
-    output          rcc_c2_qspi4_lpen,
     output          rcc_c2_rom_en,
-    output          rcc_c2_rom_lpen,
-    output          rcc_c2_sms_en,
-    output          rcc_c2_sms_lpen,
-    output          rcc_c2_spi1_en,
-    output          rcc_c2_spi1_lpen,
-    output          rcc_c2_spi2_en,
-    output          rcc_c2_spi2_lpen,
-    output          rcc_c2_spi3_en,
-    output          rcc_c2_spi3_lpen,
-    output          rcc_c2_spi4_en,
-    output          rcc_c2_spi4_lpen,
-    output          rcc_c2_spi5_en,
-    output          rcc_c2_spi5_lpen,
-    output          rcc_c2_sysctl_en,
-    output          rcc_c2_sysctl_lpen,
-    output          rcc_c2_tim1_en,
-    output          rcc_c2_tim1_lpen,
-    output          rcc_c2_tim2_en,
-    output          rcc_c2_tim2_lpen,
-    output          rcc_c2_tsms_en,
-    output          rcc_c2_tsms_lpen,
-    output          rcc_c2_uart1_en,
-    output          rcc_c2_uart1_lpen,
-    output          rcc_c2_uart2_en,
-    output          rcc_c2_uart2_lpen,
-    output          rcc_c2_uart3_en,
-    output          rcc_c2_uart3_lpen,
-    output          rcc_c2_uart4_en,
-    output          rcc_c2_uart4_lpen,
-    output          rcc_c2_uart5_en,
-    output          rcc_c2_uart5_lpen,
-    output          rcc_c2_uart6_en,
-    output          rcc_c2_uart6_lpen,
-    output          rcc_c2_uart7_en,
-    output          rcc_c2_uart7_lpen,
-    output          rcc_c2_uart8_en,
-    output          rcc_c2_uart8_lpen,
-    output          rcc_c2_wwdt_en,
-    output          rcc_c2_wwdt_lpen,
+    output          rcc_c2_smc2_en,
+    output          rcc_c2_smc1_en,
     output          rcc_c2_xflash_en,
+    output          rcc_c2_fft_en,
+    output          rcc_c2_npu_en,
+    output          rcc_c2_dma1_en,
+    output          rcc_c2_dma2_en,
+    output          rcc_c2_dmasch_en,
+    output          rcc_c2_qspi1_en,
+    output          rcc_c2_adcspi3_en,
+    output          rcc_c2_adcspi2_en,
+    output          rcc_c2_adcspi1_en,
+    output          rcc_c2_mspi_en,
+    output          rcc_c2_hacif_l1_en,
+    output          rcc_c2_hacif_f1_en,
+    output          rcc_c2_cspi_l_en,
+    output          rcc_c2_cspi_f_en,
+    output          rcc_c2_mac2_en,
+    output          rcc_c2_mac1_en,
+    output          rcc_c2_lz_en,
+    output          rcc_c2_gtim1_en,
+    output          rcc_c2_gtim2_en,
+    output          rcc_c2_gtim3_en,
+    output          rcc_c2_gtim4_en,
+    output          rcc_c2_spi1_en,
+    output          rcc_c2_spi2_en,
+    output          rcc_c2_spi3_en,
+    output          rcc_c2_uart1_en,
+    output          rcc_c2_uart2_en,
+    output          rcc_c2_uart3_en,
+    output          rcc_c2_uart4_en,
+    output          rcc_c2_i2c1_en,
+    output          rcc_c2_gpio1_en,
+    output          rcc_c2_gpio2_en,
+    output          rcc_c2_gpio3_en,
+    output          rcc_c2_can1_en,
+    output          rcc_c2_can2_en,
+    output          rcc_c2_can3_en,
+    output          rcc_c2_gtim5_en,
+    output          rcc_c2_gtim6_en,
+    output          rcc_c2_spi4_en,
+    output          rcc_c2_spi5_en,
+    output          rcc_c2_uart5_en,
+    output          rcc_c2_uart6_en,
+    output          rcc_c2_uart7_en,
+    output          rcc_c2_uart8_en,
+    output          rcc_c2_i2c2_en,
+    output          rcc_c2_i2c3_en,
+    output          rcc_c2_can4_en,
+    output          rcc_c2_can5_en,
+    output          rcc_c2_can6_en,
+    output          rcc_c2_mppt_en,
+    output          rcc_c2_gpio4_en,
+    output          rcc_c2_gpio5_en,
+    output          rcc_c2_spl2_en,
+    output          rcc_c2_spl1_en,
+    output          rcc_c2_mailbox2_en,
+    output          rcc_c2_mailbox1_en,
+    output          rcc_c2_sysctl_en,
+    output          rcc_c2_wwdt_en,
+    output          rcc_c2_tim1_en,
+    output          rcc_c2_tim2_en,
+    output          rcc_c2_gpio6_en,
+    output          rcc_c2_gpio7_en,
+    output          rcc_c2_gpio8_en,
+    output          rcc_c2_rom_lpen,
+    output          rcc_c2_smc2_lpen,
+    output          rcc_c2_smc1_lpen,
     output          rcc_c2_xflash_lpen,
-    output          rcc_c2_xspi_en,
-    output          rcc_c2_xspi_lpen,
+    output          rcc_c2_fft_lpen,
+    output          rcc_c2_npu_lpen,
+    output          rcc_c2_dma1_lpen,
+    output          rcc_c2_dma2_lpen,
+    output          rcc_c2_dmasch_lpen,
+    output          rcc_c2_qspi1_lpen,
+    output          rcc_c2_adcspi3_lpen,
+    output          rcc_c2_adcspi2_lpen,
+    output          rcc_c2_adcspi1_lpen,
+    output          rcc_c2_mspi_lpen,
+    output          rcc_c2_hacif_l1_lpen,
+    output          rcc_c2_hacif_f1_lpen,
+    output          rcc_c2_cspi_l_lpen,
+    output          rcc_c2_cspi_f_lpen,
+    output          rcc_c2_mac2_lpen,
+    output          rcc_c2_mac1_lpen,
+    output          rcc_c2_lz_lpen,
+    output          rcc_c2_gtim1_lpen,
+    output          rcc_c2_gtim2_lpen,
+    output          rcc_c2_gtim3_lpen,
+    output          rcc_c2_gtim4_lpen,
+    output          rcc_c2_spi1_lpen,
+    output          rcc_c2_spi2_lpen,
+    output          rcc_c2_spi3_lpen,
+    output          rcc_c2_uart1_lpen,
+    output          rcc_c2_uart2_lpen,
+    output          rcc_c2_uart3_lpen,
+    output          rcc_c2_uart4_lpen,
+    output          rcc_c2_i2c1_lpen,
+    output          rcc_c2_gpio1_lpen,
+    output          rcc_c2_gpio2_lpen,
+    output          rcc_c2_gpio3_lpen,
+    output          rcc_c2_can1_lpen,
+    output          rcc_c2_can2_lpen,
+    output          rcc_c2_can3_lpen,
+    output          rcc_c2_gtim5_lpen,
+    output          rcc_c2_gtim6_lpen,
+    output          rcc_c2_spi4_lpen,
+    output          rcc_c2_spi5_lpen,
+    output          rcc_c2_uart5_lpen,
+    output          rcc_c2_uart6_lpen,
+    output          rcc_c2_uart7_lpen,
+    output          rcc_c2_uart8_lpen,
+    output          rcc_c2_i2c2_lpen,
+    output          rcc_c2_i2c3_lpen,
+    output          rcc_c2_can4_lpen,
+    output          rcc_c2_can5_lpen,
+    output          rcc_c2_can6_lpen,
+    output          rcc_c2_mppt_lpen,
+    output          rcc_c2_gpio4_lpen,
+    output          rcc_c2_gpio5_lpen,
+    output          rcc_c2_spl2_lpen,
+    output          rcc_c2_spl1_lpen,
+    output          rcc_c2_mailbox2_lpen,
+    output          rcc_c2_mailbox1_lpen,
+    output          rcc_c2_sysctl_lpen,
+    output          rcc_c2_wwdt_lpen,
+    output          rcc_c2_tim1_lpen,
+    output          rcc_c2_tim2_lpen,
+    output          rcc_c2_gpio6_lpen,
+    output          rcc_c2_gpio7_lpen,
+    output          rcc_c2_gpio8_lpen,
     input           rcc_sys_stop,
     input           rcc_d1_stop,
     input           rcc_d2_stop,
@@ -1176,12 +1202,12 @@ module rcc_vcore_reg #(
   wire          cur_rcc_ahb1rstr_romrst;
   wire          nxt_rcc_ahb1rstr_romrst;
   wire          rcc_ahb1rstr_romrst_en;
-  wire          cur_rcc_ahb1rstr_tsmsrst;
-  wire          nxt_rcc_ahb1rstr_tsmsrst;
-  wire          rcc_ahb1rstr_tsmsrst_en;
-  wire          cur_rcc_ahb1rstr_smsrst;
-  wire          nxt_rcc_ahb1rstr_smsrst;
-  wire          rcc_ahb1rstr_smsrst_en;
+  wire          cur_rcc_ahb1rstr_smc2rst;
+  wire          nxt_rcc_ahb1rstr_smc2rst;
+  wire          rcc_ahb1rstr_smc2rst_en;
+  wire          cur_rcc_ahb1rstr_smc1rst;
+  wire          nxt_rcc_ahb1rstr_smc1rst;
+  wire          rcc_ahb1rstr_smc1rst_en;
   wire          cur_rcc_ahb1rstr_xflashrst;
   wire          nxt_rcc_ahb1rstr_xflashrst;
   wire          rcc_ahb1rstr_xflashrst_en;
@@ -1203,18 +1229,15 @@ module rcc_vcore_reg #(
   wire          cur_rcc_ahb1rstr_qspi1rst;
   wire          nxt_rcc_ahb1rstr_qspi1rst;
   wire          rcc_ahb1rstr_qspi1rst_en;
-  wire          cur_rcc_ahb1rstr_qspi2rst;
-  wire          nxt_rcc_ahb1rstr_qspi2rst;
-  wire          rcc_ahb1rstr_qspi2rst_en;
-  wire          cur_rcc_ahb1rstr_qspi3rst;
-  wire          nxt_rcc_ahb1rstr_qspi3rst;
-  wire          rcc_ahb1rstr_qspi3rst_en;
-  wire          cur_rcc_ahb1rstr_qspi4rst;
-  wire          nxt_rcc_ahb1rstr_qspi4rst;
-  wire          rcc_ahb1rstr_qspi4rst_en;
-  wire          cur_rcc_ahb1rstr_xspirst;
-  wire          nxt_rcc_ahb1rstr_xspirst;
-  wire          rcc_ahb1rstr_xspirst_en;
+  wire          cur_rcc_ahb1rstr_adcspi3rst;
+  wire          nxt_rcc_ahb1rstr_adcspi3rst;
+  wire          rcc_ahb1rstr_adcspi3rst_en;
+  wire          cur_rcc_ahb1rstr_adcspi2rst;
+  wire          nxt_rcc_ahb1rstr_adcspi2rst;
+  wire          rcc_ahb1rstr_adcspi2rst_en;
+  wire          cur_rcc_ahb1rstr_adcspi1rst;
+  wire          nxt_rcc_ahb1rstr_adcspi1rst;
+  wire          rcc_ahb1rstr_adcspi1rst_en;
   wire          cur_rcc_ahb1rstr_mspirst;
   wire          nxt_rcc_ahb1rstr_mspirst;
   wire          rcc_ahb1rstr_mspirst_en;
@@ -1224,9 +1247,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_ahb1rstr_hacif_f1rst;
   wire          nxt_rcc_ahb1rstr_hacif_f1rst;
   wire          rcc_ahb1rstr_hacif_f1rst_en;
-  wire          cur_rcc_ahb1rstr_macrst;
-  wire          nxt_rcc_ahb1rstr_macrst;
-  wire          rcc_ahb1rstr_macrst_en;
+  wire          cur_rcc_ahb1rstr_cspi_lrst;
+  wire          nxt_rcc_ahb1rstr_cspi_lrst;
+  wire          rcc_ahb1rstr_cspi_lrst_en;
+  wire          cur_rcc_ahb1rstr_cspi_frst;
+  wire          nxt_rcc_ahb1rstr_cspi_frst;
+  wire          rcc_ahb1rstr_cspi_frst_en;
+  wire          cur_rcc_ahb1rstr_mac2rst;
+  wire          nxt_rcc_ahb1rstr_mac2rst;
+  wire          rcc_ahb1rstr_mac2rst_en;
+  wire          cur_rcc_ahb1rstr_mac1rst;
+  wire          nxt_rcc_ahb1rstr_mac1rst;
+  wire          rcc_ahb1rstr_mac1rst_en;
   wire          cur_rcc_ahb1rstr_lzrst;
   wire          nxt_rcc_ahb1rstr_lzrst;
   wire          rcc_ahb1rstr_lzrst_en;
@@ -1341,6 +1373,18 @@ module rcc_vcore_reg #(
   // rcc_apb3rstr
   wire [  31:0] rcc_apb3rstr_read;
   wire          rcc_apb3rstr_sel;
+  wire          cur_rcc_apb3rstr_spl2rst;
+  wire          nxt_rcc_apb3rstr_spl2rst;
+  wire          rcc_apb3rstr_spl2rst_en;
+  wire          cur_rcc_apb3rstr_spl1rst;
+  wire          nxt_rcc_apb3rstr_spl1rst;
+  wire          rcc_apb3rstr_spl1rst_en;
+  wire          cur_rcc_apb3rstr_mailbox2rst;
+  wire          nxt_rcc_apb3rstr_mailbox2rst;
+  wire          rcc_apb3rstr_mailbox2rst_en;
+  wire          cur_rcc_apb3rstr_mailbox1rst;
+  wire          nxt_rcc_apb3rstr_mailbox1rst;
+  wire          rcc_apb3rstr_mailbox1rst_en;
   wire          cur_rcc_apb3rstr_sysctlrst;
   wire          nxt_rcc_apb3rstr_sysctlrst;
   wire          rcc_apb3rstr_sysctlrst_en;
@@ -1353,9 +1397,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb3rstr_tim2rst;
   wire          nxt_rcc_apb3rstr_tim2rst;
   wire          rcc_apb3rstr_tim2rst_en;
-  wire          cur_rcc_apb3rstr_adccrst;
-  wire          nxt_rcc_apb3rstr_adccrst;
-  wire          rcc_apb3rstr_adccrst_en;
   wire          cur_rcc_apb3rstr_gpio6rst;
   wire          nxt_rcc_apb3rstr_gpio6rst;
   wire          rcc_apb3rstr_gpio6rst_en;
@@ -1386,12 +1427,12 @@ module rcc_vcore_reg #(
   wire          cur_rcc_ahb1d3amr_romamen;
   wire          nxt_rcc_ahb1d3amr_romamen;
   wire          rcc_ahb1d3amr_romamen_en;
-  wire          cur_rcc_ahb1d3amr_tsmsamen;
-  wire          nxt_rcc_ahb1d3amr_tsmsamen;
-  wire          rcc_ahb1d3amr_tsmsamen_en;
-  wire          cur_rcc_ahb1d3amr_smsamen;
-  wire          nxt_rcc_ahb1d3amr_smsamen;
-  wire          rcc_ahb1d3amr_smsamen_en;
+  wire          cur_rcc_ahb1d3amr_smc2amen;
+  wire          nxt_rcc_ahb1d3amr_smc2amen;
+  wire          rcc_ahb1d3amr_smc2amen_en;
+  wire          cur_rcc_ahb1d3amr_smc1amen;
+  wire          nxt_rcc_ahb1d3amr_smc1amen;
+  wire          rcc_ahb1d3amr_smc1amen_en;
   wire          cur_rcc_ahb1d3amr_xflashamen;
   wire          nxt_rcc_ahb1d3amr_xflashamen;
   wire          rcc_ahb1d3amr_xflashamen_en;
@@ -1413,18 +1454,15 @@ module rcc_vcore_reg #(
   wire          cur_rcc_ahb1d3amr_qspi1amen;
   wire          nxt_rcc_ahb1d3amr_qspi1amen;
   wire          rcc_ahb1d3amr_qspi1amen_en;
-  wire          cur_rcc_ahb1d3amr_qspi2amen;
-  wire          nxt_rcc_ahb1d3amr_qspi2amen;
-  wire          rcc_ahb1d3amr_qspi2amen_en;
-  wire          cur_rcc_ahb1d3amr_qspi3amen;
-  wire          nxt_rcc_ahb1d3amr_qspi3amen;
-  wire          rcc_ahb1d3amr_qspi3amen_en;
-  wire          cur_rcc_ahb1d3amr_qspi4amen;
-  wire          nxt_rcc_ahb1d3amr_qspi4amen;
-  wire          rcc_ahb1d3amr_qspi4amen_en;
-  wire          cur_rcc_ahb1d3amr_xspiamen;
-  wire          nxt_rcc_ahb1d3amr_xspiamen;
-  wire          rcc_ahb1d3amr_xspiamen_en;
+  wire          cur_rcc_ahb1d3amr_adcspi3amen;
+  wire          nxt_rcc_ahb1d3amr_adcspi3amen;
+  wire          rcc_ahb1d3amr_adcspi3amen_en;
+  wire          cur_rcc_ahb1d3amr_adcspi2amen;
+  wire          nxt_rcc_ahb1d3amr_adcspi2amen;
+  wire          rcc_ahb1d3amr_adcspi2amen_en;
+  wire          cur_rcc_ahb1d3amr_adcspi1amen;
+  wire          nxt_rcc_ahb1d3amr_adcspi1amen;
+  wire          rcc_ahb1d3amr_adcspi1amen_en;
   wire          cur_rcc_ahb1d3amr_mspiamen;
   wire          nxt_rcc_ahb1d3amr_mspiamen;
   wire          rcc_ahb1d3amr_mspiamen_en;
@@ -1434,9 +1472,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_ahb1d3amr_hacif_f1amen;
   wire          nxt_rcc_ahb1d3amr_hacif_f1amen;
   wire          rcc_ahb1d3amr_hacif_f1amen_en;
-  wire          cur_rcc_ahb1d3amr_macamen;
-  wire          nxt_rcc_ahb1d3amr_macamen;
-  wire          rcc_ahb1d3amr_macamen_en;
+  wire          cur_rcc_ahb1d3amr_cspi_lamen;
+  wire          nxt_rcc_ahb1d3amr_cspi_lamen;
+  wire          rcc_ahb1d3amr_cspi_lamen_en;
+  wire          cur_rcc_ahb1d3amr_cspi_famen;
+  wire          nxt_rcc_ahb1d3amr_cspi_famen;
+  wire          rcc_ahb1d3amr_cspi_famen_en;
+  wire          cur_rcc_ahb1d3amr_mac2amen;
+  wire          nxt_rcc_ahb1d3amr_mac2amen;
+  wire          rcc_ahb1d3amr_mac2amen_en;
+  wire          cur_rcc_ahb1d3amr_mac1amen;
+  wire          nxt_rcc_ahb1d3amr_mac1amen;
+  wire          rcc_ahb1d3amr_mac1amen_en;
   wire          cur_rcc_ahb1d3amr_lzamen;
   wire          nxt_rcc_ahb1d3amr_lzamen;
   wire          rcc_ahb1d3amr_lzamen_en;
@@ -1551,6 +1598,18 @@ module rcc_vcore_reg #(
   // rcc_apb3d3amr
   wire [  31:0] rcc_apb3d3amr_read;
   wire          rcc_apb3d3amr_sel;
+  wire          cur_rcc_apb3d3amr_spl2amen;
+  wire          nxt_rcc_apb3d3amr_spl2amen;
+  wire          rcc_apb3d3amr_spl2amen_en;
+  wire          cur_rcc_apb3d3amr_spl1amen;
+  wire          nxt_rcc_apb3d3amr_spl1amen;
+  wire          rcc_apb3d3amr_spl1amen_en;
+  wire          cur_rcc_apb3d3amr_mailbox2amen;
+  wire          nxt_rcc_apb3d3amr_mailbox2amen;
+  wire          rcc_apb3d3amr_mailbox2amen_en;
+  wire          cur_rcc_apb3d3amr_mailbox1amen;
+  wire          nxt_rcc_apb3d3amr_mailbox1amen;
+  wire          rcc_apb3d3amr_mailbox1amen_en;
   wire          cur_rcc_apb3d3amr_sysctlamen;
   wire          nxt_rcc_apb3d3amr_sysctlamen;
   wire          rcc_apb3d3amr_sysctlamen_en;
@@ -1563,9 +1622,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb3d3amr_tim2amen;
   wire          nxt_rcc_apb3d3amr_tim2amen;
   wire          rcc_apb3d3amr_tim2amen_en;
-  wire          cur_rcc_apb3d3amr_adccamen;
-  wire          nxt_rcc_apb3d3amr_adccamen;
-  wire          rcc_apb3d3amr_adccamen_en;
   wire          cur_rcc_apb3d3amr_gpio6amen;
   wire          nxt_rcc_apb3d3amr_gpio6amen;
   wire          rcc_apb3d3amr_gpio6amen_en;
@@ -1581,19 +1637,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_apb3d3amr_rtcamen;
   wire          nxt_rcc_apb3d3amr_rtcamen;
   wire          rcc_apb3d3amr_rtcamen_en;
-  // rcc_c1_rsr
   // rcc_c1_ahb1enr
   wire [  31:0] rcc_c1_ahb1enr_read;
   wire          rcc_c1_ahb1enr_sel;
   wire          cur_rcc_c1_ahb1enr_romen;
   wire          nxt_rcc_c1_ahb1enr_romen;
   wire          rcc_c1_ahb1enr_romen_en;
-  wire          cur_rcc_c1_ahb1enr_tsmsen;
-  wire          nxt_rcc_c1_ahb1enr_tsmsen;
-  wire          rcc_c1_ahb1enr_tsmsen_en;
-  wire          cur_rcc_c1_ahb1enr_smsen;
-  wire          nxt_rcc_c1_ahb1enr_smsen;
-  wire          rcc_c1_ahb1enr_smsen_en;
+  wire          cur_rcc_c1_ahb1enr_smc2en;
+  wire          nxt_rcc_c1_ahb1enr_smc2en;
+  wire          rcc_c1_ahb1enr_smc2en_en;
+  wire          cur_rcc_c1_ahb1enr_smc1en;
+  wire          nxt_rcc_c1_ahb1enr_smc1en;
+  wire          rcc_c1_ahb1enr_smc1en_en;
   wire          cur_rcc_c1_ahb1enr_xflashen;
   wire          nxt_rcc_c1_ahb1enr_xflashen;
   wire          rcc_c1_ahb1enr_xflashen_en;
@@ -1615,18 +1670,15 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_ahb1enr_qspi1en;
   wire          nxt_rcc_c1_ahb1enr_qspi1en;
   wire          rcc_c1_ahb1enr_qspi1en_en;
-  wire          cur_rcc_c1_ahb1enr_qspi2en;
-  wire          nxt_rcc_c1_ahb1enr_qspi2en;
-  wire          rcc_c1_ahb1enr_qspi2en_en;
-  wire          cur_rcc_c1_ahb1enr_qspi3en;
-  wire          nxt_rcc_c1_ahb1enr_qspi3en;
-  wire          rcc_c1_ahb1enr_qspi3en_en;
-  wire          cur_rcc_c1_ahb1enr_qspi4en;
-  wire          nxt_rcc_c1_ahb1enr_qspi4en;
-  wire          rcc_c1_ahb1enr_qspi4en_en;
-  wire          cur_rcc_c1_ahb1enr_xspien;
-  wire          nxt_rcc_c1_ahb1enr_xspien;
-  wire          rcc_c1_ahb1enr_xspien_en;
+  wire          cur_rcc_c1_ahb1enr_adcspi3en;
+  wire          nxt_rcc_c1_ahb1enr_adcspi3en;
+  wire          rcc_c1_ahb1enr_adcspi3en_en;
+  wire          cur_rcc_c1_ahb1enr_adcspi2en;
+  wire          nxt_rcc_c1_ahb1enr_adcspi2en;
+  wire          rcc_c1_ahb1enr_adcspi2en_en;
+  wire          cur_rcc_c1_ahb1enr_adcspi1en;
+  wire          nxt_rcc_c1_ahb1enr_adcspi1en;
+  wire          rcc_c1_ahb1enr_adcspi1en_en;
   wire          cur_rcc_c1_ahb1enr_mspien;
   wire          nxt_rcc_c1_ahb1enr_mspien;
   wire          rcc_c1_ahb1enr_mspien_en;
@@ -1636,9 +1688,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_ahb1enr_hacif_f1en;
   wire          nxt_rcc_c1_ahb1enr_hacif_f1en;
   wire          rcc_c1_ahb1enr_hacif_f1en_en;
-  wire          cur_rcc_c1_ahb1enr_macen;
-  wire          nxt_rcc_c1_ahb1enr_macen;
-  wire          rcc_c1_ahb1enr_macen_en;
+  wire          cur_rcc_c1_ahb1enr_cspi_len;
+  wire          nxt_rcc_c1_ahb1enr_cspi_len;
+  wire          rcc_c1_ahb1enr_cspi_len_en;
+  wire          cur_rcc_c1_ahb1enr_cspi_fen;
+  wire          nxt_rcc_c1_ahb1enr_cspi_fen;
+  wire          rcc_c1_ahb1enr_cspi_fen_en;
+  wire          cur_rcc_c1_ahb1enr_mac2en;
+  wire          nxt_rcc_c1_ahb1enr_mac2en;
+  wire          rcc_c1_ahb1enr_mac2en_en;
+  wire          cur_rcc_c1_ahb1enr_mac1en;
+  wire          nxt_rcc_c1_ahb1enr_mac1en;
+  wire          rcc_c1_ahb1enr_mac1en_en;
   wire          cur_rcc_c1_ahb1enr_lzen;
   wire          nxt_rcc_c1_ahb1enr_lzen;
   wire          rcc_c1_ahb1enr_lzen_en;
@@ -1753,6 +1814,18 @@ module rcc_vcore_reg #(
   // rcc_c1_apb3enr
   wire [  31:0] rcc_c1_apb3enr_read;
   wire          rcc_c1_apb3enr_sel;
+  wire          cur_rcc_c1_apb3enr_spl2en;
+  wire          nxt_rcc_c1_apb3enr_spl2en;
+  wire          rcc_c1_apb3enr_spl2en_en;
+  wire          cur_rcc_c1_apb3enr_spl1en;
+  wire          nxt_rcc_c1_apb3enr_spl1en;
+  wire          rcc_c1_apb3enr_spl1en_en;
+  wire          cur_rcc_c1_apb3enr_mailbox2en;
+  wire          nxt_rcc_c1_apb3enr_mailbox2en;
+  wire          rcc_c1_apb3enr_mailbox2en_en;
+  wire          cur_rcc_c1_apb3enr_mailbox1en;
+  wire          nxt_rcc_c1_apb3enr_mailbox1en;
+  wire          rcc_c1_apb3enr_mailbox1en_en;
   wire          cur_rcc_c1_apb3enr_sysctlen;
   wire          nxt_rcc_c1_apb3enr_sysctlen;
   wire          rcc_c1_apb3enr_sysctlen_en;
@@ -1765,9 +1838,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3enr_tim2en;
   wire          nxt_rcc_c1_apb3enr_tim2en;
   wire          rcc_c1_apb3enr_tim2en_en;
-  wire          cur_rcc_c1_apb3enr_adccen;
-  wire          nxt_rcc_c1_apb3enr_adccen;
-  wire          rcc_c1_apb3enr_adccen_en;
   wire          cur_rcc_c1_apb3enr_gpio6en;
   wire          nxt_rcc_c1_apb3enr_gpio6en;
   wire          rcc_c1_apb3enr_gpio6en_en;
@@ -1777,18 +1847,24 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3enr_gpio8en;
   wire          nxt_rcc_c1_apb3enr_gpio8en;
   wire          rcc_c1_apb3enr_gpio8en_en;
+  wire          cur_rcc_c1_apb3enr_iwdten;
+  wire          nxt_rcc_c1_apb3enr_iwdten;
+  wire          rcc_c1_apb3enr_iwdten_en;
+  wire          cur_rcc_c1_apb3enr_rtcen;
+  wire          nxt_rcc_c1_apb3enr_rtcen;
+  wire          rcc_c1_apb3enr_rtcen_en;
   // rcc_c1_ahb1lpenr
   wire [  31:0] rcc_c1_ahb1lpenr_read;
   wire          rcc_c1_ahb1lpenr_sel;
   wire          cur_rcc_c1_ahb1lpenr_romlpen;
   wire          nxt_rcc_c1_ahb1lpenr_romlpen;
   wire          rcc_c1_ahb1lpenr_romlpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_tsmslpen;
-  wire          nxt_rcc_c1_ahb1lpenr_tsmslpen;
-  wire          rcc_c1_ahb1lpenr_tsmslpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_smslpen;
-  wire          nxt_rcc_c1_ahb1lpenr_smslpen;
-  wire          rcc_c1_ahb1lpenr_smslpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_smc2lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_smc2lpen;
+  wire          rcc_c1_ahb1lpenr_smc2lpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_smc1lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_smc1lpen;
+  wire          rcc_c1_ahb1lpenr_smc1lpen_en;
   wire          cur_rcc_c1_ahb1lpenr_xflashlpen;
   wire          nxt_rcc_c1_ahb1lpenr_xflashlpen;
   wire          rcc_c1_ahb1lpenr_xflashlpen_en;
@@ -1810,18 +1886,15 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_ahb1lpenr_qspi1lpen;
   wire          nxt_rcc_c1_ahb1lpenr_qspi1lpen;
   wire          rcc_c1_ahb1lpenr_qspi1lpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_qspi2lpen;
-  wire          nxt_rcc_c1_ahb1lpenr_qspi2lpen;
-  wire          rcc_c1_ahb1lpenr_qspi2lpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_qspi3lpen;
-  wire          nxt_rcc_c1_ahb1lpenr_qspi3lpen;
-  wire          rcc_c1_ahb1lpenr_qspi3lpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_qspi4lpen;
-  wire          nxt_rcc_c1_ahb1lpenr_qspi4lpen;
-  wire          rcc_c1_ahb1lpenr_qspi4lpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_xspilpen;
-  wire          nxt_rcc_c1_ahb1lpenr_xspilpen;
-  wire          rcc_c1_ahb1lpenr_xspilpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_adcspi3lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_adcspi3lpen;
+  wire          rcc_c1_ahb1lpenr_adcspi3lpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_adcspi2lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_adcspi2lpen;
+  wire          rcc_c1_ahb1lpenr_adcspi2lpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_adcspi1lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_adcspi1lpen;
+  wire          rcc_c1_ahb1lpenr_adcspi1lpen_en;
   wire          cur_rcc_c1_ahb1lpenr_mspilpen;
   wire          nxt_rcc_c1_ahb1lpenr_mspilpen;
   wire          rcc_c1_ahb1lpenr_mspilpen_en;
@@ -1831,9 +1904,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_ahb1lpenr_hacif_f1lpen;
   wire          nxt_rcc_c1_ahb1lpenr_hacif_f1lpen;
   wire          rcc_c1_ahb1lpenr_hacif_f1lpen_en;
-  wire          cur_rcc_c1_ahb1lpenr_maclpen;
-  wire          nxt_rcc_c1_ahb1lpenr_maclpen;
-  wire          rcc_c1_ahb1lpenr_maclpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_cspi_llpen;
+  wire          nxt_rcc_c1_ahb1lpenr_cspi_llpen;
+  wire          rcc_c1_ahb1lpenr_cspi_llpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_cspi_flpen;
+  wire          nxt_rcc_c1_ahb1lpenr_cspi_flpen;
+  wire          rcc_c1_ahb1lpenr_cspi_flpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_mac2lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_mac2lpen;
+  wire          rcc_c1_ahb1lpenr_mac2lpen_en;
+  wire          cur_rcc_c1_ahb1lpenr_mac1lpen;
+  wire          nxt_rcc_c1_ahb1lpenr_mac1lpen;
+  wire          rcc_c1_ahb1lpenr_mac1lpen_en;
   wire          cur_rcc_c1_ahb1lpenr_lzlpen;
   wire          nxt_rcc_c1_ahb1lpenr_lzlpen;
   wire          rcc_c1_ahb1lpenr_lzlpen_en;
@@ -1948,6 +2030,18 @@ module rcc_vcore_reg #(
   // rcc_c1_apb3lpenr
   wire [  31:0] rcc_c1_apb3lpenr_read;
   wire          rcc_c1_apb3lpenr_sel;
+  wire          cur_rcc_c1_apb3lpenr_spl2lpen;
+  wire          nxt_rcc_c1_apb3lpenr_spl2lpen;
+  wire          rcc_c1_apb3lpenr_spl2lpen_en;
+  wire          cur_rcc_c1_apb3lpenr_spl1lpen;
+  wire          nxt_rcc_c1_apb3lpenr_spl1lpen;
+  wire          rcc_c1_apb3lpenr_spl1lpen_en;
+  wire          cur_rcc_c1_apb3lpenr_mailbox2lpen;
+  wire          nxt_rcc_c1_apb3lpenr_mailbox2lpen;
+  wire          rcc_c1_apb3lpenr_mailbox2lpen_en;
+  wire          cur_rcc_c1_apb3lpenr_mailbox1lpen;
+  wire          nxt_rcc_c1_apb3lpenr_mailbox1lpen;
+  wire          rcc_c1_apb3lpenr_mailbox1lpen_en;
   wire          cur_rcc_c1_apb3lpenr_sysctllpen;
   wire          nxt_rcc_c1_apb3lpenr_sysctllpen;
   wire          rcc_c1_apb3lpenr_sysctllpen_en;
@@ -1960,9 +2054,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3lpenr_tim2lpen;
   wire          nxt_rcc_c1_apb3lpenr_tim2lpen;
   wire          rcc_c1_apb3lpenr_tim2lpen_en;
-  wire          cur_rcc_c1_apb3lpenr_adcclpen;
-  wire          nxt_rcc_c1_apb3lpenr_adcclpen;
-  wire          rcc_c1_apb3lpenr_adcclpen_en;
   wire          cur_rcc_c1_apb3lpenr_gpio6lpen;
   wire          nxt_rcc_c1_apb3lpenr_gpio6lpen;
   wire          rcc_c1_apb3lpenr_gpio6lpen_en;
@@ -1972,20 +2063,24 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3lpenr_gpio8lpen;
   wire          nxt_rcc_c1_apb3lpenr_gpio8lpen;
   wire          rcc_c1_apb3lpenr_gpio8lpen_en;
-
-
+  wire          cur_rcc_c1_apb3lpenr_iwdtlpen;
+  wire          nxt_rcc_c1_apb3lpenr_iwdtlpen;
+  wire          rcc_c1_apb3lpenr_iwdtlpen_en;
+  wire          cur_rcc_c1_apb3lpenr_rtclpen;
+  wire          nxt_rcc_c1_apb3lpenr_rtclpen;
+  wire          rcc_c1_apb3lpenr_rtclpen_en;
   // rcc_c2_ahb1enr
   wire [  31:0] rcc_c2_ahb1enr_read;
   wire          rcc_c2_ahb1enr_sel;
   wire          cur_rcc_c2_ahb1enr_romen;
   wire          nxt_rcc_c2_ahb1enr_romen;
   wire          rcc_c2_ahb1enr_romen_en;
-  wire          cur_rcc_c2_ahb1enr_tsmsen;
-  wire          nxt_rcc_c2_ahb1enr_tsmsen;
-  wire          rcc_c2_ahb1enr_tsmsen_en;
-  wire          cur_rcc_c2_ahb1enr_smsen;
-  wire          nxt_rcc_c2_ahb1enr_smsen;
-  wire          rcc_c2_ahb1enr_smsen_en;
+  wire          cur_rcc_c2_ahb1enr_smc2en;
+  wire          nxt_rcc_c2_ahb1enr_smc2en;
+  wire          rcc_c2_ahb1enr_smc2en_en;
+  wire          cur_rcc_c2_ahb1enr_smc1en;
+  wire          nxt_rcc_c2_ahb1enr_smc1en;
+  wire          rcc_c2_ahb1enr_smc1en_en;
   wire          cur_rcc_c2_ahb1enr_xflashen;
   wire          nxt_rcc_c2_ahb1enr_xflashen;
   wire          rcc_c2_ahb1enr_xflashen_en;
@@ -2007,18 +2102,15 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_ahb1enr_qspi1en;
   wire          nxt_rcc_c2_ahb1enr_qspi1en;
   wire          rcc_c2_ahb1enr_qspi1en_en;
-  wire          cur_rcc_c2_ahb1enr_qspi2en;
-  wire          nxt_rcc_c2_ahb1enr_qspi2en;
-  wire          rcc_c2_ahb1enr_qspi2en_en;
-  wire          cur_rcc_c2_ahb1enr_qspi3en;
-  wire          nxt_rcc_c2_ahb1enr_qspi3en;
-  wire          rcc_c2_ahb1enr_qspi3en_en;
-  wire          cur_rcc_c2_ahb1enr_qspi4en;
-  wire          nxt_rcc_c2_ahb1enr_qspi4en;
-  wire          rcc_c2_ahb1enr_qspi4en_en;
-  wire          cur_rcc_c2_ahb1enr_xspien;
-  wire          nxt_rcc_c2_ahb1enr_xspien;
-  wire          rcc_c2_ahb1enr_xspien_en;
+  wire          cur_rcc_c2_ahb1enr_adcspi3en;
+  wire          nxt_rcc_c2_ahb1enr_adcspi3en;
+  wire          rcc_c2_ahb1enr_adcspi3en_en;
+  wire          cur_rcc_c2_ahb1enr_adcspi2en;
+  wire          nxt_rcc_c2_ahb1enr_adcspi2en;
+  wire          rcc_c2_ahb1enr_adcspi2en_en;
+  wire          cur_rcc_c2_ahb1enr_adcspi1en;
+  wire          nxt_rcc_c2_ahb1enr_adcspi1en;
+  wire          rcc_c2_ahb1enr_adcspi1en_en;
   wire          cur_rcc_c2_ahb1enr_mspien;
   wire          nxt_rcc_c2_ahb1enr_mspien;
   wire          rcc_c2_ahb1enr_mspien_en;
@@ -2028,9 +2120,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_ahb1enr_hacif_f1en;
   wire          nxt_rcc_c2_ahb1enr_hacif_f1en;
   wire          rcc_c2_ahb1enr_hacif_f1en_en;
-  wire          cur_rcc_c2_ahb1enr_macen;
-  wire          nxt_rcc_c2_ahb1enr_macen;
-  wire          rcc_c2_ahb1enr_macen_en;
+  wire          cur_rcc_c2_ahb1enr_cspi_len;
+  wire          nxt_rcc_c2_ahb1enr_cspi_len;
+  wire          rcc_c2_ahb1enr_cspi_len_en;
+  wire          cur_rcc_c2_ahb1enr_cspi_fen;
+  wire          nxt_rcc_c2_ahb1enr_cspi_fen;
+  wire          rcc_c2_ahb1enr_cspi_fen_en;
+  wire          cur_rcc_c2_ahb1enr_mac2en;
+  wire          nxt_rcc_c2_ahb1enr_mac2en;
+  wire          rcc_c2_ahb1enr_mac2en_en;
+  wire          cur_rcc_c2_ahb1enr_mac1en;
+  wire          nxt_rcc_c2_ahb1enr_mac1en;
+  wire          rcc_c2_ahb1enr_mac1en_en;
   wire          cur_rcc_c2_ahb1enr_lzen;
   wire          nxt_rcc_c2_ahb1enr_lzen;
   wire          rcc_c2_ahb1enr_lzen_en;
@@ -2070,9 +2171,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb1enr_uart4en;
   wire          nxt_rcc_c2_apb1enr_uart4en;
   wire          rcc_c2_apb1enr_uart4en_en;
-  wire          cur_rcc_c2_apb1enr_i2c2en;
-  wire          nxt_rcc_c2_apb1enr_i2c2en;
-  wire          rcc_c2_apb1enr_i2c2en_en;
+  wire          cur_rcc_c2_apb1enr_i2c1en;
+  wire          nxt_rcc_c2_apb1enr_i2c1en;
+  wire          rcc_c2_apb1enr_i2c1en_en;
   wire          cur_rcc_c2_apb1enr_gpio1en;
   wire          nxt_rcc_c2_apb1enr_gpio1en;
   wire          rcc_c2_apb1enr_gpio1en_en;
@@ -2145,6 +2246,18 @@ module rcc_vcore_reg #(
   // rcc_c2_apb3enr
   wire [  31:0] rcc_c2_apb3enr_read;
   wire          rcc_c2_apb3enr_sel;
+  wire          cur_rcc_c2_apb3enr_spl2en;
+  wire          nxt_rcc_c2_apb3enr_spl2en;
+  wire          rcc_c2_apb3enr_spl2en_en;
+  wire          cur_rcc_c2_apb3enr_spl1en;
+  wire          nxt_rcc_c2_apb3enr_spl1en;
+  wire          rcc_c2_apb3enr_spl1en_en;
+  wire          cur_rcc_c2_apb3enr_mailbox2en;
+  wire          nxt_rcc_c2_apb3enr_mailbox2en;
+  wire          rcc_c2_apb3enr_mailbox2en_en;
+  wire          cur_rcc_c2_apb3enr_mailbox1en;
+  wire          nxt_rcc_c2_apb3enr_mailbox1en;
+  wire          rcc_c2_apb3enr_mailbox1en_en;
   wire          cur_rcc_c2_apb3enr_sysctlen;
   wire          nxt_rcc_c2_apb3enr_sysctlen;
   wire          rcc_c2_apb3enr_sysctlen_en;
@@ -2157,9 +2270,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb3enr_tim2en;
   wire          nxt_rcc_c2_apb3enr_tim2en;
   wire          rcc_c2_apb3enr_tim2en_en;
-  wire          cur_rcc_c2_apb3enr_adccen;
-  wire          nxt_rcc_c2_apb3enr_adccen;
-  wire          rcc_c2_apb3enr_adccen_en;
   wire          cur_rcc_c2_apb3enr_gpio6en;
   wire          nxt_rcc_c2_apb3enr_gpio6en;
   wire          rcc_c2_apb3enr_gpio6en_en;
@@ -2169,18 +2279,24 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb3enr_gpio8en;
   wire          nxt_rcc_c2_apb3enr_gpio8en;
   wire          rcc_c2_apb3enr_gpio8en_en;
+  wire          cur_rcc_c2_apb3enr_iwdten;
+  wire          nxt_rcc_c2_apb3enr_iwdten;
+  wire          rcc_c2_apb3enr_iwdten_en;
+  wire          cur_rcc_c2_apb3enr_rtcen;
+  wire          nxt_rcc_c2_apb3enr_rtcen;
+  wire          rcc_c2_apb3enr_rtcen_en;
   // rcc_c2_ahb1lpenr
   wire [  31:0] rcc_c2_ahb1lpenr_read;
   wire          rcc_c2_ahb1lpenr_sel;
   wire          cur_rcc_c2_ahb1lpenr_romlpen;
   wire          nxt_rcc_c2_ahb1lpenr_romlpen;
   wire          rcc_c2_ahb1lpenr_romlpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_tsmslpen;
-  wire          nxt_rcc_c2_ahb1lpenr_tsmslpen;
-  wire          rcc_c2_ahb1lpenr_tsmslpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_smslpen;
-  wire          nxt_rcc_c2_ahb1lpenr_smslpen;
-  wire          rcc_c2_ahb1lpenr_smslpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_smc2lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_smc2lpen;
+  wire          rcc_c2_ahb1lpenr_smc2lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_smc1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_smc1lpen;
+  wire          rcc_c2_ahb1lpenr_smc1lpen_en;
   wire          cur_rcc_c2_ahb1lpenr_xflashlpen;
   wire          nxt_rcc_c2_ahb1lpenr_xflashlpen;
   wire          rcc_c2_ahb1lpenr_xflashlpen_en;
@@ -2202,18 +2318,15 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_ahb1lpenr_qspi1lpen;
   wire          nxt_rcc_c2_ahb1lpenr_qspi1lpen;
   wire          rcc_c2_ahb1lpenr_qspi1lpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_qspi2lpen;
-  wire          nxt_rcc_c2_ahb1lpenr_qspi2lpen;
-  wire          rcc_c2_ahb1lpenr_qspi2lpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_qspi3lpen;
-  wire          nxt_rcc_c2_ahb1lpenr_qspi3lpen;
-  wire          rcc_c2_ahb1lpenr_qspi3lpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_qspi4lpen;
-  wire          nxt_rcc_c2_ahb1lpenr_qspi4lpen;
-  wire          rcc_c2_ahb1lpenr_qspi4lpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_xspilpen;
-  wire          nxt_rcc_c2_ahb1lpenr_xspilpen;
-  wire          rcc_c2_ahb1lpenr_xspilpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_adcspi3lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_adcspi3lpen;
+  wire          rcc_c2_ahb1lpenr_adcspi3lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_adcspi2lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_adcspi2lpen;
+  wire          rcc_c2_ahb1lpenr_adcspi2lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_adcspi1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_adcspi1lpen;
+  wire          rcc_c2_ahb1lpenr_adcspi1lpen_en;
   wire          cur_rcc_c2_ahb1lpenr_mspilpen;
   wire          nxt_rcc_c2_ahb1lpenr_mspilpen;
   wire          rcc_c2_ahb1lpenr_mspilpen_en;
@@ -2223,9 +2336,18 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_ahb1lpenr_hacif_f1lpen;
   wire          nxt_rcc_c2_ahb1lpenr_hacif_f1lpen;
   wire          rcc_c2_ahb1lpenr_hacif_f1lpen_en;
-  wire          cur_rcc_c2_ahb1lpenr_maclpen;
-  wire          nxt_rcc_c2_ahb1lpenr_maclpen;
-  wire          rcc_c2_ahb1lpenr_maclpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_cspi_llpen;
+  wire          nxt_rcc_c2_ahb1lpenr_cspi_llpen;
+  wire          rcc_c2_ahb1lpenr_cspi_llpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_cspi_flpen;
+  wire          nxt_rcc_c2_ahb1lpenr_cspi_flpen;
+  wire          rcc_c2_ahb1lpenr_cspi_flpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_mac2lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_mac2lpen;
+  wire          rcc_c2_ahb1lpenr_mac2lpen_en;
+  wire          cur_rcc_c2_ahb1lpenr_mac1lpen;
+  wire          nxt_rcc_c2_ahb1lpenr_mac1lpen;
+  wire          rcc_c2_ahb1lpenr_mac1lpen_en;
   wire          cur_rcc_c2_ahb1lpenr_lzlpen;
   wire          nxt_rcc_c2_ahb1lpenr_lzlpen;
   wire          rcc_c2_ahb1lpenr_lzlpen_en;
@@ -2265,9 +2387,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb1lpenr_uart4lpen;
   wire          nxt_rcc_c2_apb1lpenr_uart4lpen;
   wire          rcc_c2_apb1lpenr_uart4lpen_en;
-  wire          cur_rcc_c2_apb1lpenr_i2c2lpen;
-  wire          nxt_rcc_c2_apb1lpenr_i2c2lpen;
-  wire          rcc_c2_apb1lpenr_i2c2lpen_en;
+  wire          cur_rcc_c2_apb1lpenr_i2c1lpen;
+  wire          nxt_rcc_c2_apb1lpenr_i2c1lpen;
+  wire          rcc_c2_apb1lpenr_i2c1lpen_en;
   wire          cur_rcc_c2_apb1lpenr_gpio1lpen;
   wire          nxt_rcc_c2_apb1lpenr_gpio1lpen;
   wire          rcc_c2_apb1lpenr_gpio1lpen_en;
@@ -2340,6 +2462,18 @@ module rcc_vcore_reg #(
   // rcc_c2_apb3lpenr
   wire [  31:0] rcc_c2_apb3lpenr_read;
   wire          rcc_c2_apb3lpenr_sel;
+  wire          cur_rcc_c2_apb3lpenr_spl2lpen;
+  wire          nxt_rcc_c2_apb3lpenr_spl2lpen;
+  wire          rcc_c2_apb3lpenr_spl2lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_spl1lpen;
+  wire          nxt_rcc_c2_apb3lpenr_spl1lpen;
+  wire          rcc_c2_apb3lpenr_spl1lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_mailbox2lpen;
+  wire          nxt_rcc_c2_apb3lpenr_mailbox2lpen;
+  wire          rcc_c2_apb3lpenr_mailbox2lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_mailbox1lpen;
+  wire          nxt_rcc_c2_apb3lpenr_mailbox1lpen;
+  wire          rcc_c2_apb3lpenr_mailbox1lpen_en;
   wire          cur_rcc_c2_apb3lpenr_sysctllpen;
   wire          nxt_rcc_c2_apb3lpenr_sysctllpen;
   wire          rcc_c2_apb3lpenr_sysctllpen_en;
@@ -2352,9 +2486,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb3lpenr_tim2lpen;
   wire          nxt_rcc_c2_apb3lpenr_tim2lpen;
   wire          rcc_c2_apb3lpenr_tim2lpen_en;
-  wire          cur_rcc_c2_apb3lpenr_adcclpen;
-  wire          nxt_rcc_c2_apb3lpenr_adcclpen;
-  wire          rcc_c2_apb3lpenr_adcclpen_en;
   wire          cur_rcc_c2_apb3lpenr_gpio6lpen;
   wire          nxt_rcc_c2_apb3lpenr_gpio6lpen;
   wire          rcc_c2_apb3lpenr_gpio6lpen_en;
@@ -2364,6 +2495,13 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb3lpenr_gpio8lpen;
   wire          nxt_rcc_c2_apb3lpenr_gpio8lpen;
   wire          rcc_c2_apb3lpenr_gpio8lpen_en;
+  wire          cur_rcc_c2_apb3lpenr_iwdtlpen;
+  wire          nxt_rcc_c2_apb3lpenr_iwdtlpen;
+  wire          rcc_c2_apb3lpenr_iwdtlpen_en;
+  wire          cur_rcc_c2_apb3lpenr_rtclpen;
+  wire          nxt_rcc_c2_apb3lpenr_rtclpen;
+  wire          rcc_c2_apb3lpenr_rtclpen_en;
+
 
   //register async set or reset
   wire          raw_pllxon_clr_n;
@@ -5602,58 +5740,60 @@ module rcc_vcore_reg #(
   );
 
 
-
-
   // --------------------------------------------------------------------------------
-  // rcc_ahb1rstr                            0x7c                                    
+  // rcc_ahb1rstr                            0x0                                     
   // --------------------------------------------------------------------------------
-  // 18:18               romrst             RW                  0b0                 
+  // 20:20               romrst              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsrst            RW                  0b0                 
+  // 19:19               smc2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 16:16               smsrst             RW                  0b0                 
+  // 18:18               smc1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashrst          RW                  0b0                 
+  // 17:17               xflashrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 14:14               fftrst             RW                  0b0                 
+  // 16:16               fftrst              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               npurst             RW                  0b0                 
+  // 15:15               npurst              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1rst            RW                  0b0                 
+  // 14:14               dma1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2rst            RW                  0b0                 
+  // 13:13               dma2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschrst          RW                  0b0                 
+  // 12:12               dmaschrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1rst           RW                  0b0                 
+  // 11:11               qspi1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2rst           RW                  0b0                 
+  // 10:10               adcspi3rst          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3rst           RW                  0b0                 
+  // 9:9                 adcspi2rst          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4rst           RW                  0b0                 
+  // 8:8                 adcspi1rst          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspirst            RW                  0b0                 
+  // 7:7                 mspirst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 mspirst            RW                  0b0                 
+  // 6:6                 hacif_l1rst         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1rst        RW                  0b0                 
+  // 5:5                 hacif_f1rst         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1rst        RW                  0b0                 
+  // 4:4                 cspi_lrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 macrst             RW                  0b0                 
+  // 3:3                 cspi_frst           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 0:0                 lzrst              RW                  0b0                 
+  // 2:2                 mac2rst             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1rst             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 lzrst               RW                  0b0                 
   // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_ahb1rstr read data
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_read = {
-    {13{1'b0}},
+    {11{1'b0}},
     cur_rcc_ahb1rstr_romrst,
-    cur_rcc_ahb1rstr_tsmsrst,
-    cur_rcc_ahb1rstr_smsrst,
+    cur_rcc_ahb1rstr_smc2rst,
+    cur_rcc_ahb1rstr_smc1rst,
     cur_rcc_ahb1rstr_xflashrst,
     cur_rcc_ahb1rstr_fftrst,
     cur_rcc_ahb1rstr_npurst,
@@ -5661,22 +5801,24 @@ module rcc_vcore_reg #(
     cur_rcc_ahb1rstr_dma2rst,
     cur_rcc_ahb1rstr_dmaschrst,
     cur_rcc_ahb1rstr_qspi1rst,
-    cur_rcc_ahb1rstr_qspi2rst,
-    cur_rcc_ahb1rstr_qspi3rst,
-    cur_rcc_ahb1rstr_qspi4rst,
-    cur_rcc_ahb1rstr_xspirst,
+    cur_rcc_ahb1rstr_adcspi3rst,
+    cur_rcc_ahb1rstr_adcspi2rst,
+    cur_rcc_ahb1rstr_adcspi1rst,
     cur_rcc_ahb1rstr_mspirst,
     cur_rcc_ahb1rstr_hacif_l1rst,
     cur_rcc_ahb1rstr_hacif_f1rst,
-    cur_rcc_ahb1rstr_macrst,
+    cur_rcc_ahb1rstr_cspi_lrst,
+    cur_rcc_ahb1rstr_cspi_frst,
+    cur_rcc_ahb1rstr_mac2rst,
+    cur_rcc_ahb1rstr_mac1rst,
     cur_rcc_ahb1rstr_lzrst
   };
 
   // --------------------------------------------------------------------------------
-  // 18:18               romrst             RW                  0b0                 
+  // 20:20               romrst              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_romrst_en = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_romrst = wdata[18:18];
+  assign nxt_rcc_ahb1rstr_romrst = wdata[20:20];
   assign romrst = cur_rcc_ahb1rstr_romrst;
   BB_dfflr #(
       .DW     (1),
@@ -5690,44 +5832,44 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsrst            RW                  0b0                 
+  // 19:19               smc2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_tsmsrst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_tsmsrst = wdata[17:17];
-  assign tsmsrst                  = cur_rcc_ahb1rstr_tsmsrst;
+  assign rcc_ahb1rstr_smc2rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_smc2rst = wdata[19:19];
+  assign smc2rst                  = cur_rcc_ahb1rstr_smc2rst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_tsmsrst (
+  ) U_rcc_ahb1rstr_smc2rst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_tsmsrst_en),
-      .din  (nxt_rcc_ahb1rstr_tsmsrst),
-      .dout (cur_rcc_ahb1rstr_tsmsrst)
+      .en   (rcc_ahb1rstr_smc2rst_en),
+      .din  (nxt_rcc_ahb1rstr_smc2rst),
+      .dout (cur_rcc_ahb1rstr_smc2rst)
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               smsrst             RW                  0b0                 
+  // 18:18               smc1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_smsrst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_smsrst = wdata[16:16];
-  assign smsrst                  = cur_rcc_ahb1rstr_smsrst;
+  assign rcc_ahb1rstr_smc1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_smc1rst = wdata[18:18];
+  assign smc1rst                  = cur_rcc_ahb1rstr_smc1rst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_smsrst (
+  ) U_rcc_ahb1rstr_smc1rst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_smsrst_en),
-      .din  (nxt_rcc_ahb1rstr_smsrst),
-      .dout (cur_rcc_ahb1rstr_smsrst)
+      .en   (rcc_ahb1rstr_smc1rst_en),
+      .din  (nxt_rcc_ahb1rstr_smc1rst),
+      .dout (cur_rcc_ahb1rstr_smc1rst)
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashrst          RW                  0b0                 
+  // 17:17               xflashrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_xflashrst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_xflashrst = wdata[15:15];
+  assign nxt_rcc_ahb1rstr_xflashrst = wdata[17:17];
   assign xflashrst                  = cur_rcc_ahb1rstr_xflashrst;
   BB_dfflr #(
       .DW     (1),
@@ -5741,10 +5883,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               fftrst             RW                  0b0                 
+  // 16:16               fftrst              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_fftrst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_fftrst = wdata[14:14];
+  assign nxt_rcc_ahb1rstr_fftrst = wdata[16:16];
   assign fftrst                  = cur_rcc_ahb1rstr_fftrst;
   BB_dfflr #(
       .DW     (1),
@@ -5758,10 +5900,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               npurst             RW                  0b0                 
+  // 15:15               npurst              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_npurst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_npurst = wdata[13:13];
+  assign nxt_rcc_ahb1rstr_npurst = wdata[15:15];
   assign npurst                  = cur_rcc_ahb1rstr_npurst;
   BB_dfflr #(
       .DW     (1),
@@ -5775,10 +5917,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1rst            RW                  0b0                 
+  // 14:14               dma1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_dma1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_dma1rst = wdata[12:12];
+  assign nxt_rcc_ahb1rstr_dma1rst = wdata[14:14];
   assign dma1rst                  = cur_rcc_ahb1rstr_dma1rst;
   BB_dfflr #(
       .DW     (1),
@@ -5792,10 +5934,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2rst            RW                  0b0                 
+  // 13:13               dma2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_dma2rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_dma2rst = wdata[11:11];
+  assign nxt_rcc_ahb1rstr_dma2rst = wdata[13:13];
   assign dma2rst                  = cur_rcc_ahb1rstr_dma2rst;
   BB_dfflr #(
       .DW     (1),
@@ -5809,10 +5951,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschrst          RW                  0b0                 
+  // 12:12               dmaschrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_dmaschrst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_dmaschrst = wdata[10:10];
+  assign nxt_rcc_ahb1rstr_dmaschrst = wdata[12:12];
   assign dmaschrst                  = cur_rcc_ahb1rstr_dmaschrst;
   BB_dfflr #(
       .DW     (1),
@@ -5826,10 +5968,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1rst           RW                  0b0                 
+  // 11:11               qspi1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_qspi1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_qspi1rst = wdata[9:9];
+  assign nxt_rcc_ahb1rstr_qspi1rst = wdata[11:11];
   assign qspi1rst                  = cur_rcc_ahb1rstr_qspi1rst;
   BB_dfflr #(
       .DW     (1),
@@ -5843,78 +5985,61 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2rst           RW                  0b0                 
+  // 10:10               adcspi3rst          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_qspi2rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_qspi2rst = wdata[8:8];
-  assign qspi2rst                  = cur_rcc_ahb1rstr_qspi2rst;
+  assign rcc_ahb1rstr_adcspi3rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_adcspi3rst = wdata[10:10];
+  assign adcspi3rst                  = cur_rcc_ahb1rstr_adcspi3rst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_qspi2rst (
+  ) U_rcc_ahb1rstr_adcspi3rst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_qspi2rst_en),
-      .din  (nxt_rcc_ahb1rstr_qspi2rst),
-      .dout (cur_rcc_ahb1rstr_qspi2rst)
+      .en   (rcc_ahb1rstr_adcspi3rst_en),
+      .din  (nxt_rcc_ahb1rstr_adcspi3rst),
+      .dout (cur_rcc_ahb1rstr_adcspi3rst)
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3rst           RW                  0b0                 
+  // 9:9                 adcspi2rst          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_qspi3rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_qspi3rst = wdata[7:7];
-  assign qspi3rst                  = cur_rcc_ahb1rstr_qspi3rst;
+  assign rcc_ahb1rstr_adcspi2rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_adcspi2rst = wdata[9:9];
+  assign adcspi2rst                  = cur_rcc_ahb1rstr_adcspi2rst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_qspi3rst (
+  ) U_rcc_ahb1rstr_adcspi2rst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_qspi3rst_en),
-      .din  (nxt_rcc_ahb1rstr_qspi3rst),
-      .dout (cur_rcc_ahb1rstr_qspi3rst)
+      .en   (rcc_ahb1rstr_adcspi2rst_en),
+      .din  (nxt_rcc_ahb1rstr_adcspi2rst),
+      .dout (cur_rcc_ahb1rstr_adcspi2rst)
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4rst           RW                  0b0                 
+  // 8:8                 adcspi1rst          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_qspi4rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_qspi4rst = wdata[6:6];
-  assign qspi4rst                  = cur_rcc_ahb1rstr_qspi4rst;
+  assign rcc_ahb1rstr_adcspi1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_adcspi1rst = wdata[8:8];
+  assign adcspi1rst                  = cur_rcc_ahb1rstr_adcspi1rst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_qspi4rst (
+  ) U_rcc_ahb1rstr_adcspi1rst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_qspi4rst_en),
-      .din  (nxt_rcc_ahb1rstr_qspi4rst),
-      .dout (cur_rcc_ahb1rstr_qspi4rst)
+      .en   (rcc_ahb1rstr_adcspi1rst_en),
+      .din  (nxt_rcc_ahb1rstr_adcspi1rst),
+      .dout (cur_rcc_ahb1rstr_adcspi1rst)
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspirst            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_xspirst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_xspirst = wdata[5:5];
-  assign xspirst                  = cur_rcc_ahb1rstr_xspirst;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_xspirst (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_xspirst_en),
-      .din  (nxt_rcc_ahb1rstr_xspirst),
-      .dout (cur_rcc_ahb1rstr_xspirst)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 4:4                 mspirst            RW                  0b0                 
+  // 7:7                 mspirst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_mspirst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_mspirst = wdata[4:4];
+  assign nxt_rcc_ahb1rstr_mspirst = wdata[7:7];
   assign mspirst                  = cur_rcc_ahb1rstr_mspirst;
   BB_dfflr #(
       .DW     (1),
@@ -5928,10 +6053,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1rst        RW                  0b0                 
+  // 6:6                 hacif_l1rst         RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_hacif_l1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_hacif_l1rst = wdata[3:3];
+  assign nxt_rcc_ahb1rstr_hacif_l1rst = wdata[6:6];
   assign hacif_l1rst                  = cur_rcc_ahb1rstr_hacif_l1rst;
   BB_dfflr #(
       .DW     (1),
@@ -5945,10 +6070,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1rst        RW                  0b0                 
+  // 5:5                 hacif_f1rst         RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_hacif_f1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_hacif_f1rst = wdata[2:2];
+  assign nxt_rcc_ahb1rstr_hacif_f1rst = wdata[5:5];
   assign hacif_f1rst                  = cur_rcc_ahb1rstr_hacif_f1rst;
   BB_dfflr #(
       .DW     (1),
@@ -5962,24 +6087,75 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 macrst             RW                  0b0                 
+  // 4:4                 cspi_lrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1rstr_macrst_en  = (|wr_req & rcc_ahb1rstr_sel);
-  assign nxt_rcc_ahb1rstr_macrst = wdata[1:1];
-  assign macrst                  = cur_rcc_ahb1rstr_macrst;
+  assign rcc_ahb1rstr_cspi_lrst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_cspi_lrst = wdata[4:4];
+  assign cspi_lrst                  = cur_rcc_ahb1rstr_cspi_lrst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1rstr_macrst (
+  ) U_rcc_ahb1rstr_cspi_lrst (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1rstr_macrst_en),
-      .din  (nxt_rcc_ahb1rstr_macrst),
-      .dout (cur_rcc_ahb1rstr_macrst)
+      .en   (rcc_ahb1rstr_cspi_lrst_en),
+      .din  (nxt_rcc_ahb1rstr_cspi_lrst),
+      .dout (cur_rcc_ahb1rstr_cspi_lrst)
   );
 
   // --------------------------------------------------------------------------------
-  // 0:0                 lzrst              RW                  0b0                 
+  // 3:3                 cspi_frst           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_ahb1rstr_cspi_frst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_cspi_frst = wdata[3:3];
+  assign cspi_frst                  = cur_rcc_ahb1rstr_cspi_frst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_ahb1rstr_cspi_frst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_ahb1rstr_cspi_frst_en),
+      .din  (nxt_rcc_ahb1rstr_cspi_frst),
+      .dout (cur_rcc_ahb1rstr_cspi_frst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2rst             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_ahb1rstr_mac2rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_mac2rst = wdata[2:2];
+  assign mac2rst                  = cur_rcc_ahb1rstr_mac2rst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_ahb1rstr_mac2rst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_ahb1rstr_mac2rst_en),
+      .din  (nxt_rcc_ahb1rstr_mac2rst),
+      .dout (cur_rcc_ahb1rstr_mac2rst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1rst             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_ahb1rstr_mac1rst_en  = (|wr_req & rcc_ahb1rstr_sel);
+  assign nxt_rcc_ahb1rstr_mac1rst = wdata[1:1];
+  assign mac1rst                  = cur_rcc_ahb1rstr_mac1rst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_ahb1rstr_mac1rst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_ahb1rstr_mac1rst_en),
+      .din  (nxt_rcc_ahb1rstr_mac1rst),
+      .dout (cur_rcc_ahb1rstr_mac1rst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 0:0                 lzrst               RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1rstr_lzrst_en  = (|wr_req & rcc_ahb1rstr_sel);
   assign nxt_rcc_ahb1rstr_lzrst = wdata[0:0];
@@ -5997,43 +6173,43 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_apb1rstr                            0x80                                    
+  // rcc_apb1rstr                            0x4                                     
   // --------------------------------------------------------------------------------
-  // 17:17               gtim1rst           RW                  0b0                 
+  // 17:17               gtim1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 16:16               gtim2rst           RW                  0b0                 
+  // 16:16               gtim2rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 15:15               gtim3rst           RW                  0b0                 
+  // 15:15               gtim3rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 14:14               gtim4rst           RW                  0b0                 
+  // 14:14               gtim4rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               spi1rst            RW                  0b0                 
+  // 13:13               spi1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               spi2rst            RW                  0b0                 
+  // 12:12               spi2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               spi3rst            RW                  0b0                 
+  // 11:11               spi3rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               uart1rst           RW                  0b0                 
+  // 10:10               uart1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 uart2rst           RW                  0b0                 
+  // 9:9                 uart2rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 uart3rst           RW                  0b0                 
+  // 8:8                 uart3rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 uart4rst           RW                  0b0                 
+  // 7:7                 uart4rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c1rst            RW                  0b0                 
+  // 6:6                 i2c1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 gpio1rst           RW                  0b0                 
+  // 5:5                 gpio1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 gpio2rst           RW                  0b0                 
+  // 4:4                 gpio2rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 gpio3rst           RW                  0b0                 
+  // 3:3                 gpio3rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 can1rst            RW                  0b0                 
+  // 2:2                 can1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 can2rst            RW                  0b0                 
+  // 1:1                 can2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 0:0                 can3rst            RW                  0b0                 
+  // 0:0                 can3rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
@@ -6062,7 +6238,7 @@ module rcc_vcore_reg #(
   };
 
   // --------------------------------------------------------------------------------
-  // 17:17               gtim1rst           RW                  0b0                 
+  // 17:17               gtim1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gtim1rst_en = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gtim1rst = wdata[17:17];
@@ -6079,7 +6255,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               gtim2rst           RW                  0b0                 
+  // 16:16               gtim2rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gtim2rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gtim2rst = wdata[16:16];
@@ -6096,7 +6272,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               gtim3rst           RW                  0b0                 
+  // 15:15               gtim3rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gtim3rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gtim3rst = wdata[15:15];
@@ -6113,7 +6289,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               gtim4rst           RW                  0b0                 
+  // 14:14               gtim4rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gtim4rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gtim4rst = wdata[14:14];
@@ -6130,7 +6306,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               spi1rst            RW                  0b0                 
+  // 13:13               spi1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_spi1rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_spi1rst = wdata[13:13];
@@ -6147,7 +6323,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               spi2rst            RW                  0b0                 
+  // 12:12               spi2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_spi2rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_spi2rst = wdata[12:12];
@@ -6164,7 +6340,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               spi3rst            RW                  0b0                 
+  // 11:11               spi3rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_spi3rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_spi3rst = wdata[11:11];
@@ -6181,7 +6357,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               uart1rst           RW                  0b0                 
+  // 10:10               uart1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_uart1rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_uart1rst = wdata[10:10];
@@ -6198,7 +6374,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 uart2rst           RW                  0b0                 
+  // 9:9                 uart2rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_uart2rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_uart2rst = wdata[9:9];
@@ -6215,7 +6391,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 uart3rst           RW                  0b0                 
+  // 8:8                 uart3rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_uart3rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_uart3rst = wdata[8:8];
@@ -6232,7 +6408,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 uart4rst           RW                  0b0                 
+  // 7:7                 uart4rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_uart4rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_uart4rst = wdata[7:7];
@@ -6249,7 +6425,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c1rst            RW                  0b0                 
+  // 6:6                 i2c1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_i2c1rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_i2c1rst = wdata[6:6];
@@ -6266,7 +6442,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 gpio1rst           RW                  0b0                 
+  // 5:5                 gpio1rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gpio1rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gpio1rst = wdata[5:5];
@@ -6283,7 +6459,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 4:4                 gpio2rst           RW                  0b0                 
+  // 4:4                 gpio2rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gpio2rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gpio2rst = wdata[4:4];
@@ -6300,7 +6476,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 gpio3rst           RW                  0b0                 
+  // 3:3                 gpio3rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_gpio3rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_gpio3rst = wdata[3:3];
@@ -6317,7 +6493,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 can1rst            RW                  0b0                 
+  // 2:2                 can1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_can1rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_can1rst = wdata[2:2];
@@ -6334,7 +6510,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 can2rst            RW                  0b0                 
+  // 1:1                 can2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_can2rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_can2rst = wdata[1:1];
@@ -6351,7 +6527,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 0:0                 can3rst            RW                  0b0                 
+  // 0:0                 can3rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb1rstr_can3rst_en  = (|wr_req & rcc_apb1rstr_sel);
   assign nxt_rcc_apb1rstr_can3rst = wdata[0:0];
@@ -6369,39 +6545,39 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_apb2rstr                            0x84                                    
+  // rcc_apb2rstr                            0x8                                     
   // --------------------------------------------------------------------------------
-  // 15:15               gtim5rst           RW                  0b0                 
+  // 15:15               gtim5rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 14:14               gtim6rst           RW                  0b0                 
+  // 14:14               gtim6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               spi4rst            RW                  0b0                 
+  // 13:13               spi4rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               spi5rst            RW                  0b0                 
+  // 12:12               spi5rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               uart5rst           RW                  0b0                 
+  // 11:11               uart5rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               uart6rst           RW                  0b0                 
+  // 10:10               uart6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 uart7rst           RW                  0b0                 
+  // 9:9                 uart7rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 uart8rst           RW                  0b0                 
+  // 8:8                 uart8rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 i2c2rst            RW                  0b0                 
+  // 7:7                 i2c2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c3rst            RW                  0b0                 
+  // 6:6                 i2c3rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 can4rst            RW                  0b0                 
+  // 5:5                 can4rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 can5rst            RW                  0b0                 
+  // 4:4                 can5rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 can6rst            RW                  0b0                 
+  // 3:3                 can6rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 mpptrst        RW                  0b0                 
+  // 2:2                 mpptrst         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 gpio4rst           RW                  0b0                 
+  // 1:1                 gpio4rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 0:0                 gpio5rst           RW                  0b0                 
+  // 0:0                 gpio5rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
@@ -6428,7 +6604,7 @@ module rcc_vcore_reg #(
   };
 
   // --------------------------------------------------------------------------------
-  // 15:15               gtim5rst           RW                  0b0                 
+  // 15:15               gtim5rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_gtim5rst_en = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_gtim5rst = wdata[15:15];
@@ -6445,7 +6621,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               gtim6rst           RW                  0b0                 
+  // 14:14               gtim6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_gtim6rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_gtim6rst = wdata[14:14];
@@ -6462,7 +6638,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               spi4rst            RW                  0b0                 
+  // 13:13               spi4rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_spi4rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_spi4rst = wdata[13:13];
@@ -6479,7 +6655,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               spi5rst            RW                  0b0                 
+  // 12:12               spi5rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_spi5rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_spi5rst = wdata[12:12];
@@ -6496,7 +6672,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               uart5rst           RW                  0b0                 
+  // 11:11               uart5rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_uart5rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_uart5rst = wdata[11:11];
@@ -6513,7 +6689,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               uart6rst           RW                  0b0                 
+  // 10:10               uart6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_uart6rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_uart6rst = wdata[10:10];
@@ -6530,7 +6706,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 uart7rst           RW                  0b0                 
+  // 9:9                 uart7rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_uart7rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_uart7rst = wdata[9:9];
@@ -6547,7 +6723,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 uart8rst           RW                  0b0                 
+  // 8:8                 uart8rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_uart8rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_uart8rst = wdata[8:8];
@@ -6564,7 +6740,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 i2c2rst            RW                  0b0                 
+  // 7:7                 i2c2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_i2c2rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_i2c2rst = wdata[7:7];
@@ -6581,7 +6757,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c3rst            RW                  0b0                 
+  // 6:6                 i2c3rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_i2c3rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_i2c3rst = wdata[6:6];
@@ -6598,7 +6774,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 can4rst            RW                  0b0                 
+  // 5:5                 can4rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_can4rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_can4rst = wdata[5:5];
@@ -6615,7 +6791,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 4:4                 can5rst            RW                  0b0                 
+  // 4:4                 can5rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_can5rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_can5rst = wdata[4:4];
@@ -6632,7 +6808,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 can6rst            RW                  0b0                 
+  // 3:3                 can6rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_can6rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_can6rst = wdata[3:3];
@@ -6649,7 +6825,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 mpptrst        RW                  0b0                 
+  // 2:2                 mpptrst         RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_mpptrst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_mpptrst = wdata[2:2];
@@ -6666,7 +6842,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 gpio4rst           RW                  0b0                 
+  // 1:1                 gpio4rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_gpio4rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_gpio4rst = wdata[1:1];
@@ -6683,7 +6859,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 0:0                 gpio5rst           RW                  0b0                 
+  // 0:0                 gpio5rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb2rstr_gpio5rst_en  = (|wr_req & rcc_apb2rstr_sel);
   assign nxt_rcc_apb2rstr_gpio5rst = wdata[0:0];
@@ -6701,42 +6877,130 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_apb3rstr                            0x88                                    
+  // rcc_apb3rstr                            0xc                                     
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlrst          RW                  0b0                 
+  // 14:14               spl2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtrst            RW                  0b0                 
+  // 13:13               spl1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1rst            RW                  0b0                 
+  // 12:12               mailbox2rst         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2rst            RW                  0b0                 
+  // 11:11               mailbox1rst         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 adccrst            RW                  0b0                 
+  // 10:10               sysctlrst           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 gpio6rst           RW                  0b0                 
+  // 9:9                 wwdtrst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 gpio7rst           RW                  0b0                 
+  // 8:8                 tim1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 gpio8rst           RW                  0b0                 
+  // 7:7                 tim2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 iwdtrst            RW                  0b0                 
+  // 6:6                 gpio6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 0:0                 rtcrst             RW                  0b0                 
+  // 5:5                 gpio7rst            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 4:4                 gpio8rst            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 3:3                 iwdtrst             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 rtcrst              RW                  0b0                 
   // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_apb3rstr read data
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_read = {
-    {20{1'b0}}, cur_rcc_apb3rstr_sysctlrst, cur_rcc_apb3rstr_wwdtrst, cur_rcc_apb3rstr_tim1rst, cur_rcc_apb3rstr_tim2rst, cur_rcc_apb3rstr_adccrst, cur_rcc_apb3rstr_gpio6rst, cur_rcc_apb3rstr_gpio7rst, cur_rcc_apb3rstr_gpio8rst, cur_rcc_apb3rstr_iwdtrst, {2{1'b0}}, cur_rcc_apb3rstr_rtcrst
+    {17{1'b0}},
+    cur_rcc_apb3rstr_spl2rst,
+    cur_rcc_apb3rstr_spl1rst,
+    cur_rcc_apb3rstr_mailbox2rst,
+    cur_rcc_apb3rstr_mailbox1rst,
+    cur_rcc_apb3rstr_sysctlrst,
+    cur_rcc_apb3rstr_wwdtrst,
+    cur_rcc_apb3rstr_tim1rst,
+    cur_rcc_apb3rstr_tim2rst,
+    cur_rcc_apb3rstr_gpio6rst,
+    cur_rcc_apb3rstr_gpio7rst,
+    cur_rcc_apb3rstr_gpio8rst,
+    cur_rcc_apb3rstr_iwdtrst,
+    {2{1'b0}},
+    cur_rcc_apb3rstr_rtcrst
   };
 
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlrst          RW                  0b0                 
+  // 14:14               spl2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_apb3rstr_sysctlrst_en = (|wr_req & rcc_apb3rstr_sel);
-  assign nxt_rcc_apb3rstr_sysctlrst = wdata[11:11];
-  assign sysctlrst = cur_rcc_apb3rstr_sysctlrst;
+  assign rcc_apb3rstr_spl2rst_en = (|wr_req & rcc_apb3rstr_sel);
+  assign nxt_rcc_apb3rstr_spl2rst = wdata[14:14];
+  assign spl2rst = cur_rcc_apb3rstr_spl2rst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3rstr_spl2rst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3rstr_spl2rst_en),
+      .din  (nxt_rcc_apb3rstr_spl2rst),
+      .dout (cur_rcc_apb3rstr_spl2rst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spl1rst             RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3rstr_spl1rst_en  = (|wr_req & rcc_apb3rstr_sel);
+  assign nxt_rcc_apb3rstr_spl1rst = wdata[13:13];
+  assign spl1rst                  = cur_rcc_apb3rstr_spl1rst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3rstr_spl1rst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3rstr_spl1rst_en),
+      .din  (nxt_rcc_apb3rstr_spl1rst),
+      .dout (cur_rcc_apb3rstr_spl1rst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               mailbox2rst         RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3rstr_mailbox2rst_en  = (|wr_req & rcc_apb3rstr_sel);
+  assign nxt_rcc_apb3rstr_mailbox2rst = wdata[12:12];
+  assign mailbox2rst                  = cur_rcc_apb3rstr_mailbox2rst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3rstr_mailbox2rst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3rstr_mailbox2rst_en),
+      .din  (nxt_rcc_apb3rstr_mailbox2rst),
+      .dout (cur_rcc_apb3rstr_mailbox2rst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               mailbox1rst         RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3rstr_mailbox1rst_en  = (|wr_req & rcc_apb3rstr_sel);
+  assign nxt_rcc_apb3rstr_mailbox1rst = wdata[11:11];
+  assign mailbox1rst                  = cur_rcc_apb3rstr_mailbox1rst;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3rstr_mailbox1rst (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3rstr_mailbox1rst_en),
+      .din  (nxt_rcc_apb3rstr_mailbox1rst),
+      .dout (cur_rcc_apb3rstr_mailbox1rst)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               sysctlrst           RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3rstr_sysctlrst_en  = (|wr_req & rcc_apb3rstr_sel);
+  assign nxt_rcc_apb3rstr_sysctlrst = wdata[10:10];
+  assign sysctlrst                  = cur_rcc_apb3rstr_sysctlrst;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -6749,10 +7013,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtrst            RW                  0b0                 
+  // 9:9                 wwdtrst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_wwdtrst_en  = (|wr_req & rcc_apb3rstr_sel);
-  assign nxt_rcc_apb3rstr_wwdtrst = wdata[10:10];
+  assign nxt_rcc_apb3rstr_wwdtrst = wdata[9:9];
   assign wwdtrst                  = cur_rcc_apb3rstr_wwdtrst;
   BB_dfflr #(
       .DW     (1),
@@ -6766,10 +7030,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1rst            RW                  0b0                 
+  // 8:8                 tim1rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_tim1rst_en  = (|wr_req & rcc_apb3rstr_sel);
-  assign nxt_rcc_apb3rstr_tim1rst = wdata[9:9];
+  assign nxt_rcc_apb3rstr_tim1rst = wdata[8:8];
   assign tim1rst                  = cur_rcc_apb3rstr_tim1rst;
   BB_dfflr #(
       .DW     (1),
@@ -6783,10 +7047,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2rst            RW                  0b0                 
+  // 7:7                 tim2rst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_tim2rst_en  = (|wr_req & rcc_apb3rstr_sel);
-  assign nxt_rcc_apb3rstr_tim2rst = wdata[8:8];
+  assign nxt_rcc_apb3rstr_tim2rst = wdata[7:7];
   assign tim2rst                  = cur_rcc_apb3rstr_tim2rst;
   BB_dfflr #(
       .DW     (1),
@@ -6800,24 +7064,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 adccrst            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_apb3rstr_adccrst_en  = (|wr_req & rcc_apb3rstr_sel);
-  assign nxt_rcc_apb3rstr_adccrst = wdata[7:7];
-  assign adccrst                  = cur_rcc_apb3rstr_adccrst;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_apb3rstr_adccrst (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_apb3rstr_adccrst_en),
-      .din  (nxt_rcc_apb3rstr_adccrst),
-      .dout (cur_rcc_apb3rstr_adccrst)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 6:6                 gpio6rst           RW                  0b0                 
+  // 6:6                 gpio6rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_gpio6rst_en  = (|wr_req & rcc_apb3rstr_sel);
   assign nxt_rcc_apb3rstr_gpio6rst = wdata[6:6];
@@ -6834,7 +7081,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 gpio7rst           RW                  0b0                 
+  // 5:5                 gpio7rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_gpio7rst_en  = (|wr_req & rcc_apb3rstr_sel);
   assign nxt_rcc_apb3rstr_gpio7rst = wdata[5:5];
@@ -6851,7 +7098,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 4:4                 gpio8rst           RW                  0b0                 
+  // 4:4                 gpio8rst            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_gpio8rst_en  = (|wr_req & rcc_apb3rstr_sel);
   assign nxt_rcc_apb3rstr_gpio8rst = wdata[4:4];
@@ -6868,7 +7115,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 iwdtrst            RW                  0b0                 
+  // 3:3                 iwdtrst             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_iwdtrst_en  = (|wr_req & rcc_apb3rstr_sel);
   assign nxt_rcc_apb3rstr_iwdtrst = wdata[3:3];
@@ -6885,7 +7132,7 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 0:0                 rtcrst             RW                  0b0                 
+  // 0:0                 rtcrst              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3rstr_rtcrst_en  = (|wr_req & rcc_apb3rstr_sel);
   assign nxt_rcc_apb3rstr_rtcrst = wdata[0:0];
@@ -6900,7 +7147,6 @@ module rcc_vcore_reg #(
       .din  (nxt_rcc_apb3rstr_rtcrst),
       .dout (cur_rcc_apb3rstr_rtcrst)
   );
-
 
   // --------------------------------------------------------------------------------
   // rcc_gcr                                 0x8c                                    
@@ -6952,43 +7198,47 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_ahb1d3amr                           0xa8                                    
+  // rcc_ahb1d3amr                           0x10                                    
   // --------------------------------------------------------------------------------
-  // 18:18               romamen             RW                  0b1                 
+  // 20:20               romamen             RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsamen            RW                  0b1                 
+  // 19:19               smc2amen            RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 16:16               smsamen             RW                  0b0                 
+  // 18:18               smc1amen            RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashamen          RW                  0b0                 
+  // 17:17               xflashamen          RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 14:14               fftamen             RW                  0b0                 
+  // 16:16               fftamen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               npuamen             RW                  0b0                 
+  // 15:15               npuamen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1amen            RW                  0b0                 
+  // 14:14               dma1amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2amen            RW                  0b0                 
+  // 13:13               dma2amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschamen          RW                  0b0                 
+  // 12:12               dmaschamen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1amen           RW                  0b0                 
+  // 11:11               qspi1amen           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2amen           RW                  0b0                 
+  // 10:10               adcspi3amen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3amen           RW                  0b0                 
+  // 9:9                 adcspi2amen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4amen           RW                  0b0                 
+  // 8:8                 adcspi1amen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspiamen            RW                  0b0                 
+  // 7:7                 mspiamen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 mspiamen            RW                  0b0                 
+  // 6:6                 hacif_l1amen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1amen        RW                  0b0                 
+  // 5:5                 hacif_f1amen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1amen        RW                  0b0                 
+  // 4:4                 cspi_lamen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 macamen             RW                  0b1                 
+  // 3:3                 cspi_famen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2amen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1amen            RW                  0b1                 
   // --------------------------------------------------------------------------------
   // 0:0                 lzamen              RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -6997,10 +7247,10 @@ module rcc_vcore_reg #(
   // rcc_ahb1d3amr read data
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_read = {
-    {13{1'b0}},
+    {11{1'b0}},
     cur_rcc_ahb1d3amr_romamen,
-    cur_rcc_ahb1d3amr_tsmsamen,
-    cur_rcc_ahb1d3amr_smsamen,
+    cur_rcc_ahb1d3amr_smc2amen,
+    cur_rcc_ahb1d3amr_smc1amen,
     cur_rcc_ahb1d3amr_xflashamen,
     cur_rcc_ahb1d3amr_fftamen,
     cur_rcc_ahb1d3amr_npuamen,
@@ -7008,22 +7258,24 @@ module rcc_vcore_reg #(
     cur_rcc_ahb1d3amr_dma2amen,
     cur_rcc_ahb1d3amr_dmaschamen,
     cur_rcc_ahb1d3amr_qspi1amen,
-    cur_rcc_ahb1d3amr_qspi2amen,
-    cur_rcc_ahb1d3amr_qspi3amen,
-    cur_rcc_ahb1d3amr_qspi4amen,
-    cur_rcc_ahb1d3amr_xspiamen,
+    cur_rcc_ahb1d3amr_adcspi3amen,
+    cur_rcc_ahb1d3amr_adcspi2amen,
+    cur_rcc_ahb1d3amr_adcspi1amen,
     cur_rcc_ahb1d3amr_mspiamen,
     cur_rcc_ahb1d3amr_hacif_l1amen,
     cur_rcc_ahb1d3amr_hacif_f1amen,
-    cur_rcc_ahb1d3amr_macamen,
+    cur_rcc_ahb1d3amr_cspi_lamen,
+    cur_rcc_ahb1d3amr_cspi_famen,
+    cur_rcc_ahb1d3amr_mac2amen,
+    cur_rcc_ahb1d3amr_mac1amen,
     cur_rcc_ahb1d3amr_lzamen
   };
 
   // --------------------------------------------------------------------------------
-  // 18:18               romamen             RW                  0b1                 
+  // 20:20               romamen             RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_romamen_en = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_romamen = wdata[18:18];
+  assign nxt_rcc_ahb1d3amr_romamen = wdata[20:20];
   assign rcc_rom_amen = cur_rcc_ahb1d3amr_romamen;
   BB_dfflr #(
       .DW     (1),
@@ -7037,48 +7289,48 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsamen            RW                  0b1                 
+  // 19:19               smc2amen            RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_tsmsamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_tsmsamen = wdata[17:17];
-  assign rcc_tsms_amen              = cur_rcc_ahb1d3amr_tsmsamen;
+  assign rcc_ahb1d3amr_smc2amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_smc2amen = wdata[19:19];
+  assign rcc_smc2_amen              = cur_rcc_ahb1d3amr_smc2amen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_ahb1d3amr_tsmsamen (
+  ) U_rcc_ahb1d3amr_smc2amen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_tsmsamen_en),
-      .din  (nxt_rcc_ahb1d3amr_tsmsamen),
-      .dout (cur_rcc_ahb1d3amr_tsmsamen)
+      .en   (rcc_ahb1d3amr_smc2amen_en),
+      .din  (nxt_rcc_ahb1d3amr_smc2amen),
+      .dout (cur_rcc_ahb1d3amr_smc2amen)
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               smsamen             RW                  0b0                 
+  // 18:18               smc1amen            RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_smsamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_smsamen = wdata[16:16];
-  assign rcc_sms_amen              = cur_rcc_ahb1d3amr_smsamen;
+  assign rcc_ahb1d3amr_smc1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_smc1amen = wdata[18:18];
+  assign rcc_smc1_amen              = cur_rcc_ahb1d3amr_smc1amen;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_ahb1d3amr_smsamen (
+      .RST_VAL('h1)
+  ) U_rcc_ahb1d3amr_smc1amen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_smsamen_en),
-      .din  (nxt_rcc_ahb1d3amr_smsamen),
-      .dout (cur_rcc_ahb1d3amr_smsamen)
+      .en   (rcc_ahb1d3amr_smc1amen_en),
+      .din  (nxt_rcc_ahb1d3amr_smc1amen),
+      .dout (cur_rcc_ahb1d3amr_smc1amen)
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashamen          RW                  0b0                 
+  // 17:17               xflashamen          RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_xflashamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_xflashamen = wdata[15:15];
+  assign nxt_rcc_ahb1d3amr_xflashamen = wdata[17:17];
   assign rcc_xflash_amen              = cur_rcc_ahb1d3amr_xflashamen;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
+      .RST_VAL('h1)
   ) U_rcc_ahb1d3amr_xflashamen (
       .clk  (clk),
       .rst_n(rst_n),
@@ -7088,10 +7340,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               fftamen             RW                  0b0                 
+  // 16:16               fftamen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_fftamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_fftamen = wdata[14:14];
+  assign nxt_rcc_ahb1d3amr_fftamen = wdata[16:16];
   assign rcc_fft_amen              = cur_rcc_ahb1d3amr_fftamen;
   BB_dfflr #(
       .DW     (1),
@@ -7105,10 +7357,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               npuamen             RW                  0b0                 
+  // 15:15               npuamen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_npuamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_npuamen = wdata[13:13];
+  assign nxt_rcc_ahb1d3amr_npuamen = wdata[15:15];
   assign rcc_npu_amen              = cur_rcc_ahb1d3amr_npuamen;
   BB_dfflr #(
       .DW     (1),
@@ -7122,10 +7374,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1amen            RW                  0b0                 
+  // 14:14               dma1amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_dma1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_dma1amen = wdata[12:12];
+  assign nxt_rcc_ahb1d3amr_dma1amen = wdata[14:14];
   assign rcc_dma1_amen              = cur_rcc_ahb1d3amr_dma1amen;
   BB_dfflr #(
       .DW     (1),
@@ -7139,10 +7391,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2amen            RW                  0b0                 
+  // 13:13               dma2amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_dma2amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_dma2amen = wdata[11:11];
+  assign nxt_rcc_ahb1d3amr_dma2amen = wdata[13:13];
   assign rcc_dma2_amen              = cur_rcc_ahb1d3amr_dma2amen;
   BB_dfflr #(
       .DW     (1),
@@ -7156,10 +7408,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschamen          RW                  0b0                 
+  // 12:12               dmaschamen          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_dmaschamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_dmaschamen = wdata[10:10];
+  assign nxt_rcc_ahb1d3amr_dmaschamen = wdata[12:12];
   assign rcc_dmasch_amen              = cur_rcc_ahb1d3amr_dmaschamen;
   BB_dfflr #(
       .DW     (1),
@@ -7173,10 +7425,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1amen           RW                  0b0                 
+  // 11:11               qspi1amen           RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_qspi1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_qspi1amen = wdata[9:9];
+  assign nxt_rcc_ahb1d3amr_qspi1amen = wdata[11:11];
   assign rcc_qspi1_amen              = cur_rcc_ahb1d3amr_qspi1amen;
   BB_dfflr #(
       .DW     (1),
@@ -7190,78 +7442,61 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2amen           RW                  0b0                 
+  // 10:10               adcspi3amen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_qspi2amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_qspi2amen = wdata[8:8];
-  assign rcc_qspi2_amen              = cur_rcc_ahb1d3amr_qspi2amen;
+  assign rcc_ahb1d3amr_adcspi3amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_adcspi3amen = wdata[10:10];
+  assign rcc_adcspi3_amen              = cur_rcc_ahb1d3amr_adcspi3amen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1d3amr_qspi2amen (
+  ) U_rcc_ahb1d3amr_adcspi3amen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_qspi2amen_en),
-      .din  (nxt_rcc_ahb1d3amr_qspi2amen),
-      .dout (cur_rcc_ahb1d3amr_qspi2amen)
+      .en   (rcc_ahb1d3amr_adcspi3amen_en),
+      .din  (nxt_rcc_ahb1d3amr_adcspi3amen),
+      .dout (cur_rcc_ahb1d3amr_adcspi3amen)
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3amen           RW                  0b0                 
+  // 9:9                 adcspi2amen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_qspi3amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_qspi3amen = wdata[7:7];
-  assign rcc_qspi3_amen              = cur_rcc_ahb1d3amr_qspi3amen;
+  assign rcc_ahb1d3amr_adcspi2amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_adcspi2amen = wdata[9:9];
+  assign rcc_adcspi2_amen              = cur_rcc_ahb1d3amr_adcspi2amen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1d3amr_qspi3amen (
+  ) U_rcc_ahb1d3amr_adcspi2amen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_qspi3amen_en),
-      .din  (nxt_rcc_ahb1d3amr_qspi3amen),
-      .dout (cur_rcc_ahb1d3amr_qspi3amen)
+      .en   (rcc_ahb1d3amr_adcspi2amen_en),
+      .din  (nxt_rcc_ahb1d3amr_adcspi2amen),
+      .dout (cur_rcc_ahb1d3amr_adcspi2amen)
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4amen           RW                  0b0                 
+  // 8:8                 adcspi1amen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_qspi4amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_qspi4amen = wdata[6:6];
-  assign rcc_qspi4_amen              = cur_rcc_ahb1d3amr_qspi4amen;
+  assign rcc_ahb1d3amr_adcspi1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_adcspi1amen = wdata[8:8];
+  assign rcc_adcspi1_amen              = cur_rcc_ahb1d3amr_adcspi1amen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_ahb1d3amr_qspi4amen (
+  ) U_rcc_ahb1d3amr_adcspi1amen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_qspi4amen_en),
-      .din  (nxt_rcc_ahb1d3amr_qspi4amen),
-      .dout (cur_rcc_ahb1d3amr_qspi4amen)
+      .en   (rcc_ahb1d3amr_adcspi1amen_en),
+      .din  (nxt_rcc_ahb1d3amr_adcspi1amen),
+      .dout (cur_rcc_ahb1d3amr_adcspi1amen)
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspiamen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_xspiamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_xspiamen = wdata[5:5];
-  assign rcc_xspi_amen              = cur_rcc_ahb1d3amr_xspiamen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_ahb1d3amr_xspiamen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_xspiamen_en),
-      .din  (nxt_rcc_ahb1d3amr_xspiamen),
-      .dout (cur_rcc_ahb1d3amr_xspiamen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 4:4                 mspiamen            RW                  0b0                 
+  // 7:7                 mspiamen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_mspiamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_mspiamen = wdata[4:4];
+  assign nxt_rcc_ahb1d3amr_mspiamen = wdata[7:7];
   assign rcc_mspi_amen              = cur_rcc_ahb1d3amr_mspiamen;
   BB_dfflr #(
       .DW     (1),
@@ -7275,10 +7510,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1amen        RW                  0b0                 
+  // 6:6                 hacif_l1amen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_hacif_l1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_hacif_l1amen = wdata[3:3];
+  assign nxt_rcc_ahb1d3amr_hacif_l1amen = wdata[6:6];
   assign rcc_hacif_l1_amen              = cur_rcc_ahb1d3amr_hacif_l1amen;
   BB_dfflr #(
       .DW     (1),
@@ -7292,10 +7527,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1amen        RW                  0b0                 
+  // 5:5                 hacif_f1amen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_ahb1d3amr_hacif_f1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_hacif_f1amen = wdata[2:2];
+  assign nxt_rcc_ahb1d3amr_hacif_f1amen = wdata[5:5];
   assign rcc_hacif_f1_amen              = cur_rcc_ahb1d3amr_hacif_f1amen;
   BB_dfflr #(
       .DW     (1),
@@ -7309,20 +7544,71 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 macamen             RW                  0b1                 
+  // 4:4                 cspi_lamen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_ahb1d3amr_macamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
-  assign nxt_rcc_ahb1d3amr_macamen = wdata[1:1];
-  assign rcc_mac_amen              = cur_rcc_ahb1d3amr_macamen;
+  assign rcc_ahb1d3amr_cspi_lamen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_cspi_lamen = wdata[4:4];
+  assign rcc_cspi_l_amen              = cur_rcc_ahb1d3amr_cspi_lamen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_ahb1d3amr_cspi_lamen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_ahb1d3amr_cspi_lamen_en),
+      .din  (nxt_rcc_ahb1d3amr_cspi_lamen),
+      .dout (cur_rcc_ahb1d3amr_cspi_lamen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 cspi_famen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_ahb1d3amr_cspi_famen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_cspi_famen = wdata[3:3];
+  assign rcc_cspi_f_amen              = cur_rcc_ahb1d3amr_cspi_famen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_ahb1d3amr_cspi_famen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_ahb1d3amr_cspi_famen_en),
+      .din  (nxt_rcc_ahb1d3amr_cspi_famen),
+      .dout (cur_rcc_ahb1d3amr_cspi_famen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2amen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_ahb1d3amr_mac2amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_mac2amen = wdata[2:2];
+  assign rcc_mac2_amen              = cur_rcc_ahb1d3amr_mac2amen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_ahb1d3amr_mac2amen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_ahb1d3amr_mac2amen_en),
+      .din  (nxt_rcc_ahb1d3amr_mac2amen),
+      .dout (cur_rcc_ahb1d3amr_mac2amen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1amen            RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_ahb1d3amr_mac1amen_en  = (|wr_req & rcc_ahb1d3amr_sel);
+  assign nxt_rcc_ahb1d3amr_mac1amen = wdata[1:1];
+  assign rcc_mac1_amen              = cur_rcc_ahb1d3amr_mac1amen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_ahb1d3amr_macamen (
+  ) U_rcc_ahb1d3amr_mac1amen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_ahb1d3amr_macamen_en),
-      .din  (nxt_rcc_ahb1d3amr_macamen),
-      .dout (cur_rcc_ahb1d3amr_macamen)
+      .en   (rcc_ahb1d3amr_mac1amen_en),
+      .din  (nxt_rcc_ahb1d3amr_mac1amen),
+      .dout (cur_rcc_ahb1d3amr_mac1amen)
   );
 
   // --------------------------------------------------------------------------------
@@ -7344,7 +7630,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_apb1d3amr                           0xac                                    
+  // rcc_apb1d3amr                           0x14                                    
   // --------------------------------------------------------------------------------
   // 17:17               gtim1amen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -7716,7 +8002,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_apb2d3amr                           0xb0                                    
+  // rcc_apb2d3amr                           0x18                                    
   // --------------------------------------------------------------------------------
   // 15:15               gtim5amen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -8048,17 +8334,23 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_apb3d3amr                           0xb4                                    
+  // rcc_apb3d3amr                           0x1c                                    
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlamen          RW                  0b0                 
+  // 14:14               spl2amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtamen            RW                  0b0                 
+  // 13:13               spl1amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1amen            RW                  0b0                 
+  // 12:12               mailbox2amen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2amen            RW                  0b0                 
+  // 11:11               mailbox1amen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 adccamen            RW                  0b0                 
+  // 10:10               sysctlamen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 wwdtamen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim1amen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 tim2amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 6:6                 gpio6amen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -8075,12 +8367,15 @@ module rcc_vcore_reg #(
   // rcc_apb3d3amr read data
   // --------------------------------------------------------------------------------
   assign rcc_apb3d3amr_read = {
-    {20{1'b0}},
+    {17{1'b0}},
+    cur_rcc_apb3d3amr_spl2amen,
+    cur_rcc_apb3d3amr_spl1amen,
+    cur_rcc_apb3d3amr_mailbox2amen,
+    cur_rcc_apb3d3amr_mailbox1amen,
     cur_rcc_apb3d3amr_sysctlamen,
     cur_rcc_apb3d3amr_wwdtamen,
     cur_rcc_apb3d3amr_tim1amen,
     cur_rcc_apb3d3amr_tim2amen,
-    cur_rcc_apb3d3amr_adccamen,
     cur_rcc_apb3d3amr_gpio6amen,
     cur_rcc_apb3d3amr_gpio7amen,
     cur_rcc_apb3d3amr_gpio8amen,
@@ -8090,11 +8385,79 @@ module rcc_vcore_reg #(
   };
 
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlamen          RW                  0b0                 
+  // 14:14               spl2amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_apb3d3amr_sysctlamen_en = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_sysctlamen = wdata[11:11];
-  assign rcc_sysctl_amen = cur_rcc_apb3d3amr_sysctlamen;
+  assign rcc_apb3d3amr_spl2amen_en = (|wr_req & rcc_apb3d3amr_sel);
+  assign nxt_rcc_apb3d3amr_spl2amen = wdata[14:14];
+  assign rcc_spl2_amen = cur_rcc_apb3d3amr_spl2amen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3d3amr_spl2amen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3d3amr_spl2amen_en),
+      .din  (nxt_rcc_apb3d3amr_spl2amen),
+      .dout (cur_rcc_apb3d3amr_spl2amen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spl1amen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3d3amr_spl1amen_en  = (|wr_req & rcc_apb3d3amr_sel);
+  assign nxt_rcc_apb3d3amr_spl1amen = wdata[13:13];
+  assign rcc_spl1_amen              = cur_rcc_apb3d3amr_spl1amen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3d3amr_spl1amen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3d3amr_spl1amen_en),
+      .din  (nxt_rcc_apb3d3amr_spl1amen),
+      .dout (cur_rcc_apb3d3amr_spl1amen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               mailbox2amen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3d3amr_mailbox2amen_en  = (|wr_req & rcc_apb3d3amr_sel);
+  assign nxt_rcc_apb3d3amr_mailbox2amen = wdata[12:12];
+  assign rcc_mailbox2_amen              = cur_rcc_apb3d3amr_mailbox2amen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3d3amr_mailbox2amen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3d3amr_mailbox2amen_en),
+      .din  (nxt_rcc_apb3d3amr_mailbox2amen),
+      .dout (cur_rcc_apb3d3amr_mailbox2amen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               mailbox1amen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3d3amr_mailbox1amen_en  = (|wr_req & rcc_apb3d3amr_sel);
+  assign nxt_rcc_apb3d3amr_mailbox1amen = wdata[11:11];
+  assign rcc_mailbox1_amen              = cur_rcc_apb3d3amr_mailbox1amen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_apb3d3amr_mailbox1amen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_apb3d3amr_mailbox1amen_en),
+      .din  (nxt_rcc_apb3d3amr_mailbox1amen),
+      .dout (cur_rcc_apb3d3amr_mailbox1amen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               sysctlamen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_apb3d3amr_sysctlamen_en  = (|wr_req & rcc_apb3d3amr_sel);
+  assign nxt_rcc_apb3d3amr_sysctlamen = wdata[10:10];
+  assign rcc_sysctl_amen              = cur_rcc_apb3d3amr_sysctlamen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -8107,10 +8470,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtamen            RW                  0b0                 
+  // 9:9                 wwdtamen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3d3amr_wwdtamen_en  = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_wwdtamen = wdata[10:10];
+  assign nxt_rcc_apb3d3amr_wwdtamen = wdata[9:9];
   assign rcc_wwdt_amen              = cur_rcc_apb3d3amr_wwdtamen;
   BB_dfflr #(
       .DW     (1),
@@ -8124,10 +8487,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1amen            RW                  0b0                 
+  // 8:8                 tim1amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3d3amr_tim1amen_en  = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_tim1amen = wdata[9:9];
+  assign nxt_rcc_apb3d3amr_tim1amen = wdata[8:8];
   assign rcc_tim1_amen              = cur_rcc_apb3d3amr_tim1amen;
   BB_dfflr #(
       .DW     (1),
@@ -8141,10 +8504,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2amen            RW                  0b0                 
+  // 7:7                 tim2amen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_apb3d3amr_tim2amen_en  = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_tim2amen = wdata[8:8];
+  assign nxt_rcc_apb3d3amr_tim2amen = wdata[7:7];
   assign rcc_tim2_amen              = cur_rcc_apb3d3amr_tim2amen;
   BB_dfflr #(
       .DW     (1),
@@ -8155,23 +8518,6 @@ module rcc_vcore_reg #(
       .en   (rcc_apb3d3amr_tim2amen_en),
       .din  (nxt_rcc_apb3d3amr_tim2amen),
       .dout (cur_rcc_apb3d3amr_tim2amen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 7:7                 adccamen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_apb3d3amr_adccamen_en  = (|wr_req & rcc_apb3d3amr_sel);
-  assign nxt_rcc_apb3d3amr_adccamen = wdata[7:7];
-  assign rcc_adcc_amen              = cur_rcc_apb3d3amr_adccamen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_apb3d3amr_adccamen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_apb3d3amr_adccamen_en),
-      .din  (nxt_rcc_apb3d3amr_adccamen),
-      .dout (cur_rcc_apb3d3amr_adccamen)
   );
 
   // --------------------------------------------------------------------------------
@@ -8260,47 +8606,48 @@ module rcc_vcore_reg #(
   );
 
 
-
-
-
   // --------------------------------------------------------------------------------
-  // rcc_c1_ahb1enr                          0xbc                                    
+  // rcc_c1_ahb1enr                          0x20                                    
   // --------------------------------------------------------------------------------
-  // 18:18               romen               RW                  0b1                 
+  // 20:20               romen               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsen              RW                  0b1                 
+  // 19:19               smc2en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 16:16               smsen               RW                  0b0                 
+  // 18:18               smc1en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashen            RW                  0b0                 
+  // 17:17               xflashen            RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 14:14               fften               RW                  0b0                 
+  // 16:16               fften               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               npuen               RW                  0b0                 
+  // 15:15               npuen               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1en              RW                  0b0                 
+  // 14:14               dma1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2en              RW                  0b0                 
+  // 13:13               dma2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschen            RW                  0b0                 
+  // 12:12               dmaschen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1en             RW                  0b0                 
+  // 11:11               qspi1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2en             RW                  0b0                 
+  // 10:10               adcspi3en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3en             RW                  0b0                 
+  // 9:9                 adcspi2en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4en             RW                  0b0                 
+  // 8:8                 adcspi1en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspien              RW                  0b0                 
+  // 7:7                 mspien              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 mspien              RW                  0b0                 
+  // 6:6                 hacif_l1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1en          RW                  0b0                 
+  // 5:5                 hacif_f1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1en          RW                  0b0                 
+  // 4:4                 cspi_len            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 macen               RW                  0b1                 
+  // 3:3                 cspi_fen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 0:0                 lzen                RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -8309,10 +8656,10 @@ module rcc_vcore_reg #(
   // rcc_c1_ahb1enr read data
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_read = {
-    {13{1'b0}},
+    {11{1'b0}},
     cur_rcc_c1_ahb1enr_romen,
-    cur_rcc_c1_ahb1enr_tsmsen,
-    cur_rcc_c1_ahb1enr_smsen,
+    cur_rcc_c1_ahb1enr_smc2en,
+    cur_rcc_c1_ahb1enr_smc1en,
     cur_rcc_c1_ahb1enr_xflashen,
     cur_rcc_c1_ahb1enr_fften,
     cur_rcc_c1_ahb1enr_npuen,
@@ -8320,22 +8667,24 @@ module rcc_vcore_reg #(
     cur_rcc_c1_ahb1enr_dma2en,
     cur_rcc_c1_ahb1enr_dmaschen,
     cur_rcc_c1_ahb1enr_qspi1en,
-    cur_rcc_c1_ahb1enr_qspi2en,
-    cur_rcc_c1_ahb1enr_qspi3en,
-    cur_rcc_c1_ahb1enr_qspi4en,
-    cur_rcc_c1_ahb1enr_xspien,
+    cur_rcc_c1_ahb1enr_adcspi3en,
+    cur_rcc_c1_ahb1enr_adcspi2en,
+    cur_rcc_c1_ahb1enr_adcspi1en,
     cur_rcc_c1_ahb1enr_mspien,
     cur_rcc_c1_ahb1enr_hacif_l1en,
     cur_rcc_c1_ahb1enr_hacif_f1en,
-    cur_rcc_c1_ahb1enr_macen,
+    cur_rcc_c1_ahb1enr_cspi_len,
+    cur_rcc_c1_ahb1enr_cspi_fen,
+    cur_rcc_c1_ahb1enr_mac2en,
+    cur_rcc_c1_ahb1enr_mac1en,
     cur_rcc_c1_ahb1enr_lzen
   };
 
   // --------------------------------------------------------------------------------
-  // 18:18               romen               RW                  0b1                 
+  // 20:20               romen               RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_romen_en = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_romen = wdata[18:18];
+  assign nxt_rcc_c1_ahb1enr_romen = wdata[20:20];
   assign rcc_c1_rom_en = cur_rcc_c1_ahb1enr_romen;
   BB_dfflr #(
       .DW     (1),
@@ -8349,48 +8698,48 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsen              RW                  0b1                 
+  // 19:19               smc2en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_tsmsen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_tsmsen = wdata[17:17];
-  assign rcc_c1_tsms_en            = cur_rcc_c1_ahb1enr_tsmsen;
+  assign rcc_c1_ahb1enr_smc2en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_smc2en = wdata[19:19];
+  assign rcc_c1_smc2_en            = cur_rcc_c1_ahb1enr_smc2en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_c1_ahb1enr_tsmsen (
+  ) U_rcc_c1_ahb1enr_smc2en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_tsmsen_en),
-      .din  (nxt_rcc_c1_ahb1enr_tsmsen),
-      .dout (cur_rcc_c1_ahb1enr_tsmsen)
+      .en   (rcc_c1_ahb1enr_smc2en_en),
+      .din  (nxt_rcc_c1_ahb1enr_smc2en),
+      .dout (cur_rcc_c1_ahb1enr_smc2en)
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               smsen               RW                  0b0                 
+  // 18:18               smc1en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_smsen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_smsen = wdata[16:16];
-  assign rcc_c1_sms_en            = cur_rcc_c1_ahb1enr_smsen;
+  assign rcc_c1_ahb1enr_smc1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_smc1en = wdata[18:18];
+  assign rcc_c1_smc1_en            = cur_rcc_c1_ahb1enr_smc1en;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_ahb1enr_smsen (
+      .RST_VAL('h1)
+  ) U_rcc_c1_ahb1enr_smc1en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_smsen_en),
-      .din  (nxt_rcc_c1_ahb1enr_smsen),
-      .dout (cur_rcc_c1_ahb1enr_smsen)
+      .en   (rcc_c1_ahb1enr_smc1en_en),
+      .din  (nxt_rcc_c1_ahb1enr_smc1en),
+      .dout (cur_rcc_c1_ahb1enr_smc1en)
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashen            RW                  0b0                 
+  // 17:17               xflashen            RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_xflashen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_xflashen = wdata[15:15];
+  assign nxt_rcc_c1_ahb1enr_xflashen = wdata[17:17];
   assign rcc_c1_xflash_en            = cur_rcc_c1_ahb1enr_xflashen;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
+      .RST_VAL('h1)
   ) U_rcc_c1_ahb1enr_xflashen (
       .clk  (clk),
       .rst_n(rst_n),
@@ -8400,10 +8749,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               fften               RW                  0b0                 
+  // 16:16               fften               RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_fften_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_fften = wdata[14:14];
+  assign nxt_rcc_c1_ahb1enr_fften = wdata[16:16];
   assign rcc_c1_fft_en            = cur_rcc_c1_ahb1enr_fften;
   BB_dfflr #(
       .DW     (1),
@@ -8417,10 +8766,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               npuen               RW                  0b0                 
+  // 15:15               npuen               RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_npuen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_npuen = wdata[13:13];
+  assign nxt_rcc_c1_ahb1enr_npuen = wdata[15:15];
   assign rcc_c1_npu_en            = cur_rcc_c1_ahb1enr_npuen;
   BB_dfflr #(
       .DW     (1),
@@ -8434,10 +8783,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1en              RW                  0b0                 
+  // 14:14               dma1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_dma1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_dma1en = wdata[12:12];
+  assign nxt_rcc_c1_ahb1enr_dma1en = wdata[14:14];
   assign rcc_c1_dma1_en            = cur_rcc_c1_ahb1enr_dma1en;
   BB_dfflr #(
       .DW     (1),
@@ -8451,10 +8800,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2en              RW                  0b0                 
+  // 13:13               dma2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_dma2en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_dma2en = wdata[11:11];
+  assign nxt_rcc_c1_ahb1enr_dma2en = wdata[13:13];
   assign rcc_c1_dma2_en            = cur_rcc_c1_ahb1enr_dma2en;
   BB_dfflr #(
       .DW     (1),
@@ -8468,10 +8817,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschen            RW                  0b0                 
+  // 12:12               dmaschen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_dmaschen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_dmaschen = wdata[10:10];
+  assign nxt_rcc_c1_ahb1enr_dmaschen = wdata[12:12];
   assign rcc_c1_dmasch_en            = cur_rcc_c1_ahb1enr_dmaschen;
   BB_dfflr #(
       .DW     (1),
@@ -8485,10 +8834,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1en             RW                  0b0                 
+  // 11:11               qspi1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_qspi1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_qspi1en = wdata[9:9];
+  assign nxt_rcc_c1_ahb1enr_qspi1en = wdata[11:11];
   assign rcc_c1_qspi1_en            = cur_rcc_c1_ahb1enr_qspi1en;
   BB_dfflr #(
       .DW     (1),
@@ -8502,78 +8851,61 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2en             RW                  0b0                 
+  // 10:10               adcspi3en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_qspi2en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_qspi2en = wdata[8:8];
-  assign rcc_c1_qspi2_en            = cur_rcc_c1_ahb1enr_qspi2en;
+  assign rcc_c1_ahb1enr_adcspi3en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_adcspi3en = wdata[10:10];
+  assign rcc_c1_adcspi3_en            = cur_rcc_c1_ahb1enr_adcspi3en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1enr_qspi2en (
+  ) U_rcc_c1_ahb1enr_adcspi3en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_qspi2en_en),
-      .din  (nxt_rcc_c1_ahb1enr_qspi2en),
-      .dout (cur_rcc_c1_ahb1enr_qspi2en)
+      .en   (rcc_c1_ahb1enr_adcspi3en_en),
+      .din  (nxt_rcc_c1_ahb1enr_adcspi3en),
+      .dout (cur_rcc_c1_ahb1enr_adcspi3en)
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3en             RW                  0b0                 
+  // 9:9                 adcspi2en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_qspi3en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_qspi3en = wdata[7:7];
-  assign rcc_c1_qspi3_en            = cur_rcc_c1_ahb1enr_qspi3en;
+  assign rcc_c1_ahb1enr_adcspi2en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_adcspi2en = wdata[9:9];
+  assign rcc_c1_adcspi2_en            = cur_rcc_c1_ahb1enr_adcspi2en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1enr_qspi3en (
+  ) U_rcc_c1_ahb1enr_adcspi2en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_qspi3en_en),
-      .din  (nxt_rcc_c1_ahb1enr_qspi3en),
-      .dout (cur_rcc_c1_ahb1enr_qspi3en)
+      .en   (rcc_c1_ahb1enr_adcspi2en_en),
+      .din  (nxt_rcc_c1_ahb1enr_adcspi2en),
+      .dout (cur_rcc_c1_ahb1enr_adcspi2en)
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4en             RW                  0b0                 
+  // 8:8                 adcspi1en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_qspi4en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_qspi4en = wdata[6:6];
-  assign rcc_c1_qspi4_en            = cur_rcc_c1_ahb1enr_qspi4en;
+  assign rcc_c1_ahb1enr_adcspi1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_adcspi1en = wdata[8:8];
+  assign rcc_c1_adcspi1_en            = cur_rcc_c1_ahb1enr_adcspi1en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1enr_qspi4en (
+  ) U_rcc_c1_ahb1enr_adcspi1en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_qspi4en_en),
-      .din  (nxt_rcc_c1_ahb1enr_qspi4en),
-      .dout (cur_rcc_c1_ahb1enr_qspi4en)
+      .en   (rcc_c1_ahb1enr_adcspi1en_en),
+      .din  (nxt_rcc_c1_ahb1enr_adcspi1en),
+      .dout (cur_rcc_c1_ahb1enr_adcspi1en)
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspien              RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_xspien_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_xspien = wdata[5:5];
-  assign rcc_c1_xspi_en            = cur_rcc_c1_ahb1enr_xspien;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_ahb1enr_xspien (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_xspien_en),
-      .din  (nxt_rcc_c1_ahb1enr_xspien),
-      .dout (cur_rcc_c1_ahb1enr_xspien)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 4:4                 mspien              RW                  0b0                 
+  // 7:7                 mspien              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_mspien_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_mspien = wdata[4:4];
+  assign nxt_rcc_c1_ahb1enr_mspien = wdata[7:7];
   assign rcc_c1_mspi_en            = cur_rcc_c1_ahb1enr_mspien;
   BB_dfflr #(
       .DW     (1),
@@ -8587,10 +8919,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1en          RW                  0b0                 
+  // 6:6                 hacif_l1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_hacif_l1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_hacif_l1en = wdata[3:3];
+  assign nxt_rcc_c1_ahb1enr_hacif_l1en = wdata[6:6];
   assign rcc_c1_hacif_l1_en            = cur_rcc_c1_ahb1enr_hacif_l1en;
   BB_dfflr #(
       .DW     (1),
@@ -8604,10 +8936,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1en          RW                  0b0                 
+  // 5:5                 hacif_f1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1enr_hacif_f1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_hacif_f1en = wdata[2:2];
+  assign nxt_rcc_c1_ahb1enr_hacif_f1en = wdata[5:5];
   assign rcc_c1_hacif_f1_en            = cur_rcc_c1_ahb1enr_hacif_f1en;
   BB_dfflr #(
       .DW     (1),
@@ -8621,20 +8953,71 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 macen               RW                  0b1                 
+  // 4:4                 cspi_len            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1enr_macen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
-  assign nxt_rcc_c1_ahb1enr_macen = wdata[1:1];
-  assign rcc_c1_mac_en            = cur_rcc_c1_ahb1enr_macen;
+  assign rcc_c1_ahb1enr_cspi_len_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_cspi_len = wdata[4:4];
+  assign rcc_c1_cspi_l_en            = cur_rcc_c1_ahb1enr_cspi_len;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h1)
-  ) U_rcc_c1_ahb1enr_macen (
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1enr_cspi_len (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1enr_macen_en),
-      .din  (nxt_rcc_c1_ahb1enr_macen),
-      .dout (cur_rcc_c1_ahb1enr_macen)
+      .en   (rcc_c1_ahb1enr_cspi_len_en),
+      .din  (nxt_rcc_c1_ahb1enr_cspi_len),
+      .dout (cur_rcc_c1_ahb1enr_cspi_len)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 cspi_fen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_ahb1enr_cspi_fen_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_cspi_fen = wdata[3:3];
+  assign rcc_c1_cspi_f_en            = cur_rcc_c1_ahb1enr_cspi_fen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1enr_cspi_fen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_ahb1enr_cspi_fen_en),
+      .din  (nxt_rcc_c1_ahb1enr_cspi_fen),
+      .dout (cur_rcc_c1_ahb1enr_cspi_fen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_ahb1enr_mac2en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_mac2en = wdata[2:2];
+  assign rcc_c1_mac2_en            = cur_rcc_c1_ahb1enr_mac2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1enr_mac2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_ahb1enr_mac2en_en),
+      .din  (nxt_rcc_c1_ahb1enr_mac2en),
+      .dout (cur_rcc_c1_ahb1enr_mac2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_ahb1enr_mac1en_en  = (|wr_req & rcc_c1_ahb1enr_sel);
+  assign nxt_rcc_c1_ahb1enr_mac1en = wdata[1:1];
+  assign rcc_c1_mac1_en            = cur_rcc_c1_ahb1enr_mac1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1enr_mac1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_ahb1enr_mac1en_en),
+      .din  (nxt_rcc_c1_ahb1enr_mac1en),
+      .dout (cur_rcc_c1_ahb1enr_mac1en)
   );
 
   // --------------------------------------------------------------------------------
@@ -8656,7 +9039,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_apb1enr                          0xc0                                    
+  // rcc_c1_apb1enr                          0x24                                    
   // --------------------------------------------------------------------------------
   // 17:17               gtim1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -9028,7 +9411,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_apb2enr                          0xc4                                    
+  // rcc_c1_apb2enr                          0x28                                    
   // --------------------------------------------------------------------------------
   // 15:15               gtim5en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -9360,17 +9743,23 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_apb3enr                          0xc8                                    
+  // rcc_c1_apb3enr                          0x2c                                    
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlen            RW                  0b0                 
+  // 14:14               spl2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdten              RW                  0b0                 
+  // 13:13               spl1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1en              RW                  0b0                 
+  // 12:12               mailbox2en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2en              RW                  0b0                 
+  // 11:11               mailbox1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 adccen              RW                  0b0                 
+  // 10:10               sysctlen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 wwdten              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 tim2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 6:6                 gpio6en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -9378,17 +9767,105 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 gpio8en             RW                  0b0                 
   // --------------------------------------------------------------------------------
+  // 3:3                 iwdten              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 rtcen               RW                  0b0                 
+  // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_c1_apb3enr read data
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_read         = {{20{1'b0}}, cur_rcc_c1_apb3enr_sysctlen, cur_rcc_c1_apb3enr_wwdten, cur_rcc_c1_apb3enr_tim1en, cur_rcc_c1_apb3enr_tim2en, cur_rcc_c1_apb3enr_adccen, cur_rcc_c1_apb3enr_gpio6en, cur_rcc_c1_apb3enr_gpio7en, cur_rcc_c1_apb3enr_gpio8en, {4{1'b0}}};
+  assign rcc_c1_apb3enr_read = {
+    {17{1'b0}},
+    cur_rcc_c1_apb3enr_spl2en,
+    cur_rcc_c1_apb3enr_spl1en,
+    cur_rcc_c1_apb3enr_mailbox2en,
+    cur_rcc_c1_apb3enr_mailbox1en,
+    cur_rcc_c1_apb3enr_sysctlen,
+    cur_rcc_c1_apb3enr_wwdten,
+    cur_rcc_c1_apb3enr_tim1en,
+    cur_rcc_c1_apb3enr_tim2en,
+    cur_rcc_c1_apb3enr_gpio6en,
+    cur_rcc_c1_apb3enr_gpio7en,
+    cur_rcc_c1_apb3enr_gpio8en,
+    cur_rcc_c1_apb3enr_iwdten,
+    {2{1'b0}},
+    cur_rcc_c1_apb3enr_rtcen
+  };
 
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlen            RW                  0b0                 
+  // 14:14               spl2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3enr_spl2en_en = (|wr_req & rcc_c1_apb3enr_sel);
+  assign nxt_rcc_c1_apb3enr_spl2en = wdata[14:14];
+  assign rcc_c1_spl2_en = cur_rcc_c1_apb3enr_spl2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3enr_spl2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3enr_spl2en_en),
+      .din  (nxt_rcc_c1_apb3enr_spl2en),
+      .dout (cur_rcc_c1_apb3enr_spl2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spl1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3enr_spl1en_en  = (|wr_req & rcc_c1_apb3enr_sel);
+  assign nxt_rcc_c1_apb3enr_spl1en = wdata[13:13];
+  assign rcc_c1_spl1_en            = cur_rcc_c1_apb3enr_spl1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3enr_spl1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3enr_spl1en_en),
+      .din  (nxt_rcc_c1_apb3enr_spl1en),
+      .dout (cur_rcc_c1_apb3enr_spl1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               mailbox2en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3enr_mailbox2en_en  = (|wr_req & rcc_c1_apb3enr_sel);
+  assign nxt_rcc_c1_apb3enr_mailbox2en = wdata[12:12];
+  assign rcc_c1_mailbox2_en            = cur_rcc_c1_apb3enr_mailbox2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3enr_mailbox2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3enr_mailbox2en_en),
+      .din  (nxt_rcc_c1_apb3enr_mailbox2en),
+      .dout (cur_rcc_c1_apb3enr_mailbox2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               mailbox1en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3enr_mailbox1en_en  = (|wr_req & rcc_c1_apb3enr_sel);
+  assign nxt_rcc_c1_apb3enr_mailbox1en = wdata[11:11];
+  assign rcc_c1_mailbox1_en            = cur_rcc_c1_apb3enr_mailbox1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3enr_mailbox1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3enr_mailbox1en_en),
+      .din  (nxt_rcc_c1_apb3enr_mailbox1en),
+      .dout (cur_rcc_c1_apb3enr_mailbox1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               sysctlen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3enr_sysctlen_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_sysctlen = wdata[11:11];
+  assign nxt_rcc_c1_apb3enr_sysctlen = wdata[10:10];
   assign rcc_c1_sysctl_en            = cur_rcc_c1_apb3enr_sysctlen;
   BB_dfflr #(
       .DW     (1),
@@ -9402,10 +9879,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdten              RW                  0b0                 
+  // 9:9                 wwdten              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3enr_wwdten_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_wwdten = wdata[10:10];
+  assign nxt_rcc_c1_apb3enr_wwdten = wdata[9:9];
   assign rcc_c1_wwdt_en            = cur_rcc_c1_apb3enr_wwdten;
   BB_dfflr #(
       .DW     (1),
@@ -9419,10 +9896,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1en              RW                  0b0                 
+  // 8:8                 tim1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3enr_tim1en_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_tim1en = wdata[9:9];
+  assign nxt_rcc_c1_apb3enr_tim1en = wdata[8:8];
   assign rcc_c1_tim1_en            = cur_rcc_c1_apb3enr_tim1en;
   BB_dfflr #(
       .DW     (1),
@@ -9436,10 +9913,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2en              RW                  0b0                 
+  // 7:7                 tim2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3enr_tim2en_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_tim2en = wdata[8:8];
+  assign nxt_rcc_c1_apb3enr_tim2en = wdata[7:7];
   assign rcc_c1_tim2_en            = cur_rcc_c1_apb3enr_tim2en;
   BB_dfflr #(
       .DW     (1),
@@ -9450,23 +9927,6 @@ module rcc_vcore_reg #(
       .en   (rcc_c1_apb3enr_tim2en_en),
       .din  (nxt_rcc_c1_apb3enr_tim2en),
       .dout (cur_rcc_c1_apb3enr_tim2en)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 7:7                 adccen              RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3enr_adccen_en  = (|wr_req & rcc_c1_apb3enr_sel);
-  assign nxt_rcc_c1_apb3enr_adccen = wdata[7:7];
-  assign rcc_c1_adcc_en            = cur_rcc_c1_apb3enr_adccen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3enr_adccen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_apb3enr_adccen_en),
-      .din  (nxt_rcc_c1_apb3enr_adccen),
-      .dout (cur_rcc_c1_apb3enr_adccen)
   );
 
   // --------------------------------------------------------------------------------
@@ -9522,43 +9982,47 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_ahb1lpenr                        0xcc                                    
+  // rcc_c1_ahb1lpenr                        0x30                                    
   // --------------------------------------------------------------------------------
-  // 18:18               romlpen             RW                  0b0                 
+  // 20:20               romlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmslpen            RW                  0b0                 
+  // 19:19               smc2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 16:16               smslpen             RW                  0b0                 
+  // 18:18               smc1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashlpen          RW                  0b0                 
+  // 17:17               xflashlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 14:14               fftlpen             RW                  0b0                 
+  // 16:16               fftlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               npulpen             RW                  0b0                 
+  // 15:15               npulpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1lpen            RW                  0b0                 
+  // 14:14               dma1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2lpen            RW                  0b0                 
+  // 13:13               dma2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschlpen          RW                  0b0                 
+  // 12:12               dmaschlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1lpen           RW                  0b0                 
+  // 11:11               qspi1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2lpen           RW                  0b0                 
+  // 10:10               adcspi3lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3lpen           RW                  0b0                 
+  // 9:9                 adcspi2lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4lpen           RW                  0b0                 
+  // 8:8                 adcspi1lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspilpen            RW                  0b0                 
+  // 7:7                 mspilpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 mspilpen            RW                  0b0                 
+  // 6:6                 hacif_l1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1lpen        RW                  0b0                 
+  // 5:5                 hacif_f1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1lpen        RW                  0b0                 
+  // 4:4                 cspi_llpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 maclpen             RW                  0b1                 
+  // 3:3                 cspi_flpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1lpen            RW                  0b1                 
   // --------------------------------------------------------------------------------
   // 0:0                 lzlpen              RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -9567,10 +10031,10 @@ module rcc_vcore_reg #(
   // rcc_c1_ahb1lpenr read data
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_read = {
-    {13{1'b0}},
+    {11{1'b0}},
     cur_rcc_c1_ahb1lpenr_romlpen,
-    cur_rcc_c1_ahb1lpenr_tsmslpen,
-    cur_rcc_c1_ahb1lpenr_smslpen,
+    cur_rcc_c1_ahb1lpenr_smc2lpen,
+    cur_rcc_c1_ahb1lpenr_smc1lpen,
     cur_rcc_c1_ahb1lpenr_xflashlpen,
     cur_rcc_c1_ahb1lpenr_fftlpen,
     cur_rcc_c1_ahb1lpenr_npulpen,
@@ -9578,22 +10042,24 @@ module rcc_vcore_reg #(
     cur_rcc_c1_ahb1lpenr_dma2lpen,
     cur_rcc_c1_ahb1lpenr_dmaschlpen,
     cur_rcc_c1_ahb1lpenr_qspi1lpen,
-    cur_rcc_c1_ahb1lpenr_qspi2lpen,
-    cur_rcc_c1_ahb1lpenr_qspi3lpen,
-    cur_rcc_c1_ahb1lpenr_qspi4lpen,
-    cur_rcc_c1_ahb1lpenr_xspilpen,
+    cur_rcc_c1_ahb1lpenr_adcspi3lpen,
+    cur_rcc_c1_ahb1lpenr_adcspi2lpen,
+    cur_rcc_c1_ahb1lpenr_adcspi1lpen,
     cur_rcc_c1_ahb1lpenr_mspilpen,
     cur_rcc_c1_ahb1lpenr_hacif_l1lpen,
     cur_rcc_c1_ahb1lpenr_hacif_f1lpen,
-    cur_rcc_c1_ahb1lpenr_maclpen,
+    cur_rcc_c1_ahb1lpenr_cspi_llpen,
+    cur_rcc_c1_ahb1lpenr_cspi_flpen,
+    cur_rcc_c1_ahb1lpenr_mac2lpen,
+    cur_rcc_c1_ahb1lpenr_mac1lpen,
     cur_rcc_c1_ahb1lpenr_lzlpen
   };
 
   // --------------------------------------------------------------------------------
-  // 18:18               romlpen             RW                  0b0                 
+  // 20:20               romlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_romlpen_en = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_romlpen = wdata[18:18];
+  assign nxt_rcc_c1_ahb1lpenr_romlpen = wdata[20:20];
   assign rcc_c1_rom_lpen = cur_rcc_c1_ahb1lpenr_romlpen;
   BB_dfflr #(
       .DW     (1),
@@ -9607,44 +10073,44 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmslpen            RW                  0b0                 
+  // 19:19               smc2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_tsmslpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_tsmslpen = wdata[17:17];
-  assign rcc_c1_tsms_lpen              = cur_rcc_c1_ahb1lpenr_tsmslpen;
+  assign rcc_c1_ahb1lpenr_smc2lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_smc2lpen = wdata[19:19];
+  assign rcc_c1_smc2_lpen              = cur_rcc_c1_ahb1lpenr_smc2lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1lpenr_tsmslpen (
+  ) U_rcc_c1_ahb1lpenr_smc2lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_tsmslpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_tsmslpen),
-      .dout (cur_rcc_c1_ahb1lpenr_tsmslpen)
+      .en   (rcc_c1_ahb1lpenr_smc2lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_smc2lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_smc2lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               smslpen             RW                  0b0                 
+  // 18:18               smc1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_smslpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_smslpen = wdata[16:16];
-  assign rcc_c1_sms_lpen              = cur_rcc_c1_ahb1lpenr_smslpen;
+  assign rcc_c1_ahb1lpenr_smc1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_smc1lpen = wdata[18:18];
+  assign rcc_c1_smc1_lpen              = cur_rcc_c1_ahb1lpenr_smc1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1lpenr_smslpen (
+  ) U_rcc_c1_ahb1lpenr_smc1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_smslpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_smslpen),
-      .dout (cur_rcc_c1_ahb1lpenr_smslpen)
+      .en   (rcc_c1_ahb1lpenr_smc1lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_smc1lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_smc1lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashlpen          RW                  0b0                 
+  // 17:17               xflashlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_xflashlpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_xflashlpen = wdata[15:15];
+  assign nxt_rcc_c1_ahb1lpenr_xflashlpen = wdata[17:17];
   assign rcc_c1_xflash_lpen              = cur_rcc_c1_ahb1lpenr_xflashlpen;
   BB_dfflr #(
       .DW     (1),
@@ -9658,10 +10124,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               fftlpen             RW                  0b0                 
+  // 16:16               fftlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_fftlpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_fftlpen = wdata[14:14];
+  assign nxt_rcc_c1_ahb1lpenr_fftlpen = wdata[16:16];
   assign rcc_c1_fft_lpen              = cur_rcc_c1_ahb1lpenr_fftlpen;
   BB_dfflr #(
       .DW     (1),
@@ -9675,10 +10141,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               npulpen             RW                  0b0                 
+  // 15:15               npulpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_npulpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_npulpen = wdata[13:13];
+  assign nxt_rcc_c1_ahb1lpenr_npulpen = wdata[15:15];
   assign rcc_c1_npu_lpen              = cur_rcc_c1_ahb1lpenr_npulpen;
   BB_dfflr #(
       .DW     (1),
@@ -9692,10 +10158,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1lpen            RW                  0b0                 
+  // 14:14               dma1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_dma1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_dma1lpen = wdata[12:12];
+  assign nxt_rcc_c1_ahb1lpenr_dma1lpen = wdata[14:14];
   assign rcc_c1_dma1_lpen              = cur_rcc_c1_ahb1lpenr_dma1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -9709,10 +10175,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2lpen            RW                  0b0                 
+  // 13:13               dma2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_dma2lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_dma2lpen = wdata[11:11];
+  assign nxt_rcc_c1_ahb1lpenr_dma2lpen = wdata[13:13];
   assign rcc_c1_dma2_lpen              = cur_rcc_c1_ahb1lpenr_dma2lpen;
   BB_dfflr #(
       .DW     (1),
@@ -9726,10 +10192,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschlpen          RW                  0b0                 
+  // 12:12               dmaschlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_dmaschlpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_dmaschlpen = wdata[10:10];
+  assign nxt_rcc_c1_ahb1lpenr_dmaschlpen = wdata[12:12];
   assign rcc_c1_dmasch_lpen              = cur_rcc_c1_ahb1lpenr_dmaschlpen;
   BB_dfflr #(
       .DW     (1),
@@ -9743,10 +10209,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1lpen           RW                  0b0                 
+  // 11:11               qspi1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_qspi1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_qspi1lpen = wdata[9:9];
+  assign nxt_rcc_c1_ahb1lpenr_qspi1lpen = wdata[11:11];
   assign rcc_c1_qspi1_lpen              = cur_rcc_c1_ahb1lpenr_qspi1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -9760,78 +10226,61 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2lpen           RW                  0b0                 
+  // 10:10               adcspi3lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_qspi2lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_qspi2lpen = wdata[8:8];
-  assign rcc_c1_qspi2_lpen              = cur_rcc_c1_ahb1lpenr_qspi2lpen;
+  assign rcc_c1_ahb1lpenr_adcspi3lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_adcspi3lpen = wdata[10:10];
+  assign rcc_c1_adcspi3_lpen              = cur_rcc_c1_ahb1lpenr_adcspi3lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1lpenr_qspi2lpen (
+  ) U_rcc_c1_ahb1lpenr_adcspi3lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_qspi2lpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_qspi2lpen),
-      .dout (cur_rcc_c1_ahb1lpenr_qspi2lpen)
+      .en   (rcc_c1_ahb1lpenr_adcspi3lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_adcspi3lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_adcspi3lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3lpen           RW                  0b0                 
+  // 9:9                 adcspi2lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_qspi3lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_qspi3lpen = wdata[7:7];
-  assign rcc_c1_qspi3_lpen              = cur_rcc_c1_ahb1lpenr_qspi3lpen;
+  assign rcc_c1_ahb1lpenr_adcspi2lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_adcspi2lpen = wdata[9:9];
+  assign rcc_c1_adcspi2_lpen              = cur_rcc_c1_ahb1lpenr_adcspi2lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1lpenr_qspi3lpen (
+  ) U_rcc_c1_ahb1lpenr_adcspi2lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_qspi3lpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_qspi3lpen),
-      .dout (cur_rcc_c1_ahb1lpenr_qspi3lpen)
+      .en   (rcc_c1_ahb1lpenr_adcspi2lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_adcspi2lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_adcspi2lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4lpen           RW                  0b0                 
+  // 8:8                 adcspi1lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_qspi4lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_qspi4lpen = wdata[6:6];
-  assign rcc_c1_qspi4_lpen              = cur_rcc_c1_ahb1lpenr_qspi4lpen;
+  assign rcc_c1_ahb1lpenr_adcspi1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_adcspi1lpen = wdata[8:8];
+  assign rcc_c1_adcspi1_lpen              = cur_rcc_c1_ahb1lpenr_adcspi1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c1_ahb1lpenr_qspi4lpen (
+  ) U_rcc_c1_ahb1lpenr_adcspi1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_qspi4lpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_qspi4lpen),
-      .dout (cur_rcc_c1_ahb1lpenr_qspi4lpen)
+      .en   (rcc_c1_ahb1lpenr_adcspi1lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_adcspi1lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_adcspi1lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspilpen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_xspilpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_xspilpen = wdata[5:5];
-  assign rcc_c1_xspi_lpen              = cur_rcc_c1_ahb1lpenr_xspilpen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_ahb1lpenr_xspilpen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_xspilpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_xspilpen),
-      .dout (cur_rcc_c1_ahb1lpenr_xspilpen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 4:4                 mspilpen            RW                  0b0                 
+  // 7:7                 mspilpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_mspilpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_mspilpen = wdata[4:4];
+  assign nxt_rcc_c1_ahb1lpenr_mspilpen = wdata[7:7];
   assign rcc_c1_mspi_lpen              = cur_rcc_c1_ahb1lpenr_mspilpen;
   BB_dfflr #(
       .DW     (1),
@@ -9845,10 +10294,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1lpen        RW                  0b0                 
+  // 6:6                 hacif_l1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_hacif_l1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_hacif_l1lpen = wdata[3:3];
+  assign nxt_rcc_c1_ahb1lpenr_hacif_l1lpen = wdata[6:6];
   assign rcc_c1_hacif_l1_lpen              = cur_rcc_c1_ahb1lpenr_hacif_l1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -9862,10 +10311,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1lpen        RW                  0b0                 
+  // 5:5                 hacif_f1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_ahb1lpenr_hacif_f1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_hacif_f1lpen = wdata[2:2];
+  assign nxt_rcc_c1_ahb1lpenr_hacif_f1lpen = wdata[5:5];
   assign rcc_c1_hacif_f1_lpen              = cur_rcc_c1_ahb1lpenr_hacif_f1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -9879,20 +10328,71 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 maclpen             RW                  0b1                 
+  // 4:4                 cspi_llpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_ahb1lpenr_maclpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
-  assign nxt_rcc_c1_ahb1lpenr_maclpen = wdata[1:1];
-  assign rcc_c1_mac_lpen              = cur_rcc_c1_ahb1lpenr_maclpen;
+  assign rcc_c1_ahb1lpenr_cspi_llpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_cspi_llpen = wdata[4:4];
+  assign rcc_c1_cspi_l_lpen              = cur_rcc_c1_ahb1lpenr_cspi_llpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1lpenr_cspi_llpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_ahb1lpenr_cspi_llpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_cspi_llpen),
+      .dout (cur_rcc_c1_ahb1lpenr_cspi_llpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 cspi_flpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_ahb1lpenr_cspi_flpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_cspi_flpen = wdata[3:3];
+  assign rcc_c1_cspi_f_lpen              = cur_rcc_c1_ahb1lpenr_cspi_flpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1lpenr_cspi_flpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_ahb1lpenr_cspi_flpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_cspi_flpen),
+      .dout (cur_rcc_c1_ahb1lpenr_cspi_flpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_ahb1lpenr_mac2lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_mac2lpen = wdata[2:2];
+  assign rcc_c1_mac2_lpen              = cur_rcc_c1_ahb1lpenr_mac2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_ahb1lpenr_mac2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_ahb1lpenr_mac2lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_mac2lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_mac2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1lpen            RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_ahb1lpenr_mac1lpen_en  = (|wr_req & rcc_c1_ahb1lpenr_sel);
+  assign nxt_rcc_c1_ahb1lpenr_mac1lpen = wdata[1:1];
+  assign rcc_c1_mac1_lpen              = cur_rcc_c1_ahb1lpenr_mac1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_c1_ahb1lpenr_maclpen (
+  ) U_rcc_c1_ahb1lpenr_mac1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c1_ahb1lpenr_maclpen_en),
-      .din  (nxt_rcc_c1_ahb1lpenr_maclpen),
-      .dout (cur_rcc_c1_ahb1lpenr_maclpen)
+      .en   (rcc_c1_ahb1lpenr_mac1lpen_en),
+      .din  (nxt_rcc_c1_ahb1lpenr_mac1lpen),
+      .dout (cur_rcc_c1_ahb1lpenr_mac1lpen)
   );
 
   // --------------------------------------------------------------------------------
@@ -9914,7 +10414,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_apb1lpenr                        0xd0                                    
+  // rcc_c1_apb1lpenr                        0x34                                    
   // --------------------------------------------------------------------------------
   // 17:17               gtim1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -10286,7 +10786,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_apb2lpenr                        0xd4                                    
+  // rcc_c1_apb2lpenr                        0x38                                    
   // --------------------------------------------------------------------------------
   // 15:15               gtim5lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -10618,17 +11118,23 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c1_apb3lpenr                        0xd8                                    
+  // rcc_c1_apb3lpenr                        0x3c                                    
   // --------------------------------------------------------------------------------
-  // 11:11               sysctllpen          RW                  0b0                 
+  // 14:14               spl2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtlpen            RW                  0b0                 
+  // 13:13               spl1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1lpen            RW                  0b0                 
+  // 12:12               mailbox2lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2lpen            RW                  0b0                 
+  // 11:11               mailbox1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 adcclpen            RW                  0b0                 
+  // 10:10               sysctllpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 wwdtlpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 tim2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 6:6                 gpio6lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -10636,20 +11142,106 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 gpio8lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
+  // 3:3                 iwdtlpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 rtclpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_c1_apb3lpenr read data
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3lpenr_read = {
-    {20{1'b0}}, cur_rcc_c1_apb3lpenr_sysctllpen, cur_rcc_c1_apb3lpenr_wwdtlpen, cur_rcc_c1_apb3lpenr_tim1lpen, cur_rcc_c1_apb3lpenr_tim2lpen, cur_rcc_c1_apb3lpenr_adcclpen, cur_rcc_c1_apb3lpenr_gpio6lpen, cur_rcc_c1_apb3lpenr_gpio7lpen, cur_rcc_c1_apb3lpenr_gpio8lpen, {4{1'b0}}
+    {17{1'b0}},
+    cur_rcc_c1_apb3lpenr_spl2lpen,
+    cur_rcc_c1_apb3lpenr_spl1lpen,
+    cur_rcc_c1_apb3lpenr_mailbox2lpen,
+    cur_rcc_c1_apb3lpenr_mailbox1lpen,
+    cur_rcc_c1_apb3lpenr_sysctllpen,
+    cur_rcc_c1_apb3lpenr_wwdtlpen,
+    cur_rcc_c1_apb3lpenr_tim1lpen,
+    cur_rcc_c1_apb3lpenr_tim2lpen,
+    cur_rcc_c1_apb3lpenr_gpio6lpen,
+    cur_rcc_c1_apb3lpenr_gpio7lpen,
+    cur_rcc_c1_apb3lpenr_gpio8lpen,
+    cur_rcc_c1_apb3lpenr_iwdtlpen,
+    {2{1'b0}},
+    cur_rcc_c1_apb3lpenr_rtclpen
   };
 
   // --------------------------------------------------------------------------------
-  // 11:11               sysctllpen          RW                  0b0                 
+  // 14:14               spl2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3lpenr_sysctllpen_en = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_sysctllpen = wdata[11:11];
-  assign rcc_c1_sysctl_lpen = cur_rcc_c1_apb3lpenr_sysctllpen;
+  assign rcc_c1_apb3lpenr_spl2lpen_en = (|wr_req & rcc_c1_apb3lpenr_sel);
+  assign nxt_rcc_c1_apb3lpenr_spl2lpen = wdata[14:14];
+  assign rcc_c1_spl2_lpen = cur_rcc_c1_apb3lpenr_spl2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3lpenr_spl2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3lpenr_spl2lpen_en),
+      .din  (nxt_rcc_c1_apb3lpenr_spl2lpen),
+      .dout (cur_rcc_c1_apb3lpenr_spl2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spl1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3lpenr_spl1lpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
+  assign nxt_rcc_c1_apb3lpenr_spl1lpen = wdata[13:13];
+  assign rcc_c1_spl1_lpen              = cur_rcc_c1_apb3lpenr_spl1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3lpenr_spl1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3lpenr_spl1lpen_en),
+      .din  (nxt_rcc_c1_apb3lpenr_spl1lpen),
+      .dout (cur_rcc_c1_apb3lpenr_spl1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               mailbox2lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3lpenr_mailbox2lpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
+  assign nxt_rcc_c1_apb3lpenr_mailbox2lpen = wdata[12:12];
+  assign rcc_c1_mailbox2_lpen              = cur_rcc_c1_apb3lpenr_mailbox2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3lpenr_mailbox2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3lpenr_mailbox2lpen_en),
+      .din  (nxt_rcc_c1_apb3lpenr_mailbox2lpen),
+      .dout (cur_rcc_c1_apb3lpenr_mailbox2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               mailbox1lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3lpenr_mailbox1lpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
+  assign nxt_rcc_c1_apb3lpenr_mailbox1lpen = wdata[11:11];
+  assign rcc_c1_mailbox1_lpen              = cur_rcc_c1_apb3lpenr_mailbox1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c1_apb3lpenr_mailbox1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c1_apb3lpenr_mailbox1lpen_en),
+      .din  (nxt_rcc_c1_apb3lpenr_mailbox1lpen),
+      .dout (cur_rcc_c1_apb3lpenr_mailbox1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               sysctllpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c1_apb3lpenr_sysctllpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
+  assign nxt_rcc_c1_apb3lpenr_sysctllpen = wdata[10:10];
+  assign rcc_c1_sysctl_lpen              = cur_rcc_c1_apb3lpenr_sysctllpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -10662,10 +11254,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtlpen            RW                  0b0                 
+  // 9:9                 wwdtlpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3lpenr_wwdtlpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_wwdtlpen = wdata[10:10];
+  assign nxt_rcc_c1_apb3lpenr_wwdtlpen = wdata[9:9];
   assign rcc_c1_wwdt_lpen              = cur_rcc_c1_apb3lpenr_wwdtlpen;
   BB_dfflr #(
       .DW     (1),
@@ -10679,10 +11271,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1lpen            RW                  0b0                 
+  // 8:8                 tim1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3lpenr_tim1lpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_tim1lpen = wdata[9:9];
+  assign nxt_rcc_c1_apb3lpenr_tim1lpen = wdata[8:8];
   assign rcc_c1_tim1_lpen              = cur_rcc_c1_apb3lpenr_tim1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -10696,10 +11288,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2lpen            RW                  0b0                 
+  // 7:7                 tim2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c1_apb3lpenr_tim2lpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_tim2lpen = wdata[8:8];
+  assign nxt_rcc_c1_apb3lpenr_tim2lpen = wdata[7:7];
   assign rcc_c1_tim2_lpen              = cur_rcc_c1_apb3lpenr_tim2lpen;
   BB_dfflr #(
       .DW     (1),
@@ -10710,23 +11302,6 @@ module rcc_vcore_reg #(
       .en   (rcc_c1_apb3lpenr_tim2lpen_en),
       .din  (nxt_rcc_c1_apb3lpenr_tim2lpen),
       .dout (cur_rcc_c1_apb3lpenr_tim2lpen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 7:7                 adcclpen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c1_apb3lpenr_adcclpen_en  = (|wr_req & rcc_c1_apb3lpenr_sel);
-  assign nxt_rcc_c1_apb3lpenr_adcclpen = wdata[7:7];
-  assign rcc_c1_adcc_lpen              = cur_rcc_c1_apb3lpenr_adcclpen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c1_apb3lpenr_adcclpen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c1_apb3lpenr_adcclpen_en),
-      .din  (nxt_rcc_c1_apb3lpenr_adcclpen),
-      .dout (cur_rcc_c1_apb3lpenr_adcclpen)
   );
 
   // --------------------------------------------------------------------------------
@@ -10781,43 +11356,47 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_ahb1enr                          0xbc                                    
+  // rcc_c2_ahb1enr                          0x40                                    
   // --------------------------------------------------------------------------------
-  // 18:18               romen               RW                  0b1                 
+  // 20:20               romen               RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsen              RW                  0b1                 
+  // 19:19               smc2en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 16:16               smsen               RW                  0b0                 
+  // 18:18               smc1en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashen            RW                  0b0                 
+  // 17:17               xflashen            RW                  0b1                 
   // --------------------------------------------------------------------------------
-  // 14:14               fften               RW                  0b0                 
+  // 16:16               fften               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               npuen               RW                  0b0                 
+  // 15:15               npuen               RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1en              RW                  0b0                 
+  // 14:14               dma1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2en              RW                  0b0                 
+  // 13:13               dma2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschen            RW                  0b0                 
+  // 12:12               dmaschen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1en             RW                  0b0                 
+  // 11:11               qspi1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2en             RW                  0b0                 
+  // 10:10               adcspi3en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3en             RW                  0b0                 
+  // 9:9                 adcspi2en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4en             RW                  0b0                 
+  // 8:8                 adcspi1en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspien              RW                  0b0                 
+  // 7:7                 mspien              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 mspien              RW                  0b0                 
+  // 6:6                 hacif_l1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1en          RW                  0b0                 
+  // 5:5                 hacif_f1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1en          RW                  0b0                 
+  // 4:4                 cspi_len            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 macen               RW                  0b1                 
+  // 3:3                 cspi_fen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1en              RW                  0b1                 
   // --------------------------------------------------------------------------------
   // 0:0                 lzen                RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -10826,10 +11405,10 @@ module rcc_vcore_reg #(
   // rcc_c2_ahb1enr read data
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_read = {
-    {13{1'b0}},
+    {11{1'b0}},
     cur_rcc_c2_ahb1enr_romen,
-    cur_rcc_c2_ahb1enr_tsmsen,
-    cur_rcc_c2_ahb1enr_smsen,
+    cur_rcc_c2_ahb1enr_smc2en,
+    cur_rcc_c2_ahb1enr_smc1en,
     cur_rcc_c2_ahb1enr_xflashen,
     cur_rcc_c2_ahb1enr_fften,
     cur_rcc_c2_ahb1enr_npuen,
@@ -10837,22 +11416,24 @@ module rcc_vcore_reg #(
     cur_rcc_c2_ahb1enr_dma2en,
     cur_rcc_c2_ahb1enr_dmaschen,
     cur_rcc_c2_ahb1enr_qspi1en,
-    cur_rcc_c2_ahb1enr_qspi2en,
-    cur_rcc_c2_ahb1enr_qspi3en,
-    cur_rcc_c2_ahb1enr_qspi4en,
-    cur_rcc_c2_ahb1enr_xspien,
+    cur_rcc_c2_ahb1enr_adcspi3en,
+    cur_rcc_c2_ahb1enr_adcspi2en,
+    cur_rcc_c2_ahb1enr_adcspi1en,
     cur_rcc_c2_ahb1enr_mspien,
     cur_rcc_c2_ahb1enr_hacif_l1en,
     cur_rcc_c2_ahb1enr_hacif_f1en,
-    cur_rcc_c2_ahb1enr_macen,
+    cur_rcc_c2_ahb1enr_cspi_len,
+    cur_rcc_c2_ahb1enr_cspi_fen,
+    cur_rcc_c2_ahb1enr_mac2en,
+    cur_rcc_c2_ahb1enr_mac1en,
     cur_rcc_c2_ahb1enr_lzen
   };
 
   // --------------------------------------------------------------------------------
-  // 18:18               romen               RW                  0b1                 
+  // 20:20               romen               RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_romen_en = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_romen = wdata[18:18];
+  assign nxt_rcc_c2_ahb1enr_romen = wdata[20:20];
   assign rcc_c2_rom_en = cur_rcc_c2_ahb1enr_romen;
   BB_dfflr #(
       .DW     (1),
@@ -10866,48 +11447,48 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmsen              RW                  0b1                 
+  // 19:19               smc2en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_tsmsen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_tsmsen = wdata[17:17];
-  assign rcc_c2_tsms_en            = cur_rcc_c2_ahb1enr_tsmsen;
+  assign rcc_c2_ahb1enr_smc2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_smc2en = wdata[19:19];
+  assign rcc_c2_smc2_en            = cur_rcc_c2_ahb1enr_smc2en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_c2_ahb1enr_tsmsen (
+  ) U_rcc_c2_ahb1enr_smc2en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_tsmsen_en),
-      .din  (nxt_rcc_c2_ahb1enr_tsmsen),
-      .dout (cur_rcc_c2_ahb1enr_tsmsen)
+      .en   (rcc_c2_ahb1enr_smc2en_en),
+      .din  (nxt_rcc_c2_ahb1enr_smc2en),
+      .dout (cur_rcc_c2_ahb1enr_smc2en)
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               smsen               RW                  0b0                 
+  // 18:18               smc1en              RW                  0b1                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_smsen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_smsen = wdata[16:16];
-  assign rcc_c2_sms_en            = cur_rcc_c2_ahb1enr_smsen;
+  assign rcc_c2_ahb1enr_smc1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_smc1en = wdata[18:18];
+  assign rcc_c2_smc1_en            = cur_rcc_c2_ahb1enr_smc1en;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c2_ahb1enr_smsen (
+      .RST_VAL('h1)
+  ) U_rcc_c2_ahb1enr_smc1en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_smsen_en),
-      .din  (nxt_rcc_c2_ahb1enr_smsen),
-      .dout (cur_rcc_c2_ahb1enr_smsen)
+      .en   (rcc_c2_ahb1enr_smc1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_smc1en),
+      .dout (cur_rcc_c2_ahb1enr_smc1en)
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashen            RW                  0b0                 
+  // 17:17               xflashen            RW                  0b1                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_xflashen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_xflashen = wdata[15:15];
+  assign nxt_rcc_c2_ahb1enr_xflashen = wdata[17:17];
   assign rcc_c2_xflash_en            = cur_rcc_c2_ahb1enr_xflashen;
   BB_dfflr #(
       .DW     (1),
-      .RST_VAL('h0)
+      .RST_VAL('h1)
   ) U_rcc_c2_ahb1enr_xflashen (
       .clk  (clk),
       .rst_n(rst_n),
@@ -10917,10 +11498,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               fften               RW                  0b0                 
+  // 16:16               fften               RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_fften_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_fften = wdata[14:14];
+  assign nxt_rcc_c2_ahb1enr_fften = wdata[16:16];
   assign rcc_c2_fft_en            = cur_rcc_c2_ahb1enr_fften;
   BB_dfflr #(
       .DW     (1),
@@ -10934,10 +11515,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               npuen               RW                  0b0                 
+  // 15:15               npuen               RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_npuen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_npuen = wdata[13:13];
+  assign nxt_rcc_c2_ahb1enr_npuen = wdata[15:15];
   assign rcc_c2_npu_en            = cur_rcc_c2_ahb1enr_npuen;
   BB_dfflr #(
       .DW     (1),
@@ -10951,10 +11532,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1en              RW                  0b0                 
+  // 14:14               dma1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_dma1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_dma1en = wdata[12:12];
+  assign nxt_rcc_c2_ahb1enr_dma1en = wdata[14:14];
   assign rcc_c2_dma1_en            = cur_rcc_c2_ahb1enr_dma1en;
   BB_dfflr #(
       .DW     (1),
@@ -10968,10 +11549,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2en              RW                  0b0                 
+  // 13:13               dma2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_dma2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_dma2en = wdata[11:11];
+  assign nxt_rcc_c2_ahb1enr_dma2en = wdata[13:13];
   assign rcc_c2_dma2_en            = cur_rcc_c2_ahb1enr_dma2en;
   BB_dfflr #(
       .DW     (1),
@@ -10985,10 +11566,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschen            RW                  0b0                 
+  // 12:12               dmaschen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_dmaschen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_dmaschen = wdata[10:10];
+  assign nxt_rcc_c2_ahb1enr_dmaschen = wdata[12:12];
   assign rcc_c2_dmasch_en            = cur_rcc_c2_ahb1enr_dmaschen;
   BB_dfflr #(
       .DW     (1),
@@ -11002,10 +11583,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1en             RW                  0b0                 
+  // 11:11               qspi1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_qspi1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_qspi1en = wdata[9:9];
+  assign nxt_rcc_c2_ahb1enr_qspi1en = wdata[11:11];
   assign rcc_c2_qspi1_en            = cur_rcc_c2_ahb1enr_qspi1en;
   BB_dfflr #(
       .DW     (1),
@@ -11019,78 +11600,61 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2en             RW                  0b0                 
+  // 10:10               adcspi3en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_qspi2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_qspi2en = wdata[8:8];
-  assign rcc_c2_qspi2_en            = cur_rcc_c2_ahb1enr_qspi2en;
+  assign rcc_c2_ahb1enr_adcspi3en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_adcspi3en = wdata[10:10];
+  assign rcc_c2_adcspi3_en            = cur_rcc_c2_ahb1enr_adcspi3en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1enr_qspi2en (
+  ) U_rcc_c2_ahb1enr_adcspi3en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_qspi2en_en),
-      .din  (nxt_rcc_c2_ahb1enr_qspi2en),
-      .dout (cur_rcc_c2_ahb1enr_qspi2en)
+      .en   (rcc_c2_ahb1enr_adcspi3en_en),
+      .din  (nxt_rcc_c2_ahb1enr_adcspi3en),
+      .dout (cur_rcc_c2_ahb1enr_adcspi3en)
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3en             RW                  0b0                 
+  // 9:9                 adcspi2en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_qspi3en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_qspi3en = wdata[7:7];
-  assign rcc_c2_qspi3_en            = cur_rcc_c2_ahb1enr_qspi3en;
+  assign rcc_c2_ahb1enr_adcspi2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_adcspi2en = wdata[9:9];
+  assign rcc_c2_adcspi2_en            = cur_rcc_c2_ahb1enr_adcspi2en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1enr_qspi3en (
+  ) U_rcc_c2_ahb1enr_adcspi2en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_qspi3en_en),
-      .din  (nxt_rcc_c2_ahb1enr_qspi3en),
-      .dout (cur_rcc_c2_ahb1enr_qspi3en)
+      .en   (rcc_c2_ahb1enr_adcspi2en_en),
+      .din  (nxt_rcc_c2_ahb1enr_adcspi2en),
+      .dout (cur_rcc_c2_ahb1enr_adcspi2en)
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4en             RW                  0b0                 
+  // 8:8                 adcspi1en           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_qspi4en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_qspi4en = wdata[6:6];
-  assign rcc_c2_qspi4_en            = cur_rcc_c2_ahb1enr_qspi4en;
+  assign rcc_c2_ahb1enr_adcspi1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_adcspi1en = wdata[8:8];
+  assign rcc_c2_adcspi1_en            = cur_rcc_c2_ahb1enr_adcspi1en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1enr_qspi4en (
+  ) U_rcc_c2_ahb1enr_adcspi1en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_qspi4en_en),
-      .din  (nxt_rcc_c2_ahb1enr_qspi4en),
-      .dout (cur_rcc_c2_ahb1enr_qspi4en)
+      .en   (rcc_c2_ahb1enr_adcspi1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_adcspi1en),
+      .dout (cur_rcc_c2_ahb1enr_adcspi1en)
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspien              RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_xspien_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_xspien = wdata[5:5];
-  assign rcc_c2_xspi_en            = cur_rcc_c2_ahb1enr_xspien;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c2_ahb1enr_xspien (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_xspien_en),
-      .din  (nxt_rcc_c2_ahb1enr_xspien),
-      .dout (cur_rcc_c2_ahb1enr_xspien)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 4:4                 mspien              RW                  0b0                 
+  // 7:7                 mspien              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_mspien_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_mspien = wdata[4:4];
+  assign nxt_rcc_c2_ahb1enr_mspien = wdata[7:7];
   assign rcc_c2_mspi_en            = cur_rcc_c2_ahb1enr_mspien;
   BB_dfflr #(
       .DW     (1),
@@ -11104,10 +11668,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1en          RW                  0b0                 
+  // 6:6                 hacif_l1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_hacif_l1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_hacif_l1en = wdata[3:3];
+  assign nxt_rcc_c2_ahb1enr_hacif_l1en = wdata[6:6];
   assign rcc_c2_hacif_l1_en            = cur_rcc_c2_ahb1enr_hacif_l1en;
   BB_dfflr #(
       .DW     (1),
@@ -11121,10 +11685,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1en          RW                  0b0                 
+  // 5:5                 hacif_f1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1enr_hacif_f1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_hacif_f1en = wdata[2:2];
+  assign nxt_rcc_c2_ahb1enr_hacif_f1en = wdata[5:5];
   assign rcc_c2_hacif_f1_en            = cur_rcc_c2_ahb1enr_hacif_f1en;
   BB_dfflr #(
       .DW     (1),
@@ -11138,20 +11702,71 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 macen               RW                  0b1                 
+  // 4:4                 cspi_len            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1enr_macen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
-  assign nxt_rcc_c2_ahb1enr_macen = wdata[1:1];
-  assign rcc_c2_mac_en            = cur_rcc_c2_ahb1enr_macen;
+  assign rcc_c2_ahb1enr_cspi_len_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_cspi_len = wdata[4:4];
+  assign rcc_c2_cspi_l_en            = cur_rcc_c2_ahb1enr_cspi_len;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_cspi_len (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_cspi_len_en),
+      .din  (nxt_rcc_c2_ahb1enr_cspi_len),
+      .dout (cur_rcc_c2_ahb1enr_cspi_len)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 cspi_fen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_cspi_fen_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_cspi_fen = wdata[3:3];
+  assign rcc_c2_cspi_f_en            = cur_rcc_c2_ahb1enr_cspi_fen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_cspi_fen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_cspi_fen_en),
+      .din  (nxt_rcc_c2_ahb1enr_cspi_fen),
+      .dout (cur_rcc_c2_ahb1enr_cspi_fen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_mac2en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_mac2en = wdata[2:2];
+  assign rcc_c2_mac2_en            = cur_rcc_c2_ahb1enr_mac2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1enr_mac2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1enr_mac2en_en),
+      .din  (nxt_rcc_c2_ahb1enr_mac2en),
+      .dout (cur_rcc_c2_ahb1enr_mac2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1en              RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1enr_mac1en_en  = (|wr_req & rcc_c2_ahb1enr_sel);
+  assign nxt_rcc_c2_ahb1enr_mac1en = wdata[1:1];
+  assign rcc_c2_mac1_en            = cur_rcc_c2_ahb1enr_mac1en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_c2_ahb1enr_macen (
+  ) U_rcc_c2_ahb1enr_mac1en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1enr_macen_en),
-      .din  (nxt_rcc_c2_ahb1enr_macen),
-      .dout (cur_rcc_c2_ahb1enr_macen)
+      .en   (rcc_c2_ahb1enr_mac1en_en),
+      .din  (nxt_rcc_c2_ahb1enr_mac1en),
+      .dout (cur_rcc_c2_ahb1enr_mac1en)
   );
 
   // --------------------------------------------------------------------------------
@@ -11173,7 +11788,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_apb1enr                          0xc0                                    
+  // rcc_c2_apb1enr                          0x44                                    
   // --------------------------------------------------------------------------------
   // 17:17               gtim1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -11197,7 +11812,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 7:7                 uart4en             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c2en              RW                  0b0                 
+  // 6:6                 i2c1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 5:5                 gpio1en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -11228,7 +11843,7 @@ module rcc_vcore_reg #(
     cur_rcc_c2_apb1enr_uart2en,
     cur_rcc_c2_apb1enr_uart3en,
     cur_rcc_c2_apb1enr_uart4en,
-    cur_rcc_c2_apb1enr_i2c2en,
+    cur_rcc_c2_apb1enr_i2c1en,
     cur_rcc_c2_apb1enr_gpio1en,
     cur_rcc_c2_apb1enr_gpio2en,
     cur_rcc_c2_apb1enr_gpio3en,
@@ -11425,20 +12040,20 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c2en              RW                  0b0                 
+  // 6:6                 i2c1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_apb1enr_i2c2en_en  = (|wr_req & rcc_c2_apb1enr_sel);
-  assign nxt_rcc_c2_apb1enr_i2c2en = wdata[6:6];
-  assign rcc_c2_i2c2_en            = cur_rcc_c2_apb1enr_i2c2en;
+  assign rcc_c2_apb1enr_i2c1en_en  = (|wr_req & rcc_c2_apb1enr_sel);
+  assign nxt_rcc_c2_apb1enr_i2c1en = wdata[6:6];
+  assign rcc_c2_i2c1_en            = cur_rcc_c2_apb1enr_i2c1en;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_apb1enr_i2c2en (
+  ) U_rcc_c2_apb1enr_i2c1en (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_apb1enr_i2c2en_en),
-      .din  (nxt_rcc_c2_apb1enr_i2c2en),
-      .dout (cur_rcc_c2_apb1enr_i2c2en)
+      .en   (rcc_c2_apb1enr_i2c1en_en),
+      .din  (nxt_rcc_c2_apb1enr_i2c1en),
+      .dout (cur_rcc_c2_apb1enr_i2c1en)
   );
 
   // --------------------------------------------------------------------------------
@@ -11545,7 +12160,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_apb2enr                          0xc4                                    
+  // rcc_c2_apb2enr                          0x48                                    
   // --------------------------------------------------------------------------------
   // 15:15               gtim5en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -11877,17 +12492,23 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_apb3enr                          0xc8                                    
+  // rcc_c2_apb3enr                          0x4c                                    
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlen            RW                  0b0                 
+  // 14:14               spl2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdten              RW                  0b0                 
+  // 13:13               spl1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1en              RW                  0b0                 
+  // 12:12               mailbox2en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2en              RW                  0b0                 
+  // 11:11               mailbox1en          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 adccen              RW                  0b0                 
+  // 10:10               sysctlen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 wwdten              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 tim2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 6:6                 gpio6en             RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -11895,17 +12516,105 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 gpio8en             RW                  0b0                 
   // --------------------------------------------------------------------------------
+  // 3:3                 iwdten              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 rtcen               RW                  0b0                 
+  // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_c2_apb3enr read data
   // --------------------------------------------------------------------------------
-  assign rcc_c2_apb3enr_read         = {{20{1'b0}}, cur_rcc_c2_apb3enr_sysctlen, cur_rcc_c2_apb3enr_wwdten, cur_rcc_c2_apb3enr_tim1en, cur_rcc_c2_apb3enr_tim2en, cur_rcc_c2_apb3enr_adccen, cur_rcc_c2_apb3enr_gpio6en, cur_rcc_c2_apb3enr_gpio7en, cur_rcc_c2_apb3enr_gpio8en, {4{1'b0}}};
+  assign rcc_c2_apb3enr_read = {
+    {17{1'b0}},
+    cur_rcc_c2_apb3enr_spl2en,
+    cur_rcc_c2_apb3enr_spl1en,
+    cur_rcc_c2_apb3enr_mailbox2en,
+    cur_rcc_c2_apb3enr_mailbox1en,
+    cur_rcc_c2_apb3enr_sysctlen,
+    cur_rcc_c2_apb3enr_wwdten,
+    cur_rcc_c2_apb3enr_tim1en,
+    cur_rcc_c2_apb3enr_tim2en,
+    cur_rcc_c2_apb3enr_gpio6en,
+    cur_rcc_c2_apb3enr_gpio7en,
+    cur_rcc_c2_apb3enr_gpio8en,
+    cur_rcc_c2_apb3enr_iwdten,
+    {2{1'b0}},
+    cur_rcc_c2_apb3enr_rtcen
+  };
 
   // --------------------------------------------------------------------------------
-  // 11:11               sysctlen            RW                  0b0                 
+  // 14:14               spl2en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_spl2en_en = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_spl2en = wdata[14:14];
+  assign rcc_c2_spl2_en = cur_rcc_c2_apb3enr_spl2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_spl2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_spl2en_en),
+      .din  (nxt_rcc_c2_apb3enr_spl2en),
+      .dout (cur_rcc_c2_apb3enr_spl2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spl1en              RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_spl1en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_spl1en = wdata[13:13];
+  assign rcc_c2_spl1_en            = cur_rcc_c2_apb3enr_spl1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_spl1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_spl1en_en),
+      .din  (nxt_rcc_c2_apb3enr_spl1en),
+      .dout (cur_rcc_c2_apb3enr_spl1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               mailbox2en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_mailbox2en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_mailbox2en = wdata[12:12];
+  assign rcc_c2_mailbox2_en            = cur_rcc_c2_apb3enr_mailbox2en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_mailbox2en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_mailbox2en_en),
+      .din  (nxt_rcc_c2_apb3enr_mailbox2en),
+      .dout (cur_rcc_c2_apb3enr_mailbox2en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               mailbox1en          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3enr_mailbox1en_en  = (|wr_req & rcc_c2_apb3enr_sel);
+  assign nxt_rcc_c2_apb3enr_mailbox1en = wdata[11:11];
+  assign rcc_c2_mailbox1_en            = cur_rcc_c2_apb3enr_mailbox1en;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3enr_mailbox1en (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3enr_mailbox1en_en),
+      .din  (nxt_rcc_c2_apb3enr_mailbox1en),
+      .dout (cur_rcc_c2_apb3enr_mailbox1en)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               sysctlen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3enr_sysctlen_en  = (|wr_req & rcc_c2_apb3enr_sel);
-  assign nxt_rcc_c2_apb3enr_sysctlen = wdata[11:11];
+  assign nxt_rcc_c2_apb3enr_sysctlen = wdata[10:10];
   assign rcc_c2_sysctl_en            = cur_rcc_c2_apb3enr_sysctlen;
   BB_dfflr #(
       .DW     (1),
@@ -11919,10 +12628,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdten              RW                  0b0                 
+  // 9:9                 wwdten              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3enr_wwdten_en  = (|wr_req & rcc_c2_apb3enr_sel);
-  assign nxt_rcc_c2_apb3enr_wwdten = wdata[10:10];
+  assign nxt_rcc_c2_apb3enr_wwdten = wdata[9:9];
   assign rcc_c2_wwdt_en            = cur_rcc_c2_apb3enr_wwdten;
   BB_dfflr #(
       .DW     (1),
@@ -11936,10 +12645,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1en              RW                  0b0                 
+  // 8:8                 tim1en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3enr_tim1en_en  = (|wr_req & rcc_c2_apb3enr_sel);
-  assign nxt_rcc_c2_apb3enr_tim1en = wdata[9:9];
+  assign nxt_rcc_c2_apb3enr_tim1en = wdata[8:8];
   assign rcc_c2_tim1_en            = cur_rcc_c2_apb3enr_tim1en;
   BB_dfflr #(
       .DW     (1),
@@ -11953,10 +12662,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2en              RW                  0b0                 
+  // 7:7                 tim2en              RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3enr_tim2en_en  = (|wr_req & rcc_c2_apb3enr_sel);
-  assign nxt_rcc_c2_apb3enr_tim2en = wdata[8:8];
+  assign nxt_rcc_c2_apb3enr_tim2en = wdata[7:7];
   assign rcc_c2_tim2_en            = cur_rcc_c2_apb3enr_tim2en;
   BB_dfflr #(
       .DW     (1),
@@ -11967,23 +12676,6 @@ module rcc_vcore_reg #(
       .en   (rcc_c2_apb3enr_tim2en_en),
       .din  (nxt_rcc_c2_apb3enr_tim2en),
       .dout (cur_rcc_c2_apb3enr_tim2en)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 7:7                 adccen              RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c2_apb3enr_adccen_en  = (|wr_req & rcc_c2_apb3enr_sel);
-  assign nxt_rcc_c2_apb3enr_adccen = wdata[7:7];
-  assign rcc_c2_adcc_en            = cur_rcc_c2_apb3enr_adccen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c2_apb3enr_adccen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c2_apb3enr_adccen_en),
-      .din  (nxt_rcc_c2_apb3enr_adccen),
-      .dout (cur_rcc_c2_apb3enr_adccen)
   );
 
   // --------------------------------------------------------------------------------
@@ -12039,43 +12731,47 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_ahb1lpenr                        0xcc                                    
+  // rcc_c2_ahb1lpenr                        0x50                                    
   // --------------------------------------------------------------------------------
-  // 18:18               romlpen             RW                  0b0                 
+  // 20:20               romlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmslpen            RW                  0b0                 
+  // 19:19               smc2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 16:16               smslpen             RW                  0b0                 
+  // 18:18               smc1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashlpen          RW                  0b0                 
+  // 17:17               xflashlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 14:14               fftlpen             RW                  0b0                 
+  // 16:16               fftlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 13:13               npulpen             RW                  0b0                 
+  // 15:15               npulpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1lpen            RW                  0b0                 
+  // 14:14               dma1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2lpen            RW                  0b0                 
+  // 13:13               dma2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschlpen          RW                  0b0                 
+  // 12:12               dmaschlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1lpen           RW                  0b0                 
+  // 11:11               qspi1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2lpen           RW                  0b0                 
+  // 10:10               adcspi3lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3lpen           RW                  0b0                 
+  // 9:9                 adcspi2lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4lpen           RW                  0b0                 
+  // 8:8                 adcspi1lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspilpen            RW                  0b0                 
+  // 7:7                 mspilpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 4:4                 mspilpen            RW                  0b0                 
+  // 6:6                 hacif_l1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1lpen        RW                  0b0                 
+  // 5:5                 hacif_f1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1lpen        RW                  0b0                 
+  // 4:4                 cspi_llpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 1:1                 maclpen             RW                  0b1                 
+  // 3:3                 cspi_flpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1lpen            RW                  0b1                 
   // --------------------------------------------------------------------------------
   // 0:0                 lzlpen              RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -12084,10 +12780,10 @@ module rcc_vcore_reg #(
   // rcc_c2_ahb1lpenr read data
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_read = {
-    {13{1'b0}},
+    {11{1'b0}},
     cur_rcc_c2_ahb1lpenr_romlpen,
-    cur_rcc_c2_ahb1lpenr_tsmslpen,
-    cur_rcc_c2_ahb1lpenr_smslpen,
+    cur_rcc_c2_ahb1lpenr_smc2lpen,
+    cur_rcc_c2_ahb1lpenr_smc1lpen,
     cur_rcc_c2_ahb1lpenr_xflashlpen,
     cur_rcc_c2_ahb1lpenr_fftlpen,
     cur_rcc_c2_ahb1lpenr_npulpen,
@@ -12095,22 +12791,24 @@ module rcc_vcore_reg #(
     cur_rcc_c2_ahb1lpenr_dma2lpen,
     cur_rcc_c2_ahb1lpenr_dmaschlpen,
     cur_rcc_c2_ahb1lpenr_qspi1lpen,
-    cur_rcc_c2_ahb1lpenr_qspi2lpen,
-    cur_rcc_c2_ahb1lpenr_qspi3lpen,
-    cur_rcc_c2_ahb1lpenr_qspi4lpen,
-    cur_rcc_c2_ahb1lpenr_xspilpen,
+    cur_rcc_c2_ahb1lpenr_adcspi3lpen,
+    cur_rcc_c2_ahb1lpenr_adcspi2lpen,
+    cur_rcc_c2_ahb1lpenr_adcspi1lpen,
     cur_rcc_c2_ahb1lpenr_mspilpen,
     cur_rcc_c2_ahb1lpenr_hacif_l1lpen,
     cur_rcc_c2_ahb1lpenr_hacif_f1lpen,
-    cur_rcc_c2_ahb1lpenr_maclpen,
+    cur_rcc_c2_ahb1lpenr_cspi_llpen,
+    cur_rcc_c2_ahb1lpenr_cspi_flpen,
+    cur_rcc_c2_ahb1lpenr_mac2lpen,
+    cur_rcc_c2_ahb1lpenr_mac1lpen,
     cur_rcc_c2_ahb1lpenr_lzlpen
   };
 
   // --------------------------------------------------------------------------------
-  // 18:18               romlpen             RW                  0b0                 
+  // 20:20               romlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_romlpen_en = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_romlpen = wdata[18:18];
+  assign nxt_rcc_c2_ahb1lpenr_romlpen = wdata[20:20];
   assign rcc_c2_rom_lpen = cur_rcc_c2_ahb1lpenr_romlpen;
   BB_dfflr #(
       .DW     (1),
@@ -12124,44 +12822,44 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 17:17               tsmslpen            RW                  0b0                 
+  // 19:19               smc2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_tsmslpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_tsmslpen = wdata[17:17];
-  assign rcc_c2_tsms_lpen              = cur_rcc_c2_ahb1lpenr_tsmslpen;
+  assign rcc_c2_ahb1lpenr_smc2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_smc2lpen = wdata[19:19];
+  assign rcc_c2_smc2_lpen              = cur_rcc_c2_ahb1lpenr_smc2lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1lpenr_tsmslpen (
+  ) U_rcc_c2_ahb1lpenr_smc2lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_tsmslpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_tsmslpen),
-      .dout (cur_rcc_c2_ahb1lpenr_tsmslpen)
+      .en   (rcc_c2_ahb1lpenr_smc2lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_smc2lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_smc2lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 16:16               smslpen             RW                  0b0                 
+  // 18:18               smc1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_smslpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_smslpen = wdata[16:16];
-  assign rcc_c2_sms_lpen              = cur_rcc_c2_ahb1lpenr_smslpen;
+  assign rcc_c2_ahb1lpenr_smc1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_smc1lpen = wdata[18:18];
+  assign rcc_c2_smc1_lpen              = cur_rcc_c2_ahb1lpenr_smc1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1lpenr_smslpen (
+  ) U_rcc_c2_ahb1lpenr_smc1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_smslpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_smslpen),
-      .dout (cur_rcc_c2_ahb1lpenr_smslpen)
+      .en   (rcc_c2_ahb1lpenr_smc1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_smc1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_smc1lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 15:15               xflashlpen          RW                  0b0                 
+  // 17:17               xflashlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_xflashlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_xflashlpen = wdata[15:15];
+  assign nxt_rcc_c2_ahb1lpenr_xflashlpen = wdata[17:17];
   assign rcc_c2_xflash_lpen              = cur_rcc_c2_ahb1lpenr_xflashlpen;
   BB_dfflr #(
       .DW     (1),
@@ -12175,10 +12873,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 14:14               fftlpen             RW                  0b0                 
+  // 16:16               fftlpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_fftlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_fftlpen = wdata[14:14];
+  assign nxt_rcc_c2_ahb1lpenr_fftlpen = wdata[16:16];
   assign rcc_c2_fft_lpen              = cur_rcc_c2_ahb1lpenr_fftlpen;
   BB_dfflr #(
       .DW     (1),
@@ -12192,10 +12890,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 13:13               npulpen             RW                  0b0                 
+  // 15:15               npulpen             RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_npulpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_npulpen = wdata[13:13];
+  assign nxt_rcc_c2_ahb1lpenr_npulpen = wdata[15:15];
   assign rcc_c2_npu_lpen              = cur_rcc_c2_ahb1lpenr_npulpen;
   BB_dfflr #(
       .DW     (1),
@@ -12209,10 +12907,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 12:12               dma1lpen            RW                  0b0                 
+  // 14:14               dma1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_dma1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_dma1lpen = wdata[12:12];
+  assign nxt_rcc_c2_ahb1lpenr_dma1lpen = wdata[14:14];
   assign rcc_c2_dma1_lpen              = cur_rcc_c2_ahb1lpenr_dma1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -12226,10 +12924,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 11:11               dma2lpen            RW                  0b0                 
+  // 13:13               dma2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_dma2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_dma2lpen = wdata[11:11];
+  assign nxt_rcc_c2_ahb1lpenr_dma2lpen = wdata[13:13];
   assign rcc_c2_dma2_lpen              = cur_rcc_c2_ahb1lpenr_dma2lpen;
   BB_dfflr #(
       .DW     (1),
@@ -12243,10 +12941,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               dmaschlpen          RW                  0b0                 
+  // 12:12               dmaschlpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_dmaschlpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_dmaschlpen = wdata[10:10];
+  assign nxt_rcc_c2_ahb1lpenr_dmaschlpen = wdata[12:12];
   assign rcc_c2_dmasch_lpen              = cur_rcc_c2_ahb1lpenr_dmaschlpen;
   BB_dfflr #(
       .DW     (1),
@@ -12260,10 +12958,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 qspi1lpen           RW                  0b0                 
+  // 11:11               qspi1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_qspi1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_qspi1lpen = wdata[9:9];
+  assign nxt_rcc_c2_ahb1lpenr_qspi1lpen = wdata[11:11];
   assign rcc_c2_qspi1_lpen              = cur_rcc_c2_ahb1lpenr_qspi1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -12277,78 +12975,61 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 qspi2lpen           RW                  0b0                 
+  // 10:10               adcspi3lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_qspi2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_qspi2lpen = wdata[8:8];
-  assign rcc_c2_qspi2_lpen              = cur_rcc_c2_ahb1lpenr_qspi2lpen;
+  assign rcc_c2_ahb1lpenr_adcspi3lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_adcspi3lpen = wdata[10:10];
+  assign rcc_c2_adcspi3_lpen              = cur_rcc_c2_ahb1lpenr_adcspi3lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1lpenr_qspi2lpen (
+  ) U_rcc_c2_ahb1lpenr_adcspi3lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_qspi2lpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_qspi2lpen),
-      .dout (cur_rcc_c2_ahb1lpenr_qspi2lpen)
+      .en   (rcc_c2_ahb1lpenr_adcspi3lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_adcspi3lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_adcspi3lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 7:7                 qspi3lpen           RW                  0b0                 
+  // 9:9                 adcspi2lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_qspi3lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_qspi3lpen = wdata[7:7];
-  assign rcc_c2_qspi3_lpen              = cur_rcc_c2_ahb1lpenr_qspi3lpen;
+  assign rcc_c2_ahb1lpenr_adcspi2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_adcspi2lpen = wdata[9:9];
+  assign rcc_c2_adcspi2_lpen              = cur_rcc_c2_ahb1lpenr_adcspi2lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1lpenr_qspi3lpen (
+  ) U_rcc_c2_ahb1lpenr_adcspi2lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_qspi3lpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_qspi3lpen),
-      .dout (cur_rcc_c2_ahb1lpenr_qspi3lpen)
+      .en   (rcc_c2_ahb1lpenr_adcspi2lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_adcspi2lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_adcspi2lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 qspi4lpen           RW                  0b0                 
+  // 8:8                 adcspi1lpen         RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_qspi4lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_qspi4lpen = wdata[6:6];
-  assign rcc_c2_qspi4_lpen              = cur_rcc_c2_ahb1lpenr_qspi4lpen;
+  assign rcc_c2_ahb1lpenr_adcspi1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_adcspi1lpen = wdata[8:8];
+  assign rcc_c2_adcspi1_lpen              = cur_rcc_c2_ahb1lpenr_adcspi1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_ahb1lpenr_qspi4lpen (
+  ) U_rcc_c2_ahb1lpenr_adcspi1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_qspi4lpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_qspi4lpen),
-      .dout (cur_rcc_c2_ahb1lpenr_qspi4lpen)
+      .en   (rcc_c2_ahb1lpenr_adcspi1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_adcspi1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_adcspi1lpen)
   );
 
   // --------------------------------------------------------------------------------
-  // 5:5                 xspilpen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_xspilpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_xspilpen = wdata[5:5];
-  assign rcc_c2_xspi_lpen              = cur_rcc_c2_ahb1lpenr_xspilpen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c2_ahb1lpenr_xspilpen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_xspilpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_xspilpen),
-      .dout (cur_rcc_c2_ahb1lpenr_xspilpen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 4:4                 mspilpen            RW                  0b0                 
+  // 7:7                 mspilpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_mspilpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_mspilpen = wdata[4:4];
+  assign nxt_rcc_c2_ahb1lpenr_mspilpen = wdata[7:7];
   assign rcc_c2_mspi_lpen              = cur_rcc_c2_ahb1lpenr_mspilpen;
   BB_dfflr #(
       .DW     (1),
@@ -12362,10 +13043,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 3:3                 hacif_l1lpen        RW                  0b0                 
+  // 6:6                 hacif_l1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_hacif_l1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_hacif_l1lpen = wdata[3:3];
+  assign nxt_rcc_c2_ahb1lpenr_hacif_l1lpen = wdata[6:6];
   assign rcc_c2_hacif_l1_lpen              = cur_rcc_c2_ahb1lpenr_hacif_l1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -12379,10 +13060,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 2:2                 hacif_f1lpen        RW                  0b0                 
+  // 5:5                 hacif_f1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_ahb1lpenr_hacif_f1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_hacif_f1lpen = wdata[2:2];
+  assign nxt_rcc_c2_ahb1lpenr_hacif_f1lpen = wdata[5:5];
   assign rcc_c2_hacif_f1_lpen              = cur_rcc_c2_ahb1lpenr_hacif_f1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -12396,20 +13077,71 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 1:1                 maclpen             RW                  0b1                 
+  // 4:4                 cspi_llpen          RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_ahb1lpenr_maclpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
-  assign nxt_rcc_c2_ahb1lpenr_maclpen = wdata[1:1];
-  assign rcc_c2_mac_lpen              = cur_rcc_c2_ahb1lpenr_maclpen;
+  assign rcc_c2_ahb1lpenr_cspi_llpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_cspi_llpen = wdata[4:4];
+  assign rcc_c2_cspi_l_lpen              = cur_rcc_c2_ahb1lpenr_cspi_llpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_cspi_llpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_cspi_llpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_cspi_llpen),
+      .dout (cur_rcc_c2_ahb1lpenr_cspi_llpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 3:3                 cspi_flpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_cspi_flpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_cspi_flpen = wdata[3:3];
+  assign rcc_c2_cspi_f_lpen              = cur_rcc_c2_ahb1lpenr_cspi_flpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_cspi_flpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_cspi_flpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_cspi_flpen),
+      .dout (cur_rcc_c2_ahb1lpenr_cspi_flpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 2:2                 mac2lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_mac2lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_mac2lpen = wdata[2:2];
+  assign rcc_c2_mac2_lpen              = cur_rcc_c2_ahb1lpenr_mac2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_ahb1lpenr_mac2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_ahb1lpenr_mac2lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_mac2lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_mac2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 1:1                 mac1lpen            RW                  0b1                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_ahb1lpenr_mac1lpen_en  = (|wr_req & rcc_c2_ahb1lpenr_sel);
+  assign nxt_rcc_c2_ahb1lpenr_mac1lpen = wdata[1:1];
+  assign rcc_c2_mac1_lpen              = cur_rcc_c2_ahb1lpenr_mac1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h1)
-  ) U_rcc_c2_ahb1lpenr_maclpen (
+  ) U_rcc_c2_ahb1lpenr_mac1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_ahb1lpenr_maclpen_en),
-      .din  (nxt_rcc_c2_ahb1lpenr_maclpen),
-      .dout (cur_rcc_c2_ahb1lpenr_maclpen)
+      .en   (rcc_c2_ahb1lpenr_mac1lpen_en),
+      .din  (nxt_rcc_c2_ahb1lpenr_mac1lpen),
+      .dout (cur_rcc_c2_ahb1lpenr_mac1lpen)
   );
 
   // --------------------------------------------------------------------------------
@@ -12431,7 +13163,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_apb1lpenr                        0xd0                                    
+  // rcc_c2_apb1lpenr                        0x54                                    
   // --------------------------------------------------------------------------------
   // 17:17               gtim1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -12455,7 +13187,7 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 7:7                 uart4lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c2lpen            RW                  0b0                 
+  // 6:6                 i2c1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 5:5                 gpio1lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -12486,7 +13218,7 @@ module rcc_vcore_reg #(
     cur_rcc_c2_apb1lpenr_uart2lpen,
     cur_rcc_c2_apb1lpenr_uart3lpen,
     cur_rcc_c2_apb1lpenr_uart4lpen,
-    cur_rcc_c2_apb1lpenr_i2c2lpen,
+    cur_rcc_c2_apb1lpenr_i2c1lpen,
     cur_rcc_c2_apb1lpenr_gpio1lpen,
     cur_rcc_c2_apb1lpenr_gpio2lpen,
     cur_rcc_c2_apb1lpenr_gpio3lpen,
@@ -12683,20 +13415,20 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 6:6                 i2c2lpen            RW                  0b0                 
+  // 6:6                 i2c1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_apb1lpenr_i2c2lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
-  assign nxt_rcc_c2_apb1lpenr_i2c2lpen = wdata[6:6];
-  assign rcc_c2_i2c2_lpen              = cur_rcc_c2_apb1lpenr_i2c2lpen;
+  assign rcc_c2_apb1lpenr_i2c1lpen_en  = (|wr_req & rcc_c2_apb1lpenr_sel);
+  assign nxt_rcc_c2_apb1lpenr_i2c1lpen = wdata[6:6];
+  assign rcc_c2_i2c1_lpen              = cur_rcc_c2_apb1lpenr_i2c1lpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
-  ) U_rcc_c2_apb1lpenr_i2c2lpen (
+  ) U_rcc_c2_apb1lpenr_i2c1lpen (
       .clk  (clk),
       .rst_n(rst_n),
-      .en   (rcc_c2_apb1lpenr_i2c2lpen_en),
-      .din  (nxt_rcc_c2_apb1lpenr_i2c2lpen),
-      .dout (cur_rcc_c2_apb1lpenr_i2c2lpen)
+      .en   (rcc_c2_apb1lpenr_i2c1lpen_en),
+      .din  (nxt_rcc_c2_apb1lpenr_i2c1lpen),
+      .dout (cur_rcc_c2_apb1lpenr_i2c1lpen)
   );
 
   // --------------------------------------------------------------------------------
@@ -12803,7 +13535,7 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_apb2lpenr                        0xd4                                    
+  // rcc_c2_apb2lpenr                        0x58                                    
   // --------------------------------------------------------------------------------
   // 15:15               gtim5lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -13135,17 +13867,23 @@ module rcc_vcore_reg #(
 
 
   // --------------------------------------------------------------------------------
-  // rcc_c2_apb3lpenr                        0xd8                                    
+  // rcc_c2_apb3lpenr                        0x5c                                    
   // --------------------------------------------------------------------------------
-  // 11:11               sysctllpen          RW                  0b0                 
+  // 14:14               spl2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtlpen            RW                  0b0                 
+  // 13:13               spl1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1lpen            RW                  0b0                 
+  // 12:12               mailbox2lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2lpen            RW                  0b0                 
+  // 11:11               mailbox1lpen        RW                  0b0                 
   // --------------------------------------------------------------------------------
-  // 7:7                 adcclpen            RW                  0b0                 
+  // 10:10               sysctllpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 9:9                 wwdtlpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 8:8                 tim1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 7:7                 tim2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   // 6:6                 gpio6lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
@@ -13153,20 +13891,106 @@ module rcc_vcore_reg #(
   // --------------------------------------------------------------------------------
   // 4:4                 gpio8lpen           RW                  0b0                 
   // --------------------------------------------------------------------------------
+  // 3:3                 iwdtlpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  // 0:0                 rtclpen             RW                  0b0                 
+  // --------------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------------
   // rcc_c2_apb3lpenr read data
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3lpenr_read = {
-    {20{1'b0}}, cur_rcc_c2_apb3lpenr_sysctllpen, cur_rcc_c2_apb3lpenr_wwdtlpen, cur_rcc_c2_apb3lpenr_tim1lpen, cur_rcc_c2_apb3lpenr_tim2lpen, cur_rcc_c2_apb3lpenr_adcclpen, cur_rcc_c2_apb3lpenr_gpio6lpen, cur_rcc_c2_apb3lpenr_gpio7lpen, cur_rcc_c2_apb3lpenr_gpio8lpen, {4{1'b0}}
+    {17{1'b0}},
+    cur_rcc_c2_apb3lpenr_spl2lpen,
+    cur_rcc_c2_apb3lpenr_spl1lpen,
+    cur_rcc_c2_apb3lpenr_mailbox2lpen,
+    cur_rcc_c2_apb3lpenr_mailbox1lpen,
+    cur_rcc_c2_apb3lpenr_sysctllpen,
+    cur_rcc_c2_apb3lpenr_wwdtlpen,
+    cur_rcc_c2_apb3lpenr_tim1lpen,
+    cur_rcc_c2_apb3lpenr_tim2lpen,
+    cur_rcc_c2_apb3lpenr_gpio6lpen,
+    cur_rcc_c2_apb3lpenr_gpio7lpen,
+    cur_rcc_c2_apb3lpenr_gpio8lpen,
+    cur_rcc_c2_apb3lpenr_iwdtlpen,
+    {2{1'b0}},
+    cur_rcc_c2_apb3lpenr_rtclpen
   };
 
   // --------------------------------------------------------------------------------
-  // 11:11               sysctllpen          RW                  0b0                 
+  // 14:14               spl2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
-  assign rcc_c2_apb3lpenr_sysctllpen_en = (|wr_req & rcc_c2_apb3lpenr_sel);
-  assign nxt_rcc_c2_apb3lpenr_sysctllpen = wdata[11:11];
-  assign rcc_c2_sysctl_lpen = cur_rcc_c2_apb3lpenr_sysctllpen;
+  assign rcc_c2_apb3lpenr_spl2lpen_en = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_spl2lpen = wdata[14:14];
+  assign rcc_c2_spl2_lpen = cur_rcc_c2_apb3lpenr_spl2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_spl2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_spl2lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_spl2lpen),
+      .dout (cur_rcc_c2_apb3lpenr_spl2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 13:13               spl1lpen            RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_spl1lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_spl1lpen = wdata[13:13];
+  assign rcc_c2_spl1_lpen              = cur_rcc_c2_apb3lpenr_spl1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_spl1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_spl1lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_spl1lpen),
+      .dout (cur_rcc_c2_apb3lpenr_spl1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 12:12               mailbox2lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_mailbox2lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_mailbox2lpen = wdata[12:12];
+  assign rcc_c2_mailbox2_lpen              = cur_rcc_c2_apb3lpenr_mailbox2lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_mailbox2lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_mailbox2lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_mailbox2lpen),
+      .dout (cur_rcc_c2_apb3lpenr_mailbox2lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 11:11               mailbox1lpen        RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_mailbox1lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_mailbox1lpen = wdata[11:11];
+  assign rcc_c2_mailbox1_lpen              = cur_rcc_c2_apb3lpenr_mailbox1lpen;
+  BB_dfflr #(
+      .DW     (1),
+      .RST_VAL('h0)
+  ) U_rcc_c2_apb3lpenr_mailbox1lpen (
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (rcc_c2_apb3lpenr_mailbox1lpen_en),
+      .din  (nxt_rcc_c2_apb3lpenr_mailbox1lpen),
+      .dout (cur_rcc_c2_apb3lpenr_mailbox1lpen)
+  );
+
+  // --------------------------------------------------------------------------------
+  // 10:10               sysctllpen          RW                  0b0                 
+  // --------------------------------------------------------------------------------
+  assign rcc_c2_apb3lpenr_sysctllpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
+  assign nxt_rcc_c2_apb3lpenr_sysctllpen = wdata[10:10];
+  assign rcc_c2_sysctl_lpen              = cur_rcc_c2_apb3lpenr_sysctllpen;
   BB_dfflr #(
       .DW     (1),
       .RST_VAL('h0)
@@ -13179,10 +14003,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 10:10               wwdtlpen            RW                  0b0                 
+  // 9:9                 wwdtlpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3lpenr_wwdtlpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
-  assign nxt_rcc_c2_apb3lpenr_wwdtlpen = wdata[10:10];
+  assign nxt_rcc_c2_apb3lpenr_wwdtlpen = wdata[9:9];
   assign rcc_c2_wwdt_lpen              = cur_rcc_c2_apb3lpenr_wwdtlpen;
   BB_dfflr #(
       .DW     (1),
@@ -13196,10 +14020,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 9:9                 tim1lpen            RW                  0b0                 
+  // 8:8                 tim1lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3lpenr_tim1lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
-  assign nxt_rcc_c2_apb3lpenr_tim1lpen = wdata[9:9];
+  assign nxt_rcc_c2_apb3lpenr_tim1lpen = wdata[8:8];
   assign rcc_c2_tim1_lpen              = cur_rcc_c2_apb3lpenr_tim1lpen;
   BB_dfflr #(
       .DW     (1),
@@ -13213,10 +14037,10 @@ module rcc_vcore_reg #(
   );
 
   // --------------------------------------------------------------------------------
-  // 8:8                 tim2lpen            RW                  0b0                 
+  // 7:7                 tim2lpen            RW                  0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_c2_apb3lpenr_tim2lpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
-  assign nxt_rcc_c2_apb3lpenr_tim2lpen = wdata[8:8];
+  assign nxt_rcc_c2_apb3lpenr_tim2lpen = wdata[7:7];
   assign rcc_c2_tim2_lpen              = cur_rcc_c2_apb3lpenr_tim2lpen;
   BB_dfflr #(
       .DW     (1),
@@ -13227,23 +14051,6 @@ module rcc_vcore_reg #(
       .en   (rcc_c2_apb3lpenr_tim2lpen_en),
       .din  (nxt_rcc_c2_apb3lpenr_tim2lpen),
       .dout (cur_rcc_c2_apb3lpenr_tim2lpen)
-  );
-
-  // --------------------------------------------------------------------------------
-  // 7:7                 adcclpen            RW                  0b0                 
-  // --------------------------------------------------------------------------------
-  assign rcc_c2_apb3lpenr_adcclpen_en  = (|wr_req & rcc_c2_apb3lpenr_sel);
-  assign nxt_rcc_c2_apb3lpenr_adcclpen = wdata[7:7];
-  assign rcc_c2_adcc_lpen              = cur_rcc_c2_apb3lpenr_adcclpen;
-  BB_dfflr #(
-      .DW     (1),
-      .RST_VAL('h0)
-  ) U_rcc_c2_apb3lpenr_adcclpen (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .en   (rcc_c2_apb3lpenr_adcclpen_en),
-      .din  (nxt_rcc_c2_apb3lpenr_adcclpen),
-      .dout (cur_rcc_c2_apb3lpenr_adcclpen)
   );
 
   // --------------------------------------------------------------------------------
@@ -13296,10 +14103,6 @@ module rcc_vcore_reg #(
       .din  (nxt_rcc_c2_apb3lpenr_gpio8lpen),
       .dout (cur_rcc_c2_apb3lpenr_gpio8lpen)
   );
-
-
-
-
 
   // --------------------------------------------------------------------------------
   // rcc_c1_rsr read data
