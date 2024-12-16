@@ -14,6 +14,7 @@ module clk_div_d #(
     input                  rst_n,
     input                  i_clk,
     input  [RATIO_WID-1:0] ratio,
+    input                  testmode,
     output                 o_clk,
     output                 div_en
 );
@@ -66,12 +67,20 @@ module clk_div_d #(
       .inv_clk(nxt_o_clk)
   );
   assign o_clk_wren = (cur_cnt == minus_one_half_ratio) || (cur_cnt == minus_one_ratio);
-  BB_mux_cell u_o_clk_mux (
-      .ina(cur_o_clk),  //0
-      .inb(i_clk),      //1
-      .sel(no_div),
-      .out(o_clk)
+
+  glitch_free_clk_switch #(
+      .CLK_NUM(2)
+  ) u_o_clk_mux (
+      .i_clk    ({i_clk, cur_o_clk}),
+      .clk_fail (2'b0),
+      .sel      (no_div),
+      .rst_n    ({2{rst_n}}),
+      .testmode (testmode),
+      .scan_mode(1'b0),
+      .test_clk (1'b0),
+      .o_clk    (o_clk)
   );
+
 
   BB_dfflr #(
       .DW     (1),

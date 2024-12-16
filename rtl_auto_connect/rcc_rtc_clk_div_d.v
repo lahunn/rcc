@@ -23,10 +23,10 @@ module rcc_rtc_clk_div_d #(
   rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_rcc_reset_sync (
-      .src_rst_n (rst_n),
-      .clk       (i_clk),
-      .testmode  (testmode),
-      .gen_rst_n (sync_rst_n)
+      .src_rst_n(rst_n),
+      .clk      (i_clk),
+      .testmode (testmode),
+      .gen_rst_n(sync_rst_n)
   );
 
   BB_signal_sync #(
@@ -52,11 +52,12 @@ module rcc_rtc_clk_div_d #(
   clk_div_d #(
       .RATIO_WID(RATIO_WID)
   ) u_clk_div_d (
-      .rst_n (sync_rst_n),
-      .i_clk (div_i_clk),
-      .ratio (sync_ratio),
-      .o_clk (o_clk),
-      .div_en(div_en)
+      .rst_n   (sync_rst_n),
+      .i_clk   (div_i_clk),
+      .ratio   (sync_ratio),
+      .testmode(testmode),
+      .o_clk   (o_clk),
+      .div_en  (div_en)
   );
 
 endmodule

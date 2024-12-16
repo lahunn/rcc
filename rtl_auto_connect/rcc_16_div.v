@@ -7,6 +7,7 @@ module rcc_16_div (
     input        i_clk,
     input        rst_n,
     input  [2:0] div_sel,
+    input        testmode,
     output       div_en,
     output       o_clk
 );
@@ -38,11 +39,12 @@ module rcc_16_div (
   clk_div_d #(
       .RATIO_WID(4)
   ) u_clk_div_d (
-      .rst_n (rst_n),
-      .i_clk (i_clk),
-      .ratio (d1_div_ratio),
-      .o_clk (o_clk),
-      .div_en(div_en)
+      .rst_n   (rst_n),
+      .i_clk   (i_clk),
+      .ratio   (d1_div_ratio),
+      .testmode(testmode),
+      .o_clk   (o_clk),
+      .div_en  (div_en)
   );
 
 
