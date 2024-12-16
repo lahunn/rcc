@@ -127,7 +127,12 @@ module sys_clk_switch #(
   generate
     genvar m;
     for (m = 0; m < CLK_NUM; m = m + 1) begin : clk_pre_out_gen
-      assign clk_pre_out[m] = i_clk[m] && d2_clk_sel[m];
+      BB_clk_gating u_BB_clk_gating (
+          .raw_clk(i_clk[m]),
+          .active (d2_clk_sel[m]),
+          .bypass (scan_mode),
+          .gen_clk(clk_pre_out[m])
+      );
     end
   endgenerate
 

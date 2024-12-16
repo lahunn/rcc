@@ -68,19 +68,18 @@ module clk_div_d #(
   );
   assign o_clk_wren = (cur_cnt == minus_one_half_ratio) || (cur_cnt == minus_one_ratio);
 
-  glitch_free_clk_switch #(
+  sys_clk_switch #(
       .CLK_NUM(2)
   ) u_o_clk_mux (
-      .i_clk    ({i_clk, cur_o_clk}),
+      .i_clk    ({cur_o_clk, i_clk}),
       .clk_fail (2'b0),
-      .sel      (no_div),
+      .sel      (!no_div),
       .rst_n    ({2{rst_n}}),
       .testmode (testmode),
       .scan_mode(1'b0),
       .test_clk (1'b0),
       .o_clk    (o_clk)
   );
-
 
   BB_dfflr #(
       .DW     (1),

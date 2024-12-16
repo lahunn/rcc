@@ -25,9 +25,9 @@ module glitch_free_clk_switch #(
 );
   wire [        CLK_NUM-1:0] onehot_sel;
   wire [        CLK_NUM-1:0] clk_sel;
-  wire [        CLK_NUM-1:0] clk_sel_f;
-  wire [        CLK_NUM-1:0] clk_sel_ff;
-  wire [        CLK_NUM-1:0] clk_sel_ff_n;
+  wire [        CLK_NUM-1:0] d1_clk_sel;
+  wire [        CLK_NUM-1:0] d2_clk_sel;
+  wire [        CLK_NUM-1:0] d2_clk_sel_n;
   wire [        CLK_NUM-1:0] clk_pre_out;
   wire [        CLK_NUM-1:0] raw_clk_rst_n;
   wire [        CLK_NUM-1:0] clk_rst_n;
@@ -67,14 +67,14 @@ module glitch_free_clk_switch #(
   //================================================================
   // generate clk_sel
   //================================================================
-  assign clk_sel[0] = onehot_sel[0] && (&clk_sel_ff_n[CLK_NUM-1:1]);
+  assign clk_sel[0] = onehot_sel[0] && (&d2_clk_sel_n[CLK_NUM-1:1]);
   generate
     genvar j;
     for (j = 1; j < CLK_NUM - 1; j = j + 1) begin : clk_sel_gen
-      assign clk_sel[j] = onehot_sel[j] && (&clk_sel_ff_n[j-1:0]) && (&clk_sel_ff_n[CLK_NUM-1:j+1]);
+      assign clk_sel[j] = onehot_sel[j] && (&d2_clk_sel_n[j-1:0]) && (&d2_clk_sel_n[CLK_NUM-1:j+1]);
     end
   endgenerate
-  assign clk_sel[CLK_NUM-1] = onehot_sel[CLK_NUM-1] && (&clk_sel_ff_n[CLK_NUM-2:0]);
+  assign clk_sel[CLK_NUM-1] = onehot_sel[CLK_NUM-1] && (&d2_clk_sel_n[CLK_NUM-2:0]);
 
   //================================================================
   // two stage flip-flop to synchronize the sel signal
@@ -89,7 +89,7 @@ module glitch_free_clk_switch #(
           .clk  (i_clk[k]),
           .rst_n(clk_rst_n[k]),
           .din  (clk_sel[k]),
-          .dout (clk_sel_f[k])
+          .dout (d1_clk_sel[k])
       );
 
       BB_dffr #(
@@ -98,13 +98,13 @@ module glitch_free_clk_switch #(
       ) u_BB_dffr_1 (
           .clk  (i_clk[k]),
           .rst_n(clk_rst_n[k]),
-          .din  (clk_sel_f[k]),
-          .dout (clk_sel_ff[k])
+          .din  (d1_clk_sel[k]),
+          .dout (d2_clk_sel[k])
       );
     end
   endgenerate
 
-  assign clk_sel_ff_n = ~clk_sel_ff;
+  assign d2_clk_sel_n = ~d2_clk_sel;
 
   //================================================================
   // clk_pre_out is i_clk gating by onehot_sel , 
@@ -113,7 +113,12 @@ module glitch_free_clk_switch #(
   generate
     genvar m;
     for (m = 0; m < CLK_NUM; m = m + 1) begin : clk_pre_out_gen
-      assign clk_pre_out[m] = i_clk[m] && clk_sel_ff[m];
+      BB_clk_gating u_BB_clk_gating (
+          .raw_clk(i_clk[m]),
+          .active (d2_clk_sel[m]),
+          .bypass (scan_mode),
+          .gen_clk(clk_pre_out[m])
+      );
     end
   endgenerate
 
