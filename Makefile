@@ -1,4 +1,4 @@
-all:cp_src_rtl connect_files remove_auto 
+all:cp_src_rtl connect_files remove_auto
 
 cp_src_rtl:
 	rm -rf ./rtl_connected/*.v
@@ -43,7 +43,7 @@ inject_auto_files:
 	emacs --batch ./rtl_connected/rcc_vsw_top.v						-f  verilog-batch-inject-auto
 	emacs --batch ./rtl_connected/rcc_top.v								-f  verilog-batch-inject-auto
 
-gen_rtl_zip:
+gen_rtl_zip: all
 	rm -rf rtl_connected.zip
 	cp *dc rtl_connected/
 	zip -r rtl_connected.zip rtl_connected/
