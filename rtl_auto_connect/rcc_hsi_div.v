@@ -20,10 +20,10 @@ module rcc_hsi_div (
   rcc_reset_sync #(
       .STAGE_NUM(2)
   ) u_rcc_reset_sync (
-      .src_rst_n (rst_n),
-      .clk       (i_clk),
-      .testmode  (testmode),
-      .gen_rst_n (sync_rst_n)
+      .src_rst_n(rst_n),
+      .clk      (i_clk),
+      .testmode (testmode),
+      .gen_rst_n(sync_rst_n)
   );
 
   BB_signal_sync #(
@@ -60,11 +60,12 @@ module rcc_hsi_div (
   clk_div_d #(
       .RATIO_WID(3)
   ) u_clk_div_d (
-      .rst_n (sync_rst_n),
-      .i_clk (i_clk),
-      .ratio (d1_div_ratio),
-      .o_clk (o_clk),
-      .div_en()
+      .rst_n   (sync_rst_n),
+      .i_clk   (i_clk),
+      .ratio   (d1_div_ratio),
+      .testmode(testmode),
+      .o_clk   (o_clk),
+      .div_en  ()
   );
 
 endmodule

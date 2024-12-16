@@ -8,6 +8,7 @@ module rcc_pclk_timer_div (
     input        rst_n,
     input  [2:0] div_sel,
     input        timpre,
+    input        testmode,
     output       tim_ker_clk,
     output       div_en,
     output       pclk
@@ -16,11 +17,12 @@ module rcc_pclk_timer_div (
   reg [2:0] tim_div_ratio;
 
   rcc_16_div u_rcc_pclk_divider (
-      .i_clk  (i_clk),
-      .rst_n  (rst_n),
-      .div_sel(div_sel),
-      .div_en (div_en),
-      .o_clk  (pclk)
+      .i_clk   (i_clk),
+      .rst_n   (rst_n),
+      .div_sel (div_sel),
+      .testmode(testmode),
+      .div_en  (div_en),
+      .o_clk   (pclk)
   );
 
   always @(*) begin
@@ -49,11 +51,12 @@ module rcc_pclk_timer_div (
   clk_div_d #(
       .RATIO_WID(3)
   ) u_tim_clk_div_d (
-      .rst_n (rst_n),
-      .i_clk (i_clk),
-      .ratio (tim_div_ratio),
-      .o_clk (tim_ker_clk),
-      .div_en()
+      .rst_n   (rst_n),
+      .i_clk   (i_clk),
+      .ratio   (tim_div_ratio),
+      .testmode(testmode),
+      .o_clk   (tim_ker_clk),
+      .div_en  ()
   );
 
 endmodule

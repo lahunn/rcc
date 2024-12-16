@@ -1151,7 +1151,7 @@ module rcc_sys_clk_rst_ctrl #(
       .div_en  ()
   );
   //MCO2
-  assign mco2_clk_src  = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
+  assign mco2_clk_src = {lsi_clk, csi_clk, pll1_p_clk, hse_clk, pll2_p_clk, sys_clk};
   // assign mco2_scan_inc = scan_mode && raw_mco2_pre_clk;
   mux_n_to_1 #(
       .N(6),
@@ -1220,7 +1220,7 @@ module rcc_sys_clk_rst_ctrl #(
   //pll source clock generate
   //====================================================================
 
-  assign pll_clk_src          = {hse_clk, csi_clk, hsi_clk};
+  assign pll_clk_src = {hse_clk, csi_clk, hsi_clk};
   // assign pll_src_clk_scan_inc = scan_mode && raw_pll_src_clk;
 
   mux_n_to_1 #(
@@ -1305,11 +1305,12 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   rcc_512_div u_sys_d1cpre_clk_divider (
-      .i_clk  (sys_clk),
-      .rst_n  (sys_rst_n),
-      .div_sel(d1cpre),
-      .div_en (),
-      .o_clk  (raw_sys_d1cpre_clk)
+      .i_clk   (sys_clk),
+      .rst_n   (sys_rst_n),
+      .div_sel (d1cpre),
+      .testmode(testmode),
+      .div_en  (),
+      .o_clk   (raw_sys_d1cpre_clk)
   );
 
   test_clk_mux u_sys_d1cpre_clk_tmux (
@@ -1350,11 +1351,12 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   rcc_512_div u_sys_hpre_clk_divider (
-      .i_clk  (sys_d1cpre_clk),
-      .rst_n  (sys_rst_n),
-      .div_sel(hpre),
-      .div_en (c1_to_axi_div_en),
-      .o_clk  (raw_sys_hpre_clk)
+      .i_clk   (sys_d1cpre_clk),
+      .rst_n   (sys_rst_n),
+      .div_sel (hpre),
+      .testmode(testmode),
+      .div_en  (c1_to_axi_div_en),
+      .o_clk   (raw_sys_hpre_clk)
   );
 
   // sys_hpre_clk test clock mux
@@ -1390,11 +1392,12 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   rcc_16_div u_rcc_d2_bus_clk_divider (
-      .i_clk  (rcc_d1_bus_clk),
-      .rst_n  (sys_rst_n),
-      .div_sel(d1ppre),
-      .div_en (d1_h2b_div_en),
-      .o_clk  (raw_rcc_apb3bridge_d1_pre_clk)
+      .i_clk   (rcc_d1_bus_clk),
+      .rst_n   (sys_rst_n),
+      .div_sel (d1ppre),
+      .testmode(testmode),
+      .div_en  (d1_h2b_div_en),
+      .o_clk   (raw_rcc_apb3bridge_d1_pre_clk)
   );
 
   // rcc_apb3bridge_d1_pre_clk test clock mux
@@ -1471,6 +1474,7 @@ module rcc_sys_clk_rst_ctrl #(
       .i_clk      (rcc_d2_bus_clk),
       .rst_n      (sys_rst_n),
       .div_sel    (d2ppre1),
+      .testmode   (testmode),
       .div_en     (d2_h2b1_div_en),
       .timpre     (timpre),
       .tim_ker_clk(raw_rcc_timx_ker_clk),
@@ -1505,6 +1509,7 @@ module rcc_sys_clk_rst_ctrl #(
       .i_clk      (rcc_d2_bus_clk),
       .rst_n      (sys_rst_n),
       .div_sel    (d2ppre2),
+      .testmode   (testmode),
       .div_en     (d2_h2b2_div_en),
       .timpre     (timpre),
       .tim_ker_clk(raw_rcc_timy_ker_clk),
@@ -1572,11 +1577,12 @@ module rcc_sys_clk_rst_ctrl #(
   );
 
   rcc_16_div u_rcc_d3_bus_clk_divider (
-      .i_clk  (rcc_d3_bus_clk),
-      .rst_n  (sys_rst_n),
-      .div_sel(d3ppre),
-      .div_en (d3_h2b_div_en),
-      .o_clk  (raw_rcc_apb4bridge_d3_pre_clk)
+      .i_clk   (rcc_d3_bus_clk),
+      .rst_n   (sys_rst_n),
+      .div_sel (d3ppre),
+      .testmode(testmode),
+      .div_en  (d3_h2b_div_en),
+      .o_clk   (raw_rcc_apb4bridge_d3_pre_clk)
   );
 
   // rcc_apb4bridge_d3_pre_clk test clock mux

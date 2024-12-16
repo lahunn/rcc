@@ -7,6 +7,7 @@ module rcc_512_div (
     input        i_clk,
     input        rst_n,
     input  [3:0] div_sel,
+    input        testmode,
     output       div_en,
     output       o_clk
 );
@@ -42,11 +43,12 @@ module rcc_512_div (
   clk_div_d #(
       .RATIO_WID(9)
   ) u_clk_div_d (
-      .rst_n (rst_n),
-      .i_clk (i_clk),
-      .ratio (d1_div_ratio),
-      .o_clk (o_clk),
-      .div_en(div_en)
+      .rst_n   (rst_n),
+      .i_clk   (i_clk),
+      .ratio   (d1_div_ratio),
+      .testmode(testmode),
+      .o_clk   (o_clk),
+      .div_en  (div_en)
   );
 
 endmodule
