@@ -84,8 +84,10 @@ module rcc_top #(
     input          lsi_clk,                 // To u_rcc_vsw_top of rcc_vsw_top.v, ...
     input          lsi_rdy,                 // To u_rcc_vcore_top of rcc_vcore_top.v
     //eth
-    input          eth_rcc_epis_2,          // To u_rcc_vcore_top of rcc_vcore_top.v
-    input          eth_rcc_fes,             // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          mac1_rcc_epis_2,         // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          mac1_rcc_fes,            // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          mac2_rcc_epis_2,         // To u_rcc_vcore_top of rcc_vcore_top.v
+    input          mac2_rcc_fes,            // To u_rcc_vcore_top of rcc_vcore_top.v
     //================================================================
     // falsh signals
     //================================================================
@@ -303,8 +305,12 @@ module rcc_top #(
     //================================================================
     // peripheral clock and reset
     //================================================================
-    output          rcc_adcc_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_adcc_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcspi1_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcspi1_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcspi2_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcspi2_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcspi3_hclk,           // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_adcspi3_sync_rst_n,     // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_can1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_can1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_can2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -317,17 +323,17 @@ module rcc_top #(
     output          rcc_can5_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_can6_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_can6_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_cspi_f_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_cspi_f_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_cspi_l_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_cspi_l_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_cspi_l_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma1_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma2_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dma2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dmasch_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_dmasch_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth_mii_rx_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth_mii_tx_clk,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth_rmii_ref_clk,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth_mii_rx_180_clk,     // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_eth_mii_tx_180_clk,     // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_fft_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_fft_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_gpio1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -375,8 +381,14 @@ module rcc_top #(
     output          rcc_iwdt_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_lz_hclk,                // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_lz_sync_rst_n,          // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mac_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_mac_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mac1_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mac1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mac2_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mac2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mailbox1_pclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mailbox1_sync_rst_n,    // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mailbox2_pclk,          // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_mailbox2_sync_rst_n,    // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_mppt_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_mppt_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_mppt_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -389,19 +401,15 @@ module rcc_top #(
     output          rcc_obl_rst_n,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_qspi1_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_qspi1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi2_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi2_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi3_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi3_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi4_hclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_qspi4_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rom_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rom_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rtc_ker_clk,            // From u_rcc_vsw_top of rcc_vsw_top.v, ...
     output          rcc_rtc_pclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rtc_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sms_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_sms_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_smc1_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_smc1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_smc2_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_smc2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -412,6 +420,10 @@ module rcc_top #(
     output          rcc_spi4_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi5_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_spi5_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_spl1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_spl1_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_spl2_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_spl2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_sysctl_pclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_sysctl_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_tim1_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -420,8 +432,6 @@ module rcc_top #(
     output          rcc_tim2_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_timx_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_timy_ker_clk,           // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tsms_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_tsms_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart1_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_uart2_pclk,             // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -441,9 +451,7 @@ module rcc_top #(
     output          rcc_wwdt_pclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_wwdt_sync_rst_n,        // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_xflash_hclk,            // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_xflash_sync_rst_n,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_xspi_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_xspi_sync_rst_n         // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_xflash_sync_rst_n       // From u_rcc_vcore_top of rcc_vcore_top.v
     /*AUTOINPUT*/
     /*AUTOOUTPUT*/
 );
