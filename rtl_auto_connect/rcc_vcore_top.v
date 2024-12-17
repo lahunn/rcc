@@ -121,10 +121,10 @@ module rcc_vcore_top #(
   wire [   2:0] raw_d3ppre;
   wire          raw_timpre;
 
-  wire          gen_mac1_rcc_fes;
-  wire          gen_mac1_rcc_epis_2;
-  wire          gen_mac2_rcc_fes;
-  wire          gen_mac2_rcc_epis_2;
+  wire          mac1_rcc_fes;
+  wire          mac1_rcc_epis_2;
+  wire          mac2_rcc_fes;
+  wire          mac2_rcc_epis_2;
 
   // rcc_vcore_dft_sig_loopback Outputs
   wire          gen_cur_rcc_bdcr_bdrst;
@@ -331,8 +331,8 @@ module rcc_vcore_top #(
   rcc_eth_ker_clk_ctrl u_rcc_mac1_ker_clk_ctrl (
       .pad_rcc_eth_mii_tx_clk(pad_rcc_mac1_mii_tx_clk),
       .pad_rcc_eth_mii_rx_clk(pad_rcc_mac1_mii_rx_clk),
-      .eth_rcc_fes           (gen_mac1_rcc_fes),
-      .eth_rcc_epis_2        (gen_mac1_rcc_epis_2),
+      .eth_rcc_fes           (mac1_rcc_fes),
+      .eth_rcc_epis_2        (mac1_rcc_epis_2),
       .rst_n                 (sys_rst_n),
       .rcc_mac_amen          (rcc_mac1_amen),
       .rcc_c1_eth1rx_en      (rcc_c1_mac1_en),
@@ -354,8 +354,8 @@ module rcc_vcore_top #(
   rcc_eth_ker_clk_ctrl u_rcc_mac2_ker_clk_ctrl (
       .pad_rcc_eth_mii_tx_clk(pad_rcc_mac2_mii_tx_clk),
       .pad_rcc_eth_mii_rx_clk(pad_rcc_mac2_mii_rx_clk),
-      .eth_rcc_fes           (gen_mac2_rcc_fes),
-      .eth_rcc_epis_2        (gen_mac2_rcc_epis_2),
+      .eth_rcc_fes           (mac2_rcc_fes),
+      .eth_rcc_epis_2        (mac2_rcc_epis_2),
       .rst_n                 (sys_rst_n),
       .rcc_mac_amen          (rcc_mac2_amen),
       .rcc_c1_eth1rx_en      (rcc_c1_mac2_en),
@@ -378,10 +378,10 @@ module rcc_vcore_top #(
   // rcc config mux for atspeed test
   //================================================================
   rcc_config_mux u_rcc_config_mux (
-      .gen_mac1_rcc_fes   (gen_mac1_rcc_fes),
-      .gen_mac1_rcc_epis_2(gen_mac1_rcc_epis_2),
-      .gen_mac2_rcc_fes   (gen_mac2_rcc_fes),
-      .gen_mac2_rcc_epis_2(gen_mac2_rcc_epis_2)
+      .mac1_rcc_fes   (mac1_rcc_fes),
+      .mac1_rcc_epis_2(mac1_rcc_epis_2),
+      .mac2_rcc_fes   (mac2_rcc_fes),
+      .mac2_rcc_epis_2(mac2_rcc_epis_2)
       /*AUTOINST*/
   );
 
