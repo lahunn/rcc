@@ -123,9 +123,6 @@ module rcc_vcore_top #(
   wire [   2:0] raw_d3ppre;
   wire          raw_timpre;
 
-  wire          gen_eth_rcc_fes;
-  wire          gen_eth_rcc_epis_2;
-
   // rcc_vcore_dft_sig_loopback Outputs
   wire          gen_cur_rcc_bdcr_bdrst;
   wire          gen_cur_rcc_bdcr_lsebyp;
@@ -329,9 +326,7 @@ module rcc_vcore_top #(
 
   //rcc_eth_ker_clk_ctrl
   rcc_eth_ker_clk_ctrl u_rcc_eth_ker_clk_ctrl (
-      .rst_n         (sys_rst_n),
-      .eth_rcc_fes   (gen_eth_rcc_fes),
-      .eth_rcc_epis_2(gen_eth_rcc_epis_2)
+      .rst_n(sys_rst_n)
       /*AUTOINST*/
   );
 
@@ -339,9 +334,7 @@ module rcc_vcore_top #(
   // rcc config mux for atspeed test
   //================================================================
   rcc_config_mux u_rcc_config_mux (
-      .gen_eth_rcc_fes   (gen_eth_rcc_fes),
-      .gen_eth_rcc_epis_2(gen_eth_rcc_epis_2)
-      /*AUTOINST*/
+  /*AUTOINST*/
   );
 
 
