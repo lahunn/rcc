@@ -396,7 +396,7 @@ module rcc_sys_clk_rst_ctrl #(
 
   assign rcc_d1_stop        = rcc_pwr_d1_req;
   assign rcc_d2_stop        = rcc_pwr_d2_req;
-  assign rcc_sys_stop       = rcc_pwr_d3_req;
+  assign rcc_sys_stop       = rcc_pwr_d3_req && (~rcc_exit_sys_stop);
 
   // pwr_dx_wkup is aynchrous signal, so it need to be synchronized
   // rcc_pwr_dx_req_set_n can set rcc_pwr_dx_req to 1 but can't set rcc_pwr_dx_req to 0
@@ -407,22 +407,25 @@ module rcc_sys_clk_rst_ctrl #(
   //================================================================
   // pwr_d1_wkup might be pulse, so we should be able to store the value of pwr_d1_wkup
   // d2_pwr_d1_wkup would not be release ultil rcc_pwr_d1_req is cleared
-  BB_dffr #(
+  BB_dfflrs #(
       .DW     (1),
-      .RST_VAL(1)
+      .RST_VAL(0)
   ) u_pwr_d1_wkup_dffr (
       .clk  (sys_clk),
-      .rst_n(~pwr_d1_wkup),
+      .rst_n(sys_rst_n),
+      .set_n(~pwr_d1_wkup),
+      .en   (~rcc_pwr_d1_req),
       .din  (rcc_pwr_d1_req),
       .dout (d1_pwr_d1_wkup)
   );
 
-  BB_dffr #(
+  BB_dffrs #(
       .DW     (1),
-      .RST_VAL(1)
+      .RST_VAL(0)
   ) u_d1_pwr_d1_wkup_dffr (
       .clk  (sys_clk),
-      .rst_n(~pwr_d1_wkup),
+      .rst_n(sys_rst_n),
+      .set_n(~pwr_d1_wkup),
       .din  (d1_pwr_d1_wkup),
       .dout (d2_pwr_d1_wkup)
   );
@@ -447,22 +450,25 @@ module rcc_sys_clk_rst_ctrl #(
   //================================================================
   // pwr_d2_wkup might be pulse, so we should be able to store the value of pwr_d2_wkup
   // d2_pwr_d2_wkup_n would not be release ultil rcc_pwr_d2_req is cleared
-  BB_dffr #(
+  BB_dfflrs #(
       .DW     (1),
-      .RST_VAL(1)
+      .RST_VAL(0)
   ) u_pwr_d2_wkup_dffr (
       .clk  (sys_clk),
-      .rst_n(~pwr_d2_wkup),
+      .rst_n(sys_rst_n),
+      .set_n(~pwr_d2_wkup),
+      .en   (~rcc_pwr_d2_req),
       .din  (rcc_pwr_d2_req),
       .dout (d1_pwr_d2_wkup)
   );
 
-  BB_dffr #(
+  BB_dffrs #(
       .DW     (1),
-      .RST_VAL(1)
+      .RST_VAL(0)
   ) u_d1_pwr_d2_wkup_dffr (
       .clk  (sys_clk),
-      .rst_n(~pwr_d2_wkup),
+      .rst_n(sys_rst_n),
+      .set_n(~pwr_d2_wkup),
       .din  (d1_pwr_d2_wkup),
       .dout (d2_pwr_d2_wkup)
   );
@@ -487,22 +493,25 @@ module rcc_sys_clk_rst_ctrl #(
   //================================================================
   // pwr_d3_wkup might be pulse, so we should be able to store the value of pwr_d3_wkup
   // d2_pwr_d3_wkup_n would not be release ultil rcc_pwr_d3_req is cleared
-  BB_dffr #(
+  BB_dfflrs #(
       .DW     (1),
-      .RST_VAL(1)
+      .RST_VAL(0)
   ) u_pwr_d3_wkup_dffr (
       .clk  (sys_clk),
-      .rst_n(~pwr_d3_wkup),
+      .rst_n(sys_rst_n),
+      .set_n(~pwr_d3_wkup),
+      .en   (~rcc_pwr_d3_req),
       .din  (rcc_pwr_d3_req),
       .dout (d1_pwr_d3_wkup)
   );
 
-  BB_dffr #(
+  BB_dffrs #(
       .DW     (1),
-      .RST_VAL(1)
+      .RST_VAL(0)
   ) u_d1_pwr_d3_wkup_dffr (
       .clk  (sys_clk),
-      .rst_n(~pwr_d3_wkup),
+      .rst_n(sys_rst_n),
+      .set_n(~pwr_d3_wkup),
       .din  (d1_pwr_d3_wkup),
       .dout (d2_pwr_d3_wkup)
   );
