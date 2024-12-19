@@ -4006,11 +4006,14 @@ module rcc_vcore_reg #(
   assign rcc_cfgr_sws_en  = tg_sys_clk_rdy;
   assign sw               = cur_rcc_cfgr_sws[1:0];  //the MSB is not used
 
-  BB_dfflr #(
-      .DW(3)
+  BB_dfflrs #(
+      .DW     (3),
+      .RST_VAL(3'b000),
+      .SET_VAL(3'b001)
   ) U_rcc_cfgr_sws (
       .clk  (clk),
-      .rst_n(rst_n),
+      .rst_n(sw_clr_n),
+      .set_n(sw_set_n),
       .en   (rcc_cfgr_sws_en),
       .din  (nxt_rcc_cfgr_sws),
       .dout (cur_rcc_cfgr_sws)
