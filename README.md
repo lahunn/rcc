@@ -1,1 +1,1 @@
- this is the RCC rtl for jingmen B10 project
+ this is the RCC rtl based on 
