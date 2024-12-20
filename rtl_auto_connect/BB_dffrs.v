@@ -10,7 +10,7 @@ module BB_dffrs #(
     output reg  [DW-1:0] dout
 );
 
-  always @(posedge clk or negedge rst_n) begin
+  always @(posedge clk or negedge rst_n or negedge set_n) begin
     if (~rst_n) begin
       dout <= RST_VAL;
     end else if (~set_n) begin

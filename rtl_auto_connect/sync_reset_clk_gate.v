@@ -37,6 +37,6 @@ module sync_reset_clk_gate #(
       .dout (cur_counter)
   );
 
-  assign cur_clk_en = (!counter_wren);
+  assign cur_clk_en = !counter_wren;
 
 endmodule  //moduleName
