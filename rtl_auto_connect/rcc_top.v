@@ -117,8 +117,10 @@ module rcc_top #(
     //wwdg
     input           wwdg1_out_rst,              // To u_rcc_vdd_top of rcc_vdd_top.v, ...
     input           wwdg2_out_rst,              // To u_rcc_vdd_top of rcc_vdd_top.v, ...
-    input           pad_rcc_eth_mii_rx_clk,     // To u_rcc_vcore_top of rcc_vcore_top.v
-    input           pad_rcc_eth_mii_tx_clk,     // To u_rcc_vcore_top of rcc_vcore_top.v
+    input           pad_rcc_mac1_mii_tx_clk,
+    input           pad_rcc_mac1_mii_rx_clk,
+    input           pad_rcc_mac2_mii_tx_clk,
+    input           pad_rcc_mac2_mii_rx_clk,
     //================================================================
     // NRST PAD
     //================================================================
@@ -323,6 +325,10 @@ module rcc_top #(
     output          sync_vsw_rst_n,             // sync with sys_clk
     output          rtc_clk_sync_vsw_rst_n,     // From u_rcc_vsw_top of rcc_vsw_top.v
     //================================================================
+    // vsw clock signals
+    //================================================================
+    output          vsw_rcc_rtc_ker_clk,
+    //================================================================
     // interrupt signals
     //================================================================
     output          rcc_hsecss_it,              // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -334,6 +340,19 @@ module rcc_top #(
     output          rcc_pwr_d1_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_pwr_d2_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_pwr_d3_req,             // From u_rcc_vcore_top of rcc_vcore_top.v
+    //================================================================
+    // eth clocks
+    //================================================================
+    output          rcc_mac1_mii_tx_clk,
+    output          rcc_mac1_mii_rx_clk,
+    output          rcc_mac1_mii_tx_180_clk,
+    output          rcc_mac1_mii_rx_180_clk,
+    output          rcc_mac1_rmii_ref_clk,
+    output          rcc_mac2_mii_tx_clk,
+    output          rcc_mac2_mii_rx_clk,
+    output          rcc_mac2_mii_tx_180_clk,
+    output          rcc_mac2_mii_rx_180_clk,
+    output          rcc_mac2_rmii_ref_clk,
     //================================================================
     // peripheral clock and reset
     //================================================================
@@ -435,7 +454,7 @@ module rcc_top #(
     output          rcc_qspi1_sync_rst_n,       // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rom_hclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rom_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_rtc_ker_clk,            // From u_rcc_vsw_top of rcc_vsw_top.v, ...
+    output          rcc_rtc_ker_clk,
     output          rcc_rtc_pclk,               // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_rtc_sync_rst_n,         // From u_rcc_vcore_top of rcc_vcore_top.v
     output          rcc_smc1_hclk,              // From u_rcc_vcore_top of rcc_vcore_top.v
@@ -505,7 +524,8 @@ module rcc_top #(
       .raw_lse_clk            (lse_clk),
       .raw_rcc_bdcr_byte2_wren(rcc_bdcr_byte2_wren),
       .raw_rcc_bdcr_byte1_wren(rcc_bdcr_byte1_wren),
-      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren)
+      .raw_rcc_bdcr_byte0_wren(rcc_bdcr_byte0_wren),
+      .rcc_rtc_ker_clk        (vsw_rcc_rtc_ker_clk)
       /*AUTOINST*/
   );
 
@@ -518,36 +538,38 @@ module rcc_top #(
 
   rcc_vcore_top #(  /*AUTOINSTPARAM*/
   ) u_rcc_vcore_top (
-      .hse_rtc_clk               (hse_rtc_clk),
-      .raw_lsi_clk               (lsi_clk),
-      .raw_lse_clk               (lse_clk),
-      .raw_csi_origin_clk        (csi_origin_clk),
-      .raw_hse_origin_clk        (hse_origin_clk),
-      .raw_hsi48_origin_clk      (hsi48_origin_clk),
-      .raw_hsi_origin_clk        (hsi_origin_clk),
-      .raw_pad_rcc_eth_mii_tx_clk(pad_rcc_eth_mii_tx_clk),
-      .raw_pad_rcc_eth_mii_rx_clk(pad_rcc_eth_mii_rx_clk),
-      .raw_pll1_p_clk            (pll1_p_clk),
-      .raw_pll1_q_clk            (pll1_q_clk),
-      .raw_pll2_p_clk            (pll2_p_clk),
-      .raw_pll2_q_clk            (pll2_q_clk),
-      .raw_pll2_r_clk            (pll2_r_clk),
-      .raw_pll3_p_clk            (pll3_p_clk),
-      .raw_pll3_q_clk            (pll3_q_clk),
-      .raw_pll3_r_clk            (pll3_r_clk),
-      .raw_pwr_d1_wkup           (pwr_d1_wkup),
-      .raw_pwr_d2_wkup           (pwr_d2_wkup),
-      .raw_pwr_d3_wkup           (pwr_d3_wkup),
-      .raw_mac1_rcc_fes          (mac1_rcc_fes),
-      .raw_mac1_rcc_epis_2       (mac1_rcc_epis_2),
-      .raw_mac2_rcc_fes          (mac2_rcc_fes),
-      .raw_mac2_rcc_epis_2       (mac2_rcc_epis_2),
-      .rcc_bdcr_byte0_wren       (rcc_bdcr_byte0_wren),
-      .rcc_bdcr_byte1_wren       (rcc_bdcr_byte1_wren),
-      .rcc_bdcr_byte2_wren       (rcc_bdcr_byte2_wren),
-      .rcc_c1_rsr_rmvf_wren      (rcc_c1_rsr_rmvf_wren),
-      .rcc_c2_rsr_rmvf_wren      (rcc_c2_rsr_rmvf_wren),
-      .rcc_csr_lsion_wren        (rcc_csr_lsion_wren)
+      .hse_rtc_clk                (hse_rtc_clk),
+      .raw_lsi_clk                (lsi_clk),
+      .raw_lse_clk                (lse_clk),
+      .raw_csi_origin_clk         (csi_origin_clk),
+      .raw_hse_origin_clk         (hse_origin_clk),
+      .raw_hsi48_origin_clk       (hsi48_origin_clk),
+      .raw_hsi_origin_clk         (hsi_origin_clk),
+      .raw_pad_rcc_mac1_mii_tx_clk(pad_rcc_mac1_mii_tx_clk),
+      .raw_pad_rcc_mac1_mii_rx_clk(pad_rcc_mac1_mii_rx_clk),
+      .raw_pad_rcc_mac2_mii_tx_clk(pad_rcc_mac2_mii_tx_clk),
+      .raw_pad_rcc_mac2_mii_rx_clk(pad_rcc_mac2_mii_rx_clk),
+      .raw_pll1_p_clk             (pll1_p_clk),
+      .raw_pll1_q_clk             (pll1_q_clk),
+      .raw_pll2_p_clk             (pll2_p_clk),
+      .raw_pll2_q_clk             (pll2_q_clk),
+      .raw_pll2_r_clk             (pll2_r_clk),
+      .raw_pll3_p_clk             (pll3_p_clk),
+      .raw_pll3_q_clk             (pll3_q_clk),
+      .raw_pll3_r_clk             (pll3_r_clk),
+      .raw_pwr_d1_wkup            (pwr_d1_wkup),
+      .raw_pwr_d2_wkup            (pwr_d2_wkup),
+      .raw_pwr_d3_wkup            (pwr_d3_wkup),
+      .raw_mac1_rcc_fes           (mac1_rcc_fes),
+      .raw_mac1_rcc_epis_2        (mac1_rcc_epis_2),
+      .raw_mac2_rcc_fes           (mac2_rcc_fes),
+      .raw_mac2_rcc_epis_2        (mac2_rcc_epis_2),
+      .rcc_bdcr_byte0_wren        (rcc_bdcr_byte0_wren),
+      .rcc_bdcr_byte1_wren        (rcc_bdcr_byte1_wren),
+      .rcc_bdcr_byte2_wren        (rcc_bdcr_byte2_wren),
+      .rcc_c1_rsr_rmvf_wren       (rcc_c1_rsr_rmvf_wren),
+      .rcc_c2_rsr_rmvf_wren       (rcc_c2_rsr_rmvf_wren),
+      .rcc_csr_lsion_wren         (rcc_csr_lsion_wren)
       /*AUTOINST*/
   );
 

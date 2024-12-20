@@ -3,8 +3,10 @@ module rcc_vcore_port_clock_rst_mux (
     input  raw_hse_origin_clk,
     input  raw_hsi48_origin_clk,
     input  raw_hsi_origin_clk,
-    input  raw_pad_rcc_eth_mii_tx_clk,
-    input  raw_pad_rcc_eth_mii_rx_clk,
+    input  raw_pad_rcc_mac1_mii_tx_clk,
+    input  raw_pad_rcc_mac1_mii_rx_clk,
+    input  raw_pad_rcc_mac2_mii_tx_clk,
+    input  raw_pad_rcc_mac2_mii_rx_clk,
     input  raw_pll1_p_clk,
     input  raw_pll1_q_clk,
     input  raw_pll2_p_clk,
@@ -33,8 +35,10 @@ module rcc_vcore_port_clock_rst_mux (
     output hse_origin_clk,
     output hsi48_origin_clk,
     output hsi_origin_clk,
-    output pad_rcc_eth_mii_tx_clk,
-    output pad_rcc_eth_mii_rx_clk,
+    output pad_rcc_mac1_mii_tx_clk,
+    output pad_rcc_mac1_mii_rx_clk,
+    output pad_rcc_mac2_mii_tx_clk,
+    output pad_rcc_mac2_mii_rx_clk,
     output pll1_p_clk,
     output pll1_q_clk,
     output pll2_p_clk,
@@ -87,21 +91,38 @@ module rcc_vcore_port_clock_rst_mux (
       .gen_clk  (hsi_origin_clk)
   );
 
-  // pad_rcc_eth_mii_tx_clk test clock mux
-  test_clk_mux u_pad_rcc_eth_mii_tx_clk_tmux (
+  // pad_rcc_mac1_mii_tx_clk test clock mux
+  test_clk_mux u_pad_rcc_mac1_mii_tx_clk_tmux (
       .test_clk (test_clk),
-      .func_clk (raw_pad_rcc_eth_mii_tx_clk),
+      .func_clk (raw_pad_rcc_mac1_mii_tx_clk),
       .scan_mode(scan_mode),
-      .gen_clk  (pad_rcc_eth_mii_tx_clk)
+      .gen_clk  (pad_rcc_mac1_mii_tx_clk)
   );
 
-  // pad_rcc_eth_mii_rx_clk test clock mux
-  test_clk_mux u_pad_rcc_eth_mii_rx_clk_tmux (
+  // pad_rcc_mac1_mii_rx_clk test clock mux
+  test_clk_mux u_pad_rcc_mac1_mii_rx_clk_tmux (
       .test_clk (test_clk),
-      .func_clk (raw_pad_rcc_eth_mii_rx_clk),
+      .func_clk (raw_pad_rcc_mac1_mii_rx_clk),
       .scan_mode(scan_mode),
-      .gen_clk  (pad_rcc_eth_mii_rx_clk)
+      .gen_clk  (pad_rcc_mac1_mii_rx_clk)
   );
+
+  // pad_rcc_mac2_mii_tx_clk test clock mux
+  test_clk_mux u_pad_rcc_mac2_mii_tx_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_pad_rcc_mac2_mii_tx_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (pad_rcc_mac2_mii_tx_clk)
+  );
+
+  // pad_rcc_mac2_mii_rx_clk test clock mux
+  test_clk_mux u_pad_rcc_mac2_mii_rx_clk_tmux (
+      .test_clk (test_clk),
+      .func_clk (raw_pad_rcc_mac2_mii_rx_clk),
+      .scan_mode(scan_mode),
+      .gen_clk  (pad_rcc_mac2_mii_rx_clk)
+  );
+
 
   // pll1_p_clk test clock mux
   test_clk_mux u_pll1_p_clk_tmux (

@@ -20,9 +20,6 @@ create_clock -name pll3_r_clk        [get_ports pll3_r_clk]        -period 1.25 
 create_clock -name eth_mii_rx_clk [get_ports pad_rcc_eth_mii_rx_clk]  -period 100 -waveform {0 50}
 create_clock -name eth_mii_tx_clk [get_ports pad_rcc_eth_mii_tx_clk]  -period 100 -waveform {0 50}
 
-create_clock -name i2s_clk_in [get_ports i2s_clk_in]  -period 100   -waveform {0 50}
-create_clock -name usb_phy1   [get_ports usb_phy1]    -period 20.83 -waveform {0 10.415}
-
 #==============================================================================
 # CLK-Internal
 #==============================================================================
@@ -36,8 +33,6 @@ create_generated_clock -name hsi_per_clk -source         [get_pins u_rcc_vcore_t
 create_generated_clock -name csi_per_clk -source         [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/csi_ker_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/per_clk] -combinational -master_clock csi_ker_clk       -add
 create_generated_clock -name hse_per_clk -source         [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/hse_origin_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/per_clk]     -combinational -master_clock hse_clk           -add
 create_generated_clock -name hse_rtc_clk -source         [get_ports hse_origin_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/hse_rtc_clk]                                                  -divide_by 2   -master_clock hse_origin_clk    -add
-create_generated_clock -name csi_ker_clk_122_div -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/csi_ker_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/u_csi_ker_clk_122_divider/o_clk]    -divide_by 122 -master_clock csi_ker_clk       -add
-
 
 #==============================================================================
 # SYS CLK FROM DIFFERENT SOURCES
@@ -85,7 +80,8 @@ create_generated_clock -name pll1_rcc_d2_bus_clk -source [get_pins u_rcc_vcore_t
 create_generated_clock -name pll1_rcc_d3_bus_clk -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_sys_hpre_clk_divider/o_clk] [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_d3_bus_clk_gating/gen_clk] -combinational       -master_clock pll1_sys_hpre_clk    -add
 
 #eth clock
-create_generated_clock -name eth_mii_rx_clk_divided -source [get_ports pad_rcc_eth_mii_rx_clk] [get_pins u_rcc_vcore_top/u_rcc_eth_ker_clk_ctrl/u_eth_mii_rx_div_clk_mux/mout] -divide_by 2 -master_clock eth_mii_rx_clk -add
+
+
 #ahb clock
 create_generated_clock -name hsi_hclk                   -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_d3_bus_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] -combinational -master_clock hsi_rcc_d3_bus_clk    -add
 create_generated_clock -name csi_hclk                   -source [get_pins u_rcc_vcore_top/u_rcc_sys_clk_rst_ctrl/u_d3_bus_clk_gating/gen_clk] [get_pins u_rcc_vcore_top/u_rcc_per_clk_rst_control/rcc_rcc_hclk] -combinational -master_clock csi_rcc_d3_bus_clk    -add
@@ -125,7 +121,7 @@ create_generated_clock -name pll1_rcc_csr_lsion_wren    -source [get_pins u_rcc_
 # SET CLOCK GROUPS
 #==============================================================================
 set_clock_groups -name total_group -asynchronous -group [get_clocks {hsi_origin_clk hsi_clk hsi_ker_clk hsi_per_clk hsi_pre_sys_clk hsi_sys_clk hsi_sys_d1cpre_clk hsi_rcc_c1_clk hsi_sys_hpre_clk hsi_rcc_d1_bus_clk hsi_rcc_c2_clk hsi_rcc_d2_bus_clk hsi_rcc_d3_bus_clk hsi_hclk hsi_rcc_bdcr_byte0_wren hsi_rcc_bdcr_byte1_wren hsi_rcc_bdcr_byte2_wren hsi_rcc_c1_rsr_rmvf_wren hsi_rcc_c2_rsr_rmvf_wren hsi_rcc_csr_lsion_wren}] \
-  -group [get_clocks {csi_origin_clk csi_clk csi_ker_clk csi_per_clk csi_pre_sys_clk csi_sys_clk csi_sys_d1cpre_clk csi_rcc_c1_clk csi_sys_hpre_clk csi_rcc_d1_bus_clk csi_rcc_c2_clk csi_rcc_d2_bus_clk csi_rcc_d3_bus_clk csi_ker_clk_122_div csi_hclk csi_rcc_bdcr_byte0_wren csi_rcc_bdcr_byte1_wren csi_rcc_bdcr_byte2_wren csi_rcc_c1_rsr_rmvf_wren csi_rcc_c2_rsr_rmvf_wren csi_rcc_csr_lsion_wren}] \
+  -group [get_clocks {csi_origin_clk csi_clk csi_ker_clk csi_per_clk csi_pre_sys_clk csi_sys_clk csi_sys_d1cpre_clk csi_rcc_c1_clk csi_sys_hpre_clk csi_rcc_d1_bus_clk csi_rcc_c2_clk csi_rcc_d2_bus_clk csi_rcc_d3_bus_clk csi_hclk csi_rcc_bdcr_byte0_wren csi_rcc_bdcr_byte1_wren csi_rcc_bdcr_byte2_wren csi_rcc_c1_rsr_rmvf_wren csi_rcc_c2_rsr_rmvf_wren csi_rcc_csr_lsion_wren}] \
   -group [get_clocks {hse_origin_clk hse_clk             hse_per_clk hse_pre_sys_clk hse_sys_clk hse_sys_d1cpre_clk hse_rcc_c1_clk hse_sys_hpre_clk hse_rcc_d1_bus_clk hse_rcc_c2_clk hse_rcc_d2_bus_clk hse_rcc_d3_bus_clk hse_hclk hse_rcc_bdcr_byte0_wren hse_rcc_bdcr_byte1_wren hse_rcc_bdcr_byte2_wren hse_rcc_c1_rsr_rmvf_wren hse_rcc_c2_rsr_rmvf_wren hse_rcc_csr_lsion_wren}] \
   -group [get_clocks {pll1_p_clk                                     pll1_pre_sys_clk pll1_sys_clk pll1_sys_d1cpre_clk pll1_rcc_c1_clk pll1_sys_hpre_clk pll1_rcc_d1_bus_clk pll1_rcc_c2_clk pll1_rcc_d2_bus_clk pll1_rcc_d3_bus_clk pll1_hclk pll1_rcc_bdcr_byte0_wren pll1_rcc_bdcr_byte1_wren pll1_rcc_bdcr_byte2_wren pll1_rcc_c1_rsr_rmvf_wren pll1_rcc_c2_rsr_rmvf_wren pll1_rcc_csr_lsion_wren}] \
   -group [get_clocks {lsi_clk}] \
@@ -165,7 +161,7 @@ set_clock_groups -name total_group -asynchronous -group [get_clocks {hsi_origin_
 #   -group [get_clocks {pll2_p_clk}]
 
 #==============================================================================
-# sys clock mux 
-#============================================================================== 
+# sys clock mux
+#==============================================================================
 # set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco1_clk_switch_cell.sel[2:0]" -value "{h 0}{h 1}{h 2}{h 3}{h 4}"
 # set_case_analysis -name "rcc_top.u_rcc_vcore_top.u_rcc_sys_clk_rst_ctrl.mco2_clk_switch_cell.sel[2:0]" -value "{h 0}{h 1}{h 2}{h 3}{h 4}{h 5}"

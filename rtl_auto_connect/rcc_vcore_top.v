@@ -26,8 +26,10 @@ module rcc_vcore_top #(
     input        raw_hse_origin_clk,
     input        raw_hsi48_origin_clk,
     input        raw_hsi_origin_clk,
-    input        raw_pad_rcc_eth_mii_tx_clk,
-    input        raw_pad_rcc_eth_mii_rx_clk,
+    input        raw_pad_rcc_mac1_mii_tx_clk,
+    input        raw_pad_rcc_mac1_mii_rx_clk,
+    input        raw_pad_rcc_mac2_mii_tx_clk,
+    input        raw_pad_rcc_mac2_mii_rx_clk,
     input        raw_pll1_p_clk,
     input        raw_pll1_q_clk,
     input        raw_pll2_p_clk,
@@ -37,47 +39,60 @@ module rcc_vcore_top #(
     input        raw_pll3_q_clk,
     input        raw_pll3_r_clk,
     //rcc_vsw reg outputs
-    input        cur_rcc_bdcr_bdrst,          // vsw to vcore
-    input        cur_rcc_bdcr_lsebyp,         // vsw to vcore
-    input        cur_rcc_bdcr_lsecssd,        // vsw to vcore
-    input        cur_rcc_bdcr_lsecsson,       // vsw to vcore
-    input  [1:0] cur_rcc_bdcr_lsedrv,         // vsw to vcore
-    input        cur_rcc_bdcr_lseon,          // vsw to vcore
-    input        cur_rcc_bdcr_rtcen,          // vsw to vcore
-    input  [1:0] cur_rcc_bdcr_rtcsel,         // vsw to vcore
+    input        cur_rcc_bdcr_bdrst,           // vsw to vcore
+    input        cur_rcc_bdcr_lsebyp,          // vsw to vcore
+    input        cur_rcc_bdcr_lsecssd,         // vsw to vcore
+    input        cur_rcc_bdcr_lsecsson,        // vsw to vcore
+    input  [1:0] cur_rcc_bdcr_lsedrv,          // vsw to vcore
+    input        cur_rcc_bdcr_lseon,           // vsw to vcore
+    input        cur_rcc_bdcr_rtcen,           // vsw to vcore
+    input  [1:0] cur_rcc_bdcr_rtcsel,          // vsw to vcore
     // rcc_vdd_reg Outputs
-    input        cur_rcc_c1_rsr_lpwr2rstf,    //vdd to vcore
-    input        cur_rcc_c1_rsr_lpwr1rstf,    //vdd to vcore
-    input        cur_rcc_c1_rsr_wwdg2rstf,    //vdd to vcore
-    input        cur_rcc_c1_rsr_wwdg1rstf,    //vdd to vcore
-    input        cur_rcc_c1_rsr_iwdg2rstf,    //vdd to vcore
-    input        cur_rcc_c1_rsr_iwdg1rstf,    //vdd to vcore
-    input        cur_rcc_c1_rsr_sft2rstf,     //vdd to vcore
-    input        cur_rcc_c1_rsr_sft1rstf,     //vdd to vcore
-    input        cur_rcc_c1_rsr_porrstf,      //vdd to vcore
-    input        cur_rcc_c1_rsr_pinrstf,      //vdd to vcore
-    input        cur_rcc_c1_rsr_borrstf,      //vdd to vcore
-    input        cur_rcc_c1_rsr_d2rstf,       //vdd to vcore
-    input        cur_rcc_c1_rsr_d1rstf,       //vdd to vcore
-    input        cur_rcc_c1_rsr_oblrstf,      //vdd to vcore
-    input        cur_rcc_c1_rsr_rmvf,         //vdd to vcore
-    input        cur_rcc_c2_rsr_lpwr2rstf,    //vdd to vcore
-    input        cur_rcc_c2_rsr_lpwr1rstf,    //vdd to vcore
-    input        cur_rcc_c2_rsr_wwdg2rstf,    //vdd to vcore
-    input        cur_rcc_c2_rsr_wwdg1rstf,    //vdd to vcore
-    input        cur_rcc_c2_rsr_iwdg2rstf,    //vdd to vcore
-    input        cur_rcc_c2_rsr_iwdg1rstf,    //vdd to vcore
-    input        cur_rcc_c2_rsr_sft2rstf,     //vdd to vcore
-    input        cur_rcc_c2_rsr_sft1rstf,     //vdd to vcore
-    input        cur_rcc_c2_rsr_porrstf,      //vdd to vcore
-    input        cur_rcc_c2_rsr_pinrstf,      //vdd to vcore
-    input        cur_rcc_c2_rsr_borrstf,      //vdd to vcore
-    input        cur_rcc_c2_rsr_d2rstf,       //vdd to vcore
-    input        cur_rcc_c2_rsr_d1rstf,       //vdd to vcore
-    input        cur_rcc_c2_rsr_oblrstf,      //vdd to vcore
-    input        cur_rcc_c2_rsr_rmvf,         //vdd to vcore
-    input        cur_rcc_csr_lsion,           //vdd to vcore
+    input        cur_rcc_c1_rsr_lpwr2rstf,     //vdd to vcore
+    input        cur_rcc_c1_rsr_lpwr1rstf,     //vdd to vcore
+    input        cur_rcc_c1_rsr_wwdg2rstf,     //vdd to vcore
+    input        cur_rcc_c1_rsr_wwdg1rstf,     //vdd to vcore
+    input        cur_rcc_c1_rsr_iwdg2rstf,     //vdd to vcore
+    input        cur_rcc_c1_rsr_iwdg1rstf,     //vdd to vcore
+    input        cur_rcc_c1_rsr_sft2rstf,      //vdd to vcore
+    input        cur_rcc_c1_rsr_sft1rstf,      //vdd to vcore
+    input        cur_rcc_c1_rsr_porrstf,       //vdd to vcore
+    input        cur_rcc_c1_rsr_pinrstf,       //vdd to vcore
+    input        cur_rcc_c1_rsr_borrstf,       //vdd to vcore
+    input        cur_rcc_c1_rsr_d2rstf,        //vdd to vcore
+    input        cur_rcc_c1_rsr_d1rstf,        //vdd to vcore
+    input        cur_rcc_c1_rsr_oblrstf,       //vdd to vcore
+    input        cur_rcc_c1_rsr_rmvf,          //vdd to vcore
+    input        cur_rcc_c2_rsr_lpwr2rstf,     //vdd to vcore
+    input        cur_rcc_c2_rsr_lpwr1rstf,     //vdd to vcore
+    input        cur_rcc_c2_rsr_wwdg2rstf,     //vdd to vcore
+    input        cur_rcc_c2_rsr_wwdg1rstf,     //vdd to vcore
+    input        cur_rcc_c2_rsr_iwdg2rstf,     //vdd to vcore
+    input        cur_rcc_c2_rsr_iwdg1rstf,     //vdd to vcore
+    input        cur_rcc_c2_rsr_sft2rstf,      //vdd to vcore
+    input        cur_rcc_c2_rsr_sft1rstf,      //vdd to vcore
+    input        cur_rcc_c2_rsr_porrstf,       //vdd to vcore
+    input        cur_rcc_c2_rsr_pinrstf,       //vdd to vcore
+    input        cur_rcc_c2_rsr_borrstf,       //vdd to vcore
+    input        cur_rcc_c2_rsr_d2rstf,        //vdd to vcore
+    input        cur_rcc_c2_rsr_d1rstf,        //vdd to vcore
+    input        cur_rcc_c2_rsr_oblrstf,       //vdd to vcore
+    input        cur_rcc_c2_rsr_rmvf,          //vdd to vcore
+    input        cur_rcc_csr_lsion,            //vdd to vcore
     /*AUTOOUTPUT*/
+    //================================================================
+    // eth clocks
+    //================================================================
+    output       rcc_mac1_mii_tx_clk,
+    output       rcc_mac1_mii_rx_clk,
+    output       rcc_mac1_mii_tx_180_clk,
+    output       rcc_mac1_mii_rx_180_clk,
+    output       rcc_mac1_rmii_ref_clk,
+    output       rcc_mac2_mii_tx_clk,
+    output       rcc_mac2_mii_rx_clk,
+    output       rcc_mac2_mii_tx_180_clk,
+    output       rcc_mac2_mii_rx_180_clk,
+    output       rcc_mac2_rmii_ref_clk,
     //bus clock signals
     output       rcc_axibridge_d1_clk,
     output       rcc_ahb3bridge_d1_clk,

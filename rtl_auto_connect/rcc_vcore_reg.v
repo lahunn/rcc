@@ -132,13 +132,6 @@ module rcc_vcore_reg #(
     output [   1:0] i2c4sel,
     output [   2:0] lpuart1sel,
     output [   1:0] rtcsel,
-    output          lsecsson,
-    output [   1:0] lsedrv,
-    output          lsebyp,
-    input           lse_rdy,
-    output          lseon,
-    input           lsi_rdy,
-    output          lsion,
     output          romrst,
     output          smc2rst,
     output          smc1rst,
@@ -702,6 +695,9 @@ module rcc_vcore_reg #(
   wire          cur_rcc_cr_hsecsson;
   wire          nxt_rcc_cr_hsecsson;
   wire          rcc_cr_hsecsson_en;
+  wire          cur_rcc_cr_hsecsson_en;
+  wire          nxt_rcc_cr_hsecsson_en;
+  wire          rcc_cr_hsecsson_en_en;
   wire          cur_rcc_cr_hsebyp;
   wire          nxt_rcc_cr_hsebyp;
   wire          rcc_cr_hsebyp_en;
@@ -1847,12 +1843,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3enr_gpio8en;
   wire          nxt_rcc_c1_apb3enr_gpio8en;
   wire          rcc_c1_apb3enr_gpio8en_en;
-  wire          cur_rcc_c1_apb3enr_iwdten;
-  wire          nxt_rcc_c1_apb3enr_iwdten;
-  wire          rcc_c1_apb3enr_iwdten_en;
-  wire          cur_rcc_c1_apb3enr_rtcen;
-  wire          nxt_rcc_c1_apb3enr_rtcen;
-  wire          rcc_c1_apb3enr_rtcen_en;
   // rcc_c1_ahb1lpenr
   wire [  31:0] rcc_c1_ahb1lpenr_read;
   wire          rcc_c1_ahb1lpenr_sel;
@@ -2279,12 +2269,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb3enr_gpio8en;
   wire          nxt_rcc_c2_apb3enr_gpio8en;
   wire          rcc_c2_apb3enr_gpio8en_en;
-  wire          cur_rcc_c2_apb3enr_iwdten;
-  wire          nxt_rcc_c2_apb3enr_iwdten;
-  wire          rcc_c2_apb3enr_iwdten_en;
-  wire          cur_rcc_c2_apb3enr_rtcen;
-  wire          nxt_rcc_c2_apb3enr_rtcen;
-  wire          rcc_c2_apb3enr_rtcen_en;
   // rcc_c2_ahb1lpenr
   wire [  31:0] rcc_c2_ahb1lpenr_read;
   wire          rcc_c2_ahb1lpenr_sel;
@@ -9791,9 +9775,7 @@ module rcc_vcore_reg #(
     cur_rcc_c1_apb3enr_gpio6en,
     cur_rcc_c1_apb3enr_gpio7en,
     cur_rcc_c1_apb3enr_gpio8en,
-    cur_rcc_c1_apb3enr_iwdten,
-    {2{1'b0}},
-    cur_rcc_c1_apb3enr_rtcen
+    {4{1'b0}}
   };
 
   // --------------------------------------------------------------------------------
@@ -12540,9 +12522,7 @@ module rcc_vcore_reg #(
     cur_rcc_c2_apb3enr_gpio6en,
     cur_rcc_c2_apb3enr_gpio7en,
     cur_rcc_c2_apb3enr_gpio8en,
-    cur_rcc_c2_apb3enr_iwdten,
-    {2{1'b0}},
-    cur_rcc_c2_apb3enr_rtcen
+    {4{1'b0}}
   };
 
   // --------------------------------------------------------------------------------
