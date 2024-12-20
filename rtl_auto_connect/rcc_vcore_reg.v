@@ -2053,12 +2053,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c1_apb3lpenr_gpio8lpen;
   wire          nxt_rcc_c1_apb3lpenr_gpio8lpen;
   wire          rcc_c1_apb3lpenr_gpio8lpen_en;
-  wire          cur_rcc_c1_apb3lpenr_iwdtlpen;
-  wire          nxt_rcc_c1_apb3lpenr_iwdtlpen;
-  wire          rcc_c1_apb3lpenr_iwdtlpen_en;
-  wire          cur_rcc_c1_apb3lpenr_rtclpen;
-  wire          nxt_rcc_c1_apb3lpenr_rtclpen;
-  wire          rcc_c1_apb3lpenr_rtclpen_en;
   // rcc_c2_ahb1enr
   wire [  31:0] rcc_c2_ahb1enr_read;
   wire          rcc_c2_ahb1enr_sel;
@@ -2479,12 +2473,6 @@ module rcc_vcore_reg #(
   wire          cur_rcc_c2_apb3lpenr_gpio8lpen;
   wire          nxt_rcc_c2_apb3lpenr_gpio8lpen;
   wire          rcc_c2_apb3lpenr_gpio8lpen_en;
-  wire          cur_rcc_c2_apb3lpenr_iwdtlpen;
-  wire          nxt_rcc_c2_apb3lpenr_iwdtlpen;
-  wire          rcc_c2_apb3lpenr_iwdtlpen_en;
-  wire          cur_rcc_c2_apb3lpenr_rtclpen;
-  wire          nxt_rcc_c2_apb3lpenr_rtclpen;
-  wire          rcc_c2_apb3lpenr_rtclpen_en;
 
 
   //register async set or reset
@@ -2561,6 +2549,13 @@ module rcc_vcore_reg #(
   wire          rcc_bdcr_byte2_en;
   wire          rcc_bdcr_byte1_en;
   wire          rcc_bdcr_byte0_en;
+  // ================================================================================
+  // interrupt logic
+  // ================================================================================
+  assign rcc_hsecss_it = rcc_hsecssf;
+  assign rcc_lsecss_it = rcc_lsecssf & lsecssie;
+  assign rcc_it = (rcc_pll3rdyf & pll3rdyie) | (rcc_pll2rdyf & pll2rdyie) | (rcc_pll1rdyf & pll1rdyie) | (rcc_hsi48rdyf & hsi48rdyie) | (rcc_csirdyf & csirdyie) | (rcc_hserdyf & hserdyie) | (rcc_hsirdyf & hsirdyie) | (rcc_lserdyf & lserdyie) | (rcc_lsirdyf & lsirdyie);
+
   // ================================================================================
   // R/W INDICATOR
   // ================================================================================
@@ -11148,9 +11143,7 @@ module rcc_vcore_reg #(
     cur_rcc_c1_apb3lpenr_gpio6lpen,
     cur_rcc_c1_apb3lpenr_gpio7lpen,
     cur_rcc_c1_apb3lpenr_gpio8lpen,
-    cur_rcc_c1_apb3lpenr_iwdtlpen,
-    {2{1'b0}},
-    cur_rcc_c1_apb3lpenr_rtclpen
+    {4{1'b0}}
   };
 
   // --------------------------------------------------------------------------------
@@ -13895,9 +13888,7 @@ module rcc_vcore_reg #(
     cur_rcc_c2_apb3lpenr_gpio6lpen,
     cur_rcc_c2_apb3lpenr_gpio7lpen,
     cur_rcc_c2_apb3lpenr_gpio8lpen,
-    cur_rcc_c2_apb3lpenr_iwdtlpen,
-    {2{1'b0}},
-    cur_rcc_c2_apb3lpenr_rtclpen
+    {4{1'b0}}
   };
 
   // --------------------------------------------------------------------------------

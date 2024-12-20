@@ -17,9 +17,6 @@ create_clock -name pll3_p_clk        [get_ports pll3_p_clk]        -period 1.25 
 create_clock -name pll3_q_clk        [get_ports pll3_q_clk]        -period 1.25   -waveform {0 0.625}
 create_clock -name pll3_r_clk        [get_ports pll3_r_clk]        -period 1.25   -waveform {0 0.625}
 
-create_clock -name eth_mii_rx_clk [get_ports pad_rcc_eth_mii_rx_clk]  -period 100 -waveform {0 50}
-create_clock -name eth_mii_tx_clk [get_ports pad_rcc_eth_mii_tx_clk]  -period 100 -waveform {0 50}
-
 #==============================================================================
 # CLK-Internal
 #==============================================================================
@@ -133,11 +130,7 @@ set_clock_groups -name total_group -asynchronous -group [get_clocks {hsi_origin_
   -group [get_clocks {pll3_q_clk}] \
   -group [get_clocks {pll2_r_clk}] \
   -group [get_clocks {pll3_r_clk}] \
-  -group [get_clocks {hsi48_origin_clk}] \
-  -group [get_clocks {eth_mii_rx_clk eth_mii_rx_clk_divided}] \
-  -group [get_clocks {eth_mii_tx_clk}] \
-  -group [get_clocks {i2s_clk_in}] \
-  -group [get_clocks {usb_phy1}]
+  -group [get_clocks {hsi48_origin_clk}]
 
 # set_clock_groups -name sys_clk_group -logically_exclusive -group [get_clocks {hsi_clk}] \
 #   -group [get_clocks {csi_clk}] \

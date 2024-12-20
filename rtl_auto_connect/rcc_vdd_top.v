@@ -32,7 +32,6 @@ module rcc_vdd_top (
     input pwr_bor_rst,               //low to high level, default 0
     input d2_rst,                    //low to high level, default 0
     input d1_rst,                    //low to high level, default 0
-    input lsi_clk,                   //in vdd domain
     // input lsi_rdy,
 
     output lsion,
@@ -157,7 +156,7 @@ module rcc_vdd_top (
   // );
 
   rcc_vdd_reg u_rcc_vdd_reg (
-      .rst_n        (~pwr_por_rst)
+      .rst_n(~pwr_por_rst)
       /*AUTOINST*/
   );
 

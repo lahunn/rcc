@@ -181,6 +181,10 @@ module rcc_vcore_top #(
   wire          gen_cur_rcc_c2_rsr_oblrstf;
   wire          gen_cur_rcc_c2_rsr_rmvf;
   wire          gen_cur_rcc_csr_lsion;
+  wire          pad_rcc_mac1_mii_tx_clk;
+  wire          pad_rcc_mac1_mii_rx_clk;
+  wire          pad_rcc_mac2_mii_tx_clk;
+  wire          pad_rcc_mac2_mii_rx_clk;
   /*AUTOWIRE*/
 
 
@@ -216,7 +220,11 @@ module rcc_vcore_top #(
   // rcc port clock mux 
   //================================================================
   rcc_vcore_port_clock_rst_mux u_rcc_vcore_port_clock_rst_mux (
-  /*AUTOINST*/
+      .pad_rcc_mac1_mii_tx_clk(pad_rcc_mac1_mii_tx_clk),
+      .pad_rcc_mac1_mii_rx_clk(pad_rcc_mac1_mii_rx_clk),
+      .pad_rcc_mac2_mii_tx_clk(pad_rcc_mac2_mii_tx_clk),
+      .pad_rcc_mac2_mii_rx_clk(pad_rcc_mac2_mii_rx_clk)
+      /*AUTOINST*/
   );
   //================================================================
   // cross domian signal loopback in dft mode
