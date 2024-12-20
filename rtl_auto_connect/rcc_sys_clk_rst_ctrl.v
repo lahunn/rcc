@@ -807,7 +807,7 @@ module rcc_sys_clk_rst_ctrl #(
   //==============================================================================================
   //obl reset generate , option byte load module request reset
   //==============================================================================================
-  assign obl_rst      = (~obl_done) || flash_obl_reload;
+  assign obl_rst      = flash_obl_reload;
 
   //==============================================================================================
   //rcc vcore reset generate

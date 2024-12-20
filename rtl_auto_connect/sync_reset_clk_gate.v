@@ -24,7 +24,7 @@ module sync_reset_clk_gate #(
 
 
   assign clk_en       = arcg_on ? cur_clk_en : 1'b1;
-  assign counter_wren = (cur_counter < DELAY);
+  assign counter_wren = (cur_counter != DELAY);
   assign nxt_counter  = cur_counter + {{(CNT_WD - 1) {1'b0}}, 1'b1};
 
   BB_dfflr #(
@@ -38,8 +38,7 @@ module sync_reset_clk_gate #(
       .dout (cur_counter)
   );
 
-
-  assign nxt_clk_en = counter_wren;
+  assign nxt_clk_en = !counter_wren;
 
   BB_dffr #(
       .DW     (1),
