@@ -56,6 +56,7 @@ module rcc_sys_clk_rst_ctrl #(
     input        hsi_rdy,
     input        hsi_origin_clk,
     //pll clocks
+    input        pll1_rdy,
     input        pll1_p_clk,
     input        pll1_q_clk,
     input        pll2_p_clk,
@@ -842,7 +843,7 @@ module rcc_sys_clk_rst_ctrl #(
       .STAGE_NUM(2)
   ) u_c1_rst_n_delay (
       .src_rst_n(c1_rst_n),
-      .clk      (rcc_c1_clk),
+      .clk      (sys_d1cpre_clk),
       .testmode (testmode),
       .gen_rst_n(raw_rcc_c1_rst_n)
   );
@@ -851,7 +852,7 @@ module rcc_sys_clk_rst_ctrl #(
       .STAGE_NUM(2)
   ) u_c2_rst_n_delay (
       .src_rst_n(c2_rst_n),
-      .clk      (rcc_c2_clk),
+      .clk      (sys_hpre_clk),
       .testmode (testmode),
       .gen_rst_n(raw_rcc_c2_rst_n)
   );
@@ -1298,7 +1299,7 @@ module rcc_sys_clk_rst_ctrl #(
       .CLK_NUM(4)
   ) u_sys_clk_switch (
       .i_clk    (sys_clk_src),
-      .clk_fail ({1'b0, hsecss_fail, 2'b0}),
+      .clk_fail ({!pll1_rdy, hsecss_fail, 2'b0}),
       .rst_n    ({pll1_p_sync_sys_rst_n, hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
       .sel      (sw),
       .testmode (testmode),

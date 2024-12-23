@@ -32,7 +32,7 @@ module rcc_512_div (
   // to avoid reconverge of signals from the same domain , need a flop to stop the propagation route
   BB_dffr #(
       .DW     (9),
-      .RST_VAL(0)
+      .RST_VAL(9'b1)
   ) u_BB_dffr (
       .clk  (i_clk),
       .rst_n(rst_n),
