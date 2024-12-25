@@ -252,15 +252,19 @@ module rcc_top #(
     output          d2_h2b1_div_en,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          d2_h2b2_div_en,             // From u_rcc_vcore_top of rcc_vcore_top.v
     output          d3_h2b_div_en,              // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ahb1bridge_d2_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ahb2bridge_d2_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ahb3bridge_d1_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_ahb4bridge_d3_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_apb1bridge_d2_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_apb2bridge_d2_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_apb3bridge_d1_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_apb4bridge_d3_clk,      // From u_rcc_vcore_top of rcc_vcore_top.v
-    output          rcc_axibridge_d1_clk,       // From u_rcc_vcore_top of rcc_vcore_top.v
+    output          rcc_axibridge_d1_clk,
+    output          rcc_ahb3bridge_d1_clk,
+    output          rcc_apb3bridge_d1_clk,
+    output          rcc_ahb1bridge_d2_clk,
+    output          rcc_ahb2bridge_d2_clk,
+    output          rcc_apb1bridge_d2_clk,
+    output          rcc_apb2bridge_d2_clk,
+    output          rcc_ahb4bridge_d3_clk,
+    output          rcc_apb4bridge_d3_clk,
+    output          rcc_ahb1bridge_d3_clk,
+    output          rcc_apb1bridge_d3_clk,
+    output          rcc_apb2bridge_d3_clk,
+    output          rcc_apb3bridge_d3_clk,
     //================================================================
     // PLL signals
     //================================================================

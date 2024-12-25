@@ -2869,7 +2869,7 @@ module rcc_vcore_reg #(
   // 19:19               hsecsson            W1S                 0b0                 
   // --------------------------------------------------------------------------------
   assign rcc_cr_hsecsson_en_en  = (|wr_req & rcc_cr_sel);
-  assign rcc_cr_hsecsson_en     = rcc_cr_hsecsson_en_en && (cur_rcc_cr_hsecsson_en || sync_hsecss_fail);
+  assign rcc_cr_hsecsson_en     = (!cur_rcc_cr_hsecsson) && (|wr_req & rcc_cr_sel);
   assign nxt_rcc_cr_hsecsson    = wdata[19:19];
   assign nxt_rcc_cr_hsecsson_en = (nxt_rcc_cr_hsecsson == 1'b0) && (cur_rcc_cr_hsecsson == 1'b0);
   assign hsecsson               = cur_rcc_cr_hsecsson;

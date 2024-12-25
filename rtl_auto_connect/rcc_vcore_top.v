@@ -102,7 +102,11 @@ module rcc_vcore_top #(
     output       rcc_apb1bridge_d2_clk,
     output       rcc_apb2bridge_d2_clk,
     output       rcc_ahb4bridge_d3_clk,
-    output       rcc_apb4bridge_d3_clk
+    output       rcc_apb4bridge_d3_clk,
+    output       rcc_ahb1bridge_d3_clk,
+    output       rcc_apb1bridge_d3_clk,
+    output       rcc_apb2bridge_d3_clk,
+    output       rcc_apb3bridge_d3_clk
 );
   wire [DW-1:0] rdata;
   wire [   1:0] rsp;
