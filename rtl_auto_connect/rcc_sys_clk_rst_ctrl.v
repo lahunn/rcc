@@ -1299,8 +1299,8 @@ module rcc_sys_clk_rst_ctrl #(
       .CLK_NUM(4)
   ) u_sys_clk_switch (
       .i_clk    (sys_clk_src),
-      .clk_fail ({!pll1_rdy, hsecss_fail, 2'b0}),
-      .rst_n    ({pll1_p_sync_sys_rst_n, hse_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hsi_ker_sync_sys_rst_n}),
+      .clk_fail ({!pll1_rdy, 2'b0, hsecss_fail}),
+      .rst_n    ({pll1_p_sync_sys_rst_n, hsi_ker_sync_sys_rst_n, csi_ker_sync_sys_rst_n, hse_sync_sys_rst_n}),
       .sel      (sw),
       .testmode (testmode),
       .scan_mode(scan_mode),
